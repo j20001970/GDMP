@@ -63,13 +63,13 @@ new file mode 100644
 +        "bin/libgodot-cpp.linux.release.64.a",
 +    ]),
 +    hdrs = glob([
-+        "godot_headers/*.h",
-+        "godot_headers/*/*.h",
++        "godot-headers/*.h",
++        "godot-headers/*/*.h",
 +        "include/core/*.hpp",
 +        "include/gen/*.hpp",
 +    ]),
 +    includes = [
-+        "godot_headers",
++        "godot-headers",
 +        "include",
 +        "include/core",
 +        "include/gen",
@@ -92,13 +92,13 @@ new file mode 100644
 +        "bin/libgodot-cpp.windows.release.64.lib",
 +    ]),
 +    hdrs = glob([
-+        "godot_headers/*.h",
-+        "godot_headers/*/*.h",
++        "godot-headers/*.h",
++        "godot-headers/*/*.h",
 +        "include/core/*.hpp",
 +        "include/gen/*.hpp",
 +    ]),
 +    includes = [
-+        "godot_headers",
++        "godot-headers",
 +        "include",
 +        "include/core",
 +        "include/gen",
