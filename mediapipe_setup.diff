@@ -106,3 +106,17 @@ new file mode 100644
 +    linkstatic = 1,
 +    visibility = ["//visibility:public"],
 +)
+diff --git a/mediapipe/java/com/google/mediapipe/framework/PacketGetter.java b/mediapipe/java/com/google/mediapipe/framework/PacketGetter.java
+--- a/mediapipe/java/com/google/mediapipe/framework/PacketGetter.java
++++ b/mediapipe/java/com/google/mediapipe/framework/PacketGetter.java
+@@ -146,6 +146,10 @@ public final class PacketGetter {
+     return nativeGetFloat64Vector(packet.getNativeHandle());
+   }
+ 
++  public static byte[][] getProtoBytesVector(final Packet packet) {
++    return nativeGetProtoVector(packet.getNativeHandle());
++  }
++
+   public static <T> List<T> getProtoVector(final Packet packet, Parser<T> messageParser) {
+     byte[][] protoVector = nativeGetProtoVector(packet.getNativeHandle());
+     Preconditions.checkNotNull(
