@@ -5,6 +5,10 @@ enum {
 	CAMERA_FACING_BACK
 }
 
+const Classification = preload("Classification.gd")
+const Detection = preload("Detection.gd")
+const Landmark = preload("Landmark.gd")
+
 var plugin
 var image : Image = Image.new()
 var packet_data : Dictionary = {}
