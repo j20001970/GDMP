@@ -48,12 +48,21 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
             GDMP.init_graph("path/to/your/graph.pbtxt")
     ```
     Note that for desktop Linux, files used by MediaPipe need to be placed externally (e.g. place the models in your project's directory according to the calculator's model_path, and export graphs and models outside of .pck file)
-3. To add a callback to the graph's output stream:
+3. To add a proto callback to the graph's output stream:
 
     ```gdscript
-    GDMP.add_packet_callback("stream_name", is_packet_vector, target_object, "target_method")
+    GDMP.add_proto_callback("stream_name", target_object, "target_method")
     ```
-4. To start the camera for sending video frames to the graph:
+4. To use the data from proto callback(NormalizedLandmarkList for example):
+
+    ```gdscript
+    func _on_new_landmarks(data : PoolByteArray) -> void:
+        var landmarks = GDMP.Landmark.NormalizedLandmarkList.new()
+        landmarks.from_bytes(data)
+        for landmark in landmarks.get_landmark():
+            print("x:%f, y:%f, z:%f" % [landmark.get_x(), landmark.get_y(), landmark.get_z()])
+    ```
+5. To start the camera for sending video frames to the graph:
 
     ```gdscript
     GDMP.start_camera()
