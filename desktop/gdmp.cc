@@ -1,4 +1,5 @@
 #include "gdmp.h"
+#include "mediapipe/framework/deps/status_macros.h"
 
 using namespace godot;
 
@@ -6,11 +7,15 @@ void GDMP::_register_methods() {
     register_method("_process", &GDMP::_process);
     register_method("initGraph", &GDMP::init_graph);
     register_method("addPacketCallback", &GDMP::add_packet_callback);
+    register_method("addProtoCallback", &GDMP::add_proto_callback);
+    register_method("addProtoVectorCallback", &GDMP::add_proto_vector_callback);
     register_method("startCamera", &GDMP::start_camera);
     register_method("closeCamera", &GDMP::close_camera);
     register_method("loadVideo", &GDMP::load_video);
     register_signal<GDMP>((char *)"new_frame", "data", GODOT_VARIANT_TYPE_POOL_REAL_ARRAY, "width", GODOT_VARIANT_TYPE_INT, "height", GODOT_VARIANT_TYPE_INT);
     register_signal<GDMP>((char *)"new_packet", "stream_name", GODOT_VARIANT_TYPE_STRING, "is_vector", GODOT_VARIANT_TYPE_BOOL, "data", GODOT_VARIANT_TYPE_POOL_REAL_ARRAY);
+    register_signal<GDMP>((char *)"on_new_proto", "stream_name", GODOT_VARIANT_TYPE_STRING, "proto_bytes", GODOT_VARIANT_TYPE_POOL_BYTE_ARRAY);
+    register_signal<GDMP>((char *)"on_new_proto_vector", "stream_name", GODOT_VARIANT_TYPE_STRING, "proto_vector", GODOT_VARIANT_TYPE_ARRAY);
 }
 
 GDMP::GDMP() {
@@ -35,6 +40,20 @@ void GDMP::_process(float delta) {
         emit_signal("new_packet", stream_name, is_vector, data);
         packet_data.erase(streams[i]);
     }
+    PoolStringArray proto_streams = PoolStringArray(proto_packets.keys());
+    for(int i=0; i<proto_streams.size(); i++) {
+        String stream_name = proto_streams[i];
+        PoolByteArray data = proto_packets[stream_name];
+        emit_signal("on_new_proto", stream_name, data);
+        proto_packets.erase(proto_streams[i]);
+    }
+    PoolStringArray proto_vector_streams = PoolStringArray(proto_vector_packets.keys());
+    for(int i=0; i<proto_vector_streams.size(); i++) {
+        String stream_name = proto_vector_streams[i];
+        Array data = proto_vector_packets[stream_name];
+        emit_signal("on_new_proto_vector", stream_name, data);
+        proto_vector_packets.erase(proto_vector_streams[i]);
+    }
     if(!video_frame.empty()){
         PoolByteArray data = PoolByteArray();
         int buf_size = video_frame.cols*video_frame.rows*video_frame.channels();
@@ -53,6 +72,8 @@ void GDMP::init_graph(String graph_path, Dictionary input_side_packets) {
     // setting input side packets is currently no-op
     close_camera();
     packet_data.clear();
+    proto_packets.clear();
+    proto_vector_packets.clear();
     absl::Status result = [this, &graph_path]()->absl::Status {
         graph = absl::make_unique<mediapipe::CalculatorGraph>();
         std::string calculator_graph_config_contents;
@@ -112,6 +133,50 @@ void GDMP::add_packet_callback(String stream_name, bool is_vector) {
                 godot_data["data"] = data;
                 packet_data[stream_name] = godot_data;
             }
+            mutex.unlock();
+            return absl::OkStatus();
+        });
+    }();
+    if(!result.ok()) {
+        Godot::print(result.message().data());
+    }
+}
+
+void GDMP::add_proto_callback(String stream_name) {
+    absl::Status result = [this, &stream_name]()->absl::Status {
+        return graph->ObserveOutputStream(stream_name.alloc_c_string(), [this, stream_name](mediapipe::Packet packet)->absl::Status {
+            mutex.lock();
+            std::string serialized;
+            packet.GetProtoMessageLite().SerializeToString(&serialized);
+            PoolByteArray data;
+            data.resize(serialized.size());
+            memcpy(data.write().ptr(), serialized.c_str(), serialized.size());
+            proto_packets[stream_name] = data;
+            mutex.unlock();
+            return absl::OkStatus();
+        });
+    }();
+    if(!result.ok()) {
+        Godot::print(result.message().data());
+    }
+}
+
+void GDMP::add_proto_vector_callback(String stream_name) {
+    absl::Status result = [this, &stream_name]()->absl::Status {
+        return graph->ObserveOutputStream(stream_name.alloc_c_string(), [this, stream_name](mediapipe::Packet packet)->absl::Status {
+            mutex.lock();
+            ASSIGN_OR_RETURN(auto proto_vector, packet.GetVectorOfProtoMessageLitePtrs());
+            Array data;
+            for(int i=0; i<proto_vector.size(); i++) {
+                auto message = proto_vector[i];
+                std::string serialized;
+                message->SerializeToString(&serialized);
+                PoolByteArray proto_bytes;
+                proto_bytes.resize(serialized.size());
+                memcpy(proto_bytes.write().ptr(), serialized.c_str(), serialized.size());
+                data.push_back(proto_bytes);
+            }
+            proto_vector_packets[stream_name] = data;
             mutex.unlock();
             return absl::OkStatus();
         });

@@ -9,7 +9,7 @@ const Classification = preload("Classification.gd")
 const Detection = preload("Detection.gd")
 const Landmark = preload("Landmark.gd")
 
-var plugin
+var plugin : Object
 var image : Image = Image.new()
 var packet_data : Dictionary = {}
 
@@ -23,10 +23,12 @@ func _enter_tree():
 			plugin = Node.new()
 			plugin.set_script(load("res://addons/GDMP/GDMP.gdns"))
 			plugin.connect("new_frame", self, "_on_new_frame")
-			plugin.connect("new_packet", self, "_on_new_packet")
+			plugin.connect("new_packet", self, "__on_new_packet")
 			add_child(plugin)
+	plugin.connect("on_new_proto", self, "_on_new_packet")
+	plugin.connect("on_new_proto_vector", self, "_on_new_packet")
 
-func _on_new_packet(stream_name, is_vector, data):
+func __on_new_packet(stream_name, is_vector, data):
 	data = Array(data)
 	if is_vector:
 		var count : int = data[0]
@@ -47,6 +49,12 @@ func _on_new_packet(stream_name, is_vector, data):
 				if is_instance_valid(obj):
 					obj.call(packet_data[stream_name][obj], landmarks.duplicate())
 
+func _on_new_packet(stream_name : String, data) -> void:
+	if packet_data.has(stream_name):
+		for obj in packet_data[stream_name]:
+			if is_instance_valid(obj):
+				obj.call(packet_data[stream_name][obj], data)
+
 func _on_new_frame(data, width, height) -> void:
 	var channel : int = int(data.size()/width/height)
 	data.resize(width*height*channel)
@@ -55,13 +63,25 @@ func _on_new_frame(data, width, height) -> void:
 	else:
 		image.create_from_data(width, height, false, Image.FORMAT_RGB8, data)
 
-func init_graph(graph_path, input_side_packets : Dictionary = {}) -> void:
+func init_graph(graph_path : String, input_side_packets : Dictionary = {}) -> void:
 	packet_data.clear()
 	plugin.initGraph(graph_path, input_side_packets)
 
 func add_packet_callback(stream_name, is_vector, target, method) -> void:
 	if not packet_data.has(stream_name):
 		plugin.addPacketCallback(stream_name, is_vector)
+		packet_data[stream_name] = {}
+	packet_data[stream_name][target] = method
+
+func add_proto_callback(stream_name : String, target : Object, method : String) -> void:
+	if not packet_data.has(stream_name):
+		plugin.addProtoCallback(stream_name)
+		packet_data[stream_name] = {}
+	packet_data[stream_name][target] = method
+
+func add_proto_vector_callback(stream_name : String, target : Object, method : String) -> void:
+	if not packet_data.has(stream_name):
+		plugin.addProtoVectorCallback(stream_name)
 		packet_data[stream_name] = {}
 	packet_data[stream_name][target] = method
 

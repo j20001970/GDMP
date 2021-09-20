@@ -8,8 +8,10 @@ import android.graphics.SurfaceTexture;
 import android.util.Log;
 import android.util.Size;
 
+import androidx.annotation.NonNull;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.internal.utils.ImageUtil;
+import androidx.collection.ArraySet;
 
 import com.google.mediapipe.components.CameraHelper;
 import com.google.mediapipe.components.ExternalTextureConverter;
@@ -27,6 +29,7 @@ import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.GodotPlugin;
 import org.godotengine.godot.GodotLib;
+import org.godotengine.godot.plugin.SignalInfo;
 import org.godotengine.godot.plugin.UsedByGodot;
 
 import java.nio.ByteBuffer;
@@ -34,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class GDMP extends GodotPlugin {
     // Godot activity
@@ -77,6 +81,15 @@ public class GDMP extends GodotPlugin {
     @Override
     public String getPluginName() {
         return "GDMP";
+    }
+
+    @NonNull
+    @Override
+    public Set<SignalInfo> getPluginSignals() {
+        Set<SignalInfo> signals = new ArraySet<>();
+        signals.add(new SignalInfo("on_new_proto", String.class, byte[].class));
+        signals.add(new SignalInfo("on_new_proto_vector", String.class, Object[].class));
+        return signals;
     }
 
     @Override
@@ -178,6 +191,36 @@ public class GDMP extends GodotPlugin {
                             Log.e(TAG, "Couldn't Exception received - " + e);
                             return;
                         }
+                    }
+            );
+        }
+    }
+
+    @UsedByGodot
+    private void addProtoCallback(String streamName) {
+        if (processor != null) {
+            processor.addPacketCallback(
+                    streamName,
+                    packet -> {
+                        byte[] protoBytes = PacketGetter.getProtoBytes(packet);
+                        emitSignal("on_new_proto", new Object[]{streamName, protoBytes});
+                    }
+            );
+        }
+    }
+
+    @UsedByGodot
+    private void addProtoVectorCallback(String streamName) {
+        if (processor != null) {
+            processor.addPacketCallback(
+                    streamName,
+                    packet -> {
+                        byte[][] protoVector = PacketGetter.getProtoBytesVector(packet);
+                        List<byte[]> protoBytesList = new ArrayList<>();
+                        for (byte[] protoBytes : protoVector) {
+                            protoBytesList.add(protoBytes);
+                        }
+                        emitSignal("on_new_proto_vector", new Object[]{streamName, protoBytesList.toArray()});
                     }
             );
         }

@@ -44,6 +44,8 @@ class GDMP : public Node {
         cv::Mat video_frame;
         cv::Mat output_video;
         Dictionary packet_data;
+        Dictionary proto_packets;
+        Dictionary proto_vector_packets;
 
     public:
         static void _register_methods();
@@ -57,6 +59,8 @@ class GDMP : public Node {
 
         void init_graph(String graph_path, Dictionary input_side_packets);
         void add_packet_callback(String stream_name, bool is_vector);
+        void add_proto_callback(String stream_name);
+        void add_proto_vector_callback(String stream_name);
 
         void start_camera(int index);
         void start_graph();
