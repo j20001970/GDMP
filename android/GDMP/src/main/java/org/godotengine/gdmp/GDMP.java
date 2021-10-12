@@ -170,7 +170,7 @@ public class GDMP extends GodotPlugin {
                                         godot_landmarks.add(new Float(landmarks.getLandmark(j).getZ()));
                                     }
                                 }
-                                GodotLib.calldeferred(instance_id, "_on_new_packet", new Object[]{stream_name, isVector, godot_landmarks.toArray()});
+                                GodotLib.calldeferred(instance_id, "__on_new_packet", new Object[]{stream_name, isVector, godot_landmarks.toArray()});
                             } else {
                                 byte[] landmarksRaw = PacketGetter.getProtoBytes(packet);
                                 LandmarkProto.NormalizedLandmarkList landmarks = LandmarkProto.NormalizedLandmarkList.parseFrom(landmarksRaw);
@@ -185,7 +185,7 @@ public class GDMP extends GodotPlugin {
                                     godot_data[1 + i * 3 + 1] = landmarks.getLandmark(i).getY();
                                     godot_data[1 + i * 3 + 2] = landmarks.getLandmark(i).getZ();
                                 }
-                                GodotLib.calldeferred(instance_id, "_on_new_packet", new Object[]{stream_name, isVector, godot_data});
+                                GodotLib.calldeferred(instance_id, "__on_new_packet", new Object[]{stream_name, isVector, godot_data});
                             }
                         } catch (InvalidProtocolBufferException e) {
                             Log.e(TAG, "Couldn't Exception received - " + e);
