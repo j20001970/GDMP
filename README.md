@@ -5,8 +5,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 1. Install [Bazelisk](https://docs.bazel.build/versions/main/install-bazelisk.html) or bazel version that meets MediaPipe requirement.
 2. Refer to [Installation](https://google.github.io/mediapipe/getting_started/install.html) for OpenCV and FFmpeg setup.
 3. Apply `mediapipe_setup.diff` to `mediapipe` directory.
-4. (Optional) Apply `absl_update.diff` to `mediapipe` directory if you are using GCC 11 or higher.
-5. Copy `addons/GDMP` to your project's directory.
+4. Copy `addons/GDMP` to your project's directory.
 
 ## Building for Android
 1. Refer to [Prerequisite](https://google.github.io/mediapipe/getting_started/android.html#prerequisite) section for Java and Android SDK & NDK setup.
