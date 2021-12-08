@@ -32,7 +32,7 @@ try:
             '--copt', '-DMESA_EGL_NO_X11_HEADERS', \
             '--copt', '-DEGL_NO_X11', \
             '--copt', '-fPIC', \
-            'GDMP/desktop:libgdmp.so'])
+            'GDMP:libgdmp.so'])
     else:
         print("unknown target, exiting.")
         sys.exit(-1)
