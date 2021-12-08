@@ -1,4 +1,4 @@
-licenses(["notice"])
+load("//mediapipe/GDMP:variables.bzl", "CALCULATORS")
 
 cc_binary(
     name = "libgdmp.so",
@@ -22,8 +22,7 @@ cc_binary(
         "//mediapipe/gpu:gpu_buffer",
         "//mediapipe/gpu:gpu_shared_data_internal",
         "//third_party:godot",
-        # place the calculator dependencies here
-    ],
+    ] + CALCULATORS,
     linkshared = 1,
     visibility = ["//visibility:public"],
 )
