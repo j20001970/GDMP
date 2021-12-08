@@ -9,19 +9,13 @@ diff --git a/WORKSPACE b/WORKSPACE
  )
  
  android_sdk_repository(
-@@ -215,6 +215,18 @@ new_local_repository(
+@@ -215,6 +215,12 @@ new_local_repository(
      path = "C:\\opencv\\build",
  )
  
 +new_local_repository(
-+    name = "linux_godot",
-+    build_file = "@//third_party:godot_linux.BUILD",
-+    path = "../godot-cpp",
-+)
-+
-+new_local_repository(
-+    name = "windows_godot",
-+    build_file = "@//third_party:godot_windows.BUILD",
++    name = "godot",
++    build_file = "@//third_party:godot.BUILD",
 +    path = "../godot-cpp",
 +)
 +
@@ -31,7 +25,7 @@ diff --git a/WORKSPACE b/WORKSPACE
 diff --git a/third_party/BUILD b/third_party/BUILD
 --- a/third_party/BUILD
 +++ b/third_party/BUILD
-@@ -317,3 +317,16 @@ java_library(
+@@ -317,3 +317,11 @@ java_library(
          "@maven//:com_google_auto_value_auto_value_annotations",
      ],
  )
@@ -39,63 +33,36 @@ diff --git a/third_party/BUILD b/third_party/BUILD
 +cc_library(
 +    name = "godot",
 +    visibility = ["//visibility:public"],
-+    deps = select({
-+        "//mediapipe:windows": [
-+            "@windows_godot//:godot",
++    deps = [
++        "@godot//:godot",
++    ],
++)
+diff --git a/third_party/godot.BUILD b/third_party/godot.BUILD
+new file mode 100644
+--- /dev/null
++++ b/third_party/godot.BUILD
+@@ -0,0 +1,31 @@
++licenses(["notice"])  # MIT
++
++exports_files(["LICENSE"])
++
++cc_library(
++    name = "godot",
++    srcs = select({
++        "@mediapipe//mediapipe:android_arm64": [
++            "bin/libgodot-cpp.android.release.arm64v8.a",
++        ],
++        "@mediapipe//mediapipe:windows": [
++            "bin/libgodot-cpp.windows.release.64.lib",
 +        ],
 +        "//conditions:default": [
-+            "@linux_godot//:godot",
++            "bin/libgodot-cpp.linux.release.64.a",
 +        ],
 +    }),
-+)
-diff --git a/third_party/godot_linux.BUILD b/third_party/godot_linux.BUILD
-new file mode 100644
---- /dev/null
-+++ b/third_party/godot_linux.BUILD
-@@ -0,0 +1,24 @@
-+licenses(["notice"])  # MIT
-+
-+exports_files(["LICENSE"])
-+
-+cc_library(
-+    name = "godot",
-+    srcs = glob([
-+        "bin/libgodot-cpp.linux.release.64.a",
-+    ]),
 +    hdrs = glob([
 +        "godot-headers/*.h",
 +        "godot-headers/*/*.h",
-+        "include/core/*.hpp",
-+        "include/gen/*.hpp",
-+    ]),
-+    includes = [
-+        "godot-headers",
-+        "include",
-+        "include/core",
-+        "include/gen",
-+    ],
-+    linkstatic = 1,
-+    visibility = ["//visibility:public"],
-+)
-diff --git a/third_party/godot_windows.BUILD b/third_party/godot_windows.BUILD
-new file mode 100644
---- /dev/null
-+++ b/third_party/godot_windows.BUILD
-@@ -0,0 +1,24 @@
-+licenses(["notice"])  # MIT
-+
-+exports_files(["LICENSE"])
-+
-+cc_library(
-+    name = "godot",
-+    srcs = glob([
-+        "bin/libgodot-cpp.windows.release.64.lib",
-+    ]),
-+    hdrs = glob([
-+        "godot-headers/*.h",
-+        "godot-headers/*/*.h",
-+        "include/core/*.hpp",
-+        "include/gen/*.hpp",
++        "include/*/*.hpp",
 +    ]),
 +    includes = [
 +        "godot-headers",
