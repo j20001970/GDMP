@@ -7,7 +7,6 @@ cc_binary(
         "gdmp.cc",
         "gdmp.h",
     ],
-    visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:image_frame",
@@ -25,10 +24,6 @@ cc_binary(
         "//third_party:godot",
         # place the calculator dependencies here
     ],
-    copts = [
-        
-    ],
-    linkopts = [
-        "-shared",
-    ]
+    linkshared = 1,
+    visibility = ["//visibility:public"],
 )
