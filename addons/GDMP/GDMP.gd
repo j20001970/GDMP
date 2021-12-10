@@ -5,9 +5,9 @@ enum {
 	CAMERA_FACING_BACK
 }
 
-const Classification = preload("Classification.gd")
-const Detection = preload("Detection.gd")
-const Landmark = preload("Landmark.gd")
+# Landmark
+const NormalizedLandmark : NativeScript = preload("NormalizedLandmark.gdns")
+const NormalizedLandmarkList : NativeScript = preload("NormalizedLandmarkList.gdns")
 
 var plugin : Object
 var image : Image = Image.new()
