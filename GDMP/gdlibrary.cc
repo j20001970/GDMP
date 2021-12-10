@@ -1,6 +1,7 @@
 #ifndef NO_GDMP
 #include "gdmp.h"
 #endif
+#include "proto/landmark.h"
 
 extern "C" void GDN_EXPORT godot_gdnative_init(godot_gdnative_init_options *o) {
     godot::Godot::gdnative_init(o);
@@ -19,4 +20,6 @@ extern "C" void GDN_EXPORT godot_nativescript_init(void *handle) {
     #ifndef NO_GDMP
     godot::register_class<godot::GDMP>();
     #endif
+    godot::register_class<godot::NormalizedLandmark>();
+    godot::register_class<godot::NormalizedLandmarkList>();
 }
