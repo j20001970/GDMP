@@ -9,7 +9,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 
 ## Building for Android
 1. Refer to [Prerequisite](https://google.github.io/mediapipe/getting_started/android.html#prerequisite) section for Java and Android SDK & NDK setup.
-2. Place the calculator dependencies and assets in `mediapipe_aar/java/com/google/mediapipe/BUILD`
+2. Place the calculator dependencies in `GDMP/variables.bzl` and assets in `GDMP/mediapipe_aar/java/com/google/mediapipe/BUILD`
 3. Run:
 
     ```
@@ -17,14 +17,24 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
     ```
     to build mediapipe_aar, generated file will be located in
 
-    `mediapipe/bazel-bin/mediapipe/mediapipe_aar/java/com/google/mediapipe/mediapipe_aar.aar`
+    `mediapipe/bazel-bin/mediapipe/GDMP/mediapipe_aar/java/com/google/mediapipe/mediapipe_aar.aar`
 4. Copy or link godot-lib and mediapipe_aar AAR to `android/GDMP/libs` directory.
-5. Build GDMP AAR, copy generated file to your project's `android/plugins` directory, along with mediapipe_aar from step 3.
-6. Copy `plugins/GDMP.gdap` to your project's `android/plugins` directory.
+5. Run:
+
+    ```
+    build.py android
+    ```
+    to build android library, and copy them to `android/GDMP/src/main/jniLibs/{ABI}` depending on your target ABIs.
+6. Build GDMP AAR, copy generated file to your project's `android/plugins` directory, along with mediapipe_aar from step 3.
+7. Copy `plugins/GDMP.gdap` to your project's `android/plugins` directory.
+
+    Note that Android export needs to exclude `res://addons/GDMP/GDMP.gdnlib` which is intended for desktop usage, otherwise it will fail to load GDNative library that provided by GDMP aar.
+
+    You can go to `Project -> Export...`, select your Android preset, and in `Resources` tab fill `addons/GDMP/*.gdnlib` in filter to exclude files from project.
 
 ## Building for Linux
 1. Refer to [Building the C++ bindings](https://docs.godotengine.org/en/stable/tutorials/plugins/gdnative/gdnative-cpp-example.html#building-the-c-bindings) section for building Godot C++ bindings in `godot-cpp` directory.
-2. Place the calculator dependencies in `desktop/BUILD`
+2. Place the calculator dependencies in `GDMP/variables.bzl`
 3. Run:
 
     ```
@@ -32,7 +42,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
     ```
     to build desktop library, generated file will be located in
 
-    `mediapipe/bazel-bin/mediapipe/desktop/libgdmp.so`
+    `mediapipe/bazel-bin/mediapipe/GDMP/libgdmp.so`
 4. Copy libgdmp.so to your project's `addons/GDMP` directory.
 
 ## Usage
