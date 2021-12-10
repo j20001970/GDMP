@@ -27,14 +27,16 @@ import com.google.protobuf.InvalidProtocolBufferException;
 
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
-import org.godotengine.godot.plugin.GodotPlugin;
 import org.godotengine.godot.GodotLib;
+import org.godotengine.godot.plugin.GodotPlugin;
 import org.godotengine.godot.plugin.SignalInfo;
 import org.godotengine.godot.plugin.UsedByGodot;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -90,6 +92,12 @@ public class GDMP extends GodotPlugin {
         signals.add(new SignalInfo("on_new_proto", String.class, byte[].class));
         signals.add(new SignalInfo("on_new_proto_vector", String.class, Object[].class));
         return signals;
+    }
+
+    @NonNull
+    @Override
+    protected Set<String> getPluginGDNativeLibrariesPaths() {
+        return new HashSet<>(Arrays.asList("addons/GDMP/GDMP.gdnlib"));
     }
 
     @Override

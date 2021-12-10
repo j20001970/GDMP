@@ -9,7 +9,7 @@ mediapipe_dir = os.path.join(os.path.dirname(__file__), 'mediapipe', 'mediapipe'
 copy_dir = 'GDMP'
 
 parser = ArgumentParser()
-parser.add_argument('target', choices=['aar', 'desktop'], help='target to build')
+parser.add_argument('target', choices=['aar', 'android', 'desktop'], help='target to build')
 args = parser.parse_args()
 
 # check bazel executable
@@ -22,17 +22,22 @@ try:
     os.chdir(os.path.dirname(__file__))
     # whcih target to build
     bazel_args = [bazel_exec, 'build', '-c', 'opt']
-    if args.target.lower() == 'aar':
+    if args.target.lower() == 'android':
+        bazel_args.extend([\
+            '--host_crosstool_top=@bazel_tools//tools/cpp:toolchain', \
+            '--crosstool_top=//external:android/crosstool', \
+            '--cpu=arm64-v8a', \
+            '--copt', '-fPIC', \
+            'GDMP:gdmp'])
+    elif args.target.lower() == 'aar':
         bazel_args.extend([\
             '--host_crosstool_top=@bazel_tools//tools/cpp:toolchain', \
             '--fat_apk_cpu=arm64-v8a', '--linkopt=-s', \
             'GDMP/mediapipe_aar/java/com/google/mediapipe:mediapipe_aar'])
     elif args.target.lower() == 'desktop':
         bazel_args.extend([\
-            '--copt', '-DMESA_EGL_NO_X11_HEADERS', \
-            '--copt', '-DEGL_NO_X11', \
             '--copt', '-fPIC', \
-            'GDMP:libgdmp.so'])
+            'GDMP:gdmp'])
     else:
         print("unknown target, exiting.")
         sys.exit(-1)

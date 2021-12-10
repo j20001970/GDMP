@@ -1,9 +1,38 @@
 load("//mediapipe/GDMP:variables.bzl", "CALCULATORS")
 
 cc_binary(
-    name = "libgdmp.so",
+    name = "gdmp",
+    srcs = ["gdlibrary.cc"],
+    deps = [
+        "//mediapipe/GDMP/proto:landmark",
+        "//third_party:godot",
+    ] + select({
+        "//mediapipe:android": [],
+        "//conditions:default": [":gdmp_lib"] + CALCULATORS,
+    }),
+    defines = select({
+        "//mediapipe:android": ["NO_GDMP"],
+        "//conditions:default": [
+            "MESA_EGL_NO_X11_HEADERS",
+            "EGL_NO_X11",
+        ],
+    }),
+    linkopts = [
+        "-s",
+    ] + select({
+        "//mediapipe:android": [
+            "-llog",
+            "-lm",
+        ],
+        "//conditions:default": [],
+    }),
+    linkshared = 1,
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "gdmp_lib",
     srcs = [
-        "gdlibrary.cc",
         "gdmp.cc",
         "gdmp.h",
     ],
@@ -22,7 +51,7 @@ cc_binary(
         "//mediapipe/gpu:gpu_buffer",
         "//mediapipe/gpu:gpu_shared_data_internal",
         "//third_party:godot",
-    ] + CALCULATORS,
-    linkshared = 1,
+    ],
+    alwayslink = 1,
     visibility = ["//visibility:public"],
 )
