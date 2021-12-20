@@ -1,14 +1,6 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -252,6 +252,7 @@ http_archive(
- # You may run setup_android.sh to install Android SDK and NDK.
- android_ndk_repository(
-     name = "androidndk",
-+    api_level=21,
- )
- 
- android_sdk_repository(
 @@ -215,6 +215,12 @@ new_local_repository(
      path = "C:\\opencv\\build",
  )
