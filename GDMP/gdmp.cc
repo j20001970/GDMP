@@ -6,14 +6,12 @@ using namespace godot;
 void GDMP::_register_methods() {
     register_method("_process", &GDMP::_process);
     register_method("initGraph", &GDMP::init_graph);
-    register_method("addPacketCallback", &GDMP::add_packet_callback);
     register_method("addProtoCallback", &GDMP::add_proto_callback);
     register_method("addProtoVectorCallback", &GDMP::add_proto_vector_callback);
     register_method("startCamera", &GDMP::start_camera);
     register_method("closeCamera", &GDMP::close_camera);
     register_method("loadVideo", &GDMP::load_video);
     register_signal<GDMP>((char *)"new_frame", "data", GODOT_VARIANT_TYPE_POOL_REAL_ARRAY, "width", GODOT_VARIANT_TYPE_INT, "height", GODOT_VARIANT_TYPE_INT);
-    register_signal<GDMP>((char *)"new_packet", "stream_name", GODOT_VARIANT_TYPE_STRING, "is_vector", GODOT_VARIANT_TYPE_BOOL, "data", GODOT_VARIANT_TYPE_POOL_REAL_ARRAY);
     register_signal<GDMP>((char *)"on_new_proto", "stream_name", GODOT_VARIANT_TYPE_STRING, "proto_bytes", GODOT_VARIANT_TYPE_POOL_BYTE_ARRAY);
     register_signal<GDMP>((char *)"on_new_proto_vector", "stream_name", GODOT_VARIANT_TYPE_STRING, "proto_vector", GODOT_VARIANT_TYPE_ARRAY);
 }
@@ -32,14 +30,6 @@ void GDMP::_init() {
 
 void GDMP::_process(float delta) {
     mutex.lock();
-    PoolStringArray streams = PoolStringArray(packet_data.keys());
-    for(int i=0; i<streams.size(); i++) {
-        String stream_name = streams[i];
-        bool is_vector = static_cast<Dictionary>(packet_data[stream_name])["is_vector"];
-        PoolRealArray data = static_cast<Dictionary>(packet_data[stream_name])["data"];
-        emit_signal("new_packet", stream_name, is_vector, data);
-        packet_data.erase(streams[i]);
-    }
     PoolStringArray proto_streams = PoolStringArray(proto_packets.keys());
     for(int i=0; i<proto_streams.size(); i++) {
         String stream_name = proto_streams[i];
@@ -71,7 +61,6 @@ void GDMP::_process(float delta) {
 void GDMP::init_graph(String graph_path, Dictionary input_side_packets) {
     // setting input side packets is currently no-op
     close_camera();
-    packet_data.clear();
     proto_packets.clear();
     proto_vector_packets.clear();
     absl::Status result = [this, &graph_path]()->absl::Status {
@@ -89,53 +78,6 @@ void GDMP::init_graph(String graph_path, Dictionary input_side_packets) {
         ASSIGN_OR_RETURN(auto gpu_resources, mediapipe::GpuResources::Create());
         MP_RETURN_IF_ERROR(graph->SetGpuResources(std::move(gpu_resources)));
         return absl::OkStatus();
-    }();
-    if(!result.ok()) {
-        Godot::print(result.message().data());
-    }
-}
-
-void GDMP::add_packet_callback(String stream_name, bool is_vector) {
-    absl::Status result = [this, &stream_name, &is_vector]()->absl::Status {
-        return graph->ObserveOutputStream(stream_name.alloc_c_string(), [this, stream_name, is_vector](mediapipe::Packet packet)->absl::Status{
-            mutex.lock();
-            if(is_vector) {
-                auto& landmarks_list = packet.Get<std::vector<mediapipe::NormalizedLandmarkList>>();
-                Dictionary godot_data;
-                godot_data["is_vector"] = is_vector;
-                PoolRealArray data;
-                data.push_back(landmarks_list.size());
-                for(int i=0; i<landmarks_list.size(); i++) {
-                    auto& landmarks = landmarks_list[i];
-                    data.push_back(landmarks.landmark_size());
-                    for(int j=0; j<landmarks.landmark_size(); j++) {
-                        auto& landmark = landmarks.landmark(j);
-                        data.push_back(landmark.x());
-                        data.push_back(landmark.y());
-                        data.push_back(landmark.z());
-                    }
-                }
-                godot_data["data"] = data;
-                packet_data[stream_name] = godot_data;
-            }
-            else {
-                auto& landmarks = packet.Get<::mediapipe::NormalizedLandmarkList>();
-                Dictionary godot_data;
-                godot_data["is_vector"] = is_vector;
-                PoolRealArray data;
-                data.push_back(landmarks.landmark_size());
-                for(int i=0; i<landmarks.landmark_size(); i++){
-                    auto& landmark = landmarks.landmark(i);
-                    data.push_back(landmark.x());
-                    data.push_back(landmark.y());
-                    data.push_back(landmark.z());
-                }
-                godot_data["data"] = data;
-                packet_data[stream_name] = godot_data;
-            }
-            mutex.unlock();
-            return absl::OkStatus();
-        });
     }();
     if(!result.ok()) {
         Godot::print(result.message().data());

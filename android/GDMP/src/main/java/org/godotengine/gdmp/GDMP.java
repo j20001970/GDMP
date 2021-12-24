@@ -155,56 +155,6 @@ public class GDMP extends GodotPlugin {
     }
 
     @UsedByGodot
-    private void addPacketCallback(String stream_name, boolean isVector) {
-        if (processor != null) {
-            processor.addPacketCallback(
-                    stream_name,
-                    (packet) -> {
-                        try {
-                            if (isVector) {
-                                List<LandmarkProto.NormalizedLandmarkList> protoVector = PacketGetter.getProtoVector(packet, LandmarkProto.NormalizedLandmarkList.parser());
-                                if (protoVector.isEmpty()) {
-                                    Log.v(TAG, "[TS:" + packet.getTimestamp() + "] No landmarks.");
-                                    return;
-                                }
-                                List<Float> godot_landmarks = new ArrayList<Float>();
-                                godot_landmarks.add(new Float(protoVector.size()));
-                                for (int i = 0; i < protoVector.size(); i++) {
-                                    LandmarkProto.NormalizedLandmarkList landmarks = protoVector.get(i);
-                                    godot_landmarks.add(new Float(landmarks.getLandmarkCount()));
-                                    for (int j = 0; j < landmarks.getLandmarkCount(); j++) {
-                                        godot_landmarks.add(new Float(landmarks.getLandmark(j).getX()));
-                                        godot_landmarks.add(new Float(landmarks.getLandmark(j).getY()));
-                                        godot_landmarks.add(new Float(landmarks.getLandmark(j).getZ()));
-                                    }
-                                }
-                                GodotLib.calldeferred(instance_id, "__on_new_packet", new Object[]{stream_name, isVector, godot_landmarks.toArray()});
-                            } else {
-                                byte[] landmarksRaw = PacketGetter.getProtoBytes(packet);
-                                LandmarkProto.NormalizedLandmarkList landmarks = LandmarkProto.NormalizedLandmarkList.parseFrom(landmarksRaw);
-                                if (landmarks == null) {
-                                    Log.v(TAG, "[TS:" + packet.getTimestamp() + "] No landmarks.");
-                                    return;
-                                }
-                                float[] godot_data = new float[1 + landmarks.getLandmarkCount() * 3];
-                                godot_data[0] = landmarks.getLandmarkCount();
-                                for (int i = 0; i < landmarks.getLandmarkList().size(); i++) {
-                                    godot_data[1 + i * 3] = landmarks.getLandmark(i).getX();
-                                    godot_data[1 + i * 3 + 1] = landmarks.getLandmark(i).getY();
-                                    godot_data[1 + i * 3 + 2] = landmarks.getLandmark(i).getZ();
-                                }
-                                GodotLib.calldeferred(instance_id, "__on_new_packet", new Object[]{stream_name, isVector, godot_data});
-                            }
-                        } catch (InvalidProtocolBufferException e) {
-                            Log.e(TAG, "Couldn't Exception received - " + e);
-                            return;
-                        }
-                    }
-            );
-        }
-    }
-
-    @UsedByGodot
     private void addProtoCallback(String streamName) {
         if (processor != null) {
             processor.addPacketCallback(
