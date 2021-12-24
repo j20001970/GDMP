@@ -11,7 +11,6 @@ void GDMP::_register_methods() {
     register_method("startCamera", &GDMP::start_camera);
     register_method("closeCamera", &GDMP::close_camera);
     register_method("loadVideo", &GDMP::load_video);
-    register_signal<GDMP>((char *)"new_frame", "data", GODOT_VARIANT_TYPE_POOL_REAL_ARRAY, "width", GODOT_VARIANT_TYPE_INT, "height", GODOT_VARIANT_TYPE_INT);
     register_signal<GDMP>((char *)"on_new_proto", "stream_name", GODOT_VARIANT_TYPE_STRING, "proto_bytes", GODOT_VARIANT_TYPE_POOL_BYTE_ARRAY);
     register_signal<GDMP>((char *)"on_new_proto_vector", "stream_name", GODOT_VARIANT_TYPE_STRING, "proto_vector", GODOT_VARIANT_TYPE_ARRAY);
 }
@@ -43,13 +42,6 @@ void GDMP::_process(float delta) {
         Array data = proto_vector_packets[stream_name];
         emit_signal("on_new_proto_vector", stream_name, data);
         proto_vector_packets.erase(proto_vector_streams[i]);
-    }
-    if(!video_frame.empty()){
-        PoolByteArray data = PoolByteArray();
-        int buf_size = video_frame.cols*video_frame.rows*video_frame.channels();
-        data.resize(buf_size);
-        memcpy(data.write().ptr(), video_frame.ptr<uint8_t>(), buf_size);
-        emit_signal("new_frame", data, video_frame.cols, video_frame.rows);
     }
     if(!output_video.empty()) {
         cv::imshow(kWindowName, output_video);

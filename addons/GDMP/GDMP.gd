@@ -22,7 +22,6 @@ func _enter_tree():
 		_:
 			plugin = Node.new()
 			plugin.set_script(load("res://addons/GDMP/GDMP.gdns"))
-			plugin.connect("new_frame", self, "_on_new_frame")
 			add_child(plugin)
 	plugin.connect("on_new_proto", self, "_on_new_packet")
 	plugin.connect("on_new_proto_vector", self, "_on_new_packet")
@@ -33,13 +32,6 @@ func _on_new_packet(stream_name : String, data) -> void:
 			if is_instance_valid(obj):
 				obj.call(packet_data[stream_name][obj], data)
 
-func _on_new_frame(data, width, height) -> void:
-	var channel : int = int(data.size()/width/height)
-	data.resize(width*height*channel)
-	if channel == 4:
-		image.create_from_data(width, height, false, Image.FORMAT_RGBA8, data)
-	else:
-		image.create_from_data(width, height, false, Image.FORMAT_RGB8, data)
 
 func init_graph(graph_path : String, input_side_packets : Dictionary = {}) -> void:
 	packet_data.clear()
