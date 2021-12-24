@@ -162,37 +162,6 @@ void GDMP::start_graph() {
         mediapipe::GlCalculatorHelper gpu_helper;
         gpu_helper.InitializeForTest(graph->GetGpuResources().get());
         absl::Status result = [this, &gpu_helper]()->absl::Status {
-            absl::Status output_video_status = 
-                graph->ObserveOutputStream(kOutputStream, [this, &gpu_helper](mediapipe::Packet packet)->absl::Status{
-                    std::unique_ptr<mediapipe::ImageFrame> output_frame;
-                        MP_RETURN_IF_ERROR(gpu_helper.RunInGlContext(
-                        [this, &gpu_helper, &packet, &output_frame]() -> ::absl::Status {
-                        auto& gpu_frame = packet.Get<mediapipe::GpuBuffer>();
-                        auto texture = gpu_helper.CreateSourceTexture(gpu_frame);
-                        output_frame = absl::make_unique<mediapipe::ImageFrame>(
-                            mediapipe::ImageFormatForGpuBufferFormat(gpu_frame.format()),
-                            gpu_frame.width(), gpu_frame.height(),
-                            mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
-                        gpu_helper.BindFramebuffer(texture);
-                        const auto info =
-                            mediapipe::GlTextureInfoForGpuBufferFormat(gpu_frame.format(), 0);
-                        glReadPixels(0, 0, texture.width(), texture.height(), info.gl_format,
-                                    info.gl_type, output_frame->MutablePixelData());
-                        glFlush();
-                        texture.Release();
-                        return absl::OkStatus();
-                    }));
-                    // Convert back to opencv for display or saving.
-                    cv::Mat output_frame_mat = mediapipe::formats::MatView(output_frame.get());
-                    if (output_frame_mat.channels() == 4)
-                        cv::cvtColor(output_frame_mat, output_video, cv::COLOR_RGBA2BGR);
-                    else
-                        cv::cvtColor(output_frame_mat, output_video, cv::COLOR_RGB2BGR);
-                    return absl::OkStatus();
-                    });
-            if(!output_video_status.ok()) {
-                Godot::print(output_video_status.message().data());
-            }
             MP_RETURN_IF_ERROR(graph->StartRun({}));
 
             Godot::print("Start grabbing and processing frames.");

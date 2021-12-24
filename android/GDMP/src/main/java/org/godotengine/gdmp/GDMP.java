@@ -17,13 +17,11 @@ import com.google.mediapipe.components.CameraHelper;
 import com.google.mediapipe.components.ExternalTextureConverter;
 import com.google.mediapipe.components.FrameProcessor;
 import com.google.mediapipe.components.PermissionHelper;
-import com.google.mediapipe.formats.proto.LandmarkProto;
 import com.google.mediapipe.framework.AndroidAssetUtil;
 import com.google.mediapipe.framework.AndroidPacketCreator;
 import com.google.mediapipe.framework.Packet;
 import com.google.mediapipe.framework.PacketGetter;
 import com.google.mediapipe.glutil.EglManager;
-import com.google.protobuf.InvalidProtocolBufferException;
 
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
@@ -211,33 +209,9 @@ public class GDMP extends GodotPlugin {
                                 isCameraRotated ? displaySize.getWidth() : displaySize.getHeight());
                     }
             );
-            ImageAnalysis.Analyzer analyzer = image -> {
-                try {
-                    @SuppressLint("RestrictedApi") byte[] bytes = ImageUtil.imageToJpegByteArray(image);
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    if (bitmap != null) {
-                        Matrix transform = new Matrix();
-                        if (cameraHelper.isCameraRotated()) {
-                            transform.postRotate(-90);
-                        }
-                        transform.postScale(-1.0f, 1.0f);
-                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), transform, false);
-                        ByteBuffer out = ByteBuffer.allocateDirect(bitmap.getByteCount());
-                        bitmap.copyPixelsToBuffer(out);
-                        GodotLib.calldeferred(instance_id, "_on_new_frame", new Object[]{out.array(), bitmap.getWidth(), bitmap.getHeight()});
-                        bitmap.recycle();
-                    } else {
-                        Log.d(TAG, "empty bitmap");
-                    }
-                } catch (ImageUtil.CodecFailedException e) {
-                    e.printStackTrace();
-                } finally {
-                    image.close();
-                }
-            };
             runOnUiThread(
                     () -> {
-                        cameraHelper.startCamera(godot.getActivity(), analyzer, cameraFacing, new Size(640, 480));
+                        cameraHelper.startCamera(godot.getActivity(), cameraFacing, previewFrameTexture, new Size(640, 480));
                     }
             );
         }
