@@ -1,35 +1,34 @@
 package org.godotengine.gdmp;
 
-import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.util.Log;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
-import androidx.camera.core.ImageAnalysis;
-import androidx.camera.core.internal.utils.ImageUtil;
 import androidx.collection.ArraySet;
 
 import com.google.mediapipe.components.CameraHelper;
 import com.google.mediapipe.components.ExternalTextureConverter;
-import com.google.mediapipe.components.FrameProcessor;
 import com.google.mediapipe.components.PermissionHelper;
+import com.google.mediapipe.components.TextureFrameConsumer;
 import com.google.mediapipe.framework.AndroidAssetUtil;
 import com.google.mediapipe.framework.AndroidPacketCreator;
+import com.google.mediapipe.framework.Graph;
+import com.google.mediapipe.framework.GraphTextureFrame;
+import com.google.mediapipe.framework.MediaPipeException;
 import com.google.mediapipe.framework.Packet;
+import com.google.mediapipe.framework.PacketCreator;
 import com.google.mediapipe.framework.PacketGetter;
+import com.google.mediapipe.framework.TextureFrame;
 import com.google.mediapipe.glutil.EglManager;
 
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
-import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.plugin.GodotPlugin;
 import org.godotengine.godot.plugin.SignalInfo;
 import org.godotengine.godot.plugin.UsedByGodot;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class GDMP extends GodotPlugin {
+public class GDMP extends GodotPlugin implements TextureFrameConsumer {
     // Godot activity
     public Godot godot;
     // The godot object instance id that get assigned from init() method
@@ -55,7 +54,9 @@ public class GDMP extends GodotPlugin {
     // Creates and manages an {@link EGLContext}.
     private EglManager eglManager;
     // Sends camera-preview frames into a MediaPipe graph for processing
-    private FrameProcessor processor;
+    private boolean graphStarted = false;
+    private Graph graph;
+    private PacketCreator packetCreator;
     // Converts the GL_TEXTURE_EXTERNAL_OES texture from Android camera into a regular texture to be
     // consumed by {@link FrameProcessor} and the underlying MediaPipe graph.
     private ExternalTextureConverter converter;
@@ -104,7 +105,7 @@ public class GDMP extends GodotPlugin {
         if (cameraStarted && PermissionHelper.cameraPermissionsGranted(this.godot.getActivity())) {
             converter = new ExternalTextureConverter(eglManager.getContext());
             converter.setFlipY(true);
-            converter.setConsumer(processor);
+            converter.setConsumer(this);
             startCamera();
         }
     }
@@ -122,6 +123,43 @@ public class GDMP extends GodotPlugin {
         super.onMainRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    @Override
+    public void onNewFrame(TextureFrame frame) {
+        Packet imagePacket = null;
+        long timestamp = frame.getTimestamp();
+        try {
+            if (!graphStarted) {
+                graphStarted = true;
+                graph.startRunningGraph();
+            }
+            imagePacket = packetCreator.createGpuBuffer(frame);
+            // imagePacket takes ownership of frame and will release it.
+            frame = null;
+            try {
+                // addConsumablePacketToInputStream allows the graph to take exclusive ownership of the
+                // packet, which may allow for more memory optimizations.
+                graph.addConsumablePacketToInputStream("input_video", imagePacket, timestamp);
+                // If addConsumablePacket succeeded, we don't need to release the packet ourselves.
+                imagePacket = null;
+            } catch (MediaPipeException e) {
+                Log.e(TAG, e.getStatusMessage());
+            }
+        } catch (RuntimeException e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (imagePacket != null) {
+                // In case of error, addConsumablePacketToInputStream will not release the packet, so we
+                // have to release it ourselves. (We could also re-try adding, but we don't).
+                imagePacket.release();
+            }
+            if (frame != null) {
+                // imagePacket will release frame if it has been created, but if not, we need to
+                // release it.
+                frame.release();
+            }
+        }
+    }
+
     @UsedByGodot
     public void init(final int id) {
         instance_id = id;
@@ -130,14 +168,15 @@ public class GDMP extends GodotPlugin {
     @UsedByGodot
     public void initGraph(String graph_path, Dictionary input_side_packet) {
         closeCamera();
-        processor = new FrameProcessor(
-                this.godot.getContext(),
-                eglManager.getNativeContext(),
-                graph_path,
-                "input_video",
-                "output_video"
-        );
-        AndroidPacketCreator packetCreator = processor.getPacketCreator();
+        graph = new Graph();
+        if (new File(graph_path).isAbsolute()) {
+            graph.loadBinaryGraph(graph_path);
+        } else {
+            graph.loadBinaryGraph(
+                    AndroidAssetUtil.getAssetBytes(this.godot.getContext().getAssets(), graph_path));
+        }
+        graph.setParentGlContext(eglManager.getNativeContext());
+        packetCreator = new AndroidPacketCreator(graph);
         Map<String, Packet> sidePackets = new HashMap<>();
         for (String key : input_side_packet.get_keys()) {
             Object value = input_side_packet.get(key);
@@ -146,16 +185,16 @@ public class GDMP extends GodotPlugin {
                 sidePackets.put(key, packetCreator.createInt32((int) value));
             }
         }
-        processor.setInputSidePackets(sidePackets);
+        graph.setInputSidePackets(sidePackets);
         converter = new ExternalTextureConverter(eglManager.getContext());
         converter.setFlipY(true);
-        converter.setConsumer(processor);
+        converter.setConsumer(this);
     }
 
     @UsedByGodot
     private void addProtoCallback(String streamName) {
-        if (processor != null) {
-            processor.addPacketCallback(
+        if (graph != null) {
+            graph.addPacketCallback(
                     streamName,
                     packet -> {
                         byte[] protoBytes = PacketGetter.getProtoBytes(packet);
@@ -167,8 +206,8 @@ public class GDMP extends GodotPlugin {
 
     @UsedByGodot
     private void addProtoVectorCallback(String streamName) {
-        if (processor != null) {
-            processor.addPacketCallback(
+        if (graph != null) {
+            graph.addPacketCallback(
                     streamName,
                     packet -> {
                         byte[][] protoVector = PacketGetter.getProtoBytesVector(packet);
