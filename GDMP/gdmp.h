@@ -54,8 +54,6 @@ class GDMP : public Node {
 
         void _init(); // our initializer called by Godot
 
-        void _process(float delta);
-
         void init_graph(String graph_path, Dictionary input_side_packets);
         void add_proto_callback(String stream_name);
         void add_proto_vector_callback(String stream_name);

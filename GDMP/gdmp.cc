@@ -4,7 +4,6 @@
 using namespace godot;
 
 void GDMP::_register_methods() {
-    register_method("_process", &GDMP::_process);
     register_method("initGraph", &GDMP::init_graph);
     register_method("addProtoCallback", &GDMP::add_proto_callback);
     register_method("addProtoVectorCallback", &GDMP::add_proto_vector_callback);
@@ -27,34 +26,9 @@ void GDMP::_init() {
     // initialize any variables here
 }
 
-void GDMP::_process(float delta) {
-    mutex.lock();
-    PoolStringArray proto_streams = PoolStringArray(proto_packets.keys());
-    for(int i=0; i<proto_streams.size(); i++) {
-        String stream_name = proto_streams[i];
-        PoolByteArray data = proto_packets[stream_name];
-        emit_signal("on_new_proto", stream_name, data);
-        proto_packets.erase(proto_streams[i]);
-    }
-    PoolStringArray proto_vector_streams = PoolStringArray(proto_vector_packets.keys());
-    for(int i=0; i<proto_vector_streams.size(); i++) {
-        String stream_name = proto_vector_streams[i];
-        Array data = proto_vector_packets[stream_name];
-        emit_signal("on_new_proto_vector", stream_name, data);
-        proto_vector_packets.erase(proto_vector_streams[i]);
-    }
-    if(!output_video.empty()) {
-        cv::imshow(kWindowName, output_video);
-        cv::waitKey(1);
-    }
-    mutex.unlock();
-}
-
 void GDMP::init_graph(String graph_path, Dictionary input_side_packets) {
     // setting input side packets is currently no-op
     close_camera();
-    proto_packets.clear();
-    proto_vector_packets.clear();
     absl::Status result = [this, &graph_path]()->absl::Status {
         graph = absl::make_unique<mediapipe::CalculatorGraph>();
         std::string calculator_graph_config_contents;
@@ -79,14 +53,10 @@ void GDMP::init_graph(String graph_path, Dictionary input_side_packets) {
 void GDMP::add_proto_callback(String stream_name) {
     absl::Status result = [this, &stream_name]()->absl::Status {
         return graph->ObserveOutputStream(stream_name.alloc_c_string(), [this, stream_name](mediapipe::Packet packet)->absl::Status {
-            mutex.lock();
-            std::string serialized;
-            packet.GetProtoMessageLite().SerializeToString(&serialized);
             PoolByteArray data;
-            data.resize(serialized.size());
-            memcpy(data.write().ptr(), serialized.c_str(), serialized.size());
-            proto_packets[stream_name] = data;
-            mutex.unlock();
+            data.resize(packet.GetProtoMessageLite().ByteSizeLong());
+            packet.GetProtoMessageLite().SerializeToArray(data.write().ptr(), data.size());
+            call_deferred("emit_signal", Array::make("on_new_proto", stream_name, data));
             return absl::OkStatus();
         });
     }();
@@ -98,20 +68,16 @@ void GDMP::add_proto_callback(String stream_name) {
 void GDMP::add_proto_vector_callback(String stream_name) {
     absl::Status result = [this, &stream_name]()->absl::Status {
         return graph->ObserveOutputStream(stream_name.alloc_c_string(), [this, stream_name](mediapipe::Packet packet)->absl::Status {
-            mutex.lock();
             ASSIGN_OR_RETURN(auto proto_vector, packet.GetVectorOfProtoMessageLitePtrs());
             Array data;
             for(int i=0; i<proto_vector.size(); i++) {
                 auto message = proto_vector[i];
-                std::string serialized;
-                message->SerializeToString(&serialized);
                 PoolByteArray proto_bytes;
-                proto_bytes.resize(serialized.size());
-                memcpy(proto_bytes.write().ptr(), serialized.c_str(), serialized.size());
+                proto_bytes.resize(message->ByteSizeLong());
+                message->SerializeToArray(proto_bytes.write().ptr(), proto_bytes.size());
                 data.push_back(proto_bytes);
             }
-            proto_vector_packets[stream_name] = data;
-            mutex.unlock();
+            call_deferred("emit_signal", Array::make("on_new_proto_vector", stream_name, data));
             return absl::OkStatus();
         });
     }();
