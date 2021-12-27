@@ -1,3 +1,5 @@
+#include <memory>
+
 #include <Godot.hpp>
 #include <OS.hpp>
 
@@ -59,6 +61,8 @@ void GDMP::init_graph(String graph_path, Dictionary input_side_packets) {
         Godot::print("Initialize the GPU.");
         ASSIGN_OR_RETURN(auto gpu_resources, mediapipe::GpuResources::Create());
         MP_RETURN_IF_ERROR(graph->SetGpuResources(std::move(gpu_resources)));
+        gpu_helper = std::make_unique<mediapipe::GlCalculatorHelper>();
+        gpu_helper->InitializeForTest(graph->GetGpuResources().get());
         return absl::OkStatus();
     }();
     if(!result.ok()) {
@@ -111,19 +115,29 @@ void GDMP::start_camera(int index) {
         capture.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
         capture.set(cv::CAP_PROP_FPS, 30);
         #endif
+        absl::Status result = [this]()->absl::Status {
+            MP_RETURN_IF_ERROR(graph->StartRun({}));
+            return absl::OkStatus();
+        }();
         if(capture.isOpened()){
             grab_frames = true;
-            camera_thread = std::thread([this](){
+            camera_thread = std::thread([this]()->void {
                 while(grab_frames) {
-                    cv::Mat video_frame_raw;
-                    capture >> video_frame_raw;
-                    cv::flip(video_frame_raw, video_frame_raw, /*flipcode=HORIZONTAL*/ 1);
-                    mutex.lock();
-                    cv::cvtColor(video_frame_raw, video_frame, cv::COLOR_BGR2RGBA);
-                    mutex.unlock();
+                    cv::Mat video_frame;
+                    capture >> video_frame;
+                    cv::flip(video_frame, video_frame, /*flipcode=HORIZONTAL*/ 1);
+                    cv::cvtColor(video_frame, video_frame, cv::COLOR_BGR2RGBA);
+                    absl::Status result = send_video_frame(video_frame, "input_video");
+                    if(!result.ok()) {
+                        Godot::print(result.message().data());
+                    }
                 }
+                Godot::print("Shutting down.");
+                absl::Status result = [this]()->absl::Status {
+                    MP_RETURN_IF_ERROR(graph->CloseAllInputStreams());
+                    return graph->WaitUntilDone();
+                }();
             });
-            start_graph();
         }
         else{
             Godot::print("fail to open camera");
@@ -131,63 +145,8 @@ void GDMP::start_camera(int index) {
     }
 }
 
-void GDMP::start_graph() {
-    graph_thread = std::thread([this](){
-        mediapipe::GlCalculatorHelper gpu_helper;
-        gpu_helper.InitializeForTest(graph->GetGpuResources().get());
-        absl::Status result = [this, &gpu_helper]()->absl::Status {
-            MP_RETURN_IF_ERROR(graph->StartRun({}));
-
-            Godot::print("Start grabbing and processing frames.");
-            grab_frames = true;
-            while (grab_frames) {
-                if (video_frame.empty()) {
-                    // Godot::print("Ignore empty frames from camera.");
-                    continue;
-                }
-                mutex.lock();
-                auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
-                    mediapipe::ImageFormat::SRGBA, video_frame.cols, video_frame.rows,
-                    mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
-                cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
-                video_frame.copyTo(input_frame_mat);
-                mutex.unlock();
-
-                // Prepare and add graph input packet.
-                size_t frame_timestamp_us =
-                    (double)cv::getTickCount() / (double)cv::getTickFrequency() * 1e6;
-
-                MP_RETURN_IF_ERROR(
-                gpu_helper.RunInGlContext([this, &input_frame, &frame_timestamp_us, &gpu_helper]() -> absl::Status {
-                // Convert ImageFrame to GpuBuffer.
-                auto texture = gpu_helper.CreateSourceTexture(*input_frame.get());
-                auto gpu_frame = texture.GetFrame<mediapipe::GpuBuffer>();
-                glFlush();
-                texture.Release();
-
-                // Send GPU image packet into the graph.
-                MP_RETURN_IF_ERROR(graph->AddPacketToInputStream(
-                    kInputStream, mediapipe::Adopt(gpu_frame.release())
-                                        .At(mediapipe::Timestamp(frame_timestamp_us))));
-                return absl::OkStatus();
-                }));
-            }
-
-            Godot::print("Shutting down.");
-            MP_RETURN_IF_ERROR(graph->CloseInputStream(kInputStream));
-            return graph->WaitUntilDone();
-        }();
-        if(!result.ok()) {
-            Godot::print(result.message().data());
-        }
-    });
-}
-
 void GDMP::close_camera() {
     grab_frames = false;
-    if(graph_thread.joinable()) {
-        graph_thread.join();
-    }
     if(camera_thread.joinable()) {
         camera_thread.join();
     }
@@ -205,21 +164,44 @@ void GDMP::load_video(String path) {
             camera_thread = std::thread([this](){
                 float delay = 1000 / capture.get(cv::CAP_PROP_FPS);
                 while(grab_frames) {
-                    cv::Mat video_frame_raw;
-                    capture >> video_frame_raw;
-                    if(video_frame_raw.empty()){
+                    cv::Mat video_frame;
+                    capture >> video_frame;
+                    if(video_frame.empty()){
                         return;
                     }
-                    mutex.lock();
-                    cv::cvtColor(video_frame_raw, video_frame, cv::COLOR_BGR2RGBA);
-                    mutex.unlock();
+                    cv::cvtColor(video_frame, video_frame, cv::COLOR_BGR2RGBA);
+                    absl::Status result = send_video_frame(video_frame, "input_video");
                     OS::get_singleton()->delay_msec(delay);
                 }
             });
-            start_graph();
         }
         else{
             Godot::print("fail to open camera");
         }
     }
+}
+
+absl::Status GDMP::send_video_frame(cv::Mat video_frame, String stream_name) {
+    auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
+        mediapipe::ImageFormat::SRGBA, video_frame.cols, video_frame.rows,
+        mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
+    cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
+    video_frame.copyTo(input_frame_mat);
+    // Prepare and add graph input packet.
+    size_t frame_timestamp_us =
+        (double)cv::getTickCount() / (double)cv::getTickFrequency() * 1e6;
+    MP_RETURN_IF_ERROR(
+        gpu_helper->RunInGlContext([this, &input_frame, &frame_timestamp_us, &stream_name]() -> absl::Status {
+        // Convert ImageFrame to GpuBuffer.
+        auto texture = gpu_helper->CreateSourceTexture(*input_frame.get());
+        auto gpu_frame = texture.GetFrame<mediapipe::GpuBuffer>();
+        glFlush();
+        texture.Release();
+        // Send GPU image packet into the graph.
+        MP_RETURN_IF_ERROR(graph->AddPacketToInputStream(
+            stream_name.alloc_c_string(), mediapipe::Adopt(gpu_frame.release())
+                                .At(mediapipe::Timestamp(frame_timestamp_us))));
+        return absl::OkStatus();
+        }));
+    return absl::OkStatus();
 }
