@@ -25,11 +25,13 @@ void GDMP::_register_methods() {
     register_method("initGraph", &GDMP::init_graph);
     register_method("addProtoCallback", &GDMP::add_proto_callback);
     register_method("addProtoVectorCallback", &GDMP::add_proto_vector_callback);
+    register_method("addGpuFrameCallback", &GDMP::add_gpu_frame_callback);
     register_method("startCamera", &GDMP::start_camera);
     register_method("closeCamera", &GDMP::close_camera);
     register_method("loadVideo", &GDMP::load_video);
-    register_signal<GDMP>((char *)"on_new_proto", "stream_name", GODOT_VARIANT_TYPE_STRING, "proto_bytes", GODOT_VARIANT_TYPE_POOL_BYTE_ARRAY);
-    register_signal<GDMP>((char *)"on_new_proto_vector", "stream_name", GODOT_VARIANT_TYPE_STRING, "proto_vector", GODOT_VARIANT_TYPE_ARRAY);
+    register_signal<GDMP>("on_new_proto", "stream_name", GODOT_VARIANT_TYPE_STRING, "proto_bytes", GODOT_VARIANT_TYPE_POOL_BYTE_ARRAY);
+    register_signal<GDMP>("on_new_proto_vector", "stream_name", GODOT_VARIANT_TYPE_STRING, "proto_vector", GODOT_VARIANT_TYPE_ARRAY);
+    register_signal<GDMP>("on_new_frame", "stream_name", GODOT_VARIANT_TYPE_STRING, "width", GODOT_VARIANT_TYPE_INT, "height", GODOT_VARIANT_TYPE_INT, "data", GODOT_VARIANT_TYPE_POOL_BYTE_ARRAY);
 }
 
 GDMP::GDMP() {
@@ -98,6 +100,37 @@ void GDMP::add_proto_vector_callback(String stream_name) {
                 data.push_back(proto_bytes);
             }
             call_deferred("emit_signal", Array::make("on_new_proto_vector", stream_name, data));
+            return absl::OkStatus();
+        });
+    }();
+    if(!result.ok()) {
+        Godot::print(result.message().data());
+    }
+}
+
+void GDMP::add_gpu_frame_callback(String stream_name) {
+    absl::Status result = [this, &stream_name]()->absl::Status {
+        return graph->ObserveOutputStream(stream_name.alloc_c_string(), [this, stream_name](mediapipe::Packet packet)->absl::Status {
+            int width;
+            int height;
+            PoolByteArray data;
+            MP_RETURN_IF_ERROR(gpu_helper->RunInGlContext(
+                [this, &packet, &width, &height, &data]() -> ::absl::Status {
+                auto& gpu_frame = packet.Get<mediapipe::GpuBuffer>();
+                auto texture = gpu_helper->CreateSourceTexture(gpu_frame);
+                gpu_helper->BindFramebuffer(texture);
+                const auto info =
+                    mediapipe::GlTextureInfoForGpuBufferFormat(gpu_frame.format(), 0, gpu_helper->GetGlVersion());
+                width = texture.width();
+                height = texture.height();
+                data.resize(width*height*4);
+                glReadPixels(0, 0, texture.width(), texture.height(), info.gl_format,
+                            info.gl_type, data.write().ptr());
+                glFlush();
+                texture.Release();
+                return absl::OkStatus();
+            }));
+            call_deferred("emit_signal", Array::make("on_new_frame", stream_name, width, height, data));
             return absl::OkStatus();
         });
     }();

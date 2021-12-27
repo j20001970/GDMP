@@ -1,6 +1,7 @@
 package org.godotengine.gdmp;
 
 import android.graphics.SurfaceTexture;
+import android.opengl.GLES20;
 import android.util.Log;
 import android.util.Size;
 
@@ -30,6 +31,7 @@ import org.godotengine.godot.plugin.UsedByGodot;
 
 import java.io.File;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,11 +40,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.microedition.khronos.egl.EGLSurface;
+
 public class GDMP extends GodotPlugin implements TextureFrameConsumer {
     // Godot activity
     public Godot godot;
-    // The godot object instance id that get assigned from init() method
-    private int instance_id;
 
     private static String TAG = "GDMP";
     // Whether camera has started
@@ -90,6 +92,7 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
         Set<SignalInfo> signals = new ArraySet<>();
         signals.add(new SignalInfo("on_new_proto", String.class, byte[].class));
         signals.add(new SignalInfo("on_new_proto_vector", String.class, Object[].class));
+        signals.add(new SignalInfo("on_new_frame", String.class, Integer.class, Integer.class, byte[].class));
         return signals;
     }
 
@@ -161,11 +164,6 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
     }
 
     @UsedByGodot
-    public void init(final int id) {
-        instance_id = id;
-    }
-
-    @UsedByGodot
     public void initGraph(String graph_path, Dictionary input_side_packet) {
         closeCamera();
         graph = new Graph();
@@ -218,6 +216,34 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
                         emitSignal("on_new_proto_vector", new Object[]{streamName, protoBytesList.toArray()});
                     }
             );
+        }
+    }
+
+    @UsedByGodot
+    private void addGpuFrameCallback(String streamName) {
+        if(graph != null) {
+            graph.addPacketCallback(
+                    streamName,
+                    packet -> {
+                        GraphTextureFrame textureFrame = PacketGetter.getTextureFrame(packet);
+                        EGLSurface eglSurface = eglManager.createOffscreenSurface(1, 1);
+                        eglManager.makeCurrent(eglSurface, eglSurface);
+                        IntBuffer framebuffer = IntBuffer.allocate(1);
+                        GLES20.glGenFramebuffers(1, framebuffer);
+                        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, framebuffer.get(0));
+                        GLES20.glViewport(0, 0, textureFrame.getWidth(), textureFrame.getHeight());
+                        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+                        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureFrame.getTextureName());
+                        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, textureFrame.getTextureName(), 0);
+                        ByteBuffer buf = ByteBuffer.allocateDirect(textureFrame.getWidth()*textureFrame.getHeight()*4);
+                        GLES20.glReadPixels(0, 0, textureFrame.getWidth(), textureFrame.getHeight(), GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf);
+                        GLES20.glDeleteFramebuffers(1, framebuffer);
+                        eglManager.makeNothingCurrent();
+                        eglManager.releaseSurface(eglSurface);
+                        textureFrame.release();
+                        buf.rewind();
+                        emitSignal("on_new_frame", new Object[]{streamName, textureFrame.getWidth(), textureFrame.getHeight(), buf.array()});
+                    });
         }
     }
 

@@ -14,8 +14,6 @@
 #include "mediapipe/gpu/gl_calculator_helper.h"
 
 namespace godot {
-constexpr char kInputStream[] = "input_video";
-
 class GDMP : public Node {
     GODOT_CLASS(GDMP, Node)
 
@@ -37,6 +35,7 @@ class GDMP : public Node {
         void init_graph(String graph_path, Dictionary input_side_packets);
         void add_proto_callback(String stream_name);
         void add_proto_vector_callback(String stream_name);
+        void add_gpu_frame_callback(String stream_name);
 
         void start_camera(int index);
         void close_camera();
