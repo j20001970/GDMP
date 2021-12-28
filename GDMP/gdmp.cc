@@ -192,6 +192,10 @@ void GDMP::load_video(String path) {
     if(!capture.isOpened()){
         Godot::print("Initialize the camera or load the video.");
         capture.open(path.alloc_c_string());
+        absl::Status result = [this]()->absl::Status {
+            MP_RETURN_IF_ERROR(graph->StartRun({}));
+            return absl::OkStatus();
+        }();
         if(capture.isOpened()){
             grab_frames = true;
             camera_thread = std::thread([this](){
@@ -199,11 +203,11 @@ void GDMP::load_video(String path) {
                 while(grab_frames) {
                     cv::Mat video_frame;
                     capture >> video_frame;
-                    if(video_frame.empty()){
-                        return;
-                    }
                     cv::cvtColor(video_frame, video_frame, cv::COLOR_BGR2RGBA);
                     absl::Status result = send_video_frame(video_frame, "input_video");
+                    if(!result.ok()) {
+                        Godot::print(result.message().data());
+                    }
                     OS::get_singleton()->delay_msec(delay);
                 }
             });
