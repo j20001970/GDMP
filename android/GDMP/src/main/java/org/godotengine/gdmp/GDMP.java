@@ -166,6 +166,7 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
     @UsedByGodot
     public void initGraph(String graph_path, Dictionary input_side_packet) {
         closeCamera();
+        graphStarted = false;
         graph = new Graph();
         if (new File(graph_path).isAbsolute()) {
             graph.loadBinaryGraph(graph_path);
