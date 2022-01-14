@@ -225,8 +225,7 @@ absl::Status GDMP::send_video_frame(cv::Mat video_frame, String stream_name) {
     cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
     video_frame.copyTo(input_frame_mat);
     // Prepare and add graph input packet.
-    size_t frame_timestamp_us =
-        (double)cv::getTickCount() / (double)cv::getTickFrequency() * 1e6;
+    size_t frame_timestamp_us = OS::get_singleton()->get_ticks_usec();
     MP_RETURN_IF_ERROR(
         gpu_helper->RunInGlContext([this, &input_frame, &frame_timestamp_us, &stream_name]() -> absl::Status {
         // Convert ImageFrame to GpuBuffer.

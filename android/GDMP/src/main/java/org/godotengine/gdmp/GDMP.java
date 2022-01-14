@@ -129,7 +129,7 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
     @Override
     public void onNewFrame(TextureFrame frame) {
         Packet imagePacket = null;
-        long timestamp = frame.getTimestamp();
+        long timestamp = System.currentTimeMillis();
         try {
             if (!graphStarted) {
                 graphStarted = true;
