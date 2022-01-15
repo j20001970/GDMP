@@ -4,7 +4,12 @@ cc_binary(
     name = "gdmp",
     srcs = ["gdlibrary.cc"],
     deps = [
+        "//mediapipe/GDMP/proto:classification",
+        "//mediapipe/GDMP/proto:detection",
         "//mediapipe/GDMP/proto:landmark",
+        "//mediapipe/GDMP/proto:location_data",
+        "//mediapipe/GDMP/proto:rasterization",
+        "//mediapipe/GDMP/proto:rect",
         "//third_party:godot",
     ] + select({
         "//mediapipe:android": [],

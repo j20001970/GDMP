@@ -1,7 +1,11 @@
 #ifndef NO_GDMP
 #include "gdmp.h"
 #endif
+#include "proto/classification.h"
+#include "proto/detection.h"
 #include "proto/landmark.h"
+#include "proto/location_data.h"
+#include "proto/rect.h"
 
 extern "C" void GDN_EXPORT godot_gdnative_init(godot_gdnative_init_options *o) {
     godot::Godot::gdnative_init(o);
@@ -20,6 +24,31 @@ extern "C" void GDN_EXPORT godot_nativescript_init(void *handle) {
     #ifndef NO_GDMP
     godot::register_class<godot::GDMP>();
     #endif
+    // Classification
+    godot::register_class<godot::Classification>();
+    godot::register_class<godot::ClassificationList>();
+    godot::register_class<godot::ClassificationListCollection>();
+    // Deteciton
+    godot::register_class<godot::AssociatedDetection>();
+    godot::register_class<godot::Detection>();
+    godot::register_class<godot::DetectionList>();
+    // Landmark
+    godot::register_class<godot::Landmark>();
+    godot::register_class<godot::LandmarkList>();
+    godot::register_class<godot::LandmarkListCollection>();
     godot::register_class<godot::NormalizedLandmark>();
     godot::register_class<godot::NormalizedLandmarkList>();
+    godot::register_class<godot::NormalizedLandmarkListCollection>();
+    // LocationData
+    godot::register_class<godot::BoundingBox>();
+    godot::register_class<godot::RelativeBoundingBox>();
+    godot::register_class<godot::BinaryMask>();
+    godot::register_class<godot::RelativeKeypoint>();
+    godot::register_class<godot::LocationData>();
+    // Rasterization
+    godot::register_class<godot::Interval>();
+    godot::register_class<godot::Rasterization>();
+    // Rect
+    godot::register_class<godot::Rect>();
+    godot::register_class<godot::NormalizedRect>();
 }

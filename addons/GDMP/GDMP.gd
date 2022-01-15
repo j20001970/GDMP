@@ -5,9 +5,37 @@ enum {
 	CAMERA_FACING_BACK
 }
 
+# Classification
+const Classification : NativeScript = preload("Classification.gdns")
+const ClassificationList : NativeScript = preload("ClassificationList.gdns")
+const ClassificationListCollection : NativeScript = preload("ClassificationListCollection.gdns")
+
+# Detection
+const Detection : NativeScript = preload("Detection.gdns")
+const DetectionList : NativeScript = preload("DetectionList.gdns")
+
 # Landmark
+const Landmark : NativeScript = preload("Landmark.gdns")
+const LandmarkList : NativeScript = preload("LandmarkList.gdns")
+const LandmarkListCollection : NativeScript = preload("LandmarkListCollection.gdns")
 const NormalizedLandmark : NativeScript = preload("NormalizedLandmark.gdns")
 const NormalizedLandmarkList : NativeScript = preload("NormalizedLandmarkList.gdns")
+const NormalizedLandmarkListCollection : NativeScript = preload("NormalizedLandmarkListCollection.gdns")
+
+# LocationData
+const BoundingBox : NativeScript = preload("BoundingBox.gdns")
+const RelativeBoundingBox : NativeScript = preload("RelativeBoundingBox.gdns")
+const BinaryMask : NativeScript = preload("BinaryMask.gdns")
+const RelativeKeypoint : NativeScript = preload("RelativeKeypoint.gdns")
+const LocationData : NativeScript = preload("LocationData.gdns")
+
+# Rasterization
+const Interval : NativeScript = preload("Interval.gdns")
+const Rasterization : NativeScript = preload("Rasterization.gdns")
+
+# Rect
+const Rect : NativeScript = preload("Rect.gdns")
+const NormalizedRect : NativeScript = preload("NormalizedRect.gdns")
 
 var plugin : Object
 var packet_data : Dictionary = {}
