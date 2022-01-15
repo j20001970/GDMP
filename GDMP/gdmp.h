@@ -17,13 +17,6 @@ namespace godot {
 class GDMP : public Node {
     GODOT_CLASS(GDMP, Node)
 
-    private:
-        std::unique_ptr<mediapipe::CalculatorGraph> graph;
-        std::unique_ptr<mediapipe::GlCalculatorHelper> gpu_helper;
-        std::thread camera_thread;
-        bool grab_frames;
-        cv::VideoCapture capture;
-
     public:
         static void _register_methods();
 
@@ -42,6 +35,13 @@ class GDMP : public Node {
         absl::Status send_video_frame(cv::Mat video_frame, String stream_name);
 
         void load_video(String path);
+
+    private:
+        std::unique_ptr<mediapipe::CalculatorGraph> graph;
+        std::unique_ptr<mediapipe::GlCalculatorHelper> gpu_helper;
+        std::thread camera_thread;
+        bool grab_frames;
+        cv::VideoCapture capture;
 };
 }
 

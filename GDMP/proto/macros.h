@@ -6,8 +6,6 @@
 
 #define GDMP_PROTO_WRAPPER(NAME, CLASS)                         \
 GODOT_CLASS(NAME, Reference)                                    \
-private:                                                        \
-    CLASS _data;                                                \
 public:                                                         \
     void _init(){}                                              \
     void _init(CLASS data){                                     \
@@ -23,6 +21,8 @@ public:                                                         \
         _data.SerializeToArray(bytes.write().ptr(), size);      \
         return bytes;                                           \
     }                                                           \
+private:                                                        \
+    CLASS _data;                                                \
 
 #define GDMP_RAW_FIELD(NAME)            \
 Variant get_##NAME(){                   \
