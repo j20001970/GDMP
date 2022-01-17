@@ -62,6 +62,7 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
     // Converts the GL_TEXTURE_EXTERNAL_OES texture from Android camera into a regular texture to be
     // consumed by {@link FrameProcessor} and the underlying MediaPipe graph.
     private ExternalTextureConverter converter;
+    private String videoStreamName;
     // Handles camera access via the {@link CameraX} Jetpack support library.
     private GDMPCameraHelper cameraHelper;
 
@@ -141,7 +142,7 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
             try {
                 // addConsumablePacketToInputStream allows the graph to take exclusive ownership of the
                 // packet, which may allow for more memory optimizations.
-                graph.addConsumablePacketToInputStream("input_video", imagePacket, timestamp);
+                graph.addConsumablePacketToInputStream(videoStreamName, imagePacket, timestamp);
                 // If addConsumablePacket succeeded, we don't need to release the packet ourselves.
                 imagePacket = null;
             } catch (MediaPipeException e) {
@@ -249,7 +250,8 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
     }
 
     @UsedByGodot
-    private void startCamera(int cameraFacing) {
+    private void startCamera(int cameraFacing, String streamName) {
+        videoStreamName = streamName;
         if (cameraFacing > -1 && CameraHelper.CameraFacing.values().length > cameraFacing) {
             this.cameraFacing = CameraHelper.CameraFacing.values()[cameraFacing];
             startCamera();

@@ -139,7 +139,7 @@ void GDMP::add_gpu_frame_callback(String stream_name) {
     }
 }
 
-void GDMP::start_camera(int index) {
+void GDMP::start_camera(int index, String stream_name) {
     if(!capture.isOpened()){
         Godot::print("Initialize the camera or load the video.");
         capture.open(index);
@@ -154,13 +154,13 @@ void GDMP::start_camera(int index) {
         }();
         if(capture.isOpened()){
             grab_frames = true;
-            camera_thread = std::thread([this]()->void {
+            camera_thread = std::thread([this, &stream_name]()->void {
                 while(grab_frames) {
                     cv::Mat video_frame;
                     capture >> video_frame;
                     cv::flip(video_frame, video_frame, /*flipcode=HORIZONTAL*/ 1);
                     cv::cvtColor(video_frame, video_frame, cv::COLOR_BGR2RGBA);
-                    absl::Status result = send_video_frame(video_frame, "input_video");
+                    absl::Status result = send_video_frame(video_frame, stream_name.alloc_c_string());
                     if(!result.ok()) {
                         Godot::print(result.message().data());
                     }

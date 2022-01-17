@@ -30,7 +30,7 @@ class GDMP : public Node {
         void add_proto_vector_callback(String stream_name);
         void add_gpu_frame_callback(String stream_name);
 
-        void start_camera(int index);
+        void start_camera(int index, String stream_name);
         void close_camera();
         absl::Status send_video_frame(cv::Mat video_frame, String stream_name);
 

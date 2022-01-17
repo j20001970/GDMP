@@ -87,8 +87,8 @@ func add_gpu_frame_callback(stream_name : String, target : Object, method : Stri
 		packet_data[stream_name] = {}
 	packet_data[stream_name][target] = method
 
-func start_camera(index : int = 0) -> void:
-	plugin.startCamera(index)
+func start_camera(index : int = 0, stream_name : String = "input_video") -> void:
+	plugin.startCamera(index, stream_name)
 
 func close_camera() -> void:
 	plugin.closeCamera()
