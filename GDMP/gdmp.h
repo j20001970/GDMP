@@ -5,6 +5,7 @@
 #include <thread>
 
 #include <Godot.hpp>
+#include <Dictionary.hpp>
 #include <Node.hpp>
 
 #include "mediapipe/framework/calculator_framework.h"
@@ -25,11 +26,12 @@ class GDMP : public Node {
 
         void _init(); // our initializer called by Godot
 
-        void init_graph(String graph_path, Dictionary input_side_packets);
+        void init_graph(String graph_path);
         void add_proto_callback(String stream_name);
         void add_proto_vector_callback(String stream_name);
         void add_gpu_frame_callback(String stream_name);
 
+        void start_graph(Dictionary side_packets);
         void start_camera(int index, String stream_name);
         void close_camera();
         absl::Status send_video_frame(cv::Mat video_frame, String stream_name);
@@ -41,6 +43,7 @@ class GDMP : public Node {
         std::unique_ptr<mediapipe::GlCalculatorHelper> gpu_helper;
         std::thread camera_thread;
         bool grab_frames;
+        String video_stream;
         cv::VideoCapture capture;
 };
 }

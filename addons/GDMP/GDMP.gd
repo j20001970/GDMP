@@ -65,9 +65,9 @@ func _on_new_frame(stream_name : String, width : int, height : int, data : PoolB
 			if is_instance_valid(obj):
 				obj.call(packet_data[stream_name][obj], width, height, data)
 
-func init_graph(graph_path : String, input_side_packets : Dictionary = {}) -> void:
+func init_graph(graph_path : String) -> void:
 	packet_data.clear()
-	plugin.initGraph(graph_path, input_side_packets)
+	plugin.initGraph(graph_path)
 
 func add_proto_callback(stream_name : String, target : Object, method : String) -> void:
 	if not packet_data.has(stream_name):
@@ -86,6 +86,9 @@ func add_gpu_frame_callback(stream_name : String, target : Object, method : Stri
 		plugin.addGpuFrameCallback(stream_name)
 		packet_data[stream_name] = {}
 	packet_data[stream_name][target] = method
+
+func start_graph(side_packets : Dictionary = {}) -> void:
+	plugin.startGraph(side_packets)
 
 func start_camera(index : int = 0, stream_name : String = "input_video") -> void:
 	plugin.startCamera(index, stream_name)

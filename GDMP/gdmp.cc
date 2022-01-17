@@ -1,7 +1,10 @@
+#include <map>
 #include <memory>
 
 #include <Godot.hpp>
+#include <Dictionary.hpp>
 #include <OS.hpp>
+#include <Variant.hpp>
 
 #include "mediapipe/framework/calculator_framework.h"
 #include "mediapipe/framework/formats/image_frame.h"
@@ -26,6 +29,7 @@ void GDMP::_register_methods() {
     register_method("addProtoCallback", &GDMP::add_proto_callback);
     register_method("addProtoVectorCallback", &GDMP::add_proto_vector_callback);
     register_method("addGpuFrameCallback", &GDMP::add_gpu_frame_callback);
+    register_method("startGraph", &GDMP::start_graph);
     register_method("startCamera", &GDMP::start_camera);
     register_method("closeCamera", &GDMP::close_camera);
     register_method("loadVideo", &GDMP::load_video);
@@ -46,8 +50,7 @@ void GDMP::_init() {
     // initialize any variables here
 }
 
-void GDMP::init_graph(String graph_path, Dictionary input_side_packets) {
-    // setting input side packets is currently no-op
+void GDMP::init_graph(String graph_path) {
     close_camera();
     absl::Status result = [this, &graph_path]()->absl::Status {
         graph = absl::make_unique<mediapipe::CalculatorGraph>();
@@ -139,6 +142,30 @@ void GDMP::add_gpu_frame_callback(String stream_name) {
     }
 }
 
+void GDMP::start_graph(Dictionary side_packets) {
+    std::map<std::string, mediapipe::Packet> packets;
+    for(int i=0; i<side_packets.keys().size(); i++) {
+        if(side_packets.keys()[i].get_type() == Variant::Type::STRING) {
+            String key = side_packets.keys()[i];
+            Variant value = side_packets[key];
+            switch(value.get_type()) {
+                case Variant::Type::INT:
+                    packets[key.alloc_c_string()] = mediapipe::MakePacket<int>(static_cast<int>(value));
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    absl::Status result = [this, &packets]()->absl::Status {
+        MP_RETURN_IF_ERROR(graph->StartRun(packets));
+        return absl::OkStatus();
+    }();
+    if(!result.ok()) {
+        Godot::print(result.message().data());
+    }
+}
+
 void GDMP::start_camera(int index, String stream_name) {
     if(!capture.isOpened()){
         Godot::print("Initialize the camera or load the video.");
@@ -148,19 +175,16 @@ void GDMP::start_camera(int index, String stream_name) {
         capture.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
         capture.set(cv::CAP_PROP_FPS, 30);
         #endif
-        absl::Status result = [this]()->absl::Status {
-            MP_RETURN_IF_ERROR(graph->StartRun({}));
-            return absl::OkStatus();
-        }();
+        video_stream = stream_name;
         if(capture.isOpened()){
             grab_frames = true;
-            camera_thread = std::thread([this, &stream_name]()->void {
+            camera_thread = std::thread([this]()->void {
                 while(grab_frames) {
                     cv::Mat video_frame;
                     capture >> video_frame;
                     cv::flip(video_frame, video_frame, /*flipcode=HORIZONTAL*/ 1);
                     cv::cvtColor(video_frame, video_frame, cv::COLOR_BGR2RGBA);
-                    absl::Status result = send_video_frame(video_frame, stream_name.alloc_c_string());
+                    absl::Status result = send_video_frame(video_frame, video_stream);
                     if(!result.ok()) {
                         Godot::print(result.message().data());
                     }

@@ -165,7 +165,7 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
     }
 
     @UsedByGodot
-    public void initGraph(String graph_path, Dictionary input_side_packet) {
+    public void initGraph(String graph_path) {
         closeCamera();
         graphStarted = false;
         graph = new Graph();
@@ -177,15 +177,6 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
         }
         graph.setParentGlContext(eglManager.getNativeContext());
         packetCreator = new AndroidPacketCreator(graph);
-        Map<String, Packet> sidePackets = new HashMap<>();
-        for (String key : input_side_packet.get_keys()) {
-            Object value = input_side_packet.get(key);
-            Class<? extends Object> cls = value.getClass();
-            if (cls == Integer.class) {
-                sidePackets.put(key, packetCreator.createInt32((int) value));
-            }
-        }
-        graph.setInputSidePackets(sidePackets);
         converter = new ExternalTextureConverter(eglManager.getContext());
         converter.setFlipY(true);
         converter.setConsumer(this);
@@ -247,6 +238,20 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
                         emitSignal("on_new_frame", new Object[]{streamName, textureFrame.getWidth(), textureFrame.getHeight(), buf.array()});
                     });
         }
+    }
+
+    @UsedByGodot
+    private void startGraph(Dictionary input_side_packet) {
+        Map<String, Packet> sidePackets = new HashMap<>();
+        for (String key : input_side_packet.get_keys()) {
+            Object value = input_side_packet.get(key);
+            Class<? extends Object> cls = value.getClass();
+            if (cls == Integer.class) {
+                sidePackets.put(key, packetCreator.createInt32((int) value));
+            }
+        }
+        graph.setInputSidePackets(sidePackets);
+        graph.startRunningGraph();
     }
 
     @UsedByGodot
