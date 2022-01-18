@@ -72,9 +72,10 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
             var landmark = landmarks.get_landmark(i)
             print("x:%f, y:%f, z:%f" % [landmark.get_x(), landmark.get_y(), landmark.get_z()])
     ```
-5. To start the camera for sending video frames to the graph:
+5. Start the graph and camera for sending video frames to the graph:
 
     ```gdscript
+    GDMP.start_graph()
     GDMP.start_camera()
     ```
     The default is front camera for Android and index 0 for desktop Linux, you can pass the `CAMERA_FACING_FRONT`, `CAMERA_FACING_BACK` enum or `index` integer to specify the camera to use.
