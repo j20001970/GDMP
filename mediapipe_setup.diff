@@ -65,6 +65,26 @@ new file mode 100644
 +    linkstatic = 1,
 +    visibility = ["//visibility:public"],
 +)
+diff --git a/mediapipe/java/com/google/mediapipe/components/CameraXPreviewHelper.java b/mediapipe/java/com/google/mediapipe/components/CameraXPreviewHelper.java
+--- a/mediapipe/java/com/google/mediapipe/components/CameraXPreviewHelper.java
++++ b/mediapipe/java/com/google/mediapipe/components/CameraXPreviewHelper.java
+@@ -320,6 +320,16 @@ public class CameraXPreviewHelper extends CameraHelper {
+         mainThreadExecutor);
+   }
+ 
++  public void closeCamera(Activity activity) {
++    if(cameraProvider != null) {
++      activity.runOnUiThread(
++          () -> {
++            cameraProvider.unbindAll();
++          }
++      );
++    }
++  }
++
+   /**
+    * Captures a new still image and saves to a file along with application specified metadata. This
+    * method works when {@link CameraXPreviewHelper#startCamera(Activity, ImageCapture.Builder,
 diff --git a/mediapipe/java/com/google/mediapipe/framework/PacketGetter.java b/mediapipe/java/com/google/mediapipe/framework/PacketGetter.java
 --- a/mediapipe/java/com/google/mediapipe/framework/PacketGetter.java
 +++ b/mediapipe/java/com/google/mediapipe/framework/PacketGetter.java

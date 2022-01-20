@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.collection.ArraySet;
 
 import com.google.mediapipe.components.CameraHelper;
+import com.google.mediapipe.components.CameraXPreviewHelper;
 import com.google.mediapipe.components.ExternalTextureConverter;
 import com.google.mediapipe.components.PermissionHelper;
 import com.google.mediapipe.components.TextureFrameConsumer;
@@ -64,7 +65,7 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
     private ExternalTextureConverter converter;
     private String videoStreamName;
     // Handles camera access via the {@link CameraX} Jetpack support library.
-    private GDMPCameraHelper cameraHelper;
+    private CameraXPreviewHelper cameraHelper;
 
     static {
         // Load all native libraries needed by the app.
@@ -270,7 +271,7 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
         // Actually start camera only when permission is granted.
         PermissionHelper.checkAndRequestCameraPermissions(godot.getActivity());
         if (PermissionHelper.cameraPermissionsGranted(godot.getActivity())) {
-            cameraHelper = new GDMPCameraHelper();
+            cameraHelper = new CameraXPreviewHelper();
             cameraHelper.setOnCameraStartedListener(
                     surfaceTexture -> {
                         previewFrameTexture = surfaceTexture;
@@ -284,7 +285,7 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
             );
             runOnUiThread(
                     () -> {
-                        cameraHelper.startCamera(godot.getActivity(), cameraFacing, previewFrameTexture, new Size(640, 480));
+                        cameraHelper.startCamera(godot.getActivity(), cameraFacing, null, new Size(640, 480));
                     }
             );
         }
