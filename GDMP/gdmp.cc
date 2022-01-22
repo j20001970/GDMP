@@ -115,25 +115,13 @@ void GDMP::add_proto_vector_callback(String stream_name) {
 void GDMP::add_gpu_frame_callback(String stream_name) {
     absl::Status result = [this, &stream_name]()->absl::Status {
         return graph->ObserveOutputStream(stream_name.alloc_c_string(), [this, stream_name](mediapipe::Packet packet)->absl::Status {
-            int width;
-            int height;
+            auto image = packet.Get<mediapipe::GpuBuffer>().AsImageFrame();
             PoolByteArray data;
-            MP_RETURN_IF_ERROR(gpu_helper->RunInGlContext(
-                [this, &packet, &width, &height, &data]() -> ::absl::Status {
-                auto& gpu_frame = packet.Get<mediapipe::GpuBuffer>();
-                auto texture = gpu_helper->CreateSourceTexture(gpu_frame);
-                gpu_helper->BindFramebuffer(texture);
-                const auto info =
-                    mediapipe::GlTextureInfoForGpuBufferFormat(gpu_frame.format(), 0, gpu_helper->GetGlVersion());
-                width = texture.width();
-                height = texture.height();
-                data.resize(width*height*4);
-                glReadPixels(0, 0, texture.width(), texture.height(), info.gl_format,
-                            info.gl_type, data.write().ptr());
-                glFlush();
-                texture.Release();
-                return absl::OkStatus();
-            }));
+            int width = image->Width();
+            int height = image->Height();
+            int channel = image->NumberOfChannels();
+            data.resize(width*height*channel);
+            image->CopyToBuffer(data.write().ptr(), width*height*channel);
             call_deferred("emit_signal", Array::make("on_new_frame", stream_name, width, height, data));
             return absl::OkStatus();
         });
