@@ -247,8 +247,14 @@ public class GDMP extends GodotPlugin implements TextureFrameConsumer {
         for (String key : input_side_packet.get_keys()) {
             Object value = input_side_packet.get(key);
             Class<? extends Object> cls = value.getClass();
-            if (cls == Integer.class) {
+            if (cls == Boolean.class) {
+                sidePackets.put(key, packetCreator.createBool((boolean) value));
+            }
+            else if (cls == Integer.class) {
                 sidePackets.put(key, packetCreator.createInt32((int) value));
+            }
+            else if (cls == String.class) {
+                sidePackets.put(key, packetCreator.createString((String) value));
             }
         }
         graph.setInputSidePackets(sidePackets);

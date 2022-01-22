@@ -1,5 +1,6 @@
 #include <map>
 #include <memory>
+#include <string>
 
 #include <Godot.hpp>
 #include <Dictionary.hpp>
@@ -149,9 +150,19 @@ void GDMP::start_graph(Dictionary side_packets) {
             String key = side_packets.keys()[i];
             Variant value = side_packets[key];
             switch(value.get_type()) {
-                case Variant::Type::INT:
+                case Variant::Type::BOOL: {
+                    packets[key.alloc_c_string()] = mediapipe::MakePacket<bool>(static_cast<bool>(value));
+                    break;
+                }
+                case Variant::Type::INT: {
                     packets[key.alloc_c_string()] = mediapipe::MakePacket<int>(static_cast<int>(value));
                     break;
+                }
+                case Variant::Type::STRING: {
+                    String str = value;
+                    packets[key.alloc_c_string()] = mediapipe::MakePacket<std::string>(str.alloc_c_string());
+                    break;
+                }
                 default:
                     break;
             }
