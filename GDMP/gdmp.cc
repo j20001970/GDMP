@@ -183,7 +183,12 @@ void GDMP::start_camera(int index, String stream_name) {
                     capture >> video_frame;
                     cv::flip(video_frame, video_frame, /*flipcode=HORIZONTAL*/ 1);
                     cv::cvtColor(video_frame, video_frame, cv::COLOR_BGR2RGBA);
-                    absl::Status result = send_video_frame(video_frame, video_stream);
+                    auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
+                        mediapipe::ImageFormat::SRGBA, video_frame.cols, video_frame.rows,
+                        mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
+                    cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
+                    video_frame.copyTo(input_frame_mat);
+                    absl::Status result = send_video_frame(std::move(input_frame), video_stream);
                     if(!result.ok()) {
                         Godot::print(result.message().data());
                     }
@@ -226,8 +231,16 @@ void GDMP::load_video(String path) {
                 while(grab_frames) {
                     cv::Mat video_frame;
                     capture >> video_frame;
+                    if(video_frame.empty()) {
+                        continue;
+                    }
                     cv::cvtColor(video_frame, video_frame, cv::COLOR_BGR2RGBA);
-                    absl::Status result = send_video_frame(video_frame, "input_video");
+                    auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
+                        mediapipe::ImageFormat::SRGBA, video_frame.cols, video_frame.rows,
+                        mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
+                    cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
+                    video_frame.copyTo(input_frame_mat);
+                    absl::Status result = send_video_frame(std::move(input_frame), "input_video");
                     if(!result.ok()) {
                         Godot::print(result.message().data());
                     }
@@ -241,18 +254,12 @@ void GDMP::load_video(String path) {
     }
 }
 
-absl::Status GDMP::send_video_frame(cv::Mat video_frame, String stream_name) {
-    auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
-        mediapipe::ImageFormat::SRGBA, video_frame.cols, video_frame.rows,
-        mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
-    cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
-    video_frame.copyTo(input_frame_mat);
-    // Prepare and add graph input packet.
+absl::Status GDMP::send_video_frame(std::unique_ptr<mediapipe::ImageFrame> video_frame, String stream_name) {
     size_t frame_timestamp_us = OS::get_singleton()->get_ticks_usec();
     MP_RETURN_IF_ERROR(
-        gpu_helper->RunInGlContext([this, &input_frame, &frame_timestamp_us, &stream_name]() -> absl::Status {
+        gpu_helper->RunInGlContext([this, &video_frame, &frame_timestamp_us, &stream_name]() -> absl::Status {
         // Convert ImageFrame to GpuBuffer.
-        auto texture = gpu_helper->CreateSourceTexture(*input_frame.get());
+        auto texture = gpu_helper->CreateSourceTexture(*video_frame.get());
         auto gpu_frame = texture.GetFrame<mediapipe::GpuBuffer>();
         glFlush();
         texture.Release();

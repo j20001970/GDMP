@@ -9,6 +9,7 @@
 #include <Node.hpp>
 
 #include "mediapipe/framework/calculator_framework.h"
+#include "mediapipe/framework/formats/image_frame.h"
 #include "mediapipe/framework/port/opencv_core_inc.h"
 #include "mediapipe/framework/port/opencv_video_inc.h"
 #include "mediapipe/framework/port/status.h"
@@ -32,9 +33,10 @@ class GDMP : public Node {
         void add_gpu_frame_callback(String stream_name);
 
         void start_graph(Dictionary side_packets);
+
         void start_camera(int index, String stream_name);
         void close_camera();
-        absl::Status send_video_frame(cv::Mat video_frame, String stream_name);
+        absl::Status send_video_frame(std::unique_ptr<mediapipe::ImageFrame> video_frame, String stream_name);
 
         void load_video(String path);
 
