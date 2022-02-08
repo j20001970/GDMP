@@ -81,4 +81,5 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
     The default is front camera for Android and index 0 for desktop Linux, you can pass the `CAMERA_FACING_FRONT`, `CAMERA_FACING_BACK` enum or `index` integer to specify the camera to use.
 
 ## Disclaimer
-The project is still much work in progress, as there are many limitations and hardcoded behaviors that need to be ironed out, we released it in the hope that someone could find the project useful, even if it's far from perfect. Contributions are welcome, if you are interested in bugfixes, adding features or support for other platforms (for now we lack support for Windows and iOS specifically)
+- The project is still much work in progress, expect usage API changes in future releases.
+-  Contributions are welcome, if you are interested in bugfixes, adding features or support for other platforms (for now we lack support for Windows and iOS specifically)
