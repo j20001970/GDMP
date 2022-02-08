@@ -4,8 +4,8 @@
 #include <memory>
 #include <thread>
 
-#include <Godot.hpp>
 #include <Dictionary.hpp>
+#include <Godot.hpp>
 #include <Node.hpp>
 
 #include "mediapipe/framework/calculator_framework.h"
@@ -17,37 +17,37 @@
 
 namespace godot {
 class GDMP : public Node {
-    GODOT_CLASS(GDMP, Node)
+		GODOT_CLASS(GDMP, Node)
 
-    public:
-        static void _register_methods();
+	public:
+		static void _register_methods();
 
-        GDMP();
-        ~GDMP();
+		GDMP();
+		~GDMP();
 
-        void _init(); // our initializer called by Godot
+		void _init(); // our initializer called by Godot
 
-        void init_graph(String graph_path);
-        void add_proto_callback(String stream_name);
-        void add_proto_vector_callback(String stream_name);
-        void add_gpu_frame_callback(String stream_name);
+		void init_graph(String graph_path);
+		void add_proto_callback(String stream_name);
+		void add_proto_vector_callback(String stream_name);
+		void add_gpu_frame_callback(String stream_name);
 
-        void start_graph(Dictionary side_packets);
+		void start_graph(Dictionary side_packets);
 
-        void start_camera(int index, String stream_name);
-        void close_camera();
-        absl::Status send_video_frame(std::unique_ptr<mediapipe::ImageFrame> video_frame, String stream_name);
+		void start_camera(int index, String stream_name);
+		void close_camera();
+		absl::Status send_video_frame(std::unique_ptr<mediapipe::ImageFrame> video_frame, String stream_name);
 
-        void load_video(String path);
+		void load_video(String path);
 
-    private:
-        std::unique_ptr<mediapipe::CalculatorGraph> graph;
-        std::unique_ptr<mediapipe::GlCalculatorHelper> gpu_helper;
-        std::thread camera_thread;
-        bool grab_frames;
-        String video_stream;
-        cv::VideoCapture capture;
+	private:
+		std::unique_ptr<mediapipe::CalculatorGraph> graph;
+		std::unique_ptr<mediapipe::GlCalculatorHelper> gpu_helper;
+		std::thread camera_thread;
+		bool grab_frames;
+		String video_stream;
+		cv::VideoCapture capture;
 };
-}
+} // namespace godot
 
 #endif
