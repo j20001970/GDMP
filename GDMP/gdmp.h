@@ -1,31 +1,30 @@
 #ifndef GDMP_H
 #define GDMP_H
 
-#include <memory>
-#include <thread>
+#include "Dictionary.hpp"
+#include "Godot.hpp"
+#include "Node.hpp"
+#include "Ref.hpp"
+#include "String.hpp"
 
-#include <Dictionary.hpp>
-#include <Godot.hpp>
-#include <Node.hpp>
-
-#include "mediapipe/framework/calculator_framework.h"
-#include "mediapipe/framework/formats/image_frame.h"
-#include "mediapipe/framework/port/opencv_core_inc.h"
-#include "mediapipe/framework/port/opencv_video_inc.h"
-#include "mediapipe/framework/port/status.h"
-#include "mediapipe/gpu/gl_calculator_helper.h"
+#include "framework/graph.h"
+#include "io/camera_helper.h"
+#if !MEDIAPIPE_DISABLE_GPU
+#include "framework/gpu_helper.h"
+#endif
 
 namespace godot {
+
 class GDMP : public Node {
 		GODOT_CLASS(GDMP, Node)
 
 	public:
 		static void _register_methods();
 
-		GDMP();
-		~GDMP();
-
 		void _init(); // our initializer called by Godot
+		void _on_new_proto(String stream_name, Ref<Packet> packet);
+		void _on_new_proto_vector(String stream_name, Ref<Packet> packet);
+		void _on_new_gpu_frame(String stream_name, Ref<Packet> packet);
 
 		void init_graph(String graph_path);
 		void add_proto_callback(String stream_name);
@@ -36,18 +35,15 @@ class GDMP : public Node {
 
 		void start_camera(int index, String stream_name);
 		void close_camera();
-		absl::Status send_video_frame(std::unique_ptr<mediapipe::ImageFrame> video_frame, String stream_name);
-
-		void load_video(String path);
 
 	private:
-		std::unique_ptr<mediapipe::CalculatorGraph> graph;
-		std::unique_ptr<mediapipe::GlCalculatorHelper> gpu_helper;
-		std::thread camera_thread;
-		bool grab_frames;
-		String video_stream;
-		cv::VideoCapture capture;
+		Ref<Graph> graph;
+		Ref<CameraHelper> camera_helper;
+#if !MEDIAPIPE_DISABLE_GPU
+		Ref<GPUHelper> gpu_helper;
+#endif
 };
+
 } // namespace godot
 
 #endif
