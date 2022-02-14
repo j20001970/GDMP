@@ -3,18 +3,6 @@ load("//mediapipe/GDMP:variables.bzl", "CALCULATORS")
 cc_binary(
     name = "gdmp",
     srcs = ["gdlibrary.cc"],
-    deps = [
-        "//mediapipe/GDMP/proto:classification",
-        "//mediapipe/GDMP/proto:detection",
-        "//mediapipe/GDMP/proto:landmark",
-        "//mediapipe/GDMP/proto:location_data",
-        "//mediapipe/GDMP/proto:rasterization",
-        "//mediapipe/GDMP/proto:rect",
-        "//third_party:godot",
-    ] + select({
-        "//mediapipe:android": [],
-        "//conditions:default": [":gdmp_lib"] + CALCULATORS,
-    }),
     defines = select({
         "//mediapipe:android": ["NO_GDMP"],
         "//conditions:default": [
@@ -33,6 +21,18 @@ cc_binary(
     }),
     linkshared = 1,
     visibility = ["//visibility:public"],
+    deps = [
+        "//mediapipe/GDMP/proto:classification",
+        "//mediapipe/GDMP/proto:detection",
+        "//mediapipe/GDMP/proto:landmark",
+        "//mediapipe/GDMP/proto:location_data",
+        "//mediapipe/GDMP/proto:rasterization",
+        "//mediapipe/GDMP/proto:rect",
+        "//third_party:godot",
+    ] + select({
+        "//mediapipe:android": [],
+        "//conditions:default": [":gdmp_lib"] + CALCULATORS,
+    }),
 )
 
 cc_library(
@@ -41,6 +41,7 @@ cc_library(
         "gdmp.cc",
         "gdmp.h",
     ],
+    visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:image_frame",
@@ -57,5 +58,4 @@ cc_library(
         "//third_party:godot",
     ],
     alwayslink = 1,
-    visibility = ["//visibility:public"],
 )

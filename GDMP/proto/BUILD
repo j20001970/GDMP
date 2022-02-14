@@ -5,11 +5,11 @@ cc_library(
         "macros.h",
     ],
     hdrs = ["classification.h"],
+    visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework/formats:classification_cc_proto",
         "//third_party:godot",
     ],
-    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -19,12 +19,12 @@ cc_library(
         "macros.h",
     ],
     hdrs = ["detection.h"],
+    visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/framework/formats:detection_cc_proto",
         ":location_data",
+        "//mediapipe/framework/formats:detection_cc_proto",
         "//third_party:godot",
     ],
-    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -34,11 +34,11 @@ cc_library(
         "macros.h",
     ],
     hdrs = ["landmark.h"],
+    visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework/formats:landmark_cc_proto",
         "//third_party:godot",
     ],
-    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -48,38 +48,38 @@ cc_library(
         "macros.h",
     ],
     hdrs = ["location_data.h"],
+    visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/framework/formats:location_data_cc_proto",
         ":rasterization",
+        "//mediapipe/framework/formats:location_data_cc_proto",
         "//third_party:godot",
     ],
-    visibility = ["//visibility:public"],
 )
 
 cc_library(
     name = "rasterization",
     srcs = [
-        "rasterization.h",
         "macros.h",
+        "rasterization.h",
     ],
     hdrs = ["rasterization.h"],
+    visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework/formats/annotation:rasterization_cc_proto",
         "//third_party:godot",
     ],
-    visibility = ["//visibility:public"],
 )
 
 cc_library(
     name = "rect",
     srcs = [
-        "rect.h",
         "macros.h",
+        "rect.h",
     ],
     hdrs = ["rect.h"],
+    visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework/formats:rect_cc_proto",
         "//third_party:godot",
     ],
-    visibility = ["//visibility:public"],
 )
