@@ -95,6 +95,3 @@ func start_camera(index : int = 0, stream_name : String = "input_video") -> void
 
 func close_camera() -> void:
 	plugin.closeCamera()
-
-func load_video(path : String):
-	plugin.loadVideo(path)

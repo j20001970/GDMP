@@ -1,31 +1,15 @@
-#include <map>
-#include <memory>
-#include <string>
-
-#include <Dictionary.hpp>
-#include <Godot.hpp>
-#include <OS.hpp>
-#include <Variant.hpp>
-
-#include "mediapipe/framework/calculator_framework.h"
-#include "mediapipe/framework/formats/image_frame.h"
-#include "mediapipe/framework/formats/image_frame_opencv.h"
-#include "mediapipe/framework/port/file_helpers.h"
-#include "mediapipe/framework/port/opencv_core_inc.h"
-#include "mediapipe/framework/port/opencv_imgproc_inc.h"
-#include "mediapipe/framework/port/opencv_video_inc.h"
-#include "mediapipe/framework/port/parse_text_proto.h"
-#include "mediapipe/framework/port/status.h"
-#include "mediapipe/framework/port/status_macros.h"
-#include "mediapipe/gpu/gl_calculator_helper.h"
-#include "mediapipe/gpu/gpu_buffer.h"
-#include "mediapipe/gpu/gpu_shared_data_internal.h"
-
 #include "gdmp.h"
+
+#include "Array.hpp"
 
 using namespace godot;
 
 void GDMP::_register_methods() {
+	register_method("_on_new_proto", &GDMP::_on_new_proto);
+	register_method("_on_new_proto_vector", &GDMP::_on_new_proto_vector);
+#if !MEDIAPIPE_DISABLE_GPU
+	register_method("_on_new_gpu_frame", &GDMP::_on_new_gpu_frame);
+#endif
 	register_method("initGraph", &GDMP::init_graph);
 	register_method("addProtoCallback", &GDMP::add_proto_callback);
 	register_method("addProtoVectorCallback", &GDMP::add_proto_vector_callback);
@@ -33,243 +17,67 @@ void GDMP::_register_methods() {
 	register_method("startGraph", &GDMP::start_graph);
 	register_method("startCamera", &GDMP::start_camera);
 	register_method("closeCamera", &GDMP::close_camera);
-	register_method("loadVideo", &GDMP::load_video);
 	register_signal<GDMP>("on_new_proto", "stream_name", GODOT_VARIANT_TYPE_STRING, "proto_bytes", GODOT_VARIANT_TYPE_POOL_BYTE_ARRAY);
 	register_signal<GDMP>("on_new_proto_vector", "stream_name", GODOT_VARIANT_TYPE_STRING, "proto_vector", GODOT_VARIANT_TYPE_ARRAY);
 	register_signal<GDMP>("on_new_frame", "stream_name", GODOT_VARIANT_TYPE_STRING, "width", GODOT_VARIANT_TYPE_INT, "height", GODOT_VARIANT_TYPE_INT, "data", GODOT_VARIANT_TYPE_POOL_BYTE_ARRAY);
 }
 
-GDMP::GDMP() {
-	graph = nullptr;
-}
-
-GDMP::~GDMP() {
-	// add your cleanup here
-}
-
 void GDMP::_init() {
 	// initialize any variables here
+	camera_helper = Ref<CameraHelper>(CameraHelper::_new());
 }
+
+void GDMP::_on_new_proto(String stream_name, Ref<Packet> packet) {
+	emit_signal("on_new_proto", Array::make(stream_name, packet->get_proto()));
+}
+
+void GDMP::_on_new_proto_vector(String stream_name, Ref<Packet> packet) {
+	emit_signal("on_new_proto_vector", Array::make(stream_name, packet->get_proto_vector()));
+}
+
+#if !MEDIAPIPE_DISABLE_GPU
+void GDMP::_on_new_gpu_frame(String stream_name, Ref<Packet> packet) {
+	Ref<Image> image = gpu_helper->get_gpu_frame(packet);
+	emit_signal("on_new_frame", Array::make(stream_name, image->get_width(), image->get_height(), image->get_data()));
+}
+#endif
 
 void GDMP::init_graph(String graph_path) {
 	close_camera();
-	absl::Status result = [this, &graph_path]() -> absl::Status {
-		graph = absl::make_unique<mediapipe::CalculatorGraph>();
-		std::string calculator_graph_config_contents;
-		MP_RETURN_IF_ERROR(mediapipe::file::GetContents(
-				graph_path.alloc_c_string(), &calculator_graph_config_contents));
-		LOG(INFO) << "Get calculator graph config contents: "
-				  << calculator_graph_config_contents;
-		mediapipe::CalculatorGraphConfig config =
-				mediapipe::ParseTextProtoOrDie<mediapipe::CalculatorGraphConfig>(
-						calculator_graph_config_contents);
-		Godot::print("Initialize the calculator graph.");
-		MP_RETURN_IF_ERROR(graph->Initialize(config));
-		Godot::print("Initialize the GPU.");
-		ASSIGN_OR_RETURN(auto gpu_resources, mediapipe::GpuResources::Create());
-		MP_RETURN_IF_ERROR(graph->SetGpuResources(std::move(gpu_resources)));
-		gpu_helper = std::make_unique<mediapipe::GlCalculatorHelper>();
-		gpu_helper->InitializeForTest(graph->GetGpuResources().get());
-		return absl::OkStatus();
-	}();
-	if (!result.ok()) {
-		Godot::print(result.message().data());
-	}
+	graph = Ref<Graph>(Graph::_new());
+	graph->initialize(graph_path);
+#if !MEDIAPIPE_DISABLE_GPU
+	gpu_helper = graph->get_gpu_helper();
+#endif
 }
 
 void GDMP::add_proto_callback(String stream_name) {
-	absl::Status result = [this, &stream_name]() -> absl::Status {
-		return graph->ObserveOutputStream(stream_name.alloc_c_string(),
-				[this, stream_name](mediapipe::Packet packet) -> absl::Status {
-					PoolByteArray data;
-					data.resize(packet.GetProtoMessageLite().ByteSizeLong());
-					packet.GetProtoMessageLite().SerializeToArray(data.write().ptr(), data.size());
-					call_deferred("emit_signal", Array::make("on_new_proto", stream_name, data));
-					return absl::OkStatus();
-				});
-	}();
-	if (!result.ok()) {
-		Godot::print(result.message().data());
-	}
+	graph->add_packet_callback(stream_name, this, "_on_new_proto");
 }
 
 void GDMP::add_proto_vector_callback(String stream_name) {
-	absl::Status result = [this, &stream_name]() -> absl::Status {
-		return graph->ObserveOutputStream(stream_name.alloc_c_string(),
-				[this, stream_name](mediapipe::Packet packet) -> absl::Status {
-					ASSIGN_OR_RETURN(auto proto_vector, packet.GetVectorOfProtoMessageLitePtrs());
-					Array data;
-					for (int i = 0; i < proto_vector.size(); i++) {
-						auto message = proto_vector[i];
-						PoolByteArray proto_bytes;
-						proto_bytes.resize(message->ByteSizeLong());
-						message->SerializeToArray(proto_bytes.write().ptr(), proto_bytes.size());
-						data.push_back(proto_bytes);
-					}
-					call_deferred("emit_signal", Array::make("on_new_proto_vector", stream_name, data));
-					return absl::OkStatus();
-				});
-	}();
-	if (!result.ok()) {
-		Godot::print(result.message().data());
-	}
+	graph->add_packet_callback(stream_name, this, "_on_new_proto_vector");
 }
 
+#if !MEDIAPIPE_DISABLE_GPU
 void GDMP::add_gpu_frame_callback(String stream_name) {
-	absl::Status result = [this, &stream_name]() -> absl::Status {
-		return graph->ObserveOutputStream(stream_name.alloc_c_string(),
-				[this, stream_name](mediapipe::Packet packet) -> absl::Status {
-					auto image = packet.Get<mediapipe::GpuBuffer>().AsImageFrame();
-					PoolByteArray data;
-					int width = image->Width();
-					int height = image->Height();
-					int channel = image->NumberOfChannels();
-					data.resize(width * height * channel);
-					image->CopyToBuffer(data.write().ptr(), width * height * channel);
-					call_deferred("emit_signal", Array::make("on_new_frame", stream_name, width, height, data));
-					return absl::OkStatus();
-				});
-	}();
-	if (!result.ok()) {
-		Godot::print(result.message().data());
-	}
+	graph->add_packet_callback(stream_name, this, "_on_new_gpu_frame");
 }
+#endif
 
 void GDMP::start_graph(Dictionary side_packets) {
-	std::map<std::string, mediapipe::Packet> packets;
-	for (int i = 0; i < side_packets.keys().size(); i++) {
-		if (side_packets.keys()[i].get_type() == Variant::Type::STRING) {
-			String key = side_packets.keys()[i];
-			Variant value = side_packets[key];
-			switch (value.get_type()) {
-				case Variant::Type::BOOL: {
-					packets[key.alloc_c_string()] = mediapipe::MakePacket<bool>(static_cast<bool>(value));
-					break;
-				}
-				case Variant::Type::INT: {
-					packets[key.alloc_c_string()] = mediapipe::MakePacket<int>(static_cast<int>(value));
-					break;
-				}
-				case Variant::Type::STRING: {
-					String str = value;
-					packets[key.alloc_c_string()] = mediapipe::MakePacket<std::string>(str.alloc_c_string());
-					break;
-				}
-				default:
-					break;
-			}
-		}
-	}
-	absl::Status result = [this, &packets]() -> absl::Status {
-		MP_RETURN_IF_ERROR(graph->StartRun(packets));
-		return absl::OkStatus();
-	}();
-	if (!result.ok()) {
-		Godot::print(result.message().data());
-	}
+	graph->start(side_packets);
 }
 
 void GDMP::start_camera(int index, String stream_name) {
-	if (!capture.isOpened()) {
-		Godot::print("Initialize the camera or load the video.");
-		capture.open(index);
-#if (CV_MAJOR_VERSION >= 3) && (CV_MINOR_VERSION >= 2)
-		capture.set(cv::CAP_PROP_FRAME_WIDTH, 640);
-		capture.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
-		capture.set(cv::CAP_PROP_FPS, 30);
-#endif
-		video_stream = stream_name;
-		if (capture.isOpened()) {
-			grab_frames = true;
-			camera_thread = std::thread([this]() -> void {
-				while (grab_frames) {
-					cv::Mat video_frame;
-					capture >> video_frame;
-					cv::flip(video_frame, video_frame, /*flipcode=HORIZONTAL*/ 1);
-					cv::cvtColor(video_frame, video_frame, cv::COLOR_BGR2RGBA);
-					auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
-							mediapipe::ImageFormat::SRGBA, video_frame.cols, video_frame.rows,
-							mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
-					cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
-					video_frame.copyTo(input_frame_mat);
-					absl::Status result = send_video_frame(std::move(input_frame), video_stream);
-					if (!result.ok()) {
-						Godot::print(result.message().data());
-					}
-				}
-				Godot::print("Shutting down.");
-				absl::Status result = [this]() -> absl::Status {
-					MP_RETURN_IF_ERROR(graph->CloseAllInputStreams());
-					return graph->WaitUntilDone();
-				}();
-			});
-		} else {
-			Godot::print("fail to open camera");
-		}
-	}
+	camera_helper->set_graph(graph, stream_name);
+	camera_helper->set_flip_y(true);
+	camera_helper->start(index);
 }
 
 void GDMP::close_camera() {
-	grab_frames = false;
-	if (camera_thread.joinable()) {
-		camera_thread.join();
+	if (camera_helper.is_null()) {
+		return;
 	}
-	if (capture.isOpened()) {
-		capture.release();
-	}
-}
-
-void GDMP::load_video(String path) {
-	if (!capture.isOpened()) {
-		Godot::print("Initialize the camera or load the video.");
-		capture.open(path.alloc_c_string());
-		absl::Status result = [this]() -> absl::Status {
-			MP_RETURN_IF_ERROR(graph->StartRun({}));
-			return absl::OkStatus();
-		}();
-		if (capture.isOpened()) {
-			grab_frames = true;
-			camera_thread = std::thread([this]() {
-				float delay = 1000 / capture.get(cv::CAP_PROP_FPS);
-				while (grab_frames) {
-					cv::Mat video_frame;
-					capture >> video_frame;
-					if (video_frame.empty()) {
-						continue;
-					}
-					cv::cvtColor(video_frame, video_frame, cv::COLOR_BGR2RGBA);
-					auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
-							mediapipe::ImageFormat::SRGBA, video_frame.cols, video_frame.rows,
-							mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
-					cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
-					video_frame.copyTo(input_frame_mat);
-					absl::Status result = send_video_frame(std::move(input_frame), "input_video");
-					if (!result.ok()) {
-						Godot::print(result.message().data());
-					}
-					OS::get_singleton()->delay_msec(delay);
-				}
-			});
-		} else {
-			Godot::print("fail to open camera");
-		}
-	}
-}
-
-absl::Status GDMP::send_video_frame(
-		std::unique_ptr<mediapipe::ImageFrame> video_frame, String stream_name) {
-	size_t frame_timestamp_us = OS::get_singleton()->get_ticks_usec();
-	MP_RETURN_IF_ERROR(
-			gpu_helper->RunInGlContext([this, &video_frame, &frame_timestamp_us, &stream_name]() -> absl::Status {
-				// Convert ImageFrame to GpuBuffer.
-				auto texture = gpu_helper->CreateSourceTexture(*video_frame.get());
-				auto gpu_frame = texture.GetFrame<mediapipe::GpuBuffer>();
-				glFlush();
-				texture.Release();
-				// Send GPU image packet into the graph.
-				MP_RETURN_IF_ERROR(graph->AddPacketToInputStream(stream_name.alloc_c_string(),
-						mediapipe::Adopt(gpu_frame.release()).At(mediapipe::Timestamp(frame_timestamp_us))));
-				return absl::OkStatus();
-			}));
-	return absl::OkStatus();
+	camera_helper->close();
 }
