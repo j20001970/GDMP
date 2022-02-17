@@ -143,7 +143,16 @@ void Graph::stop() {
 
 #if !MEDIAPIPE_DISABLE_GPU
 Ref<GPUHelper> Graph::get_gpu_helper() {
-	Ref<GPUHelper> gpu_helper = Ref<GPUHelper>(GPUHelper::_new(graph->GetGpuResources().get()));
-	return gpu_helper;
+	if (!graph) {
+		Godot::print("Graph has not initialized.");
+		return Ref<GPUHelper>();
+	}
+	std::shared_ptr<mediapipe::GpuResources> gpu_resources = graph->GetGpuResources();
+	if (gpu_resources) {
+		return Ref<GPUHelper>(GPUHelper::_new(gpu_resources.get()));
+	} else {
+		Godot::print("Graph GPU helper not available.");
+		return Ref<GPUHelper>();
+	}
 }
 #endif
