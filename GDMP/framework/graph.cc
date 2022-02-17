@@ -4,10 +4,10 @@
 #include <string>
 
 #include "Array.hpp"
+#include "File.hpp"
 #include "Variant.hpp"
 
 #include "mediapipe/framework/packet.h"
-#include "mediapipe/framework/port/file_helpers.h"
 #include "mediapipe/framework/port/parse_text_proto.h"
 #include "mediapipe/framework/port/status.h"
 
@@ -28,14 +28,26 @@ void Graph::_init() {
 	graph = nullptr;
 }
 
-void Graph::initialize(String graph_path) {
-	absl::Status result = [this, &graph_path]() -> absl::Status {
+void Graph::initialize(String graph_path, bool as_text) {
+	absl::Status result = [this, &graph_path, &as_text]() -> absl::Status {
 		graph = std::make_unique<mediapipe::CalculatorGraph>();
-		std::string calculator_graph_config_contents;
-		MP_RETURN_IF_ERROR(mediapipe::file::GetContents(
-				graph_path.alloc_c_string(), &calculator_graph_config_contents));
-		mediapipe::CalculatorGraphConfig config =
-				mediapipe::ParseTextProtoOrDie<mediapipe::CalculatorGraphConfig>(calculator_graph_config_contents);
+		Ref<File> file = Ref<File>(File::_new());
+		Error err;
+		err = file->open(graph_path, File::READ);
+		if (err != Error::OK) {
+			return absl::UnknownError(String("Failed to open graph file: {0}").format(Array::make(err)).alloc_c_string());
+		}
+		mediapipe::CalculatorGraphConfig config;
+		bool result;
+		if (as_text) {
+			result = mediapipe::ParseTextProto<mediapipe::CalculatorGraphConfig>(file->get_as_text().alloc_c_string(), &config);
+		} else {
+			result = config.ParseFromArray(file->get_buffer(file->get_len()).read().ptr(), file->get_len());
+		}
+		file->close();
+		if (!result) {
+			return absl::InvalidArgumentError("Failed to parse graph config.");
+		}
 		MP_RETURN_IF_ERROR(graph->Initialize(config));
 #if !MEDIAPIPE_DISABLE_GPU
 		ASSIGN_OR_RETURN(auto gpu_resources, mediapipe::GpuResources::Create());

@@ -45,7 +45,7 @@ void GDMP::_on_new_gpu_frame(String stream_name, Ref<Packet> packet) {
 void GDMP::init_graph(String graph_path) {
 	close_camera();
 	graph = Ref<Graph>(Graph::_new());
-	graph->initialize(graph_path);
+	graph->initialize(graph_path, true);
 #if !MEDIAPIPE_DISABLE_GPU
 	gpu_helper = graph->get_gpu_helper();
 #endif

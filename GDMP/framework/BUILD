@@ -7,7 +7,6 @@ cc_library(
         ":packet",
         "//mediapipe/framework:calculator_graph",
         "//mediapipe/framework:packet",
-        "//mediapipe/framework/port:file_helpers",
         "//mediapipe/framework/port:parse_text_proto",
         "//mediapipe/framework/port:status",
         "//third_party:godot",

@@ -54,9 +54,9 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
         "Android":
             GDMP.init_graph("name_of_your_graph.binarypb")
         "X11":
-            GDMP.init_graph("path/to/your/graph.pbtxt")
+            GDMP.init_graph("res://path/to/your/graph.pbtxt")
     ```
-    Note that for desktop Linux, files used by MediaPipe need to be placed externally (e.g. place the models in your project's directory according to the calculator's model_path, and export graphs and models outside of .pck file)
+    Note that for desktop Linux, files used by MediaPipe graphs need to be placed externally (e.g. place the models in your project's directory according to the calculator's model_path, and export models outside of .pck file)
 3. To add a proto callback to the graph's output stream:
 
     ```gdscript
