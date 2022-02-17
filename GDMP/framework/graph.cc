@@ -35,7 +35,7 @@ void Graph::initialize(String graph_path, bool as_text) {
 		Error err;
 		err = file->open(graph_path, File::READ);
 		if (err != Error::OK) {
-			return absl::UnknownError(String("Failed to open graph file: {0}").format(Array::make(err)).alloc_c_string());
+			return absl::UnknownError(String("Failed to open graph file: {0}").format(Array::make((int)err)).alloc_c_string());
 		}
 		mediapipe::CalculatorGraphConfig config;
 		bool result;
