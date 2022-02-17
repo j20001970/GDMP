@@ -27,7 +27,7 @@ class Graph : public Reference {
 
 		void _init();
 
-		void initialize(String graph_path);
+		void initialize(String graph_path, bool as_text);
 		void add_packet_callback(String stream_name, Object *object, String method);
 		void start(Dictionary side_packets);
 		void add_packet(String stream_name, Ref<Packet> packet);
