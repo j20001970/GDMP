@@ -1,7 +1,7 @@
 extends EditorExportPlugin
 
 func _export_begin(features : PoolStringArray, is_debug : bool, path : String, flags : int) -> void:
-	var exports : PoolStringArray = find_files("res://", ["binarypb", "pbtxt"])
+	var exports : PoolStringArray = find_files("res://", ["binarypb", "pbtxt", "tflite"])
 	for file in exports:
 		var f : File = File.new()
 		var result : int = f.open(file, File.READ)

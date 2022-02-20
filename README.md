@@ -29,9 +29,9 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 6. Build GDMP AAR, copy generated file to your project's `android/plugins` directory, along with mediapipe_aar from step 3.
 7. Copy `plugins/GDMP.gdap` to your project's `android/plugins` directory.
 
-    Note that Android export needs to exclude `res://addons/GDMP/GDMP.gdnlib` which is intended for desktop usage, otherwise it will fail to load GDNative library that provided by GDMP aar.
+    Note that Android export needs to exclude `res://addons/GDMP/GDMP.gdnlib` which is intended for desktop usage, otherwise it will fail to load GDNative library that provided by GDMP aar. You can go to `Project -> Export...`, select your Android preset, and in `Resources` tab fill `addons/GDMP/*.gdnlib` in filter to exclude files from project.
 
-    You can go to `Project -> Export...`, select your Android preset, and in `Resources` tab fill `addons/GDMP/*.gdnlib` in filter to exclude files from project.
+    Files used by MediaPipe graphs (e.g. TFLite models) on Android are provided by GDMP aar for now, if you're targeting both desktop and Android, consider temporary removing them from your project's directory when export to Android to avoid duplicate files.
 
 ## Building for Linux
 1. Refer to [Building the C++ bindings](https://docs.godotengine.org/en/stable/tutorials/plugins/gdnative/gdnative-cpp-example.html#building-the-c-bindings) section for building Godot C++ bindings in `godot-cpp` directory.
@@ -46,6 +46,8 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
     `mediapipe/bazel-bin/mediapipe/GDMP/libgdmp.so`
 4. Copy libgdmp.so to your project's `addons/GDMP` directory.
 
+    Files used by MediaPipe graphs (e.g. TFLite models) on desktop need to be placed in your project's directory according to the path provided by the calculator configs.
+
 ## Usage
 1. Go to `Project -> Project settings -> Plugins` to enable GDMP.
 2. To load a MediaPipe graph:
@@ -57,7 +59,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
         "X11":
             GDMP.init_graph("res://path/to/your/graph.pbtxt")
     ```
-    Note that for desktop Linux, files used by MediaPipe graphs need to be placed externally (e.g. place the models in your project's directory according to the calculator's model_path, and export models outside of .pck file)
+
 3. To add a proto callback to the graph's output stream:
 
     ```gdscript
