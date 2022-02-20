@@ -1,5 +1,13 @@
 load("//mediapipe/GDMP:variables.bzl", "CALCULATORS")
 
+config_setting(
+    name = "godot",
+    define_values = {
+        "GODOT": "1",
+    },
+    visibility = ["//visibility:public"],
+)
+
 cc_binary(
     name = "gdmp",
     srcs = ["gdlibrary.cc"],
