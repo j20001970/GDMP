@@ -41,14 +41,9 @@ var plugin : Object
 var packet_data : Dictionary = {}
 
 func _enter_tree():
-	match OS.get_name():
-		"Android":
-			if Engine.has_singleton("GDMP"):
-				plugin = Engine.get_singleton("GDMP")
-		_:
-			plugin = Node.new()
-			plugin.set_script(load("res://addons/GDMP/GDMP.gdns"))
-			add_child(plugin)
+	plugin = Node.new()
+	plugin.set_script(load("res://addons/GDMP/GDMP.gdns"))
+	add_child(plugin)
 	plugin.connect("on_new_proto", self, "_on_new_packet")
 	plugin.connect("on_new_proto_vector", self, "_on_new_packet")
 	plugin.connect("on_new_frame", self, "_on_new_frame")

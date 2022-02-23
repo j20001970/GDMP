@@ -43,6 +43,9 @@ void CameraHelper::_init() {
 #endif
 }
 
+void CameraHelper::_on_permission_result(PoolStringArray permissions, PoolIntArray results) {
+}
+
 void CameraHelper::set_flip_y(bool flip) {
 	flip_y = flip;
 }

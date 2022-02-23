@@ -4,13 +4,14 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 ## Getting Started
 1. Install [Bazelisk](https://docs.bazel.build/versions/main/install-bazelisk.html) or bazel version that meets MediaPipe requirement.
 2. Refer to [Installation](https://google.github.io/mediapipe/getting_started/install.html) for OpenCV and FFmpeg setup.
-3. Apply `mediapipe_setup.diff` to `mediapipe` directory.
-4. Run `setup.py`, the script will try to symlink source code and external dependencies to mediapipe workspace, if symlink is not available on the host it will just copy the code directory instead.
-5. Copy `addons/GDMP` to your project's directory.
+3. Refer to [Building the C++ bindings](https://docs.godotengine.org/en/stable/tutorials/plugins/gdnative/gdnative-cpp-example.html#building-the-c-bindings) section for building Godot C++ bindings in `godot-cpp` directory.
+4. Apply `mediapipe_setup.diff` to `mediapipe` directory.
+5. Run `setup.py`, the script will try to symlink source code and external dependencies to mediapipe workspace, if symlink is not available on the host it will just copy the code directory instead.
+6. Copy `addons/GDMP` to your project's directory.
 
 ## Building for Android
 1. Refer to [Prerequisite](https://google.github.io/mediapipe/getting_started/android.html#prerequisite) section for Java and Android SDK & NDK setup.
-2. Place the calculator dependencies in `GDMP/variables.bzl` and assets in `GDMP/mediapipe_aar/java/com/google/mediapipe/BUILD`
+2. Place the calculator dependencies in `GDMP/variables.bzl`
 3. Run:
 
     ```
@@ -20,23 +21,22 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 
     `mediapipe/bazel-bin/mediapipe/GDMP/mediapipe_aar/java/com/google/mediapipe/mediapipe_aar.aar`
 4. Copy or link godot-lib and mediapipe_aar AAR to `android/GDMP/libs` directory.
-5. Run:
+5. Build GDMP AAR, copy generated file to your project's `android/plugins` directory, along with mediapipe_aar from step 3.
+6. Run:
 
     ```
     build.py android
     ```
-    to build android library, and copy them to `android/GDMP/src/main/jniLibs/{ABI}` depending on your target ABIs.
-6. Build GDMP AAR, copy generated file to your project's `android/plugins` directory, along with mediapipe_aar from step 3.
+    to build android library, and copy them to your project's `addons/GDMP/libs/android/{ABI}` depending on your target ABIs.
+    (Optional) also copy `libopencv_java3.so` to the project as GDNative library dependencies if OpenCV is used in calculators.
+
 7. Copy `plugins/GDMP.gdap` to your project's `android/plugins` directory.
 
-    Note that Android export needs to exclude `res://addons/GDMP/GDMP.gdnlib` which is intended for desktop usage, otherwise it will fail to load GDNative library that provided by GDMP aar. You can go to `Project -> Export...`, select your Android preset, and in `Resources` tab fill `addons/GDMP/*.gdnlib` in filter to exclude files from project.
-
-    Files used by MediaPipe graphs (e.g. TFLite models) on Android are provided by GDMP aar for now, if you're targeting both desktop and Android, consider temporary removing them from your project's directory when export to Android to avoid duplicate files.
+    Files used by MediaPipe graphs (e.g. TFLite models) need to be placed in your project's directory according to the path provided by the calculator configs.
 
 ## Building for Linux
-1. Refer to [Building the C++ bindings](https://docs.godotengine.org/en/stable/tutorials/plugins/gdnative/gdnative-cpp-example.html#building-the-c-bindings) section for building Godot C++ bindings in `godot-cpp` directory.
-2. Place the calculator dependencies in `GDMP/variables.bzl`
-3. Run:
+1. Place the calculator dependencies in `GDMP/variables.bzl`
+2. Run:
 
     ```
     build.py desktop
@@ -44,20 +44,16 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
     to build desktop library, generated file will be located in
 
     `mediapipe/bazel-bin/mediapipe/GDMP/libgdmp.so`
-4. Copy libgdmp.so to your project's `addons/GDMP` directory.
+3. Copy libgdmp.so to your project's `addons/GDMP` directory.
 
-    Files used by MediaPipe graphs (e.g. TFLite models) on desktop need to be placed in your project's directory according to the path provided by the calculator configs.
+    Files used by MediaPipe graphs (e.g. TFLite models) need to be placed in your project's directory according to the path provided by the calculator configs.
 
 ## Usage
 1. Go to `Project -> Project settings -> Plugins` to enable GDMP.
 2. To load a MediaPipe graph:
 
     ```gdscript
-    match OS.get_name():
-        "Android":
-            GDMP.init_graph("name_of_your_graph.binarypb")
-        "X11":
-            GDMP.init_graph("res://path/to/your/graph.pbtxt")
+    GDMP.init_graph("res://path/to/your/graph.pbtxt")
     ```
 
 3. To add a proto callback to the graph's output stream:

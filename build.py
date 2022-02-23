@@ -19,7 +19,7 @@ if bazel_exec is None:
 
 try:
     # whcih target to build
-    bazel_args = [bazel_exec, 'build', '-c', 'opt']
+    bazel_args = [bazel_exec, 'build', '-c', 'opt', '--define', 'GODOT=1']
     if args.target.lower() == 'android':
         bazel_args.extend([\
             '--host_crosstool_top=@bazel_tools//tools/cpp:toolchain', \
@@ -30,11 +30,12 @@ try:
     elif args.target.lower() == 'aar':
         bazel_args.extend([\
             '--host_crosstool_top=@bazel_tools//tools/cpp:toolchain', \
-            '--fat_apk_cpu=arm64-v8a', '--linkopt=-s', \
+            '--define', 'EXCLUDE_OPENCV_SO_LIB=1', \
+            '--fat_apk_cpu=arm64-v8a', \
+            '--linkopt=-s', \
             '//mediapipe/GDMP/mediapipe_aar/java/com/google/mediapipe:mediapipe_aar'])
     elif args.target.lower() == 'desktop':
         bazel_args.extend([\
-            '--define', 'GODOT=1',\
             '--copt', '-fPIC', \
             '//mediapipe/GDMP:gdmp'])
     else:

@@ -1,13 +1,11 @@
 #include "Godot.hpp"
 
-#ifndef NO_GDMP
 #include "framework/graph.h"
 #include "framework/packet.h"
 #include "gdmp.h"
 #include "io/camera_helper.h"
 #if !MEDIAPIPE_DISABLE_GPU
 #include "framework/gpu_helper.h"
-#endif
 #endif
 
 #include "proto/classification.h"
@@ -29,14 +27,12 @@ extern "C" void GDN_EXPORT godot_gdnative_terminate(godot_gdnative_terminate_opt
 
 extern "C" void GDN_EXPORT godot_nativescript_init(void *handle) {
 	godot::Godot::nativescript_init(handle);
-#ifndef NO_GDMP
 	godot::register_class<godot::GDMP>();
 	godot::register_class<godot::Packet>();
 	godot::register_class<godot::Graph>();
 	godot::register_class<godot::CameraHelper>();
 #if !MEDIAPIPE_DISABLE_GPU
 	godot::register_class<godot::GPUHelper>();
-#endif
 #endif
 	// Classification
 	godot::register_class<godot::Classification>();

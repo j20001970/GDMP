@@ -51,7 +51,19 @@ void Graph::initialize(String graph_path, bool as_text) {
 		}
 		MP_RETURN_IF_ERROR(graph->Initialize(config));
 #if !MEDIAPIPE_DISABLE_GPU
-		ASSIGN_OR_RETURN(auto gpu_resources, mediapipe::GpuResources::Create());
+#ifdef __ANDROID__
+		JNIEnv *env = android_api->godot_android_get_env();
+		jclass egl_manager_class = env->FindClass("com/google/mediapipe/glutil/EglManager");
+		jmethodID egl_manager_cnstr = env->GetMethodID(egl_manager_class, "<init>", "(Ljava/lang/Object;)V");
+		egl_manager = env->NewObject(egl_manager_class, egl_manager_cnstr, nullptr);
+		egl_manager = env->NewGlobalRef(egl_manager);
+		EGLContext context = reinterpret_cast<EGLContext>(
+				env->CallLongMethod(egl_manager, env->GetMethodID(egl_manager_class, "getNativeContext", "()J")));
+		env->DeleteLocalRef(egl_manager_class);
+#else
+		EGLContext context = mediapipe::kPlatformGlContextNone;
+#endif
+		ASSIGN_OR_RETURN(auto gpu_resources, mediapipe::GpuResources::Create(context));
 		MP_RETURN_IF_ERROR(graph->SetGpuResources(std::move(gpu_resources)));
 #endif
 		return absl::OkStatus();

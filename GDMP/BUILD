@@ -1,7 +1,25 @@
 load("//mediapipe/GDMP:variables.bzl", "CALCULATORS")
 
-config_setting(
+alias(
     name = "godot",
+    actual = select({
+        ":godot_android": ":godot_android",
+        "//conditions:default": "godot_desktop",
+    }),
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "godot_android",
+    define_values = {
+        "GODOT": "1",
+    },
+    values = {"crosstool_top": "//external:android/crosstool"},
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "godot_desktop",
     define_values = {
         "GODOT": "1",
     },
@@ -10,9 +28,13 @@ config_setting(
 
 cc_binary(
     name = "gdmp",
-    srcs = ["gdlibrary.cc"],
+    srcs = [
+        "gdlibrary.cc",
+        "gdmp.cc",
+        "gdmp.h",
+    ],
     defines = select({
-        "//mediapipe:android": ["NO_GDMP"],
+        "//mediapipe:android": [],
         "//conditions:default": [
             "MESA_EGL_NO_X11_HEADERS",
             "EGL_NO_X11",
@@ -30,6 +52,9 @@ cc_binary(
     linkshared = 1,
     visibility = ["//visibility:public"],
     deps = [
+        "//mediapipe/GDMP/framework:graph",
+        "//mediapipe/GDMP/framework:packet",
+        "//mediapipe/GDMP/io:camera_helper",
         "//mediapipe/GDMP/proto:classification",
         "//mediapipe/GDMP/proto:detection",
         "//mediapipe/GDMP/proto:landmark",
@@ -38,26 +63,7 @@ cc_binary(
         "//mediapipe/GDMP/proto:rect",
         "//third_party:godot",
     ] + select({
-        "//mediapipe:android": [],
-        "//conditions:default": [":gdmp_lib"] + CALCULATORS,
-    }),
-)
-
-cc_library(
-    name = "gdmp_lib",
-    srcs = [
-        "gdmp.cc",
-        "gdmp.h",
-    ],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//mediapipe/GDMP/framework:graph",
-        "//mediapipe/GDMP/framework:packet",
-        "//mediapipe/GDMP/io:camera_helper",
-        "//third_party:godot",
-    ] + select({
         "//mediapipe/gpu:disable_gpu": [],
         "//conditions:default": ["//mediapipe/GDMP/framework:gpu_helper"],
-    }),
-    alwayslink = 1,
+    }) + CALCULATORS,
 )

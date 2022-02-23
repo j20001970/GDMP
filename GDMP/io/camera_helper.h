@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "Godot.hpp"
+#include "PoolArrays.hpp"
 #include "Ref.hpp"
 #include "Reference.hpp"
 #include "String.hpp"
@@ -39,6 +40,7 @@ class CameraHelper : public Reference {
 		String stream_name;
 		Graph *graph;
 		std::unique_ptr<CameraHelperImpl> impl;
+		void _on_permission_result(PoolStringArray permissions, PoolIntArray results);
 #if !MEDIAPIPE_DISABLE_GPU
 		bool use_gpu;
 #endif

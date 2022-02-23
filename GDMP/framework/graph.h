@@ -37,6 +37,9 @@ class Graph : public Object {
 #if !MEDIAPIPE_DISABLE_GPU
 		std::shared_ptr<mediapipe::GlContext> get_gl_context();
 		Ref<GPUHelper> get_gpu_helper();
+#ifdef __ANDROID__
+		jobject egl_manager;
+#endif
 #endif
 
 	private:
