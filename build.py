@@ -3,10 +3,9 @@ import os
 import subprocess
 import sys
 from argparse import ArgumentParser
-from shutil import copyfile, rmtree, which
+from shutil import which
 
-mediapipe_dir = os.path.join(os.path.dirname(__file__), 'mediapipe', 'mediapipe')
-copy_dir = 'GDMP'
+mediapipe_dir = os.path.join(os.path.dirname(__file__), 'mediapipe')
 
 parser = ArgumentParser()
 parser.add_argument('target', choices=['aar', 'android', 'desktop'], help='target to build')
@@ -19,7 +18,6 @@ if bazel_exec is None:
     sys.exit(-1)
 
 try:
-    os.chdir(os.path.dirname(__file__))
     # whcih target to build
     bazel_args = [bazel_exec, 'build', '-c', 'opt']
     if args.target.lower() == 'android':
@@ -28,28 +26,21 @@ try:
             '--crosstool_top=//external:android/crosstool', \
             '--cpu=arm64-v8a', \
             '--copt', '-fPIC', \
-            'GDMP:gdmp'])
+            '//mediapipe/GDMP:gdmp'])
     elif args.target.lower() == 'aar':
         bazel_args.extend([\
             '--host_crosstool_top=@bazel_tools//tools/cpp:toolchain', \
             '--fat_apk_cpu=arm64-v8a', '--linkopt=-s', \
-            'GDMP/mediapipe_aar/java/com/google/mediapipe:mediapipe_aar'])
+            '//mediapipe/GDMP/mediapipe_aar/java/com/google/mediapipe:mediapipe_aar'])
     elif args.target.lower() == 'desktop':
         bazel_args.extend([\
             '--copt', '-fPIC', \
-            'GDMP:gdmp'])
+            '//mediapipe/GDMP:gdmp'])
     else:
         print("unknown target, exiting.")
         sys.exit(-1)
-    for root, dirs, files in os.walk(copy_dir):
-        if not os.path.exists(os.path.join(mediapipe_dir, root)):
-            os.makedirs(os.path.join(mediapipe_dir, root))
-        for file in files:
-            if not os.path.exists(os.path.join(mediapipe_dir, root, file)):
-                copyfile(os.path.join(root, file), os.path.join(mediapipe_dir, root, file))
     os.chdir(mediapipe_dir)
     subprocess.run(bazel_args)
-    rmtree(os.path.join(mediapipe_dir, copy_dir))
 except Exception as e:
     print(e)
     sys.exit(-1)
