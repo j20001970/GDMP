@@ -99,3 +99,22 @@ diff --git a/mediapipe/java/com/google/mediapipe/framework/PacketGetter.java b/m
    public static <T> List<T> getProtoVector(final Packet packet, Parser<T> messageParser) {
      byte[][] protoVector = nativeGetProtoVector(packet.getNativeHandle());
      Preconditions.checkNotNull(
+diff --git a/mediapipe/util/BUILD b/mediapipe/util/BUILD
+--- a/mediapipe/util/BUILD
++++ b/mediapipe/util/BUILD
+@@ -157,6 +157,7 @@ cc_library(
+         "resource_util_internal.h",
+     ] + select({
+         "//conditions:default": ["resource_util_default.cc"],
++        "//mediapipe/GDMP:godot": [],
+         "//mediapipe:android": ["resource_util_android.cc"],
+         "//mediapipe:ios": ["resource_util_apple.cc"],
+         "//mediapipe:macos": ["resource_util_default.cc"],
+@@ -188,6 +189,7 @@ cc_library(
+         "//conditions:default": [
+             "@com_google_absl//absl/flags:flag",
+         ],
++        "//mediapipe/GDMP:godot": ["//mediapipe/GDMP/util:resource_util_godot"],
+         "//mediapipe:android": [
+             "//mediapipe/util/android:asset_manager_util",
+             "//mediapipe/util/android/file/base",

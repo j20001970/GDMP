@@ -34,6 +34,7 @@ try:
             '//mediapipe/GDMP/mediapipe_aar/java/com/google/mediapipe:mediapipe_aar'])
     elif args.target.lower() == 'desktop':
         bazel_args.extend([\
+            '--define', 'GODOT=1',\
             '--copt', '-fPIC', \
             '//mediapipe/GDMP:gdmp'])
     else:
