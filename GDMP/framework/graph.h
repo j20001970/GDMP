@@ -12,6 +12,7 @@
 
 #include "mediapipe/framework/calculator_graph.h"
 
+#include "mediapipe/gpu/gl_context.h"
 #include "packet.h"
 #if !MEDIAPIPE_DISABLE_GPU
 #include "gpu_helper.h"
@@ -34,6 +35,7 @@ class Graph : public Reference {
 		void stop();
 
 #if !MEDIAPIPE_DISABLE_GPU
+		std::shared_ptr<mediapipe::GlContext> get_gl_context();
 		Ref<GPUHelper> get_gpu_helper();
 #endif
 
