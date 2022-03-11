@@ -21,8 +21,21 @@ void GPUHelper::_init() {}
 
 Ref<Image> GPUHelper::get_gpu_frame(Ref<Packet> packet) {
 	Ref<Image> image;
-	gpu_helper.RunInGlContext([this, &packet, &image]() -> void {
-		auto image_frame = packet->get_packet().Get<mediapipe::GpuBuffer>().AsImageFrame();
+	std::unique_ptr<mediapipe::ImageFrame> image_frame;
+	gpu_helper.RunInGlContext([this, &packet, &image, &image_frame]() -> void {
+		auto &gpu_frame = packet->get_packet().Get<mediapipe::GpuBuffer>();
+		auto texture = gpu_helper.CreateSourceTexture(gpu_frame);
+		image_frame = absl::make_unique<mediapipe::ImageFrame>(
+				mediapipe::ImageFormatForGpuBufferFormat(gpu_frame.format()),
+				gpu_frame.width(), gpu_frame.height(),
+				mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
+		gpu_helper.BindFramebuffer(texture);
+		const auto info = mediapipe::GlTextureInfoForGpuBufferFormat(
+				gpu_frame.format(), 0, gpu_helper.GetGlVersion());
+		glReadPixels(0, 0, texture.width(), texture.height(), info.gl_format,
+				info.gl_type, image_frame->MutablePixelData());
+		glFlush();
+		texture.Release();
 		image = to_image(*image_frame);
 	});
 	return image;
