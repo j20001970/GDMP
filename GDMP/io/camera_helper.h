@@ -16,6 +16,8 @@ class CameraHelper : public Reference {
 		GODOT_CLASS(CameraHelper, Reference)
 
 	public:
+		class CameraHelperImpl;
+
 		static void _register_methods();
 
 		CameraHelper();
@@ -36,7 +38,6 @@ class CameraHelper : public Reference {
 		bool started;
 		String stream_name;
 		Ref<Graph> graph;
-		class CameraHelperImpl;
 		std::unique_ptr<CameraHelperImpl> impl;
 #if !MEDIAPIPE_DISABLE_GPU
 		bool use_gpu;
