@@ -94,7 +94,6 @@ void CameraHelper::start(int index) {
 			packet->set_timestamp(frame_timestamp_us);
 			graph->add_packet(stream_name, packet);
 		}
-		capture.release();
 	});
 }
 
@@ -102,6 +101,7 @@ void CameraHelper::close() {
 	started = false;
 	if (impl && impl->thread.joinable()) {
 		impl->thread.join();
+		impl->release();
 	}
 }
 
