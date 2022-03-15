@@ -134,7 +134,7 @@ void Graph::stop() {
 			return absl::OkStatus();
 		}
 		MP_RETURN_IF_ERROR(graph->CloseAllPacketSources());
-		return graph->WaitUntilDone();
+		return graph->WaitUntilIdle();
 	}();
 	if (!result.ok()) {
 		Godot::print(result.message().data());
