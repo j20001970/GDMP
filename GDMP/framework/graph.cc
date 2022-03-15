@@ -26,6 +26,7 @@ void Graph::_register_methods() {
 
 void Graph::_init() {
 	graph = nullptr;
+	started = false;
 }
 
 void Graph::initialize(String graph_path, bool as_text) {
@@ -109,7 +110,9 @@ void Graph::start(Dictionary side_packets) {
 				}
 			}
 		}
-		return graph->StartRun(packets);
+		MP_RETURN_IF_ERROR(graph->StartRun(packets));
+		started = true;
+		return absl::OkStatus();
 	}();
 	if (!result.ok()) {
 		Godot::print(result.message().data());
@@ -133,8 +136,12 @@ void Graph::stop() {
 		if (!graph) {
 			return absl::OkStatus();
 		}
-		MP_RETURN_IF_ERROR(graph->CloseAllPacketSources());
-		return graph->WaitUntilIdle();
+		if (started) {
+			MP_RETURN_IF_ERROR(graph->CloseAllPacketSources());
+			MP_RETURN_IF_ERROR(graph->WaitUntilIdle());
+		}
+		started = false;
+		return absl::OkStatus();
 	}();
 	if (!result.ok()) {
 		Godot::print(result.message().data());

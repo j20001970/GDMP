@@ -40,6 +40,7 @@ class Graph : public Reference {
 #endif
 
 	private:
+		bool started;
 		std::unique_ptr<mediapipe::CalculatorGraph> graph;
 };
 
