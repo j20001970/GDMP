@@ -37,7 +37,7 @@ class GDMP : public Node {
 		void close_camera();
 
 	private:
-		Ref<Graph> graph;
+		Graph *graph;
 		Ref<CameraHelper> camera_helper;
 #if !MEDIAPIPE_DISABLE_GPU
 		Ref<GPUHelper> gpu_helper;

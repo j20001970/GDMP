@@ -20,7 +20,7 @@
 
 namespace godot {
 
-class Graph : public Reference {
+class Graph : public Object {
 		GODOT_CLASS(Graph, Reference)
 
 	public:

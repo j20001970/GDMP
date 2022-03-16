@@ -26,7 +26,7 @@ class CameraHelper : public Reference {
 		void _init();
 
 		void set_flip_y(bool flip);
-		void set_graph(Ref<Graph> graph, String stream_name);
+		void set_graph(Graph *graph, String stream_name);
 		void start(int index);
 		void close();
 #if !MEDIAPIPE_DISABLE_GPU
@@ -37,7 +37,7 @@ class CameraHelper : public Reference {
 		bool flip_y;
 		bool started;
 		String stream_name;
-		Ref<Graph> graph;
+		Graph *graph;
 		std::unique_ptr<CameraHelperImpl> impl;
 #if !MEDIAPIPE_DISABLE_GPU
 		bool use_gpu;

@@ -47,13 +47,13 @@ void CameraHelper::set_flip_y(bool flip) {
 	flip_y = flip;
 }
 
-void CameraHelper::set_graph(Ref<Graph> graph, String stream_name) {
+void CameraHelper::set_graph(Graph *graph, String stream_name) {
 	this->stream_name = stream_name;
 	this->graph = graph;
 }
 
 void CameraHelper::start(int index) {
-	if (graph.is_null()) {
+	if (graph == nullptr) {
 		Godot::print("Graph is not set.");
 		return;
 	}
