@@ -24,7 +24,6 @@ void GDMP::_register_methods() {
 
 void GDMP::_init() {
 	// initialize any variables here
-	camera_helper = Ref<CameraHelper>(CameraHelper::_new());
 }
 
 void GDMP::_on_new_proto(String stream_name, Ref<Packet> packet) {
@@ -70,14 +69,14 @@ void GDMP::start_graph(Dictionary side_packets) {
 }
 
 void GDMP::start_camera(int index, String stream_name) {
+	camera_helper = Ref<CameraHelper>(CameraHelper::_new());
 	camera_helper->set_graph(graph, stream_name);
 	camera_helper->set_flip_y(true);
 	camera_helper->start(index);
 }
 
 void GDMP::close_camera() {
-	if (camera_helper.is_null()) {
-		return;
+	if (camera_helper.is_valid()) {
+		camera_helper->close();
 	}
-	camera_helper->close();
 }
