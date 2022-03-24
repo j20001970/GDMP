@@ -35,6 +35,7 @@ Ref<Image> GPUHelper::get_gpu_frame(Ref<Packet> packet) {
 		glReadPixels(0, 0, texture.width(), texture.height(), info.gl_format,
 				info.gl_type, image_frame->MutablePixelData());
 		glFlush();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		texture.Release();
 		image = to_image(*image_frame);
 	});
