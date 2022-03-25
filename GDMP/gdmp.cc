@@ -71,7 +71,6 @@ void GDMP::start_graph(Dictionary side_packets) {
 void GDMP::start_camera(int index, String stream_name) {
 	camera_helper = Ref<CameraHelper>(CameraHelper::_new());
 	camera_helper->set_graph(graph, stream_name);
-	camera_helper->set_flip_y(true);
 	camera_helper->start(index);
 }
 

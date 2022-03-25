@@ -16,7 +16,6 @@
 using namespace godot;
 
 void CameraHelper::_register_methods() {
-	register_method("set_flip_y", &CameraHelper::set_flip_y);
 	register_method("set_graph", &CameraHelper::set_graph);
 	register_method("start", &CameraHelper::start);
 	register_method("close", &CameraHelper::close);
@@ -36,7 +35,6 @@ CameraHelper::~CameraHelper() = default;
 
 void CameraHelper::_init() {
 	impl = std::make_unique<CameraHelperImpl>();
-	flip_y = false;
 	started = false;
 #if !MEDIAPIPE_DISABLE_GPU
 	use_gpu = true;
@@ -44,10 +42,6 @@ void CameraHelper::_init() {
 }
 
 void CameraHelper::_on_permission_result(PoolStringArray permissions, PoolIntArray results) {
-}
-
-void CameraHelper::set_flip_y(bool flip) {
-	flip_y = flip;
 }
 
 void CameraHelper::set_graph(Graph *graph, String stream_name) {
@@ -77,9 +71,7 @@ void CameraHelper::start(int index) {
 		while (started) {
 			cv::Mat video_frame;
 			capture >> video_frame;
-			if (flip_y) {
-				cv::flip(video_frame, video_frame, 1);
-			}
+			cv::flip(video_frame, video_frame, 1);
 			cv::cvtColor(video_frame, video_frame, cv::COLOR_BGR2RGBA);
 			auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
 					mediapipe::ImageFormat::SRGBA, video_frame.cols, video_frame.rows,

@@ -26,7 +26,6 @@ class CameraHelper : public Reference {
 
 		void _init();
 
-		void set_flip_y(bool flip);
 		void set_graph(Graph *graph, String stream_name);
 		void start(int index);
 		void close();
@@ -35,7 +34,6 @@ class CameraHelper : public Reference {
 #endif
 
 	private:
-		bool flip_y;
 		bool started;
 		String stream_name;
 		Graph *graph;
