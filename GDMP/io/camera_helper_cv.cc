@@ -15,15 +15,6 @@
 
 using namespace godot;
 
-void CameraHelper::_register_methods() {
-	register_method("set_graph", &CameraHelper::set_graph);
-	register_method("start", &CameraHelper::start);
-	register_method("close", &CameraHelper::close);
-#if !MEDIAPIPE_DISABLE_GPU
-	register_method("set_use_gpu", &CameraHelper::set_use_gpu);
-#endif
-}
-
 class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 	public:
 		CameraHelperImpl() {
@@ -39,8 +30,9 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 
 		void start(int index) {
 			open(index);
-			if(!isOpened()) {
+			if (!isOpened()) {
 				Godot::print("Failed to open camera");
+				return;
 			}
 			thread = std::thread([this]() -> void {
 				set(cv::CAP_PROP_FRAME_WIDTH, 640);
@@ -81,20 +73,20 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 				release();
 			}
 		}
-		#if !MEDIAPIPE_DISABLE_GPU
+#if !MEDIAPIPE_DISABLE_GPU
 		void set_use_gpu(bool use_gpu) {
 			this->use_gpu = use_gpu;
 		}
-		#endif
+#endif
 
 	private:
 		bool grab_frames;
 		std::thread thread;
 		String stream_name;
 		Graph *graph;
-		#if !MEDIAPIPE_DISABLE_GPU
+#if !MEDIAPIPE_DISABLE_GPU
 		bool use_gpu;
-		#endif
+#endif
 };
 
 CameraHelper::CameraHelper() = default;

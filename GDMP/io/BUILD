@@ -1,6 +1,6 @@
 cc_library(
     name = "camera_helper",
-    srcs = select({
+    srcs = ["camera_helper.cc"] + select({
         "//mediapipe:android": ["camera_helper_android.cc"],
         "//conditions:default": ["camera_helper_cv.cc"],
     }),
