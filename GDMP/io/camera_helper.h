@@ -34,14 +34,8 @@ class CameraHelper : public Reference {
 #endif
 
 	private:
-		bool started;
-		String stream_name;
-		Graph *graph;
 		std::unique_ptr<CameraHelperImpl> impl;
 		void _on_permission_result(PoolStringArray permissions, PoolIntArray results);
-#if !MEDIAPIPE_DISABLE_GPU
-		bool use_gpu;
-#endif
 };
 
 } //namespace godot

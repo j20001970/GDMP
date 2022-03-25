@@ -14,6 +14,7 @@ using namespace godot;
 
 class CameraHelper::CameraHelperImpl {
 	public:
+		bool started;
 		Object *android_plugin;
 
 		CameraHelperImpl() {
@@ -47,6 +48,7 @@ class CameraHelper::CameraHelperImpl {
 				Godot::print("Graph is not set");
 				return;
 			}
+			started = true;
 			JNIEnv *env = android_api->godot_android_get_env();
 			jobject activity = android_api->godot_android_get_activity();
 			const char *camera_cnstr_sig =
@@ -81,6 +83,7 @@ class CameraHelper::CameraHelperImpl {
 			if (camera && !env->IsSameObject(camera, NULL)) {
 				env->CallVoidMethod(camera, env->GetMethodID(camera_class, "closeCamera", "()V"));
 			}
+			started = false;
 		}
 
 		void on_new_frame(JNIEnv *env, jobject frame, int name, int width, int height) {
@@ -149,7 +152,7 @@ void CameraHelper::_init() {
 void CameraHelper::_on_permission_result(PoolStringArray permissions, PoolIntArray results) {
 	for (int i = 0; i < permissions.size(); i++) {
 		String permission = permissions[i];
-		if (permission == "android.permission.CAMERA" && results[i] == 0 && started) {
+		if (permission == "android.permission.CAMERA" && results[i] == 0 && impl->started) {
 			impl->start();
 		}
 	}
@@ -160,12 +163,10 @@ void CameraHelper::set_graph(Graph *graph, String stream_name) {
 }
 
 void CameraHelper::start(int index) {
-	started = true;
 	impl->start();
 }
 
 void CameraHelper::close() {
-	started = false;
 	impl->close();
 }
 
