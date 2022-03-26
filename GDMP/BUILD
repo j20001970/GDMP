@@ -30,8 +30,6 @@ cc_binary(
     name = "gdmp",
     srcs = [
         "gdlibrary.cc",
-        "gdmp.cc",
-        "gdmp.h",
     ],
     defines = select({
         "//mediapipe:android": [],
