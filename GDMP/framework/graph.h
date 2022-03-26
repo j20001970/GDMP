@@ -21,7 +21,7 @@
 namespace godot {
 
 class Graph : public Object {
-		GODOT_CLASS(Graph, Reference)
+		GODOT_CLASS(Graph, Object)
 
 	public:
 		static void _register_methods();
