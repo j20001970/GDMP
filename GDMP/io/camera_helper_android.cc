@@ -43,6 +43,11 @@ class CameraHelper::CameraHelperImpl {
 			this->stream_name = stream_name;
 		}
 
+		void start(int index) {
+			camera_facing = index;
+			start();
+		}
+
 		void start() {
 			if (graph == nullptr) {
 				Godot::print("Graph is not set");
@@ -51,11 +56,6 @@ class CameraHelper::CameraHelperImpl {
 			started = true;
 			JNIEnv *env = android_api->godot_android_get_env();
 			jobject activity = android_api->godot_android_get_activity();
-			const char *camera_cnstr_sig =
-					"(JLandroid/app/Activity;Lcom/google/mediapipe/glutil/EglManager;)V";
-			jmethodID camera_cnstr = env->GetMethodID(camera_class, "<init>", camera_cnstr_sig);
-			camera = env->NewObject(camera_class, camera_cnstr, this, activity, graph->egl_manager);
-			camera = env->NewGlobalRef(camera);
 			jclass permission_class = env->FindClass("com/google/mediapipe/components/PermissionHelper");
 			jmethodID check_method = env->GetStaticMethodID(
 					permission_class, "cameraPermissionsGranted", "(Landroid/app/Activity;)Z");
@@ -63,7 +63,23 @@ class CameraHelper::CameraHelperImpl {
 			if (permission_granted) {
 				const char *camera_facing_field_sig =
 						"Lcom/google/mediapipe/components/CameraHelper$CameraFacing;";
-				jfieldID camera_facing_field = env->GetStaticFieldID(camera_facing_class, "FRONT", camera_facing_field_sig);
+				jfieldID camera_facing_field;
+				switch (camera_facing) {
+					case 0:
+						camera_facing_field = env->GetStaticFieldID(camera_facing_class, "FRONT", camera_facing_field_sig);
+						break;
+					case 1:
+						camera_facing_field = env->GetStaticFieldID(camera_facing_class, "BACK", camera_facing_field_sig);
+						break;
+					default:
+						Godot::print(String("unexpected camera facing {0}").format(Array::make(camera_facing)));
+						return;
+				}
+				const char *camera_cnstr_sig =
+						"(JLandroid/app/Activity;Lcom/google/mediapipe/glutil/EglManager;)V";
+				jmethodID camera_cnstr = env->GetMethodID(camera_class, "<init>", camera_cnstr_sig);
+				camera = env->NewObject(camera_class, camera_cnstr, this, activity, graph->egl_manager);
+				camera = env->NewGlobalRef(camera);
 				jobject camera_facing = env->GetStaticObjectField(camera_facing_class, camera_facing_field);
 				jobject size = env->NewObject(size_class, env->GetMethodID(size_class, "<init>", "(II)V"), 640, 480);
 				const char *start_camera_sig =
@@ -112,6 +128,7 @@ class CameraHelper::CameraHelperImpl {
 		static jclass camera_class;
 		static jclass camera_facing_class;
 		static jclass size_class;
+		int camera_facing;
 		jobject camera = nullptr;
 		Graph *graph;
 		String stream_name;
@@ -153,7 +170,7 @@ void CameraHelper::set_graph(Graph *graph, String stream_name) {
 }
 
 void CameraHelper::start(int index) {
-	impl->start();
+	impl->start(index);
 }
 
 void CameraHelper::close() {

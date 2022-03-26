@@ -20,6 +20,9 @@ cc_library(
     deps = [
         "//mediapipe/GDMP/framework:packet",
         "//mediapipe/framework:packet",
+        "//mediapipe/gpu:gl_texture_buffer",
+        "//mediapipe/gpu:gpu_buffer",
+        "//mediapipe/gpu:gpu_buffer_format",
         "//third_party:godot",
     ],
 )
