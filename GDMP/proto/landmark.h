@@ -1,8 +1,7 @@
 #ifndef GDMP_LANDMARK
 #define GDMP_LANDMARK
 
-#include <Godot.hpp>
-#include <Reference.hpp>
+#include "Reference.hpp"
 
 #include "mediapipe/framework/formats/landmark.pb.h"
 
@@ -20,24 +19,12 @@ class Landmark : public Reference {
 
 	public:
 		static void _register_methods() {
-			// x
-			register_method("set_x", &Landmark::set_x);
-			register_method("get_x", &Landmark::get_x);
-			// y
-			register_method("set_y", &Landmark::set_y);
-			register_method("get_y", &Landmark::get_y);
-			// z
-			register_method("set_z", &Landmark::set_z);
-			register_method("get_z", &Landmark::get_z);
-			// visibility
-			register_method("set_visibility", &Landmark::set_visibility);
-			register_method("get_visibility", &Landmark::get_visibility);
-			// presence
-			register_method("set_presence", &Landmark::set_presence);
-			register_method("get_presence", &Landmark::get_presence);
-
-			register_method("from_bytes", &Landmark::from_bytes);
-			register_method("to_bytes", &Landmark::to_bytes);
+			GDMP_REGISTER_PROTO(Landmark)
+			GDMP_REGISTER_FIELD(x, Landmark)
+			GDMP_REGISTER_FIELD(y, Landmark)
+			GDMP_REGISTER_FIELD(z, Landmark)
+			GDMP_REGISTER_FIELD(visibility, Landmark)
+			GDMP_REGISTER_FIELD(presence, Landmark)
 		}
 };
 
@@ -47,12 +34,8 @@ class LandmarkList : public Reference {
 
 	public:
 		static void _register_methods() {
-			// landmark
-			register_method("landmark_size", &LandmarkList::landmark_size);
-			register_method("get_landmark", &LandmarkList::get_landmark);
-
-			register_method("from_bytes", &LandmarkList::from_bytes);
-			register_method("to_bytes", &LandmarkList::to_bytes);
+			GDMP_REGISTER_PROTO(LandmarkList)
+			GDMP_REGISTER_REPEATED_FIELD(landmark, LandmarkList)
 		};
 };
 
@@ -62,12 +45,8 @@ class LandmarkListCollection : public Reference {
 
 	public:
 		static void _register_methods() {
-			// landmark_list
-			register_method("landmark_list_size", &LandmarkListCollection::landmark_list_size);
-			register_method("get_landmark_list", &LandmarkListCollection::get_landmark_list);
-
-			register_method("from_bytes", &LandmarkListCollection::from_bytes);
-			register_method("to_bytes", &LandmarkListCollection::to_bytes);
+			GDMP_REGISTER_PROTO(LandmarkListCollection)
+			GDMP_REGISTER_REPEATED_FIELD(landmark_list, LandmarkListCollection)
 		};
 };
 
@@ -81,24 +60,12 @@ class NormalizedLandmark : public Reference {
 
 	public:
 		static void _register_methods() {
-			// x
-			register_method("set_x", &NormalizedLandmark::set_x);
-			register_method("get_x", &NormalizedLandmark::get_x);
-			// y
-			register_method("set_y", &NormalizedLandmark::set_y);
-			register_method("get_y", &NormalizedLandmark::get_y);
-			// z
-			register_method("set_z", &NormalizedLandmark::set_z);
-			register_method("get_z", &NormalizedLandmark::get_z);
-			// visibility
-			register_method("set_visibility", &NormalizedLandmark::set_visibility);
-			register_method("get_visibility", &NormalizedLandmark::get_visibility);
-			// presence
-			register_method("set_presence", &NormalizedLandmark::set_presence);
-			register_method("get_presence", &NormalizedLandmark::get_presence);
-
-			register_method("from_bytes", &NormalizedLandmark::from_bytes);
-			register_method("to_bytes", &NormalizedLandmark::to_bytes);
+			GDMP_REGISTER_PROTO(NormalizedLandmark)
+			GDMP_REGISTER_FIELD(x, NormalizedLandmark)
+			GDMP_REGISTER_FIELD(y, NormalizedLandmark)
+			GDMP_REGISTER_FIELD(z, NormalizedLandmark)
+			GDMP_REGISTER_FIELD(visibility, NormalizedLandmark)
+			GDMP_REGISTER_FIELD(presence, NormalizedLandmark)
 		};
 };
 
@@ -108,12 +75,8 @@ class NormalizedLandmarkList : public Reference {
 
 	public:
 		static void _register_methods() {
-			// landmark
-			register_method("landmark_size", &NormalizedLandmarkList::landmark_size);
-			register_method("get_landmark", &NormalizedLandmarkList::get_landmark);
-
-			register_method("from_bytes", &NormalizedLandmarkList::from_bytes);
-			register_method("to_bytes", &NormalizedLandmarkList::to_bytes);
+			GDMP_REGISTER_PROTO(NormalizedLandmarkList)
+			GDMP_REGISTER_REPEATED_FIELD(landmark, NormalizedLandmarkList)
 		};
 };
 
@@ -123,12 +86,8 @@ class NormalizedLandmarkListCollection : public Reference {
 
 	public:
 		static void _register_methods() {
-			// landmark_list
-			register_method("landmark_list_size", &NormalizedLandmarkListCollection::landmark_list_size);
-			register_method("get_landmark_list", &NormalizedLandmarkListCollection::get_landmark_list);
-
-			register_method("from_bytes", &NormalizedLandmarkListCollection::from_bytes);
-			register_method("to_bytes", &NormalizedLandmarkListCollection::to_bytes);
+			GDMP_REGISTER_PROTO(NormalizedLandmarkListCollection)
+			GDMP_REGISTER_REPEATED_FIELD(landmark_list, NormalizedLandmarkListCollection)
 		};
 };
 

@@ -1,8 +1,7 @@
 #ifndef GDMP_CLASSIFICATION
 #define GDMP_CLASSIFICATION
 
-#include <Godot.hpp>
-#include <Reference.hpp>
+#include "Reference.hpp"
 
 #include "mediapipe/framework/formats/classification.pb.h"
 
@@ -19,21 +18,11 @@ class Classification : public Reference {
 
 	public:
 		static void _register_methods() {
-			// index
-			register_method("set_index", &Classification::set_index);
-			register_method("get_index", &Classification::get_index);
-			// score
-			register_method("set_score", &Classification::set_score);
-			register_method("get_score", &Classification::get_score);
-			// label
-			register_method("set_label", &Classification::get_label);
-			register_method("get_label", &Classification::get_label);
-			// display_name
-			register_method("set_display_name", &Classification::set_display_name);
-			register_method("get_display_name", &Classification::get_display_name);
-
-			register_method("from_bytes", &Classification::from_bytes);
-			register_method("to_bytes", &Classification::to_bytes);
+			GDMP_REGISTER_PROTO(Classification)
+			GDMP_REGISTER_FIELD(index, Classification)
+			GDMP_REGISTER_FIELD(score, Classification)
+			GDMP_REGISTER_FIELD(label, Classification)
+			GDMP_REGISTER_FIELD(display_name, Classification)
 		}
 };
 
@@ -43,12 +32,8 @@ class ClassificationList : public Reference {
 
 	public:
 		static void _register_methods() {
-			//classification
-			register_method("classification_size", &ClassificationList::classification_size);
-			register_method("get_classification", &ClassificationList::get_classification);
-
-			register_method("from_bytes", &ClassificationList::from_bytes);
-			register_method("to_bytes", &ClassificationList::to_bytes);
+			GDMP_REGISTER_PROTO(ClassificationList)
+			GDMP_REGISTER_REPEATED_FIELD(classification, ClassificationList)
 		}
 };
 
@@ -58,12 +43,8 @@ class ClassificationListCollection : public Reference {
 
 	public:
 		static void _register_methods() {
-			//classification
-			register_method("classification_list_size", &ClassificationListCollection::classification_list_size);
-			register_method("get_classification_list", &ClassificationListCollection::get_classification_list);
-
-			register_method("from_bytes", &ClassificationListCollection::from_bytes);
-			register_method("to_bytes", &ClassificationListCollection::to_bytes);
+			GDMP_REGISTER_PROTO(ClassificationListCollection)
+			GDMP_REGISTER_REPEATED_FIELD(classification_list, ClassificationListCollection)
 		}
 };
 
