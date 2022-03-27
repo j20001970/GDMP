@@ -136,6 +136,9 @@ void Graph::add_packet(String stream_name, Ref<Packet> packet) {
 		if (!graph) {
 			return absl::FailedPreconditionError("Graph has not initialized.");
 		}
+		if(packet.is_null()) {
+			return absl::InvalidArgumentError("Packet is null.");
+		}
 		return graph->AddPacketToInputStream(stream_name.alloc_c_string(), packet->get_packet());
 	}();
 	if (!result.ok()) {
