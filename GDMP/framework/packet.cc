@@ -9,6 +9,8 @@ using namespace godot;
 void Packet::_register_methods() {
 	register_method("get_proto", &Packet::get_proto);
 	register_method("get_proto_vector", &Packet::get_proto_vector);
+	register_method("get_timestamp", &Packet::get_timestamp);
+	register_method("set_timestamp", &Packet::set_timestamp);
 }
 
 Packet *Packet::_new(mediapipe::Packet packet) {
