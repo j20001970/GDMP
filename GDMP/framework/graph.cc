@@ -164,8 +164,12 @@ void Graph::stop() {
 }
 
 #if !MEDIAPIPE_DISABLE_GPU
-std::shared_ptr<mediapipe::GlContext> Graph::get_gl_context() {
-	return graph->GetGpuResources()->gl_context();
+std::shared_ptr<mediapipe::GpuResources> Graph::get_gpu_resources() {
+	if (!graph) {
+		Godot::print("Graph has not initialized.");
+		return nullptr;
+	}
+	return graph->GetGpuResources();
 }
 
 Ref<GPUHelper> Graph::get_gpu_helper() {

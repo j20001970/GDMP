@@ -12,10 +12,11 @@
 
 #include "mediapipe/framework/calculator_graph.h"
 
-#include "mediapipe/gpu/gl_context.h"
 #include "packet.h"
+
 #if !MEDIAPIPE_DISABLE_GPU
 #include "gpu_helper.h"
+#include "mediapipe/gpu/gpu_shared_data_internal.h"
 #endif
 
 namespace godot {
@@ -42,7 +43,8 @@ class Graph : public Object {
 		// Stop the graph.
 		void stop();
 #if !MEDIAPIPE_DISABLE_GPU
-		std::shared_ptr<mediapipe::GlContext> get_gl_context();
+		// Get mediapipe GPU resources, only valid after graph is initialized.
+		std::shared_ptr<mediapipe::GpuResources> get_gpu_resources();
 		// Get GPU helper for performing GPU-related operations, only valid after graph is initialized.
 		Ref<GPUHelper> get_gpu_helper();
 #ifdef __ANDROID__

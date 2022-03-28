@@ -103,7 +103,7 @@ class CameraHelper::CameraHelperImpl {
 		}
 
 		void on_new_frame(JNIEnv *env, jobject frame, int name, int width, int height) {
-			auto gl_context = graph->get_gl_context();
+			auto gl_context = graph->get_gpu_resources()->gl_context();
 			mediapipe::GlTextureBuffer::DeletionCallback callback;
 			if (frame) {
 				jobject java_frame = env->NewGlobalRef(frame);
