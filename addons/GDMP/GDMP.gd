@@ -51,12 +51,19 @@ var camera_helper
 var gpu_helper
 var packet_data : Dictionary = {}
 
-func _on_new_packet(stream_name : String, packet) -> void:
+func _on_new_proto(stream_name : String, packet) -> void:
 	if packet_data.has(stream_name):
 		var bytes : PoolByteArray = packet.get_proto()
 		for obj in packet_data[stream_name]:
 			if is_instance_valid(obj):
 				obj.call(packet_data[stream_name][obj], bytes)
+
+func _on_new_proto_vector(stream_name : String, packet) -> void:
+	if packet_data.has(stream_name):
+		var data : Array = packet.get_proto_vector()
+		for obj in packet_data[stream_name]:
+			if is_instance_valid(obj):
+				obj.call(packet_data[stream_name][obj], data)
 
 func _on_new_frame(stream_name : String, packet) -> void:
 	if packet_data.has(stream_name):
@@ -77,13 +84,13 @@ func init_graph(graph_path : String) -> void:
 
 func add_proto_callback(stream_name : String, target : Object, method : String) -> void:
 	if not packet_data.has(stream_name):
-		graph.add_packet_callback(stream_name, self, "_on_new_packet")
+		graph.add_packet_callback(stream_name, self, "_on_new_proto")
 		packet_data[stream_name] = {}
 	packet_data[stream_name][target] = method
 
 func add_proto_vector_callback(stream_name : String, target : Object, method : String) -> void:
 	if not packet_data.has(stream_name):
-		graph.add_packet_callback(stream_name, self, "_on_new_packet")
+		graph.add_packet_callback(stream_name, self, "_on_new_proto_vector")
 		packet_data[stream_name] = {}
 	packet_data[stream_name][target] = method
 
