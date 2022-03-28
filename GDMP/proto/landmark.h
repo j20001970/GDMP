@@ -36,7 +36,7 @@ class LandmarkList : public Reference {
 		static void _register_methods() {
 			GDMP_REGISTER_PROTO(LandmarkList)
 			GDMP_REGISTER_REPEATED_FIELD(landmark, LandmarkList)
-		};
+		}
 };
 
 class LandmarkListCollection : public Reference {
@@ -47,7 +47,7 @@ class LandmarkListCollection : public Reference {
 		static void _register_methods() {
 			GDMP_REGISTER_PROTO(LandmarkListCollection)
 			GDMP_REGISTER_REPEATED_FIELD(landmark_list, LandmarkListCollection)
-		};
+		}
 };
 
 class NormalizedLandmark : public Reference {
@@ -66,7 +66,7 @@ class NormalizedLandmark : public Reference {
 			GDMP_REGISTER_FIELD(z, NormalizedLandmark)
 			GDMP_REGISTER_FIELD(visibility, NormalizedLandmark)
 			GDMP_REGISTER_FIELD(presence, NormalizedLandmark)
-		};
+		}
 };
 
 class NormalizedLandmarkList : public Reference {
@@ -77,7 +77,7 @@ class NormalizedLandmarkList : public Reference {
 		static void _register_methods() {
 			GDMP_REGISTER_PROTO(NormalizedLandmarkList)
 			GDMP_REGISTER_REPEATED_FIELD(landmark, NormalizedLandmarkList)
-		};
+		}
 };
 
 class NormalizedLandmarkListCollection : public Reference {
@@ -88,7 +88,7 @@ class NormalizedLandmarkListCollection : public Reference {
 		static void _register_methods() {
 			GDMP_REGISTER_PROTO(NormalizedLandmarkListCollection)
 			GDMP_REGISTER_REPEATED_FIELD(landmark_list, NormalizedLandmarkListCollection)
-		};
+		}
 };
 
 } //namespace godot

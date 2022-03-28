@@ -105,7 +105,7 @@ class CameraHelper::CameraHelperImpl {
 		void on_new_frame(JNIEnv *env, jobject frame, int name, int width, int height) {
 			auto gl_context = graph->get_gl_context();
 			mediapipe::GlTextureBuffer::DeletionCallback callback;
-			if(frame) {
+			if (frame) {
 				jobject java_frame = env->NewGlobalRef(frame);
 				jmethodID release_method = env->GetMethodID(
 						camera_class, "releaseFrame", "(Lcom/google/mediapipe/framework/TextureReleaseCallback;J)V");
