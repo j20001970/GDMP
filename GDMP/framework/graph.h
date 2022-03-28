@@ -28,14 +28,22 @@ class Graph : public Object {
 
 		void _init();
 
+		// Initialize the calculator graph with the file in graph_path.
+		// Depending on as_text, the graph file must be in either text (pbtxt) or binary (binarypb) format.
+		// If initialization failed in the process, the underlying mediapipe::CalculatorGraph must remain null.
 		void initialize(String graph_path, bool as_text);
+		// Add a callback for given stream_name.
 		void add_packet_callback(String stream_name, Object *object, String method);
+		// Start the calculator graph for sending packets to input stream,
+		// with side_packets for setting input side packet value.
 		void start(Dictionary side_packets);
+		// Add a packet to graph input stream.
 		void add_packet(String stream_name, Ref<Packet> packet);
+		// Stop the graph.
 		void stop();
-
 #if !MEDIAPIPE_DISABLE_GPU
 		std::shared_ptr<mediapipe::GlContext> get_gl_context();
+		// Get GPU helper for performing GPU-related operations, only valid after graph is initialized.
 		Ref<GPUHelper> get_gpu_helper();
 #ifdef __ANDROID__
 		jobject egl_manager;
