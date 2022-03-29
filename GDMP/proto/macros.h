@@ -1,11 +1,12 @@
 #ifndef GDMP_PROTO_MACROS
 #define GDMP_PROTO_MACROS
 
+#include "Godot.hpp"
 #include "PoolArrays.hpp"
 #include "Ref.hpp"
 #include "Variant.hpp"
 
-#include "../framework/packet.h"
+// #include "../framework/packet.h"
 
 // Define a Godot wrapper class that contains a mediapipe proto type.
 #define GDMP_PROTO_WRAPPER(NAME, CLASS)                            \
@@ -27,11 +28,11 @@ public:                                                            \
 	/* scripts is different from GDScript-created one, making   */ \
 	/* the objects invalid when passed back to GDNative.        */ \
 	/* We cannot expose this method to GDScript before such     */ \
-	/* issues are solved, it should be used internally for now. */ \
+	/* issues are solved, it should be disabled for now.        */ \
 	/* See: https://github.com/godotengine/godot-cpp/issues/430 */ \
-	Ref<Packet> make_packet() {                                    \
-		return Packet::_new(mediapipe::MakePacket<CLASS>(_data));  \
-	}                                                              \
+	/*Ref<Packet> make_packet() {                               */ \
+	/*return Packet::_new(mediapipe::MakePacket<CLASS>(_data)); */ \
+	/*}                                                         */ \
 	/* Get the serialized proto data byte array. */                \
 	PoolByteArray to_bytes() {                                     \
 		size_t size = _data.ByteSizeLong();                        \
