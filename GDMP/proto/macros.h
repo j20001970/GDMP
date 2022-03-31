@@ -6,53 +6,47 @@
 #include "Ref.hpp"
 #include "Variant.hpp"
 
-// #include "../framework/packet.h"
+#include "../framework/packet.h"
 
 // Define a Godot wrapper class that contains a mediapipe proto type.
-#define GDMP_PROTO_WRAPPER(NAME, CLASS)                            \
-	GODOT_CLASS(NAME, Reference)                                   \
-public:                                                            \
-	static NAME *_new(CLASS data) {                                \
-		NAME *p = NAME::_new();                                    \
-		p->_data = data;                                           \
-		return p;                                                  \
-	}                                                              \
-	void _init() {}                                                \
-	/* Parse the serialized proto data from given byte array. */   \
-	void from_bytes(PoolByteArray data) {                          \
-		_data.ParseFromArray(data.read().ptr(), data.size());      \
-	}                                                              \
-	/* Create a packet object that contains the proto data.     */ \
-	/* Due to how GDNative create custom class instance, when   */ \
-	/* make_packet is called from GDScript, returned object     */ \
-	/* scripts is different from GDScript-created one, making   */ \
-	/* the objects invalid when passed back to GDNative.        */ \
-	/* We cannot expose this method to GDScript before such     */ \
-	/* issues are solved, it should be disabled for now.        */ \
-	/* See: https://github.com/godotengine/godot-cpp/issues/430 */ \
-	/*Ref<Packet> make_packet() {                               */ \
-	/*return Packet::_new(mediapipe::MakePacket<CLASS>(_data)); */ \
-	/*}                                                         */ \
-	/* Get the serialized proto data byte array. */                \
-	PoolByteArray to_bytes() {                                     \
-		size_t size = _data.ByteSizeLong();                        \
-		PoolByteArray bytes;                                       \
-		bytes.resize(size);                                        \
-		_data.SerializeToArray(bytes.write().ptr(), size);         \
-		return bytes;                                              \
-	}                                                              \
-	/* Get the actual proto object. */                             \
-	CLASS data() {                                                 \
-		return _data;                                              \
-	}                                                              \
-                                                                   \
-private:                                                           \
+#define GDMP_PROTO_WRAPPER(NAME, CLASS)                           \
+	GODOT_CLASS(NAME, Reference)                                  \
+public:                                                           \
+	static NAME *_new(CLASS data) {                               \
+		NAME *p = NAME::_new();                                   \
+		p->_data = data;                                          \
+		return p;                                                 \
+	}                                                             \
+	void _init() {}                                               \
+	/* Parse the serialized proto data from given byte array. */  \
+	void from_bytes(PoolByteArray data) {                         \
+		_data.ParseFromArray(data.read().ptr(), data.size());     \
+	}                                                             \
+	/* Create a packet object that contains the proto data. */    \
+	Ref<Packet> make_packet() {                                   \
+		return Packet::_new(mediapipe::MakePacket<CLASS>(_data)); \
+	}                                                             \
+	/* Get the serialized proto data byte array. */               \
+	PoolByteArray to_bytes() {                                    \
+		size_t size = _data.ByteSizeLong();                       \
+		PoolByteArray bytes;                                      \
+		bytes.resize(size);                                       \
+		_data.SerializeToArray(bytes.write().ptr(), size);        \
+		return bytes;                                             \
+	}                                                             \
+	/* Get the actual proto object. */                            \
+	CLASS data() {                                                \
+		return _data;                                             \
+	}                                                             \
+                                                                  \
+private:                                                          \
 	CLASS _data;
 
 // Register proto wrapper common methods.
 #define GDMP_REGISTER_PROTO(CLASS)                     \
 	register_method("from_bytes", &CLASS::from_bytes); \
-	register_method("to_bytes", &CLASS::to_bytes);
+	register_method("to_bytes", &CLASS::to_bytes);     \
+	register_method("make_packet", &CLASS::make_packet);
 
 // Macros for method string.
 #define _GET_METHOD(x) "get_" #x
