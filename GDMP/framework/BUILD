@@ -38,12 +38,6 @@ cc_library(
     hdrs = ["packet.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/GDMP/proto:classification",
-        "//mediapipe/GDMP/proto:detection",
-        "//mediapipe/GDMP/proto:landmark",
-        "//mediapipe/GDMP/proto:location_data",
-        "//mediapipe/GDMP/proto:rasterization",
-        "//mediapipe/GDMP/proto:rect",
         "//mediapipe/GDMP/util:image",
         "//mediapipe/framework:packet",
         "//mediapipe/framework/formats:image_frame",
