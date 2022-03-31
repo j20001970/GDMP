@@ -23,8 +23,11 @@ class GPUHelper : public Reference {
 
 		void _init();
 
+		// Get GPU frame from GpuBuffer packet and convert to godot::Image
 		Ref<Image> get_gpu_frame(Ref<Packet> packet);
+		// Make a mediapipe::GpuBuffer packet from godot::Image
 		Ref<Packet> make_packet_from_image(Ref<Image> image);
+		// Make a mediapipe::GpuBuffer packet from mediapipe::ImageFrame
 		Ref<Packet> make_packet_from_image_frame(const mediapipe::ImageFrame &image_frame);
 
 	private:

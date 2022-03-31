@@ -9,6 +9,7 @@
 
 namespace godot {
 
+// Convert mediapipe::ImageFrame to godot::Image
 inline Ref<Image> to_image(const mediapipe::ImageFrame &image_frame) {
 	Ref<Image> image = Ref<Image>(Image::_new());
 	PoolByteArray data;
@@ -21,6 +22,7 @@ inline Ref<Image> to_image(const mediapipe::ImageFrame &image_frame) {
 	return image;
 }
 
+// Convert godot::Image to mediapipe::ImageFrame
 inline mediapipe::ImageFrame to_image_frame(Ref<Image> image) {
 	mediapipe::ImageFrame image_frame;
 	image_frame.CopyPixelData(mediapipe::ImageFormat::SRGBA, image->get_width(), image->get_height(),
