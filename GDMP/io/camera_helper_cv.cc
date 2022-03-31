@@ -52,14 +52,14 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 							mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
 					cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
 					video_frame.copyTo(input_frame_mat);
-					Ref<Packet> packet;
+					Ref<Packet> packet = Packet::_new();
 					int64_t frame_timestamp_us = OS::get_singleton()->get_ticks_usec();
 #if !MEDIAPIPE_DISABLE_GPU
 					if (use_gpu)
 						packet = gpu_helper->make_packet_from_image_frame(*input_frame);
 					else
 #endif
-						packet = Packet::make_image_frame(*input_frame);
+						packet->make_image_frame(*input_frame);
 					packet->set_timestamp(frame_timestamp_us);
 					graph->add_packet(stream_name, packet);
 				}
