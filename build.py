@@ -27,13 +27,6 @@ try:
             '--cpu=arm64-v8a', \
             '--copt', '-fPIC', \
             '//mediapipe/GDMP:gdmp'])
-    elif args.target.lower() == 'aar':
-        bazel_args.extend([\
-            '--host_crosstool_top=@bazel_tools//tools/cpp:toolchain', \
-            '--define', 'EXCLUDE_OPENCV_SO_LIB=1', \
-            '--fat_apk_cpu=arm64-v8a', \
-            '--linkopt=-s', \
-            '//mediapipe/GDMP/mediapipe_aar/java/com/google/mediapipe:mediapipe_aar'])
     elif args.target.lower() == 'desktop':
         bazel_args.extend([\
             '--copt', '-fPIC', \
