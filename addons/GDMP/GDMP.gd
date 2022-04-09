@@ -19,6 +19,7 @@ const ClassificationList : NativeScript = preload("proto/ClassificationList.gdns
 const ClassificationListCollection : NativeScript = preload("proto/ClassificationListCollection.gdns")
 
 # Detection
+const AssociatedDetection : NativeScript = preload("proto/AssociatedDetection.gdns")
 const Detection : NativeScript = preload("proto/Detection.gdns")
 const DetectionList : NativeScript = preload("proto/DetectionList.gdns")
 
