@@ -15,7 +15,6 @@ public class GDMP extends GodotPlugin {
     private Godot godot;
 
     static {
-        System.loadLibrary("mediapipe_jni");
         System.loadLibrary("gdmp");
     }
 

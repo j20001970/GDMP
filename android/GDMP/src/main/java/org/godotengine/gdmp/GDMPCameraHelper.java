@@ -10,9 +10,7 @@ import com.google.mediapipe.components.CameraHelper.OnCameraStartedListener;
 import com.google.mediapipe.components.CameraXPreviewHelper;
 import com.google.mediapipe.components.ExternalTextureConverter;
 import com.google.mediapipe.components.TextureFrameConsumer;
-import com.google.mediapipe.framework.GraphGlSyncToken;
 import com.google.mediapipe.framework.TextureFrame;
-import com.google.mediapipe.framework.TextureReleaseCallback;
 import com.google.mediapipe.glutil.EglManager;
 
 public class GDMPCameraHelper extends CameraXPreviewHelper implements OnCameraStartedListener, TextureFrameConsumer {
@@ -55,10 +53,6 @@ public class GDMPCameraHelper extends CameraXPreviewHelper implements OnCameraSt
         if(converter != null) {
             converter.close();
         }
-    }
-
-    public void releaseFrame(TextureReleaseCallback frame, long syncToken) {
-        frame.release(new GraphGlSyncToken(syncToken));
     }
 
     public native void nativeOnNewFrame(long nativeCallerPtr, TextureFrame frame, int name, int width, int height);

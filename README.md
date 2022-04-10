@@ -12,25 +12,21 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 ## Building for Android
 1. Refer to [Prerequisite](https://google.github.io/mediapipe/getting_started/android.html#prerequisite) section for Java and Android SDK & NDK setup.
 2. Place the calculator dependencies in `GDMP/variables.bzl`
-3. Run:
+3. Copy or symlink godot-lib to `android/GDMP/libs` directory as dependency, and rename the file to `godot-lib.release.aar`.
 
-    ```
-    build.py aar
-    ```
-    to build mediapipe_aar, generated file will be located in
+    godot-lib can be obtained from [godotengine.org](https://godotengine.org/download) or from your project's `android/build/libs/release` if Android build template is installed.
 
-    `mediapipe/bazel-bin/mediapipe/GDMP/mediapipe_aar/java/com/google/mediapipe/mediapipe_aar.aar`
-4. Copy or link godot-lib and mediapipe_aar AAR to `android/GDMP/libs` directory.
-5. Build GDMP AAR, copy generated file to your project's `android/plugins` directory, along with mediapipe_aar from step 3.
-6. Run:
+4. Build GDMP AAR using Android Studio or gradlew, copy the release variant AAR located in `android/GDMP/build/outputs/aar` to your project's `android/plugins` directory.
+5. Run:
 
     ```
     build.py android
     ```
     to build android library, and copy them to your project's `addons/GDMP/libs/android/{ABI}` depending on your target ABIs.
-    (Optional) also copy `libopencv_java3.so` to the project as GDNative library dependencies if OpenCV is used in calculators.
 
-7. Copy `plugins/GDMP.gdap` to your project's `android/plugins` directory.
+    (Optional) also copy `libopencv_java3.so` to the project and add it as GDNative library dependencies if OpenCV is used in calculators.
+
+6. Copy `plugins/GDMP.gdap` to your project's `android/plugins` directory.
 
     Files used by MediaPipe graphs (e.g. TFLite models) need to be placed in your project's directory according to the path provided by the calculator configs.
 

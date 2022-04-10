@@ -107,12 +107,14 @@ class CameraHelper::CameraHelperImpl {
 			mediapipe::GlTextureBuffer::DeletionCallback callback;
 			if (frame) {
 				jobject java_frame = env->NewGlobalRef(frame);
-				jmethodID release_method = env->GetMethodID(
-						camera_class, "releaseFrame", "(Lcom/google/mediapipe/framework/TextureReleaseCallback;J)V");
+				jclass frame_class = env->GetObjectClass(java_frame);
+				jmethodID release_method = env->GetMethodID(frame_class, "release", "()V");
+				env->DeleteLocalRef(frame_class);
 				callback = [this, java_frame, release_method](mediapipe::GlSyncToken release_token) {
 					JNIEnv *env = android_api->godot_android_get_env();
-					jlong token = reinterpret_cast<jlong>(new mediapipe::GlSyncToken(std::move(release_token)));
-					env->CallVoidMethod(camera, release_method, java_frame, token);
+					long token = reinterpret_cast<long>(new mediapipe::GlSyncToken(std::move(release_token)));
+					delete reinterpret_cast<mediapipe::GlSyncToken*>(token);
+					env->CallVoidMethod(java_frame, release_method);
 					env->DeleteGlobalRef(java_frame);
 				};
 			}
@@ -139,6 +141,10 @@ jclass CameraHelper::CameraHelperImpl::camera_facing_class = nullptr;
 jclass CameraHelper::CameraHelperImpl::size_class = nullptr;
 
 extern "C" {
+JNIEXPORT jlong JNICALL Java_com_google_mediapipe_framework_Compat_getCurrentNativeEGLContext(JNIEnv *env, jclass clz) {
+	return reinterpret_cast<jlong>(eglGetCurrentContext());
+}
+
 JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nativeOnNewFrame(JNIEnv *pEnv, jobject jCaller, jlong cppCaller, jobject frame, jint name, jint width, jint height) {
 	auto caller = (CameraHelper::CameraHelperImpl *)(cppCaller);
 	caller->on_new_frame(pEnv, frame, name, width, height);
