@@ -4,8 +4,14 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 ## Getting Started
 1. Install [Bazelisk](https://docs.bazel.build/versions/main/install-bazelisk.html) or bazel version that meets MediaPipe requirement.
 2. Refer to [Installation](https://google.github.io/mediapipe/getting_started/install.html) for OpenCV and FFmpeg setup.
-3. Refer to [Building the C++ bindings](https://docs.godotengine.org/en/stable/tutorials/plugins/gdnative/gdnative-cpp-example.html#building-the-c-bindings) section for building Godot C++ bindings in `godot-cpp` directory.
-4. Apply `mediapipe_setup.diff` to `mediapipe` directory.
+3. Locate your Godot executable and run `godot --gdnative-generate-json-api api.json` to get a copy of api.json for current Godot version,
+    then go to `godot-cpp` directory and run:
+
+    ```
+    python -c "from binding_generator import *; generate_bindings('/path/to/your/api.json', True)"
+    ```
+    to generate Godot C++ bindings directly, replacing `/path/to/your/api.json` with the path to your api.json
+4. Apply `mediapipe_setup.diff` to `mediapipe` directory, then copy `godot.BUILD` to `mediapipe/third_party`.
 5. Run `setup.py`, the script will try to symlink source code and external dependencies to mediapipe workspace, if symlink is not available on the host it will just copy the code directory instead.
 6. Copy `addons/GDMP` to your project's directory.
 
