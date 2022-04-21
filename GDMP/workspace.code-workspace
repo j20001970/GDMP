@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"clangd.arguments": [
+			"-header-insertion=never"
+		]
+	}
+}
