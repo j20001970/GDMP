@@ -1,4 +1,4 @@
-load("//mediapipe/GDMP:variables.bzl", "CALCULATORS")
+load("//mediapipe/GDMP:calculators.bzl", "CALCULATORS")
 
 alias(
     name = "godot",
