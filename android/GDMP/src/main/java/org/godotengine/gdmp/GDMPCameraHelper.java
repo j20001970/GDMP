@@ -25,6 +25,7 @@ public class GDMPCameraHelper extends CameraXPreviewHelper implements OnCameraSt
         converter = new ExternalTextureConverter(eglManager.getContext());
         converter.setConsumer(this);
         converter.setFlipY(true);
+        converter.setRotation(activity.getWindowManager().getDefaultDisplay().getRotation());
         converter.setSurfaceTextureAndAttachToGLContext(
                 surfaceTexture,
                 isCameraRotated() ? frameSize.getHeight() : frameSize.getWidth(),
