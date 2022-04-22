@@ -28,10 +28,6 @@ class CameraHelper::CameraHelperImpl {
 				camera_facing_class = reinterpret_cast<jclass>(
 						env->NewGlobalRef(env->FindClass("com/google/mediapipe/components/CameraHelper$CameraFacing")));
 			}
-			if (env->IsSameObject(size_class, NULL)) {
-				size_class = reinterpret_cast<jclass>(
-						env->NewGlobalRef(env->FindClass("android/util/Size")));
-			}
 			android_plugin = Engine::get_singleton()->get_singleton("GDMP");
 		}
 
@@ -43,8 +39,9 @@ class CameraHelper::CameraHelperImpl {
 			this->stream_name = stream_name;
 		}
 
-		void start(int index) {
+		void start(int index, Vector2 size) {
 			camera_facing = index;
+			camera_size = size;
 			start();
 		}
 
@@ -81,12 +78,13 @@ class CameraHelper::CameraHelperImpl {
 				camera = env->NewObject(camera_class, camera_cnstr, this, activity, graph->egl_manager);
 				camera = env->NewGlobalRef(camera);
 				jobject camera_facing = env->GetStaticObjectField(camera_facing_class, camera_facing_field);
-				jobject size = env->NewObject(size_class, env->GetMethodID(size_class, "<init>", "(II)V"), 640, 480);
 				const char *start_camera_sig =
-						"(Lcom/google/mediapipe/components/CameraHelper$CameraFacing;Landroid/util/Size;)V";
-				env->CallVoidMethod(camera, env->GetMethodID(camera_class, "startCamera", start_camera_sig), camera_facing, size);
+						"(Lcom/google/mediapipe/components/CameraHelper$CameraFacing;II)V";
+				jint width = camera_size.x;
+				jint height = camera_size.y;
+				env->CallVoidMethod(
+						camera, env->GetMethodID(camera_class, "startCamera", start_camera_sig), camera_facing, width, height);
 				env->DeleteLocalRef(camera_facing);
-				env->DeleteLocalRef(size);
 			} else {
 				jmethodID request_method = env->GetStaticMethodID(
 						permission_class, "checkAndRequestCameraPermissions", "(Landroid/app/Activity;)V");
@@ -113,7 +111,7 @@ class CameraHelper::CameraHelperImpl {
 				callback = [this, java_frame, release_method](mediapipe::GlSyncToken release_token) {
 					JNIEnv *env = android_api->godot_android_get_env();
 					long token = reinterpret_cast<long>(new mediapipe::GlSyncToken(std::move(release_token)));
-					delete reinterpret_cast<mediapipe::GlSyncToken*>(token);
+					delete reinterpret_cast<mediapipe::GlSyncToken *>(token);
 					env->CallVoidMethod(java_frame, release_method);
 					env->DeleteGlobalRef(java_frame);
 				};
@@ -129,8 +127,8 @@ class CameraHelper::CameraHelperImpl {
 	private:
 		static jclass camera_class;
 		static jclass camera_facing_class;
-		static jclass size_class;
 		int camera_facing;
+		Vector2 camera_size;
 		jobject camera = nullptr;
 		Graph *graph;
 		String stream_name;
@@ -138,7 +136,6 @@ class CameraHelper::CameraHelperImpl {
 
 jclass CameraHelper::CameraHelperImpl::camera_class = nullptr;
 jclass CameraHelper::CameraHelperImpl::camera_facing_class = nullptr;
-jclass CameraHelper::CameraHelperImpl::size_class = nullptr;
 
 extern "C" {
 JNIEXPORT jlong JNICALL Java_com_google_mediapipe_framework_Compat_getCurrentNativeEGLContext(JNIEnv *env, jclass clz) {
@@ -175,8 +172,8 @@ void CameraHelper::set_graph(Graph *graph, String stream_name) {
 	impl->set_graph(graph, stream_name);
 }
 
-void CameraHelper::start(int index) {
-	impl->start(index);
+void CameraHelper::start(int index, Vector2 size) {
+	impl->start(index, size);
 }
 
 void CameraHelper::close() {

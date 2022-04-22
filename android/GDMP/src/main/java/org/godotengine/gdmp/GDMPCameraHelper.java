@@ -45,8 +45,8 @@ public class GDMPCameraHelper extends CameraXPreviewHelper implements OnCameraSt
         setOnCameraStartedListener(this);
     }
 
-    public void startCamera(CameraFacing cameraFacing, Size targetSize) {
-        super.startCamera(activity, cameraFacing, null, targetSize);
+    public void startCamera(CameraFacing cameraFacing, int width, int height) {
+        super.startCamera(activity, cameraFacing, null, new Size(width, height));
     }
 
     public void closeCamera() {

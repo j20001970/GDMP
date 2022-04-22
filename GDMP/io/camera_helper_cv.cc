@@ -28,15 +28,19 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 			this->stream_name = stream_name;
 		}
 
-		void start(int index) {
+		void start(int index, Vector2 size) {
+			if (graph == nullptr) {
+				Godot::print("Graph is not set");
+				return;
+			}
 			open(index);
 			if (!isOpened()) {
 				Godot::print("Failed to open camera");
 				return;
 			}
-			thread = std::thread([this]() -> void {
-				set(cv::CAP_PROP_FRAME_WIDTH, 640);
-				set(cv::CAP_PROP_FRAME_HEIGHT, 480);
+			thread = std::thread([this, size]() -> void {
+				set(cv::CAP_PROP_FRAME_WIDTH, size.x);
+				set(cv::CAP_PROP_FRAME_HEIGHT, size.y);
 				set(cv::CAP_PROP_FPS, 30);
 #if !MEDIAPIPE_DISABLE_GPU
 				Ref<GPUHelper> gpu_helper = graph->get_gpu_helper();
@@ -104,8 +108,8 @@ void CameraHelper::set_graph(Graph *graph, String stream_name) {
 	impl->set_graph(graph, stream_name);
 }
 
-void CameraHelper::start(int index) {
-	impl->start(index);
+void CameraHelper::start(int index, Vector2 size) {
+	impl->start(index, size);
 }
 
 void CameraHelper::close() {
