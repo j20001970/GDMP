@@ -18,6 +18,7 @@ class CameraHelper::CameraHelperImpl {
 		Object *android_plugin;
 
 		CameraHelperImpl() {
+			started = false;
 			JNIEnv *env = android_api->godot_android_get_env();
 			if (env->IsSameObject(camera_class, NULL)) {
 				camera_class = reinterpret_cast<jclass>(
@@ -48,10 +49,13 @@ class CameraHelper::CameraHelperImpl {
 			switch (index) {
 				case 0:
 					fieldID = env->GetStaticFieldID(cls, "FRONT", sig);
+					break;
 				case 1:
 					fieldID = env->GetStaticFieldID(cls, "BACK", sig);
+					break;
 				default:
 					Godot::print(String("unexpected camera facing {0}").format(Array::make(index)));
+					break;
 			}
 			jobject camera_facing = env->GetStaticObjectField(cls, fieldID);
 			env->DeleteLocalRef(cls);
@@ -102,8 +106,9 @@ class CameraHelper::CameraHelperImpl {
 				jobject camera_facing = get_camera_facing(this->camera_facing);
 				const char *sig =
 						"(Lcom/google/mediapipe/components/CameraHelper$CameraFacing;II)V";
-				jint width = camera_size.x;
-				jint height = camera_size.y;
+				// CameraXPreviewHelper transpose target size unconditionally, therefore we transpose it back here.
+				jint width = camera_size.y;
+				jint height = camera_size.x;
 				env->CallVoidMethod(
 						camera, env->GetMethodID(camera_class, "startCamera", sig), camera_facing, width, height);
 				env->DeleteLocalRef(camera_facing);
