@@ -104,6 +104,13 @@ void CameraHelper::_init() {
 void CameraHelper::_on_permission_result(PoolStringArray permissions, PoolIntArray results) {
 }
 
+bool CameraHelper::permission_granted() {
+	return true;
+}
+
+void CameraHelper::request_permission() {
+}
+
 void CameraHelper::set_graph(Graph *graph, String stream_name) {
 	impl->set_graph(graph, stream_name);
 }

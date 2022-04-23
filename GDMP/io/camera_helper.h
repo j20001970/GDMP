@@ -26,6 +26,12 @@ class CameraHelper : public Reference {
 
 		void _init();
 
+		// Return true if camera permission is granted.
+		// Always return true if there is no permission model.
+		bool permission_granted();
+		// Request camera permission if not granted.
+		// No-op if there is no permission model.
+		void request_permission();
 		// Set the target graph to send video frames to with stream name.
 		void set_graph(Graph *graph, String stream_name);
 		// Start the camera with specified index and target resolution.

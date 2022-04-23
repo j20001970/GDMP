@@ -34,6 +34,24 @@ class CameraHelper::CameraHelperImpl {
 		~CameraHelperImpl() {
 		}
 
+		bool permission_granted() {
+			JNIEnv *env = android_api->godot_android_get_env();
+			jobject activity = android_api->godot_android_get_activity();
+			jclass cls = env->FindClass("com/google/mediapipe/components/PermissionHelper");
+			jmethodID method = env->GetStaticMethodID(
+					cls, "cameraPermissionsGranted", "(Landroid/app/Activity;)Z");
+			return env->CallStaticBooleanMethod(cls, method, activity);
+		}
+
+		void request_permission() {
+			JNIEnv *env = android_api->godot_android_get_env();
+			jobject activity = android_api->godot_android_get_activity();
+			jclass cls = env->FindClass("com/google/mediapipe/components/PermissionHelper");
+			jmethodID method = env->GetStaticMethodID(
+					cls, "checkAndRequestCameraPermissions", "(Landroid/app/Activity;)V");
+			env->CallStaticVoidMethod(cls, method, activity);
+		}
+
 		void set_graph(Graph *graph, String stream_name) {
 			this->graph = graph;
 			this->stream_name = stream_name;
@@ -52,12 +70,8 @@ class CameraHelper::CameraHelperImpl {
 			}
 			started = true;
 			JNIEnv *env = android_api->godot_android_get_env();
-			jobject activity = android_api->godot_android_get_activity();
-			jclass permission_class = env->FindClass("com/google/mediapipe/components/PermissionHelper");
-			jmethodID check_method = env->GetStaticMethodID(
-					permission_class, "cameraPermissionsGranted", "(Landroid/app/Activity;)Z");
-			jboolean permission_granted = env->CallStaticBooleanMethod(permission_class, check_method, activity);
-			if (permission_granted) {
+			if (permission_granted()) {
+				jobject activity = android_api->godot_android_get_activity();
 				const char *camera_facing_field_sig =
 						"Lcom/google/mediapipe/components/CameraHelper$CameraFacing;";
 				jfieldID camera_facing_field;
@@ -86,9 +100,7 @@ class CameraHelper::CameraHelperImpl {
 						camera, env->GetMethodID(camera_class, "startCamera", start_camera_sig), camera_facing, width, height);
 				env->DeleteLocalRef(camera_facing);
 			} else {
-				jmethodID request_method = env->GetStaticMethodID(
-						permission_class, "checkAndRequestCameraPermissions", "(Landroid/app/Activity;)V");
-				env->CallStaticVoidMethod(permission_class, request_method, activity);
+				request_permission();
 			}
 		}
 
@@ -162,10 +174,24 @@ void CameraHelper::_init() {
 void CameraHelper::_on_permission_result(PoolStringArray permissions, PoolIntArray results) {
 	for (int i = 0; i < permissions.size(); i++) {
 		String permission = permissions[i];
-		if (permission == "android.permission.CAMERA" && results[i] == 0 && impl->started) {
-			impl->start();
+		if (permission == "android.permission.CAMERA") {
+			if(results[i] == 0) {
+				emit_signal("permission_granted");
+			}
+			else {
+				emit_signal("permission_denied");
+			}
+			break;
 		}
 	}
+}
+
+bool CameraHelper::permission_granted() {
+	return impl->permission_granted();
+}
+
+void CameraHelper::request_permission() {
+	impl->request_permission();
 }
 
 void CameraHelper::set_graph(Graph *graph, String stream_name) {
