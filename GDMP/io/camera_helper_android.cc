@@ -19,19 +19,43 @@ class CameraHelper::CameraHelperImpl {
 
 		CameraHelperImpl() {
 			JNIEnv *env = android_api->godot_android_get_env();
-			jobject activity = android_api->godot_android_get_activity();
 			if (env->IsSameObject(camera_class, NULL)) {
 				camera_class = reinterpret_cast<jclass>(
 						env->NewGlobalRef(env->FindClass("org/godotengine/gdmp/GDMPCameraHelper")));
-			}
-			if (env->IsSameObject(camera_facing_class, NULL)) {
-				camera_facing_class = reinterpret_cast<jclass>(
-						env->NewGlobalRef(env->FindClass("com/google/mediapipe/components/CameraHelper$CameraFacing")));
 			}
 			android_plugin = Engine::get_singleton()->get_singleton("GDMP");
 		}
 
 		~CameraHelperImpl() {
+		}
+
+		jobject create_camera() {
+			JNIEnv *env = android_api->godot_android_get_env();
+			jobject activity = android_api->godot_android_get_activity();
+			const char *sig =
+					"(JLandroid/app/Activity;Lcom/google/mediapipe/glutil/EglManager;)V";
+			jmethodID cnstr = env->GetMethodID(camera_class, "<init>", sig);
+			jobject camera = env->NewObject(camera_class, cnstr, this, activity, graph->egl_manager);
+			return env->NewGlobalRef(camera);
+		}
+
+		jobject get_camera_facing(int index) {
+			JNIEnv *env = android_api->godot_android_get_env();
+			jclass cls = env->FindClass("com/google/mediapipe/components/CameraHelper$CameraFacing");
+			const char *sig =
+					"Lcom/google/mediapipe/components/CameraHelper$CameraFacing;";
+			jfieldID fieldID;
+			switch (index) {
+				case 0:
+					fieldID = env->GetStaticFieldID(cls, "FRONT", sig);
+				case 1:
+					fieldID = env->GetStaticFieldID(cls, "BACK", sig);
+				default:
+					Godot::print(String("unexpected camera facing {0}").format(Array::make(index)));
+			}
+			jobject camera_facing = env->GetStaticObjectField(cls, fieldID);
+			env->DeleteLocalRef(cls);
+			return camera_facing;
 		}
 
 		bool permission_granted() {
@@ -68,36 +92,20 @@ class CameraHelper::CameraHelperImpl {
 				Godot::print("Graph is not set");
 				return;
 			}
+			if (started) {
+				return;
+			}
 			started = true;
 			JNIEnv *env = android_api->godot_android_get_env();
 			if (permission_granted()) {
-				jobject activity = android_api->godot_android_get_activity();
-				const char *camera_facing_field_sig =
-						"Lcom/google/mediapipe/components/CameraHelper$CameraFacing;";
-				jfieldID camera_facing_field;
-				switch (camera_facing) {
-					case 0:
-						camera_facing_field = env->GetStaticFieldID(camera_facing_class, "FRONT", camera_facing_field_sig);
-						break;
-					case 1:
-						camera_facing_field = env->GetStaticFieldID(camera_facing_class, "BACK", camera_facing_field_sig);
-						break;
-					default:
-						Godot::print(String("unexpected camera facing {0}").format(Array::make(camera_facing)));
-						return;
-				}
-				const char *camera_cnstr_sig =
-						"(JLandroid/app/Activity;Lcom/google/mediapipe/glutil/EglManager;)V";
-				jmethodID camera_cnstr = env->GetMethodID(camera_class, "<init>", camera_cnstr_sig);
-				camera = env->NewObject(camera_class, camera_cnstr, this, activity, graph->egl_manager);
-				camera = env->NewGlobalRef(camera);
-				jobject camera_facing = env->GetStaticObjectField(camera_facing_class, camera_facing_field);
-				const char *start_camera_sig =
+				camera = create_camera();
+				jobject camera_facing = get_camera_facing(this->camera_facing);
+				const char *sig =
 						"(Lcom/google/mediapipe/components/CameraHelper$CameraFacing;II)V";
 				jint width = camera_size.x;
 				jint height = camera_size.y;
 				env->CallVoidMethod(
-						camera, env->GetMethodID(camera_class, "startCamera", start_camera_sig), camera_facing, width, height);
+						camera, env->GetMethodID(camera_class, "startCamera", sig), camera_facing, width, height);
 				env->DeleteLocalRef(camera_facing);
 			} else {
 				request_permission();
@@ -108,6 +116,7 @@ class CameraHelper::CameraHelperImpl {
 			JNIEnv *env = android_api->godot_android_get_env();
 			if (camera && !env->IsSameObject(camera, NULL)) {
 				env->CallVoidMethod(camera, env->GetMethodID(camera_class, "closeCamera", "()V"));
+				env->DeleteGlobalRef(camera);
 			}
 			started = false;
 		}
@@ -138,7 +147,6 @@ class CameraHelper::CameraHelperImpl {
 
 	private:
 		static jclass camera_class;
-		static jclass camera_facing_class;
 		int camera_facing;
 		Vector2 camera_size;
 		jobject camera = nullptr;
@@ -147,7 +155,6 @@ class CameraHelper::CameraHelperImpl {
 };
 
 jclass CameraHelper::CameraHelperImpl::camera_class = nullptr;
-jclass CameraHelper::CameraHelperImpl::camera_facing_class = nullptr;
 
 extern "C" {
 JNIEXPORT jlong JNICALL Java_com_google_mediapipe_framework_Compat_getCurrentNativeEGLContext(JNIEnv *env, jclass clz) {
@@ -175,10 +182,9 @@ void CameraHelper::_on_permission_result(PoolStringArray permissions, PoolIntArr
 	for (int i = 0; i < permissions.size(); i++) {
 		String permission = permissions[i];
 		if (permission == "android.permission.CAMERA") {
-			if(results[i] == 0) {
+			if (results[i] == 0) {
 				emit_signal("permission_granted");
-			}
-			else {
+			} else {
 				emit_signal("permission_denied");
 			}
 			break;
