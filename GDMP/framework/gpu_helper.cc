@@ -7,6 +7,7 @@
 using namespace godot;
 
 void GPUHelper::_register_methods() {
+	register_method("initialize", &GPUHelper::initialize);
 	register_method("get_gpu_frame", &GPUHelper::get_gpu_frame);
 	register_method("make_packet_from_image", &GPUHelper::make_packet_from_image);
 }
@@ -18,6 +19,10 @@ GPUHelper *GPUHelper::_new(mediapipe::GpuResources *gpu_resource) {
 }
 
 void GPUHelper::_init() {}
+
+void GPUHelper::initialize(Graph *graph) {
+	gpu_helper.InitializeForTest(graph->get_gpu_resources().get());
+}
 
 Ref<Image> GPUHelper::get_gpu_frame(Ref<Packet> packet) {
 	Ref<Image> image;

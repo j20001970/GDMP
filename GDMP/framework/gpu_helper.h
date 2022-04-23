@@ -10,6 +10,7 @@
 #include "mediapipe/gpu/gl_calculator_helper.h"
 #include "mediapipe/gpu/gpu_shared_data_internal.h"
 
+#include "graph.h"
 #include "packet.h"
 
 namespace godot {
@@ -23,6 +24,8 @@ class GPUHelper : public Reference {
 
 		void _init();
 
+		// Initialize GPU helper with given graph.
+		void initialize(Graph *graph);
 		// Get GPU frame from GpuBuffer packet and convert to godot::Image
 		Ref<Image> get_gpu_frame(Ref<Packet> packet);
 		// Make a mediapipe::GpuBuffer packet from godot::Image

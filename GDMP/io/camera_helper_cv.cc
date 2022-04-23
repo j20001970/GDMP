@@ -12,6 +12,9 @@
 #include "mediapipe/framework/port/opencv_video_inc.h"
 
 #include "../framework/packet.h"
+#if !MEDIAPIPE_DISABLE_GPU
+#include "../framework/gpu_helper.h"
+#endif
 
 using namespace godot;
 
@@ -43,7 +46,7 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 				set(cv::CAP_PROP_FRAME_HEIGHT, size.y);
 				set(cv::CAP_PROP_FPS, 30);
 #if !MEDIAPIPE_DISABLE_GPU
-				Ref<GPUHelper> gpu_helper = graph->get_gpu_helper();
+				Ref<GPUHelper> gpu_helper = GPUHelper::_new(graph->get_gpu_resources().get());
 #endif
 				grab_frames = true;
 				while (grab_frames) {

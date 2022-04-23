@@ -12,7 +12,7 @@ cc_library(
         "//third_party:godot",
     ] + select({
         "//mediapipe/gpu:disable_gpu": [],
-        "//conditions:default": [":gpu_helper"],
+        "//conditions:default": ["//mediapipe/gpu:gpu_shared_data_internal"],
     }),
 )
 
@@ -22,6 +22,7 @@ cc_library(
     hdrs = ["gpu_helper.h"],
     visibility = ["//visibility:public"],
     deps = [
+        "//mediapipe/GDMP/framework:graph",
         "//mediapipe/GDMP/framework:packet",
         "//mediapipe/GDMP/util:image",
         "//mediapipe/framework/formats:image_frame",

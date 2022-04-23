@@ -37,5 +37,8 @@ cc_library(
         "//mediapipe/framework/port:opencv_core",
         "//mediapipe/framework/port:opencv_imgproc",
         "//mediapipe/framework/port:opencv_video",
-    ],
+    ] + select({
+        "//mediapipe/gpu:disable_gpu": [],
+        "//conditions:default": ["//mediapipe/GDMP/framework:gpu_helper"],
+    }),
 )
