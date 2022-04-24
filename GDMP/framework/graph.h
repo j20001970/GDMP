@@ -44,9 +44,6 @@ class Graph : public Object {
 #if !MEDIAPIPE_DISABLE_GPU
 		// Get mediapipe GPU resources, only valid after graph is initialized.
 		std::shared_ptr<mediapipe::GpuResources> get_gpu_resources();
-#ifdef __ANDROID__
-		jobject egl_manager;
-#endif
 #endif
 
 	private:

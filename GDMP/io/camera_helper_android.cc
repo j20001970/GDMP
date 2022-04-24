@@ -31,13 +31,18 @@ class CameraHelper::CameraHelperImpl {
 		}
 
 		jobject create_camera() {
-			JNIEnv *env = android_api->godot_android_get_env();
-			jobject activity = android_api->godot_android_get_activity();
-			const char *sig =
-					"(JLandroid/app/Activity;Lcom/google/mediapipe/glutil/EglManager;)V";
-			jmethodID cnstr = env->GetMethodID(camera_class, "<init>", sig);
-			jobject camera = env->NewObject(camera_class, cnstr, this, activity, graph->egl_manager);
-			return env->NewGlobalRef(camera);
+			jobject camera;
+			auto context = graph->get_gpu_resources()->gl_context();
+			// Create camera object in GL context so that it can get graph context on Java side.
+			context->Run([this, &camera]() -> void {
+				JNIEnv *env = android_api->godot_android_get_env();
+				jobject activity = android_api->godot_android_get_activity();
+				const char *sig = "(JLandroid/app/Activity;)V";
+				jmethodID cnstr = env->GetMethodID(camera_class, "<init>", sig);
+				camera = env->NewObject(camera_class, cnstr, this, activity);
+				camera = env->NewGlobalRef(camera);
+			});
+			return camera;
 		}
 
 		jobject get_camera_facing(int index) {
@@ -162,10 +167,6 @@ class CameraHelper::CameraHelperImpl {
 jclass CameraHelper::CameraHelperImpl::camera_class = nullptr;
 
 extern "C" {
-JNIEXPORT jlong JNICALL Java_com_google_mediapipe_framework_Compat_getCurrentNativeEGLContext(JNIEnv *env, jclass clz) {
-	return reinterpret_cast<jlong>(eglGetCurrentContext());
-}
-
 JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nativeOnNewFrame(JNIEnv *pEnv, jobject jCaller, jlong cppCaller, jobject frame, jint name, jint width, jint height) {
 	auto caller = (CameraHelper::CameraHelperImpl *)(cppCaller);
 	caller->on_new_frame(pEnv, frame, name, width, height);

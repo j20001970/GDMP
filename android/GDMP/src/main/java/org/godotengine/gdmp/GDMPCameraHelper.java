@@ -2,6 +2,7 @@ package org.godotengine.gdmp;
 
 import android.app.Activity;
 import android.graphics.SurfaceTexture;
+import android.opengl.EGL14;
 import android.util.Size;
 
 import androidx.annotation.Nullable;
@@ -38,10 +39,11 @@ public class GDMPCameraHelper extends CameraXPreviewHelper implements OnCameraSt
         nativeOnNewFrame(nativeCallerPtr, frame, frame.getTextureName(), frame.getWidth(), frame.getHeight());
     }
 
-    public GDMPCameraHelper(long nativeCallerPtr, Activity activity, EglManager eglManager) {
+    public GDMPCameraHelper(long nativeCallerPtr, Activity activity) {
         this.nativeCallerPtr = nativeCallerPtr;
         this.activity = activity;
-        this.eglManager = eglManager;
+        // Get graph GL context by getting current context.
+        this.eglManager = new EglManager(EGL14.eglGetCurrentContext());
         setOnCameraStartedListener(this);
     }
 
