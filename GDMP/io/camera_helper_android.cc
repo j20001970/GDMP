@@ -180,21 +180,8 @@ CameraHelper::~CameraHelper() = default;
 void CameraHelper::_init() {
 	impl = std::make_unique<CameraHelperImpl>();
 	if (impl->android_plugin) {
-		impl->android_plugin->connect("permission_result", this, "_on_permission_result");
-	}
-}
-
-void CameraHelper::_on_permission_result(PoolStringArray permissions, PoolIntArray results) {
-	for (int i = 0; i < permissions.size(); i++) {
-		String permission = permissions[i];
-		if (permission == "android.permission.CAMERA") {
-			if (results[i] == 0) {
-				emit_signal("permission_granted");
-			} else {
-				emit_signal("permission_denied");
-			}
-			break;
-		}
+		impl->android_plugin->connect("camera_permission_granted", this, "emit_signal", Array::make("permission_granted"));
+		impl->android_plugin->connect("camera_permission_denied", this, "emit_signal", Array::make("permission_denied"));
 	}
 }
 

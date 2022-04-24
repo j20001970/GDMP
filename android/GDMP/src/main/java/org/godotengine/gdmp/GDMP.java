@@ -1,5 +1,8 @@
 package org.godotengine.gdmp;
 
+import android.Manifest.permission;
+import android.content.pm.PackageManager;
+
 import androidx.annotation.NonNull;
 import androidx.collection.ArraySet;
 
@@ -32,7 +35,8 @@ public class GDMP extends GodotPlugin {
     @Override
     public Set<SignalInfo> getPluginSignals() {
         Set<SignalInfo> signals = new ArraySet<>();
-        signals.add(new SignalInfo("permission_result", String[].class, int[].class));
+        signals.add(new SignalInfo("camera_permission_granted"));
+        signals.add(new SignalInfo("camera_permission_denied"));
         return signals;
     }
 
@@ -49,6 +53,16 @@ public class GDMP extends GodotPlugin {
     @Override
     public void onMainRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onMainRequestPermissionsResult(requestCode, permissions, grantResults);
-        emitSignal("permission_result", permissions, grantResults);
+        for (int i = 0; i < permissions.length; i++) {
+            switch (permissions[i]) {
+                case permission.CAMERA:
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        emitSignal("camera_permission_granted");
+                    } else {
+                        emitSignal("camera_permission_denied");
+                    }
+                    break;
+            }
+        }
     }
 }

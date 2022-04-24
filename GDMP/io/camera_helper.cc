@@ -3,7 +3,6 @@
 using namespace godot;
 
 void CameraHelper::_register_methods() {
-	register_method("_on_permission_result", &CameraHelper::_on_permission_result);
 	register_method("permission_granted", &CameraHelper::permission_granted);
 	register_method("request_permission", &CameraHelper::request_permission);
 	register_method("set_graph", &CameraHelper::set_graph);

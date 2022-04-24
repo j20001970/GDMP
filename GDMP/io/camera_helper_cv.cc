@@ -104,9 +104,6 @@ void CameraHelper::_init() {
 	impl = std::make_unique<CameraHelperImpl>();
 }
 
-void CameraHelper::_on_permission_result(PoolStringArray permissions, PoolIntArray results) {
-}
-
 bool CameraHelper::permission_granted() {
 	return true;
 }

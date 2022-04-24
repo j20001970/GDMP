@@ -47,9 +47,6 @@ class CameraHelper : public Reference {
 
 	private:
 		std::unique_ptr<CameraHelperImpl> impl;
-		// Permission request callback.
-		// TODO: see if this can be move to impl
-		void _on_permission_result(PoolStringArray permissions, PoolIntArray results);
 };
 
 } //namespace godot
