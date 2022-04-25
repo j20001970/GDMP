@@ -30,7 +30,7 @@ public class GDMPCameraHelper extends CameraXPreviewHelper implements OnCameraSt
         converter.setSurfaceTextureAndAttachToGLContext(
                 surfaceTexture,
                 isCameraRotated() ? frameSize.getHeight() : frameSize.getWidth(),
-                isCameraRotated()? frameSize.getWidth() : frameSize.getHeight()
+                isCameraRotated() ? frameSize.getWidth() : frameSize.getHeight()
         );
     }
 
@@ -47,13 +47,14 @@ public class GDMPCameraHelper extends CameraXPreviewHelper implements OnCameraSt
         setOnCameraStartedListener(this);
     }
 
-    public void startCamera(CameraFacing cameraFacing, int width, int height) {
+    public void startCamera(int index, int width, int height) {
+        CameraFacing cameraFacing = index == 0 ? CameraFacing.FRONT : CameraFacing.BACK;
         super.startCamera(activity, cameraFacing, null, new Size(width, height));
     }
 
     public void closeCamera() {
         super.closeCamera(activity);
-        if(converter != null) {
+        if (converter != null) {
             converter.close();
         }
     }

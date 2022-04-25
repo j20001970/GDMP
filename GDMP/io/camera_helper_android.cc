@@ -14,11 +14,9 @@ using namespace godot;
 
 class CameraHelper::CameraHelperImpl {
 	public:
-		bool started;
 		Object *android_plugin;
 
 		CameraHelperImpl() {
-			started = false;
 			JNIEnv *env = android_api->godot_android_get_env();
 			if (env->IsSameObject(camera_class, NULL)) {
 				camera_class = reinterpret_cast<jclass>(
@@ -45,28 +43,6 @@ class CameraHelper::CameraHelperImpl {
 			return camera;
 		}
 
-		jobject get_camera_facing(int index) {
-			JNIEnv *env = android_api->godot_android_get_env();
-			jclass cls = env->FindClass("com/google/mediapipe/components/CameraHelper$CameraFacing");
-			const char *sig =
-					"Lcom/google/mediapipe/components/CameraHelper$CameraFacing;";
-			jfieldID fieldID;
-			switch (index) {
-				case 0:
-					fieldID = env->GetStaticFieldID(cls, "FRONT", sig);
-					break;
-				case 1:
-					fieldID = env->GetStaticFieldID(cls, "BACK", sig);
-					break;
-				default:
-					Godot::print(String("unexpected camera facing {0}").format(Array::make(index)));
-					break;
-			}
-			jobject camera_facing = env->GetStaticObjectField(cls, fieldID);
-			env->DeleteLocalRef(cls);
-			return camera_facing;
-		}
-
 		bool permission_granted() {
 			JNIEnv *env = android_api->godot_android_get_env();
 			jobject activity = android_api->godot_android_get_activity();
@@ -91,35 +67,22 @@ class CameraHelper::CameraHelperImpl {
 		}
 
 		void start(int index, Vector2 size) {
-			camera_facing = index;
-			camera_size = size;
-			start();
-		}
-
-		void start() {
 			if (graph == nullptr) {
 				Godot::print("Graph is not set");
 				return;
 			}
-			if (started) {
+			if (!permission_granted()) {
+				Godot::print("Permission not granted");
 				return;
 			}
-			started = true;
+			close();
 			JNIEnv *env = android_api->godot_android_get_env();
-			if (permission_granted()) {
-				camera = create_camera();
-				jobject camera_facing = get_camera_facing(this->camera_facing);
-				const char *sig =
-						"(Lcom/google/mediapipe/components/CameraHelper$CameraFacing;II)V";
-				// CameraXPreviewHelper transpose target size unconditionally, therefore we transpose it back here.
-				jint width = camera_size.y;
-				jint height = camera_size.x;
-				env->CallVoidMethod(
-						camera, env->GetMethodID(camera_class, "startCamera", sig), camera_facing, width, height);
-				env->DeleteLocalRef(camera_facing);
-			} else {
-				request_permission();
-			}
+			camera = create_camera();
+			const char *sig = "(III)V";
+			// CameraXPreviewHelper transpose target size unconditionally, therefore we transpose it back here.
+			jint width = size.y;
+			jint height = size.x;
+			env->CallVoidMethod(camera, env->GetMethodID(camera_class, "startCamera", sig), index, width, height);
 		}
 
 		void close() {
@@ -127,8 +90,8 @@ class CameraHelper::CameraHelperImpl {
 			if (camera && !env->IsSameObject(camera, NULL)) {
 				env->CallVoidMethod(camera, env->GetMethodID(camera_class, "closeCamera", "()V"));
 				env->DeleteGlobalRef(camera);
+				camera = nullptr;
 			}
-			started = false;
 		}
 
 		void on_new_frame(JNIEnv *env, jobject frame, int name, int width, int height) {
@@ -157,8 +120,6 @@ class CameraHelper::CameraHelperImpl {
 
 	private:
 		static jclass camera_class;
-		int camera_facing;
-		Vector2 camera_size;
 		jobject camera = nullptr;
 		Graph *graph;
 		String stream_name;
@@ -167,7 +128,8 @@ class CameraHelper::CameraHelperImpl {
 jclass CameraHelper::CameraHelperImpl::camera_class = nullptr;
 
 extern "C" {
-JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nativeOnNewFrame(JNIEnv *pEnv, jobject jCaller, jlong cppCaller, jobject frame, jint name, jint width, jint height) {
+JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nativeOnNewFrame(
+		JNIEnv *pEnv, jobject jCaller, jlong cppCaller, jobject frame, jint name, jint width, jint height) {
 	auto caller = (CameraHelper::CameraHelperImpl *)(cppCaller);
 	caller->on_new_frame(pEnv, frame, name, width, height);
 }
@@ -180,8 +142,10 @@ CameraHelper::~CameraHelper() = default;
 void CameraHelper::_init() {
 	impl = std::make_unique<CameraHelperImpl>();
 	if (impl->android_plugin) {
-		impl->android_plugin->connect("camera_permission_granted", this, "emit_signal", Array::make("permission_granted"));
-		impl->android_plugin->connect("camera_permission_denied", this, "emit_signal", Array::make("permission_denied"));
+		impl->android_plugin->connect(
+				"camera_permission_granted", this, "emit_signal", Array::make("permission_granted"));
+		impl->android_plugin->connect(
+				"camera_permission_denied", this, "emit_signal", Array::make("permission_denied"));
 	}
 }
 

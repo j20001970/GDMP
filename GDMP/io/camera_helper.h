@@ -35,6 +35,10 @@ class CameraHelper : public Reference {
 		// Set the target graph to send video frames to with stream name.
 		void set_graph(Graph *graph, String stream_name);
 		// Start the camera with specified index and target resolution.
+		// Previously opened camera on this camera helper will be closed first.
+		// Camera will not start if:
+		// 1. the graph to send video frames to is not set.
+		// 2. camera permission is not granted.
 		// Actual supported resolutions are platform and hardware dependent.
 		void start(int index, Vector2 size);
 		// Close camera.
