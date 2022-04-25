@@ -76,7 +76,8 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
     var camera_helper : GDMP.CameraHelper = GDMP.CameraHelper.new()
     camera_helper.set_graph(graph, "input_video")
     graph.start()
-    camera_helper.start(GDMP.CAMERA_FACING_FRONT, Vector2(640, 480))
+    if camera_helper.permission_granted():
+        camera_helper.start(GDMP.CAMERA_FACING_FRONT, Vector2(640, 480))
     ```
 
 ## Disclaimer
