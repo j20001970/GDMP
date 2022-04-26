@@ -32,6 +32,9 @@ class Graph : public Object {
 		// Depending on as_text, the graph file must be in either text (pbtxt) or binary (binarypb) format.
 		// If initialization failed in the process, the underlying mediapipe::CalculatorGraph must remain null.
 		void initialize(String graph_path, bool as_text);
+		// Check if a initialized graph has specified input stream.
+		// Always return false if graph has not initialized.
+		bool has_input_stream(String stream_name);
 		// Add a callback for given stream_name.
 		void add_packet_callback(String stream_name, Object *object, String method);
 		// Start the calculator graph for sending packets to input stream,

@@ -15,6 +15,7 @@ using namespace godot;
 
 void Graph::_register_methods() {
 	register_method("initialize", &Graph::initialize);
+	register_method("has_input_stream", &Graph::has_input_stream);
 	register_method("add_packet_callback", &Graph::add_packet_callback);
 	register_method("start", &Graph::start);
 	register_method("add_packet", &Graph::add_packet);
@@ -57,6 +58,14 @@ void Graph::initialize(String graph_path, bool as_text) {
 		graph = nullptr;
 		Godot::print(result.message().data());
 	}
+}
+
+bool Graph::has_input_stream(String stream_name) {
+	if (!graph) {
+		Godot::print("Graph has not initialized.");
+		return false;
+	}
+	return graph->HasInputStream(stream_name.alloc_c_string());
 }
 
 void Graph::add_packet_callback(String stream_name, Object *object, String method) {
