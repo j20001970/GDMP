@@ -28,17 +28,9 @@ config_setting(
 
 cc_binary(
     name = "gdmp",
-    srcs = [
-        "gdlibrary.cc",
-    ],
-    linkopts = [
-        "-s",
-    ] + select({
-        "//mediapipe:android": [
-            "-llog",
-            "-lm",
-        ],
-        "//conditions:default": [],
+    srcs = ["gdlibrary.cc"],
+    linkopts = select({
+        "//conditions:default": ["-s"],
     }),
     linkshared = 1,
     visibility = ["//visibility:public"],
