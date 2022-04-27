@@ -28,7 +28,10 @@ try:
             '--copt', '-fPIC'])
     elif args.target.lower() == 'desktop':
         if sys.platform.startswith("linux"):
-            bazel_args.extend(['--copt', '-fPIC'])
+            bazel_args.extend([\
+                '--copt', '-DMESA_EGL_NO_X11_HEADERS', \
+                '--copt', '-DEGL_NO_X11', \
+                '--copt', '-fPIC'])
     else:
         print("unknown target, exiting.")
         sys.exit(-1)

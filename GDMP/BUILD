@@ -31,13 +31,6 @@ cc_binary(
     srcs = [
         "gdlibrary.cc",
     ],
-    defines = select({
-        "//mediapipe:android": [],
-        "//conditions:default": [
-            "MESA_EGL_NO_X11_HEADERS",
-            "EGL_NO_X11",
-        ],
-    }),
     linkopts = [
         "-s",
     ] + select({
