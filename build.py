@@ -8,7 +8,7 @@ from shutil import which
 mediapipe_dir = os.path.join(os.path.dirname(__file__), 'mediapipe')
 
 parser = ArgumentParser()
-parser.add_argument('target', choices=['aar', 'android', 'desktop'], help='target to build')
+parser.add_argument('target', choices=['android', 'desktop'], help='target to build')
 args = parser.parse_args()
 
 # check bazel executable
@@ -25,15 +25,14 @@ try:
             '--host_crosstool_top=@bazel_tools//tools/cpp:toolchain', \
             '--crosstool_top=//external:android/crosstool', \
             '--cpu=arm64-v8a', \
-            '--copt', '-fPIC', \
-            '//mediapipe/GDMP:gdmp'])
+            '--copt', '-fPIC'])
     elif args.target.lower() == 'desktop':
-        bazel_args.extend([\
-            '--copt', '-fPIC', \
-            '//mediapipe/GDMP:gdmp'])
+        if sys.platform.startswith("linux"):
+            bazel_args.extend(['--copt', '-fPIC'])
     else:
         print("unknown target, exiting.")
         sys.exit(-1)
+    bazel_args.extend(['//mediapipe/GDMP:gdmp'])
     os.chdir(mediapipe_dir)
     subprocess.run(bazel_args)
 except Exception as e:

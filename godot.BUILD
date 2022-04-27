@@ -13,18 +13,11 @@ cc_library(
         "godot-headers/*/*.h",
         "include/*/*.hpp",
     ]),
-    copts = [
-        "-fPIC",
-        "-std=c++14",
-        "-Wwrite-strings",
-        "-O3",
-    ],
     includes = [
         "godot-headers",
         "include",
         "include/core",
         "include/gen",
     ],
-    linkstatic = 1,
     visibility = ["//visibility:public"],
 )
