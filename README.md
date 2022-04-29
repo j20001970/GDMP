@@ -62,7 +62,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 5. To use the packet from graph callback(NormalizedLandmarkList for example):
 
     ```gdscript
-    func _on_new_landmarks(packet) -> void:
+    func _on_new_landmarks(stream_name : String, packet) -> void:
         var bytes : PoolByteArray = packet.get_proto()
         var landmarks = GDMP.NormalizedLandmarkList.new()
         landmarks.from_bytes(bytes)
