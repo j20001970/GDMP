@@ -1,9 +1,6 @@
 cc_library(
     name = "camera_helper",
-    srcs = ["camera_helper.cc"] + select({
-        "//mediapipe:android": ["camera_helper_android.cc"],
-        "//conditions:default": ["camera_helper_cv.cc"],
-    }),
+    srcs = ["camera_helper.cc"],
     hdrs = ["camera_helper.h"],
     visibility = ["//visibility:public"],
     deps = [
@@ -17,9 +14,11 @@ cc_library(
 
 cc_library(
     name = "camera_helper_android",
+    srcs = ["camera_helper_android.cc"],
+    hdrs = ["camera_helper.h"],
     deps = [
+        "//mediapipe/GDMP/framework:graph",
         "//mediapipe/GDMP/framework:packet",
-        "//mediapipe/framework:packet",
         "//mediapipe/gpu:gl_texture_buffer",
         "//mediapipe/gpu:gpu_buffer",
         "//mediapipe/gpu:gpu_buffer_format",
@@ -29,9 +28,11 @@ cc_library(
 
 cc_library(
     name = "camera_helper_cv",
+    srcs = ["camera_helper_cv.cc"],
+    hdrs = ["camera_helper.h"],
     deps = [
+        "//mediapipe/GDMP/framework:graph",
         "//mediapipe/GDMP/framework:packet",
-        "//mediapipe/framework:packet",
         "//mediapipe/framework/formats:image_frame",
         "//mediapipe/framework/formats:image_frame_opencv",
         "//mediapipe/framework/port:opencv_core",
