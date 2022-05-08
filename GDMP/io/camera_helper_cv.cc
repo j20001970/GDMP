@@ -44,7 +44,10 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 			}
 			set(cv::CAP_PROP_FRAME_WIDTH, size.x);
 			set(cv::CAP_PROP_FRAME_HEIGHT, size.y);
-			set(cv::CAP_PROP_FPS, 30);
+			if (!isOpened()) {
+				Godot::print("Failed to set target size");
+				return;
+			}
 			thread = std::thread([this, size]() -> void {
 #if !MEDIAPIPE_DISABLE_GPU
 				Ref<GPUHelper> gpu_helper = GPUHelper::_new(graph->get_gpu_resources().get());
