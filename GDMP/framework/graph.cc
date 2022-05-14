@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <thread>
 
 #include "Array.hpp"
 #include "File.hpp"
@@ -142,20 +143,24 @@ void Graph::add_packet(String stream_name, Ref<Packet> packet) {
 }
 
 void Graph::stop() {
-	absl::Status result = [this]() -> absl::Status {
-		if (!graph) {
+	// Has to stop the graph in a thread to prevent break rendering.
+	std::thread([this]() -> void {
+		absl::Status result = [this]() -> absl::Status {
+			if (!graph) {
+				return absl::OkStatus();
+			}
+			if (started) {
+				MP_RETURN_IF_ERROR(graph->CloseAllPacketSources());
+				MP_RETURN_IF_ERROR(graph->WaitUntilDone());
+				graph.reset(nullptr);
+			}
+			started = false;
 			return absl::OkStatus();
+		}();
+		if (!result.ok()) {
+			Godot::print(result.message().data());
 		}
-		if (started) {
-			MP_RETURN_IF_ERROR(graph->CloseAllPacketSources());
-			MP_RETURN_IF_ERROR(graph->WaitUntilIdle());
-		}
-		started = false;
-		return absl::OkStatus();
-	}();
-	if (!result.ok()) {
-		Godot::print(result.message().data());
-	}
+	}).join();
 }
 
 #if !MEDIAPIPE_DISABLE_GPU
