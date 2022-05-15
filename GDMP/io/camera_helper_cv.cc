@@ -32,22 +32,13 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 		}
 
 		void start(int index, Vector2 size) {
-			if (graph == nullptr) {
-				Godot::print("Graph is not set");
-				return;
-			}
+			ERR_FAIL_COND(graph == nullptr);
 			close();
 			open(index);
-			if (!isOpened()) {
-				Godot::print("Failed to open camera");
-				return;
-			}
+			ERR_FAIL_COND(!isOpened());
 			set(cv::CAP_PROP_FRAME_WIDTH, size.x);
 			set(cv::CAP_PROP_FRAME_HEIGHT, size.y);
-			if (!isOpened()) {
-				Godot::print("Failed to set target size");
-				return;
-			}
+			ERR_FAIL_COND(!isOpened());
 			thread = std::thread([this, size]() -> void {
 #if !MEDIAPIPE_DISABLE_GPU
 				Ref<GPUHelper> gpu_helper = GPUHelper::_new(graph->get_gpu_resources().get());

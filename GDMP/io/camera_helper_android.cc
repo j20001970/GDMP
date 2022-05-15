@@ -67,14 +67,8 @@ class CameraHelper::CameraHelperImpl {
 		}
 
 		void start(int index, Vector2 size) {
-			if (graph == nullptr) {
-				Godot::print("Graph is not set");
-				return;
-			}
-			if (!permission_granted()) {
-				Godot::print("Permission not granted");
-				return;
-			}
+			ERR_FAIL_COND(graph == nullptr);
+			ERR_FAIL_COND(!permission_granted());
 			close();
 			JNIEnv *env = android_api->godot_android_get_env();
 			camera = create_camera();

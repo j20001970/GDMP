@@ -64,7 +64,7 @@ void Packet::make(Variant value) {
 			packet = mediapipe::MakePacket<std::string>(String(value).alloc_c_string());
 			break;
 		default:
-			Godot::print("Unsupported type to make packet.");
+			ERR_PRINT("Unsupported type to make packet.");
 			break;
 	}
 }

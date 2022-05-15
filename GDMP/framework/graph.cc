@@ -42,9 +42,7 @@ void Graph::initialize(String graph_path, bool as_text) {
 		} else {
 			result = config.ParseFromArray(graph_contents.data(), graph_contents.size());
 		}
-		if (!result) {
-			return absl::InvalidArgumentError("Failed to parse graph config.");
-		}
+		ERR_FAIL_COND_V(!result, absl::InvalidArgumentError("Failed to parse graph config."));
 		MP_RETURN_IF_ERROR(graph->Initialize(config));
 #if !MEDIAPIPE_DISABLE_GPU
 		ASSIGN_OR_RETURN(auto gpu_resources, mediapipe::GpuResources::Create());
@@ -54,7 +52,7 @@ void Graph::initialize(String graph_path, bool as_text) {
 	}();
 	if (!result.ok()) {
 		graph = nullptr;
-		Godot::print(result.message().data());
+		ERR_PRINT(result.message().data());
 	}
 }
 
@@ -63,18 +61,13 @@ bool Graph::is_initialized() {
 }
 
 bool Graph::has_input_stream(String stream_name) {
-	if (!graph) {
-		Godot::print("Graph has not initialized.");
-		return false;
-	}
+	ERR_FAIL_COND_V(graph == nullptr, false);
 	return graph->HasInputStream(stream_name.alloc_c_string());
 }
 
 void Graph::add_packet_callback(String stream_name, Object *object, String method) {
 	absl::Status result = [this, &stream_name, &object, &method]() -> absl::Status {
-		if (!graph) {
-			return absl::FailedPreconditionError("Graph has not initialized.");
-		}
+		ERR_FAIL_COND_V(graph == nullptr, absl::FailedPreconditionError("Graph has not initialized."));
 		return graph->ObserveOutputStream(stream_name.alloc_c_string(), [this, stream_name, object, method](mediapipe::Packet packet) -> absl::Status {
 			if (object == nullptr) {
 				return absl::OkStatus();
@@ -85,15 +78,13 @@ void Graph::add_packet_callback(String stream_name, Object *object, String metho
 		});
 	}();
 	if (!result.ok()) {
-		Godot::print(result.message().data());
+		ERR_PRINT(result.message().data());
 	}
 }
 
 void Graph::start(Dictionary side_packets) {
 	absl::Status result = [this, &side_packets]() -> absl::Status {
-		if (!graph) {
-			return absl::FailedPreconditionError("Graph has not initialized.");
-		}
+		ERR_FAIL_COND_V(graph == nullptr, absl::FailedPreconditionError("Graph has not initialized."));
 		std::map<std::string, mediapipe::Packet> packets;
 		for (int i = 0; i < side_packets.keys().size(); i++) {
 			if (side_packets.keys()[i].get_type() == Variant::Type::STRING) {
@@ -123,22 +114,18 @@ void Graph::start(Dictionary side_packets) {
 		return absl::OkStatus();
 	}();
 	if (!result.ok()) {
-		Godot::print(result.message().data());
+		ERR_PRINT(result.message().data());
 	}
 }
 
 void Graph::add_packet(String stream_name, Ref<Packet> packet) {
 	absl::Status result = [this, stream_name, &packet]() -> absl::Status {
-		if (!graph) {
-			return absl::FailedPreconditionError("Graph has not initialized.");
-		}
-		if (packet.is_null()) {
-			return absl::InvalidArgumentError("Packet is null.");
-		}
+		ERR_FAIL_COND_V(graph == nullptr, absl::FailedPreconditionError("Graph has not initialized."));
+		ERR_FAIL_COND_V(packet.is_null(), absl::InvalidArgumentError("Packet is null."));
 		return graph->AddPacketToInputStream(stream_name.alloc_c_string(), packet->get_packet());
 	}();
 	if (!result.ok()) {
-		Godot::print(result.message().data());
+		ERR_PRINT(result.message().data());
 	}
 }
 
@@ -158,17 +145,14 @@ void Graph::stop() {
 			return absl::OkStatus();
 		}();
 		if (!result.ok()) {
-			Godot::print(result.message().data());
+			ERR_PRINT(result.message().data());
 		}
 	}).join();
 }
 
 #if !MEDIAPIPE_DISABLE_GPU
 std::shared_ptr<mediapipe::GpuResources> Graph::get_gpu_resources() {
-	if (!graph) {
-		Godot::print("Graph has not initialized.");
-		return nullptr;
-	}
+	ERR_FAIL_COND_V(graph == nullptr, nullptr);
 	return graph->GetGpuResources();
 }
 #endif
