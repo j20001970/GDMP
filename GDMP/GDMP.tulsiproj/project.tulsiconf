@@ -1,0 +1,21 @@
+{
+  "configDefaults" : {
+    "optionSet" : {
+      "BazelBuildOptionsDebug" : {
+        "p" : "--define=GODOT=1"
+      },
+      "BazelBuildOptionsRelease" : {
+        "p" : "--define=GODOT=1"
+      }
+    }
+  },
+  "packages" : [
+    "Mediapipe/GDMP/util",
+    "mediapipe/GDMP",
+    "mediapipe/GDMP/framework",
+    "mediapipe/GDMP/io",
+    "mediapipe/GDMP/proto"
+  ],
+  "projectName" : "GDMP",
+  "workspaceRoot" : "../../mediapipe"
+}

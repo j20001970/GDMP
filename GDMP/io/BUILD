@@ -8,6 +8,7 @@ cc_library(
         "//third_party:godot",
     ] + select({
         "//mediapipe:android": [":camera_helper_android"],
+        "//mediapipe:ios": [":camera_helper_ios"],
         "//conditions:default": [":camera_helper_cv"],
     }),
 )
@@ -42,4 +43,23 @@ cc_library(
         "//mediapipe/gpu:disable_gpu": [],
         "//conditions:default": ["//mediapipe/GDMP/framework:gpu_helper"],
     }),
+)
+
+objc_library(
+    name = "camera_helper_ios",
+    srcs = ["camera_helper_ios.mm"],
+    hdrs = ["camera_helper.h"],
+    sdk_frameworks = [
+        "Accelerate",
+        "AVFoundation",
+        "CoreGraphics",
+        "CoreVideo",
+    ],
+    deps = [
+        "//mediapipe/GDMP/framework:graph",
+        "//mediapipe/GDMP/framework:packet",
+    ],
+    copts = [
+        "-std=c++17",
+    ],
 )

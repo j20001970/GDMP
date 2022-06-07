@@ -31,7 +31,10 @@ cc_library(
         "//mediapipe/gpu:gpu_buffer",
         "//mediapipe/gpu:gpu_shared_data_internal",
         "//third_party:godot",
-    ],
+    ] + select({
+        "//conditions:default": [],
+        "//mediapipe:apple": ["//mediapipe/objc:util"],
+    }),
 )
 
 cc_library(
