@@ -2,7 +2,7 @@
 
 singleton=false
 load_once=true
-symbol_prefix="godot_"
+symbol_prefix="mediapipe_"
 reloadable=true
 
 [entry]
