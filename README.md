@@ -33,6 +33,16 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 
     (Optional) also copy `libopencv_java3.so` to the project and add it as GDNative library dependencies if OpenCV is used in calculators.
 
+## Building for iOS
+1. Comment out `macos` and `ios` part of select() in `srcs` and `deps` attributes from `resource_util` in `mediapipe/mediapipe/util/BUILD`, this step is required before the ambiguous match problem is solved.
+2. Use [Tulsi](https://tulsi.bazel.build) project located in `GDMP` directory to generate Xcode project.
+3. Build `GDMP_ios` static framework target, copy the library from the framework to your project's `addons/GDMP/libs/ios` **and rename it with .a extension**, so that Godot will treat it like static library instead of dynamic when exporting to Xcode.
+
+    (Optional) also copy `opencv2.a` to the project and add it as GDNative library dependencies if OpenCV is used in calculators.
+4. After exporting Godot project to Xcode, add necessary frameworks in order to build the app, and go to `Other Linker Flags` in `Build Settings` to force load the static library, for example:
+
+    `-force_load $(PROJECT_DIR)/path/to/your/GDMP_ios.a`
+
 ## Building for Linux
 1. Run:
 

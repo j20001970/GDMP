@@ -1,10 +1,10 @@
 {
   "additionalFilePaths" : [
-    "Mediapipe/GDMP/util/BUILD",
     "mediapipe/GDMP/BUILD",
     "mediapipe/GDMP/framework/BUILD",
     "mediapipe/GDMP/io/BUILD",
-    "mediapipe/GDMP/proto/BUILD"
+    "mediapipe/GDMP/proto/BUILD",
+    "mediapipe/GDMP/util/BUILD"
   ],
   "buildTargets" : [
     "//mediapipe/GDMP:GDMP_ios"

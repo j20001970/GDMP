@@ -10,11 +10,11 @@
     }
   },
   "packages" : [
-    "Mediapipe/GDMP/util",
     "mediapipe/GDMP",
     "mediapipe/GDMP/framework",
     "mediapipe/GDMP/io",
-    "mediapipe/GDMP/proto"
+    "mediapipe/GDMP/proto",
+    "mediapipe/GDMP/util"
   ],
   "projectName" : "GDMP",
   "workspaceRoot" : "../../mediapipe"

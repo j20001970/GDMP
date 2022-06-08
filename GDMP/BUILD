@@ -42,9 +42,6 @@ config_setting(
 cc_library(
     name = "GDMP_deps",
     srcs = ["gdlibrary.cc"],
-    linkopts = select({
-        "//conditions:default": ["-s"],
-    }),
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/GDMP/framework:graph",
@@ -61,10 +58,14 @@ cc_library(
         "//mediapipe/gpu:disable_gpu": [],
         "//conditions:default": ["//mediapipe/GDMP/framework:gpu_helper"],
     }) + CALCULATORS,
+    alwayslink = 1,
 )
 
 cc_binary(
     name = "GDMP",
+    linkopts = select({
+        "//conditions:default": ["-s"],
+    }),
     linkshared = 1,
     visibility = ["//visibility:public"],
     deps = [":GDMP_deps"],
@@ -72,7 +73,10 @@ cc_binary(
 
 ios_static_framework(
     name = "GDMP_ios",
+    families = [
+        "iphone",
+        "ipad",
+    ],
     minimum_os_version = "11.0",
-    families = ["iphone", "ipad"],
     deps = [":GDMP_deps"],
 )
