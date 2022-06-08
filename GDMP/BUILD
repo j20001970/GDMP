@@ -1,9 +1,11 @@
+load("@build_bazel_rules_apple//apple:ios.bzl", "ios_static_framework")
 load("//mediapipe/GDMP:calculators.bzl", "CALCULATORS")
 
 alias(
     name = "godot",
     actual = select({
-        ":godot_android": ":godot_android",
+        "//mediapipe:android": ":godot_android",
+        "//mediapipe:ios": ":godot_ios",
         "//conditions:default": "godot_desktop",
     }),
     visibility = ["//visibility:public"],
@@ -26,13 +28,23 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
-cc_binary(
-    name = "gdmp",
+config_setting(
+    name = "godot_ios",
+    define_values = {
+        "GODOT": "1",
+    },
+    values = {
+        "apple_platform_type": "ios",
+    },
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "GDMP_deps",
     srcs = ["gdlibrary.cc"],
     linkopts = select({
         "//conditions:default": ["-s"],
     }),
-    linkshared = 1,
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/GDMP/framework:graph",
@@ -49,4 +61,18 @@ cc_binary(
         "//mediapipe/gpu:disable_gpu": [],
         "//conditions:default": ["//mediapipe/GDMP/framework:gpu_helper"],
     }) + CALCULATORS,
+)
+
+cc_binary(
+    name = "GDMP",
+    linkshared = 1,
+    visibility = ["//visibility:public"],
+    deps = [":GDMP_deps"],
+)
+
+ios_static_framework(
+    name = "GDMP_ios",
+    minimum_os_version = "11.0",
+    families = ["iphone", "ipad"],
+    deps = [":GDMP_deps"],
 )

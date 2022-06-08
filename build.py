@@ -35,7 +35,7 @@ try:
     else:
         print("unknown target, exiting.")
         sys.exit(-1)
-    bazel_args.extend(['//mediapipe/GDMP:gdmp'])
+    bazel_args.extend(['//mediapipe/GDMP:GDMP'])
     os.chdir(mediapipe_dir)
     subprocess.run(bazel_args)
 except Exception as e:

@@ -1,6 +1,9 @@
 #include "gpu_helper.h"
 
 #include "mediapipe/gpu/gpu_buffer.h"
+#ifdef __APPLE__
+#include "mediapipe/objc/util.h"
+#endif
 
 #include "../util/image.h"
 
@@ -25,9 +28,11 @@ void GPUHelper::initialize(Graph *graph) {
 }
 
 Ref<Image> GPUHelper::get_gpu_frame(Ref<Packet> packet) {
-	Ref<Image> image;
 	std::unique_ptr<mediapipe::ImageFrame> image_frame;
-	gpu_helper.RunInGlContext([this, &packet, &image, &image_frame]() -> void {
+#if MEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER
+    image_frame = CreateImageFrameForCVPixelBuffer(mediapipe::GetCVPixelBufferRef(packet->get_packet().Get<mediapipe::GpuBuffer>()));
+#else
+	gpu_helper.RunInGlContext([this, &packet, &image_frame]() -> void {
 		auto &gpu_frame = packet->get_packet().Get<mediapipe::GpuBuffer>();
 		auto texture = gpu_helper.CreateSourceTexture(gpu_frame);
 		image_frame = absl::make_unique<mediapipe::ImageFrame>(
@@ -43,8 +48,9 @@ Ref<Image> GPUHelper::get_gpu_frame(Ref<Packet> packet) {
 		// We explicitly unbind framebuffer here, otherwise it can crash GPU inference on Android.
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		texture.Release();
-		image = to_image(*image_frame);
 	});
+#endif
+    Ref<Image> image = to_image(*image_frame);
 	return image;
 }
 

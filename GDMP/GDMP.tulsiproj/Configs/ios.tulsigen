@@ -1,0 +1,64 @@
+{
+  "additionalFilePaths" : [
+    "Mediapipe/GDMP/util/BUILD",
+    "mediapipe/GDMP/BUILD",
+    "mediapipe/GDMP/framework/BUILD",
+    "mediapipe/GDMP/io/BUILD",
+    "mediapipe/GDMP/proto/BUILD"
+  ],
+  "buildTargets" : [
+    "//mediapipe/GDMP:GDMP_ios"
+  ],
+  "optionSet" : {
+    "BazelBuildOptionsDebug" : {
+      "p" : "$(inherited)"
+    },
+    "BazelBuildOptionsRelease" : {
+      "p" : "$(inherited)"
+    },
+    "BazelBuildStartupOptionsDebug" : {
+      "p" : "$(inherited)"
+    },
+    "BazelBuildStartupOptionsRelease" : {
+      "p" : "$(inherited)"
+    },
+    "BuildActionPostActionScript" : {
+      "p" : "$(inherited)"
+    },
+    "BuildActionPreActionScript" : {
+      "p" : "$(inherited)"
+    },
+    "CommandlineArguments" : {
+      "p" : "$(inherited)"
+    },
+    "EnvironmentVariables" : {
+      "p" : "$(inherited)"
+    },
+    "LaunchActionPostActionScript" : {
+      "p" : "$(inherited)"
+    },
+    "LaunchActionPreActionScript" : {
+      "p" : "$(inherited)"
+    },
+    "ProjectGenerationBazelStartupOptions" : {
+      "p" : "$(inherited)"
+    },
+    "ProjectGenerationCompilationMode" : {
+      "p" : "opt"
+    },
+    "TestActionPostActionScript" : {
+      "p" : "$(inherited)"
+    },
+    "TestActionPreActionScript" : {
+      "p" : "$(inherited)"
+    }
+  },
+  "projectName" : "GDMP",
+  "sourceFilters" : [
+    "mediapipe/GDMP",
+    "mediapipe/GDMP/framework",
+    "mediapipe/GDMP/io",
+    "mediapipe/GDMP/proto",
+    "mediapipe/GDMP/util"
+  ]
+}
