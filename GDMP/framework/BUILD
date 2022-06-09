@@ -9,6 +9,7 @@ cc_library(
         "//mediapipe/framework:packet",
         "//mediapipe/framework/port:parse_text_proto",
         "//mediapipe/framework/port:status",
+        "//mediapipe/framework/tool:sink",
         "//mediapipe/util:resource_util",
         "//third_party:godot",
     ] + select({

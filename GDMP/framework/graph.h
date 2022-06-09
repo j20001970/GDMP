@@ -28,16 +28,15 @@ class Graph : public Object {
 
 		void _init();
 
-		// Initialize the calculator graph with the file in graph_path.
+		// Initialize the calculator graph config with the file in graph_path.
 		// Depending on as_text, the graph file must be in either text (pbtxt) or binary (binarypb) format.
-		// If initialization failed in the process, the underlying mediapipe::CalculatorGraph must remain null.
 		void initialize(String graph_path, bool as_text);
-		// Check if the graph has initialized.
+		// Check if the graph config has initialized.
 		bool is_initialized();
-		// Check if a initialized graph has specified input stream.
-		// Always return false if graph has not initialized.
+		// Check if the initialized graph config has specified input stream.
+		// Always return false if graph config is not initialized.
 		bool has_input_stream(String stream_name);
-		// Add a callback for given stream_name.
+		// Add a packet callback for given stream_name.
 		void add_packet_callback(String stream_name, Object *object, String method);
 		// Start the calculator graph for sending packets to input stream,
 		// with side_packets for setting input side packet value.
@@ -47,13 +46,17 @@ class Graph : public Object {
 		// Stop the graph.
 		void stop();
 #if !MEDIAPIPE_DISABLE_GPU
-		// Get mediapipe GPU resources, only valid after graph is initialized.
+		// Get mediapipe GPU resources.
 		std::shared_ptr<mediapipe::GpuResources> get_gpu_resources();
 #endif
 
 	private:
-		bool started;
-		std::unique_ptr<mediapipe::CalculatorGraph> graph;
+		std::unique_ptr<mediapipe::CalculatorGraph> running_graph;
+		std::unique_ptr<mediapipe::CalculatorGraphConfig> graph_config;
+		std::map<std::string, mediapipe::Packet> packet_callbacks;
+#if !MEDIAPIPE_DISABLE_GPU
+		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
+#endif
 };
 
 } //namespace godot
