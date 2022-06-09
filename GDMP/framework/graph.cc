@@ -19,6 +19,7 @@ using namespace godot;
 void Graph::_register_methods() {
 	register_method("initialize", &Graph::initialize);
 	register_method("is_initialized", &Graph::is_initialized);
+	register_method("is_running", &Graph::is_running);
 	register_method("has_input_stream", &Graph::has_input_stream);
 	register_method("add_packet_callback", &Graph::add_packet_callback);
 	register_method("start", &Graph::start);
@@ -53,6 +54,10 @@ void Graph::initialize(String graph_path, bool as_text) {
 
 bool Graph::is_initialized() {
 	return graph_config != nullptr;
+}
+
+bool Graph::is_running() {
+	return running_graph != nullptr;
 }
 
 bool Graph::has_input_stream(String stream_name) {
@@ -119,24 +124,24 @@ void Graph::start(Dictionary side_packets) {
 }
 
 void Graph::add_packet(String stream_name, Ref<Packet> packet) {
-	ERR_FAIL_COND(running_graph == nullptr);
+	ERR_FAIL_COND(!is_running());
 	ERR_FAIL_COND(packet.is_null());
 	absl::Status add_packet = running_graph->AddPacketToInputStream(stream_name.alloc_c_string(), packet->get_packet());
 	ERR_FAIL_COND_V(!add_packet.ok(), ERR_PRINT(add_packet.ToString().data()));
 }
 
 void Graph::stop() {
+	if (!is_running()) {
+		return;
+	}
 	// Has to stop the graph in a thread to prevent break rendering.
 	std::thread([this]() -> void {
 		absl::Status stop_graph = [this]() -> absl::Status {
-			if (running_graph == nullptr) {
-				return absl::OkStatus();
-			}
 			MP_RETURN_IF_ERROR(running_graph->CloseAllPacketSources());
 			MP_RETURN_IF_ERROR(running_graph->WaitUntilDone());
-			running_graph = nullptr;
 			return absl::OkStatus();
 		}();
+		running_graph = nullptr;
 		ERR_FAIL_COND_V(!stop_graph.ok(), ERR_PRINT(stop_graph.ToString().data()));
 	}).join();
 }

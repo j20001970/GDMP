@@ -33,6 +33,8 @@ class Graph : public Object {
 		void initialize(String graph_path, bool as_text);
 		// Check if the graph config has initialized.
 		bool is_initialized();
+		// Check if the graph is running.
+		bool is_running();
 		// Check if the initialized graph config has specified input stream.
 		// Always return false if graph config is not initialized.
 		bool has_input_stream(String stream_name);
