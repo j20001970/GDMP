@@ -116,7 +116,9 @@ void Graph::start(Dictionary side_packets) {
 	absl::Status start_graph = [this, &packets]() -> absl::Status {
 		running_graph = std::make_unique<mediapipe::CalculatorGraph>();
 		MP_RETURN_IF_ERROR(running_graph->Initialize(*graph_config, packet_callbacks));
+#if !MEDIAPIPE_DISABLE_GPU
 		MP_RETURN_IF_ERROR(running_graph->SetGpuResources(gpu_resources));
+#endif
 		MP_RETURN_IF_ERROR(running_graph->StartRun(packets));
 		return absl::OkStatus();
 	}();
