@@ -21,6 +21,7 @@ void Graph::_register_methods() {
 	register_method("is_initialized", &Graph::is_initialized);
 	register_method("is_running", &Graph::is_running);
 	register_method("has_input_stream", &Graph::has_input_stream);
+	register_method("has_output_stream", &Graph::has_output_stream);
 	register_method("add_packet_callback", &Graph::add_packet_callback);
 	register_method("start", &Graph::start);
 	register_method("add_packet", &Graph::add_packet);
@@ -70,8 +71,26 @@ bool Graph::has_input_stream(String stream_name) {
 	return false;
 }
 
+bool Graph::has_output_stream(String stream_name) {
+	ERR_FAIL_COND_V(!is_initialized(), false);
+	for (std::string output : graph_config->output_stream()) {
+		if (String(output.data()) == stream_name) {
+			return true;
+		}
+	}
+	for (auto node : graph_config->node()) {
+		for (auto output : node.output_stream()) {
+			if (String(output.data()) == stream_name) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 void Graph::add_packet_callback(String stream_name, Object *object, String method) {
 	ERR_FAIL_COND(!is_initialized());
+	ERR_FAIL_COND(!has_output_stream(stream_name));
 	std::string side_packet_name;
 	mediapipe::tool::AddCallbackCalculator(stream_name.alloc_c_string(), graph_config.get(), &side_packet_name, true);
 	packet_callbacks.emplace(

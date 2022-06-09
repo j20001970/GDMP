@@ -38,6 +38,9 @@ class Graph : public Object {
 		// Check if the initialized graph config has specified input stream.
 		// Always return false if graph config is not initialized.
 		bool has_input_stream(String stream_name);
+		// Check if the initialized graph config has specified output stream.
+		// Always return false if graph config is not initialized.
+		bool has_output_stream(String stream_name);
 		// Add a packet callback for given stream_name.
 		void add_packet_callback(String stream_name, Object *object, String method);
 		// Start the calculator graph for sending packets to input stream,
