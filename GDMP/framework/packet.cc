@@ -7,6 +7,7 @@
 using namespace godot;
 
 void Packet::_register_methods() {
+	register_method("is_empty", &Packet::is_empty);
 	register_method("get_image", &Packet::get_image);
 	register_method("get_proto", &Packet::get_proto);
 	register_method("get_proto_vector", &Packet::get_proto_vector);
@@ -16,7 +17,7 @@ void Packet::_register_methods() {
 	register_method("set_timestamp", &Packet::set_timestamp);
 }
 
-Packet *Packet::_new(mediapipe::Packet packet) {
+Packet *Packet::_new(const mediapipe::Packet &packet) {
 	Packet *p = Packet::_new();
 	p->packet = packet;
 	return p;
@@ -24,23 +25,31 @@ Packet *Packet::_new(mediapipe::Packet packet) {
 
 void Packet::_init(){};
 
+bool Packet::is_empty() {
+	return packet.IsEmpty();
+}
+
 Ref<Image> Packet::get_image() {
-	auto &image_frame = get_packet().Get<mediapipe::ImageFrame>();
+	Ref<Image> image;
+	ERR_FAIL_COND_V(!packet.ValidateAsType<mediapipe::ImageFrame>().ok(), image);
+	const mediapipe::ImageFrame &image_frame = get_packet().Get<mediapipe::ImageFrame>();
 	return to_image(image_frame);
 }
 
 PoolByteArray Packet::get_proto() {
 	PoolByteArray data;
+	ERR_FAIL_COND_V(!packet.ValidateAsProtoMessageLite().ok(), data);
 	data.resize(packet.GetProtoMessageLite().ByteSizeLong());
 	packet.GetProtoMessageLite().SerializeToArray(data.write().ptr(), data.size());
 	return data;
 }
 
 Array Packet::get_proto_vector() {
-	auto proto_vector = packet.GetVectorOfProtoMessageLitePtrs().value();
 	Array data;
-	for (int i = 0; i < proto_vector.size(); i++) {
-		auto message = proto_vector[i];
+	auto get_proto_vector = packet.GetVectorOfProtoMessageLitePtrs();
+	ERR_FAIL_COND_V(!get_proto_vector.ok(), data);
+	auto proto_vector = get_proto_vector.value();
+	for (auto message : proto_vector) {
 		PoolByteArray proto_bytes;
 		proto_bytes.resize(message->ByteSizeLong());
 		message->SerializeToArray(proto_bytes.write().ptr(), proto_bytes.size());

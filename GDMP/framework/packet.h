@@ -18,20 +18,22 @@ class Packet : public Reference {
 
 	public:
 		static void _register_methods();
-		static Packet *_new(mediapipe::Packet packet);
+		static Packet *_new(const mediapipe::Packet &packet);
 
 		void _init();
 
-		// Get mediapipe::ImageFrame from packet and convert to godot::Image
+		// Check if the packet is empty.
+		bool is_empty();
+
+		// Get mediapipe::ImageFrame from packet and convert to godot::Image.
 		// For getting GPU frame, refer to GPUHelper::get_gpu_frame
 		Ref<Image> get_image();
 		// Get serialized proto byte array from packet.
 		PoolByteArray get_proto();
 		// Get array of serialized proto bytes from packet,
-		// only valid when packet is std::vector of proto type.
 		Array get_proto_vector();
 
-		// Make a packet (for bool, int, float and std::string).
+		// Make a packet from variant.
 		void make(Variant value);
 		// Make a mediapipe::ImageFrame packet from godot::Image.
 		// For making mediapipe::GpuBuffer packet, refer to GPUHelper::make_packet_from_image
@@ -39,9 +41,9 @@ class Packet : public Reference {
 		// Make a mediapipe::ImageFrame packet.
 		void make_image_frame(const mediapipe::ImageFrame &image_frame);
 
-
-		// Timestamp getter and setter.
+		// Get packet timestamp in microseconds.
 		int64 get_timestamp();
+		// Set packet timestamp in microseconds.
 		void set_timestamp(int64_t timestamp);
 
 		// Get actual mediapipe::Packet
