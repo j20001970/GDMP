@@ -32,7 +32,7 @@ bool Packet::is_empty() {
 Ref<Image> Packet::get_image() {
 	Ref<Image> image;
 	ERR_FAIL_COND_V(!packet.ValidateAsType<mediapipe::ImageFrame>().ok(), image);
-	const mediapipe::ImageFrame &image_frame = get_packet().Get<mediapipe::ImageFrame>();
+	auto &image_frame = get_packet().Get<mediapipe::ImageFrame>();
 	return to_image(image_frame);
 }
 
@@ -79,12 +79,11 @@ void Packet::make(Variant value) {
 }
 
 void Packet::make_image(Ref<Image> image) {
-	mediapipe::ImageFrame image_frame = to_image_frame(image);
-	make_image_frame(image_frame);
+	make_image_frame(std::move(to_image_frame(image)));
 }
 
-void Packet::make_image_frame(const mediapipe::ImageFrame &image_frame) {
-	packet = mediapipe::Adopt(&image_frame);
+void Packet::make_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
+	packet = mediapipe::Adopt(image_frame.release());
 }
 
 int64_t Packet::get_timestamp() {

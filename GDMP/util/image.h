@@ -23,9 +23,9 @@ inline Ref<Image> to_image(const mediapipe::ImageFrame &image_frame) {
 }
 
 // Convert godot::Image to mediapipe::ImageFrame
-inline mediapipe::ImageFrame to_image_frame(Ref<Image> image) {
-	mediapipe::ImageFrame image_frame;
-	image_frame.CopyPixelData(mediapipe::ImageFormat::SRGBA, image->get_width(), image->get_height(),
+inline std::unique_ptr<mediapipe::ImageFrame> to_image_frame(Ref<Image> image) {
+	std::unique_ptr<mediapipe::ImageFrame> image_frame = std::make_unique<mediapipe::ImageFrame>();
+	image_frame->CopyPixelData(mediapipe::ImageFormat::SRGBA, image->get_width(), image->get_height(),
 			image->get_data().read().ptr(), mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
 	return image_frame;
 };

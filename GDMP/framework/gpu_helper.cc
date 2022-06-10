@@ -28,14 +28,17 @@ void GPUHelper::initialize(Graph *graph) {
 }
 
 Ref<Image> GPUHelper::get_gpu_frame(Ref<Packet> packet) {
+	Ref<Image> image;
+	ERR_FAIL_COND_V(!packet->get_packet().ValidateAsType<mediapipe::GpuBuffer>().ok(), image);
+	auto &gpu_frame = packet->get_packet().Get<mediapipe::GpuBuffer>();
 	std::unique_ptr<mediapipe::ImageFrame> image_frame;
 #if MEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER
-    image_frame = CreateImageFrameForCVPixelBuffer(mediapipe::GetCVPixelBufferRef(packet->get_packet().Get<mediapipe::GpuBuffer>()));
+	image_frame = CreateImageFrameForCVPixelBuffer(mediapipe::GetCVPixelBufferRef(gpu_frame));
 #else
-	gpu_helper.RunInGlContext([this, &packet, &image_frame]() -> void {
-		auto &gpu_frame = packet->get_packet().Get<mediapipe::GpuBuffer>();
+	ERR_FAIL_COND_V(!gpu_helper.Initialized(), image);
+	gpu_helper.RunInGlContext([this, &gpu_frame, &image_frame]() -> void {
 		auto texture = gpu_helper.CreateSourceTexture(gpu_frame);
-		image_frame = absl::make_unique<mediapipe::ImageFrame>(
+		image_frame = std::make_unique<mediapipe::ImageFrame>(
 				mediapipe::ImageFormatForGpuBufferFormat(gpu_frame.format()),
 				gpu_frame.width(), gpu_frame.height(),
 				mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
@@ -50,23 +53,15 @@ Ref<Image> GPUHelper::get_gpu_frame(Ref<Packet> packet) {
 		texture.Release();
 	});
 #endif
-    Ref<Image> image = to_image(*image_frame);
+	image = to_image(*image_frame);
 	return image;
 }
 
 Ref<Packet> GPUHelper::make_packet_from_image(Ref<Image> image) {
-	mediapipe::ImageFrame image_frame = to_image_frame(image);
-	return make_packet_from_image_frame(image_frame);
+	return make_packet_from_image_frame(std::move(to_image_frame(image)));
 }
 
-Ref<Packet> GPUHelper::make_packet_from_image_frame(const mediapipe::ImageFrame &image_frame) {
-	Ref<Packet> packet;
-	gpu_helper.RunInGlContext([this, &image_frame, &packet]() -> void {
-		auto texture = gpu_helper.CreateSourceTexture(image_frame);
-		auto gpu_frame = texture.GetFrame<mediapipe::GpuBuffer>();
-		glFlush();
-		texture.Release();
-		packet = Ref<Packet>(Packet::_new(mediapipe::Adopt(gpu_frame.release())));
-	});
-	return packet;
+Ref<Packet> GPUHelper::make_packet_from_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
+	auto gpu_frame = gpu_helper.GpuBufferWithImageFrame(std::move(image_frame));
+	return Ref<Packet>(Packet::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame)));
 }

@@ -39,7 +39,7 @@ class Packet : public Reference {
 		// For making mediapipe::GpuBuffer packet, refer to GPUHelper::make_packet_from_image
 		void make_image(Ref<Image> image);
 		// Make a mediapipe::ImageFrame packet.
-		void make_image_frame(const mediapipe::ImageFrame &image_frame);
+		void make_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame);
 
 		// Get packet timestamp in microseconds.
 		int64 get_timestamp();

@@ -49,7 +49,7 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 					*this >> video_frame;
 					cv::flip(video_frame, video_frame, 1);
 					cv::cvtColor(video_frame, video_frame, cv::COLOR_BGR2RGBA);
-					auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
+					auto input_frame = std::make_unique<mediapipe::ImageFrame>(
 							mediapipe::ImageFormat::SRGBA, video_frame.cols, video_frame.rows,
 							mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
 					cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
@@ -58,10 +58,10 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 					int64_t frame_timestamp_us = OS::get_singleton()->get_ticks_usec();
 #if !MEDIAPIPE_DISABLE_GPU
 					if (use_gpu)
-						packet = gpu_helper->make_packet_from_image_frame(*input_frame);
+						packet = gpu_helper->make_packet_from_image_frame(std::move(input_frame));
 					else
 #endif
-						packet->make_image_frame(*input_frame);
+						packet->make_image_frame(std::move(input_frame));
 					packet->set_timestamp(frame_timestamp_us);
 					graph->add_packet(stream_name, packet);
 				}
