@@ -18,7 +18,7 @@ public class GDMP extends GodotPlugin {
     private Godot godot;
 
     static {
-        System.loadLibrary("gdmp");
+        System.loadLibrary("GDMP");
     }
 
     public GDMP(Godot godot) {

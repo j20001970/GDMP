@@ -121,12 +121,10 @@ class CameraHelper::CameraHelperImpl {
 
 jclass CameraHelper::CameraHelperImpl::camera_class = nullptr;
 
-extern "C" {
-JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nativeOnNewFrame(
+extern "C" JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nativeOnNewFrame(
 		JNIEnv *pEnv, jobject jCaller, jlong cppCaller, jobject frame, jint name, jint width, jint height) {
 	auto caller = (CameraHelper::CameraHelperImpl *)(cppCaller);
 	caller->on_new_frame(pEnv, frame, name, width, height);
-}
 }
 
 CameraHelper::CameraHelper() = default;
