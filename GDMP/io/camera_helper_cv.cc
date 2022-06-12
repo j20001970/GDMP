@@ -31,6 +31,10 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 			this->stream_name = stream_name;
 		}
 
+		void set_flip(bool value) {
+			this->flip = value;
+		}
+
 		void start(int index, Vector2 size) {
 			ERR_FAIL_COND(graph == nullptr);
 			close();
@@ -47,7 +51,9 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 				while (grab_frames) {
 					cv::Mat video_frame;
 					*this >> video_frame;
-					cv::flip(video_frame, video_frame, 1);
+					if (flip) {
+						cv::flip(video_frame, video_frame, 1);
+					}
 					cv::cvtColor(video_frame, video_frame, cv::COLOR_BGR2RGBA);
 					auto input_frame = std::make_unique<mediapipe::ImageFrame>(
 							mediapipe::ImageFormat::SRGBA, video_frame.cols, video_frame.rows,
@@ -83,6 +89,7 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 
 	private:
 		bool grab_frames;
+		bool flip;
 		std::thread thread;
 		String stream_name;
 		Graph *graph;
@@ -108,6 +115,10 @@ void CameraHelper::request_permission() {
 
 void CameraHelper::set_graph(Graph *graph, String stream_name) {
 	impl->set_graph(graph, stream_name);
+}
+
+void CameraHelper::set_mirrored(bool value) {
+	impl->set_flip(value);
 }
 
 void CameraHelper::start(int index, Vector2 size) {

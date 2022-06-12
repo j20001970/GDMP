@@ -34,6 +34,9 @@ class CameraHelper : public Reference {
 		void request_permission();
 		// Set the target graph to send video frames to with stream name.
 		void set_graph(Graph *graph, String stream_name);
+		// Set whether to flip video frames horizontally.
+		// Only works on non-mobile platforms.
+		void set_mirrored(bool value);
 		// Start the camera with specified index and target resolution.
 		// Previously opened camera on this camera helper will be closed first.
 		// Camera will not start if:

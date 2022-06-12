@@ -153,6 +153,9 @@ void CameraHelper::set_graph(Graph *graph, String stream_name) {
 	impl->set_graph(graph, stream_name);
 }
 
+void CameraHelper::set_mirrored(bool value) {
+}
+
 void CameraHelper::start(int index, Vector2 size) {
 	impl->start(index, size);
 }
