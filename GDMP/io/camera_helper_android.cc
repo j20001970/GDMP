@@ -73,9 +73,8 @@ class CameraHelper::CameraHelperImpl {
 			JNIEnv *env = android_api->godot_android_get_env();
 			camera = create_camera();
 			const char *sig = "(III)V";
-			// CameraXPreviewHelper transpose target size unconditionally, therefore we transpose it back here.
-			jint width = size.y;
-			jint height = size.x;
+			jint width = size.x;
+			jint height = size.y;
 			env->CallVoidMethod(camera, env->GetMethodID(camera_class, "startCamera", sig), index, width, height);
 		}
 
