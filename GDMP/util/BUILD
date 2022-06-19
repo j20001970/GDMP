@@ -17,5 +17,10 @@ cc_library(
         "//mediapipe/framework/port:statusor",
         "//third_party:godot",
         "@com_google_absl//absl/strings",
-    ],
+    ] + select({
+        "//mediapipe:android": [
+            "//mediapipe/util/android/file/base",
+        ],
+        "//conditions:default": [],
+    }),
 )

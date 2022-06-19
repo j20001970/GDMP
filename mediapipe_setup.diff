@@ -32,7 +32,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
 diff --git a/mediapipe/util/BUILD b/mediapipe/util/BUILD
 --- a/mediapipe/util/BUILD
 +++ b/mediapipe/util/BUILD
-@@ -157,6 +157,7 @@ cc_library(
+@@ -176,6 +176,7 @@ cc_library(
          "resource_util_internal.h",
      ] + select({
          "//conditions:default": ["resource_util_default.cc"],
@@ -40,13 +40,12 @@ diff --git a/mediapipe/util/BUILD b/mediapipe/util/BUILD
          "//mediapipe:android": ["resource_util_android.cc"],
          "//mediapipe/framework:android_no_jni": ["resource_util_loonix.cc"],
          "//mediapipe:ios": ["resource_util_apple.cc"],
-@@ -189,6 +190,10 @@ cc_library(
+@@ -208,6 +209,9 @@ cc_library(
          "//conditions:default": [
              "@com_google_absl//absl/flags:flag",
          ],
 +        "//mediapipe/GDMP:godot": [
 +            "//mediapipe/GDMP/util:resource_util_godot",
-+            "//mediapipe/util/android/file/base",
 +        ],
          "//mediapipe:android": [
              "//mediapipe/util/android:asset_manager_util",
