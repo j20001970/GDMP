@@ -11,10 +11,9 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
     python -c "from binding_generator import *; generate_bindings('/path/to/your/api.json', True)"
     ```
     to generate Godot C++ bindings directly, replacing `/path/to/your/api.json` with the path to your api.json
-4. Apply `mediapipe_setup.diff` to `mediapipe` directory, then copy `godot.BUILD` to `mediapipe/third_party`.
-5. Run `setup.py`, the script will try to symlink source code and external dependencies to mediapipe workspace, if symlink is not available on the host it will just copy the code directory instead.
-6. Place calculator dependencies in `GDMP/calculators.bzl`
-7. Copy `addons/GDMP` to your project's directory.
+4. Run `setup.py`, the script will apply necessary changes, setup source code and external dependencies in mediapipe workspace.
+5. Place calculator dependencies in `GDMP/calculators.bzl`
+6. Copy `addons/GDMP` to your project's directory.
 
 ## Building for Android
 1. Refer to [Prerequisite](https://google.github.io/mediapipe/getting_started/android.html#prerequisite) section for Java and Android SDK & NDK setup.

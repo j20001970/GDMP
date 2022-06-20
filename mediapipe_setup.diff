@@ -1,7 +1,7 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -215,6 +215,12 @@ new_local_repository(
+@@ -220,6 +220,12 @@ new_local_repository(
      path = "C:\\opencv\\build",
  )
  
@@ -14,21 +14,6 @@ diff --git a/WORKSPACE b/WORKSPACE
  http_archive(
      name = "android_opencv",
      build_file = "@//third_party:opencv_android.BUILD",
-diff --git a/third_party/BUILD b/third_party/BUILD
---- a/third_party/BUILD
-+++ b/third_party/BUILD
-@@ -317,3 +317,11 @@ java_library(
-         "@maven//:com_google_auto_value_auto_value_annotations",
-     ],
- )
-+
-+cc_library(
-+    name = "godot",
-+    visibility = ["//visibility:public"],
-+    deps = [
-+        "@godot//:godot",
-+    ],
-+)
 diff --git a/mediapipe/util/BUILD b/mediapipe/util/BUILD
 --- a/mediapipe/util/BUILD
 +++ b/mediapipe/util/BUILD
@@ -50,3 +35,18 @@ diff --git a/mediapipe/util/BUILD b/mediapipe/util/BUILD
          "//mediapipe:android": [
              "//mediapipe/util/android:asset_manager_util",
              "//mediapipe/util/android/file/base",
+diff --git a/third_party/BUILD b/third_party/BUILD
+--- a/third_party/BUILD
++++ b/third_party/BUILD
+@@ -317,3 +317,11 @@ java_library(
+         "@maven//:com_google_auto_value_auto_value_annotations",
+     ],
+ )
++
++cc_library(
++    name = "godot",
++    visibility = ["//visibility:public"],
++    deps = [
++        "@godot//:godot",
++    ],
++)
