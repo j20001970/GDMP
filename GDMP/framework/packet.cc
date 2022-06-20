@@ -69,9 +69,11 @@ void Packet::make(Variant value) {
 		case Variant::Type::REAL:
 			packet = mediapipe::MakePacket<float>(value);
 			break;
-		case Variant::Type::STRING:
-			packet = mediapipe::MakePacket<std::string>(String(value).alloc_c_string());
+		case Variant::Type::STRING: {
+			String string = value;
+			packet = mediapipe::MakePacket<std::string>(string.alloc_c_string());
 			break;
+		}
 		default:
 			ERR_PRINT("Unsupported type to make packet.");
 			break;
