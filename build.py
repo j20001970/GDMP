@@ -32,6 +32,9 @@ try:
                 '--copt', '-DMESA_EGL_NO_X11_HEADERS', \
                 '--copt', '-DEGL_NO_X11', \
                 '--copt', '-fPIC'])
+        elif sys.platform.startswith("win32"):
+            bazel_args.extend([\
+                '--define', 'MEDIAPIPE_DISABLE_GPU=1'])
     else:
         print("unknown target, exiting.")
         sys.exit(-1)
