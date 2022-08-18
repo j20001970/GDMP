@@ -46,6 +46,11 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 			thread = std::thread([this, size]() -> void {
 #if !MEDIAPIPE_DISABLE_GPU
 				Ref<GPUHelper> gpu_helper = GPUHelper::_new(graph->get_gpu_resources().get());
+				auto cv_format = use_gpu ? cv::COLOR_BGR2RGBA : cv::COLOR_BGR2RGB;
+				auto image_format = use_gpu ? mediapipe::ImageFormat::SRGBA : mediapipe::ImageFormat::SRGB;
+#else
+				auto cv_format = cv::COLOR_BGR2RGB;
+				auto image_format = mediapipe::ImageFormat::SRGB;
 #endif
 				grab_frames = true;
 				while (grab_frames) {
@@ -54,9 +59,9 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 					if (flip) {
 						cv::flip(video_frame, video_frame, 1);
 					}
-					cv::cvtColor(video_frame, video_frame, cv::COLOR_BGR2RGBA);
+					cv::cvtColor(video_frame, video_frame, cv_format);
 					auto input_frame = std::make_unique<mediapipe::ImageFrame>(
-							mediapipe::ImageFormat::SRGBA, video_frame.cols, video_frame.rows,
+							image_format, video_frame.cols, video_frame.rows,
 							mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
 					cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
 					video_frame.copyTo(input_frame_mat);
