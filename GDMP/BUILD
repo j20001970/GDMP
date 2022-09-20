@@ -1,5 +1,5 @@
 load("@build_bazel_rules_apple//apple:ios.bzl", "ios_static_framework")
-load("//mediapipe/GDMP:calculators.bzl", "CALCULATORS")
+load("//mediapipe/GDMP:calculators.bzl", "CALCULATORS", "DATA")
 
 alias(
     name = "godot",
@@ -42,6 +42,7 @@ config_setting(
 cc_library(
     name = "GDMP_deps",
     srcs = ["gdlibrary.cc"],
+    data = DATA,
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/GDMP/framework:graph",
