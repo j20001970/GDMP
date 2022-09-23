@@ -26,7 +26,7 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 #endif
 		}
 
-		void set_graph(Graph *graph, String stream_name) {
+		void set_graph(Ref<Graph> graph, String stream_name) {
 			this->graph = graph;
 			this->stream_name = stream_name;
 		}
@@ -36,7 +36,7 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 		}
 
 		void start(int index, Vector2 size) {
-			ERR_FAIL_COND(graph == nullptr);
+			ERR_FAIL_COND(graph.is_null());
 			close();
 			open(index);
 			ERR_FAIL_COND(!isOpened());
@@ -97,7 +97,7 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 		bool flip;
 		std::thread thread;
 		String stream_name;
-		Graph *graph;
+		Ref<Graph> graph;
 #if !MEDIAPIPE_DISABLE_GPU
 		bool use_gpu;
 #endif
@@ -118,7 +118,7 @@ bool CameraHelper::permission_granted() {
 void CameraHelper::request_permission() {
 }
 
-void CameraHelper::set_graph(Graph *graph, String stream_name) {
+void CameraHelper::set_graph(Ref<Graph> graph, String stream_name) {
 	impl->set_graph(graph, stream_name);
 }
 

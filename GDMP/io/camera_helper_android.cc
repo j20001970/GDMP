@@ -61,13 +61,13 @@ class CameraHelper::CameraHelperImpl {
 			env->CallStaticVoidMethod(cls, method, activity);
 		}
 
-		void set_graph(Graph *graph, String stream_name) {
+		void set_graph(Ref<Graph> graph, String stream_name) {
 			this->graph = graph;
 			this->stream_name = stream_name;
 		}
 
 		void start(int index, Vector2 size) {
-			ERR_FAIL_COND(graph == nullptr);
+			ERR_FAIL_COND(graph.is_null());
 			ERR_FAIL_COND(!permission_granted());
 			close();
 			JNIEnv *env = android_api->godot_android_get_env();
@@ -114,7 +114,7 @@ class CameraHelper::CameraHelperImpl {
 	private:
 		static jclass camera_class;
 		jobject camera = nullptr;
-		Graph *graph;
+		Ref<Graph> graph;
 		String stream_name;
 };
 
@@ -148,7 +148,7 @@ void CameraHelper::request_permission() {
 	impl->request_permission();
 }
 
-void CameraHelper::set_graph(Graph *graph, String stream_name) {
+void CameraHelper::set_graph(Ref<Graph> graph, String stream_name) {
 	impl->set_graph(graph, stream_name);
 }
 

@@ -23,7 +23,7 @@ GPUHelper *GPUHelper::_new(mediapipe::GpuResources *gpu_resource) {
 
 void GPUHelper::_init() {}
 
-void GPUHelper::initialize(Graph *graph) {
+void GPUHelper::initialize(Ref<Graph> graph) {
 	gpu_helper.InitializeForTest(graph->get_gpu_resources().get());
 }
 

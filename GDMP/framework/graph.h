@@ -5,7 +5,6 @@
 
 #include "Dictionary.hpp"
 #include "Godot.hpp"
-#include "Object.hpp"
 #include "Ref.hpp"
 #include "Reference.hpp"
 #include "String.hpp"
@@ -20,8 +19,8 @@
 
 namespace godot {
 
-class Graph : public Object {
-		GODOT_CLASS(Graph, Object)
+class Graph : public Reference {
+		GODOT_CLASS(Graph, Reference)
 
 	public:
 		static void _register_methods();

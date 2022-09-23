@@ -12,12 +12,12 @@ using namespace godot;
 
 @class OutputDelegate;
 @interface OutputDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
-@property(nonatomic) Graph *graph;
+@property(nonatomic) Ref<Graph> graph;
 @property(nonatomic) String stream_name;
 @end
 
 @implementation OutputDelegate
-- (instancetype)init:(Graph*)graph
+- (instancetype)init:(Ref<Graph>)graph
     StreamName:(String)stream_name{
     self = [super init];
     self.graph = graph;
@@ -62,7 +62,7 @@ class CameraHelper::CameraHelperImpl {
             }];
         }
 
-        void set_graph(Graph *graph, String stream_name) {
+        void set_graph(Ref<Graph> graph, String stream_name) {
             delegate = [[OutputDelegate alloc] init:graph
             StreamName:stream_name];
         }
@@ -137,7 +137,7 @@ void CameraHelper::request_permission() {
     impl->request_permission(this);
 }
 
-void CameraHelper::set_graph(Graph *graph, String stream_name) {
+void CameraHelper::set_graph(Ref<Graph> graph, String stream_name) {
     impl->set_graph(graph, stream_name);
 }
 
