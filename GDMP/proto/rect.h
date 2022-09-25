@@ -1,7 +1,7 @@
 #ifndef GDMP_RECT
 #define GDMP_RECT
 
-#include "Reference.hpp"
+#include "godot_cpp/classes/ref_counted.hpp"
 
 #include "mediapipe/framework/formats/rect.pb.h"
 
@@ -9,7 +9,7 @@
 
 namespace godot {
 
-class Rect : public Reference {
+class Rect : public RefCounted {
 		GDMP_PROTO_WRAPPER(Rect, mediapipe::Rect)
 		GDMP_RAW_FIELD(x_center)
 		GDMP_RAW_FIELD(y_center)
@@ -18,8 +18,8 @@ class Rect : public Reference {
 		GDMP_RAW_FIELD(rotation)
 		GDMP_RAW_FIELD(rect_id)
 
-	public:
-		static void _register_methods() {
+	protected:
+		static void _bind_methods() {
 			GDMP_REGISTER_PROTO(Rect)
 			GDMP_REGISTER_FIELD(x_center, Rect)
 			GDMP_REGISTER_FIELD(y_center, Rect)
@@ -30,7 +30,7 @@ class Rect : public Reference {
 		}
 };
 
-class NormalizedRect : public Reference {
+class NormalizedRect : public RefCounted {
 		GDMP_PROTO_WRAPPER(NormalizedRect, mediapipe::NormalizedRect)
 		GDMP_RAW_FIELD(x_center)
 		GDMP_RAW_FIELD(y_center)
@@ -39,8 +39,8 @@ class NormalizedRect : public Reference {
 		GDMP_RAW_FIELD(rotation)
 		GDMP_RAW_FIELD(rect_id)
 
-	public:
-		static void _register_methods() {
+	protected:
+		static void _bind_methods() {
 			GDMP_REGISTER_PROTO(NormalizedRect)
 			GDMP_REGISTER_FIELD(x_center, NormalizedRect)
 			GDMP_REGISTER_FIELD(y_center, NormalizedRect)

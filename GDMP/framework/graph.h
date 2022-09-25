@@ -4,12 +4,12 @@
 #include <map>
 #include <memory>
 
-#include "Dictionary.hpp"
-#include "Godot.hpp"
-#include "Object.hpp"
-#include "Ref.hpp"
-#include "Reference.hpp"
-#include "String.hpp"
+#include "godot_cpp/classes/object.hpp"
+#include "godot_cpp/classes/ref.hpp"
+#include "godot_cpp/classes/ref_counted.hpp"
+#include "godot_cpp/core/binder_common.hpp"
+#include "godot_cpp/variant/dictionary.hpp"
+#include "godot_cpp/variant/string.hpp"
 
 #include "mediapipe/framework/calculator_graph.h"
 
@@ -19,15 +19,17 @@
 #include "mediapipe/gpu/gpu_shared_data_internal.h"
 #endif
 
-namespace godot {
+using namespace godot;
 
-class Graph : public Reference {
-		GODOT_CLASS(Graph, Reference)
+class Graph : public RefCounted {
+		GDCLASS(Graph, RefCounted)
+
+	protected:
+		static void _bind_methods();
 
 	public:
-		static void _register_methods();
-
-		void _init();
+		Graph();
+		~Graph();
 
 		// Initialize the calculator graph config with the file in graph_path.
 		// Depending on as_text, the graph file must be in either text (pbtxt) or binary (binarypb) format.
@@ -64,7 +66,5 @@ class Graph : public Reference {
 		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
 #endif
 };
-
-} //namespace godot
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef GDMP_DETECTION
 #define GDMP_DETECTION
 
-#include "Reference.hpp"
+#include "godot_cpp/classes/ref_counted.hpp"
 
 #include "mediapipe/framework/formats/detection.pb.h"
 
@@ -11,20 +11,20 @@
 
 namespace godot {
 
-class AssociatedDetection : public Reference {
+class AssociatedDetection : public RefCounted {
 		GDMP_PROTO_WRAPPER(AssociatedDetection, mediapipe::Detection::AssociatedDetection)
 		GDMP_RAW_FIELD(id)
 		GDMP_RAW_FIELD(confidence)
 
-	public:
-		static void _register_methods() {
+	protected:
+		static void _bind_methods() {
 			GDMP_REGISTER_PROTO(AssociatedDetection)
 			GDMP_REGISTER_FIELD(id, AssociatedDetection)
 			GDMP_REGISTER_FIELD(confidence, AssociatedDetection)
 		}
 };
 
-class Detection : public Reference {
+class Detection : public RefCounted {
 		GDMP_PROTO_WRAPPER(Detection, mediapipe::Detection)
 		GDMP_REPEATED_STRING_FIELD(label);
 		GDMP_REPEATED_RAW_FIELD(label_id);
@@ -37,8 +37,8 @@ class Detection : public Reference {
 		GDMP_REPEATED_STRING_FIELD(display_name)
 		GDMP_RAW_FIELD(timestamp_usec)
 
-	public:
-		static void _register_methods() {
+	protected:
+		static void _bind_methods() {
 			GDMP_REGISTER_PROTO(Detection)
 			GDMP_REGISTER_REPEATED_FIELD(label, Detection)
 			GDMP_REGISTER_REPEATED_FIELD(label_id, Detection)
@@ -53,12 +53,12 @@ class Detection : public Reference {
 		}
 };
 
-class DetectionList : public Reference {
+class DetectionList : public RefCounted {
 		GDMP_PROTO_WRAPPER(DetectionList, mediapipe::DetectionList)
 		GDMP_REPEATED_PROTO_FIELD(detection, Detection)
 
-	public:
-		static void _register_methods() {
+	protected:
+		static void _bind_methods() {
 			GDMP_REGISTER_PROTO(DetectionList)
 			GDMP_REGISTER_REPEATED_FIELD(detection, DetectionList)
 		}

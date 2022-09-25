@@ -3,8 +3,9 @@
 #include <string>
 #include <thread>
 
-#include "Array.hpp"
-#include "Variant.hpp"
+#include "godot_cpp/classes/file.hpp"
+#include "godot_cpp/variant/array.hpp"
+#include "godot_cpp/variant/variant.hpp"
 
 #include "mediapipe/framework/packet.h"
 #include "mediapipe/framework/port/parse_text_proto.h"
@@ -14,31 +15,37 @@
 
 using namespace godot;
 
-void Graph::_register_methods() {
-	register_method("initialize", &Graph::initialize);
-	register_method("is_initialized", &Graph::is_initialized);
-	register_method("is_running", &Graph::is_running);
-	register_method("has_input_stream", &Graph::has_input_stream);
-	register_method("has_output_stream", &Graph::has_output_stream);
-	register_method("add_packet_callback", &Graph::add_packet_callback);
-	register_method("start", &Graph::start);
-	register_method("add_packet", &Graph::add_packet);
-	register_method("stop", &Graph::stop);
+void Graph::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("initialize"), &Graph::initialize);
+	ClassDB::bind_method(D_METHOD("is_initialized"), &Graph::is_initialized);
+	ClassDB::bind_method(D_METHOD("is_running"), &Graph::is_running);
+	ClassDB::bind_method(D_METHOD("has_input_stream"), &Graph::has_input_stream);
+	ClassDB::bind_method(D_METHOD("has_output_stream"), &Graph::has_output_stream);
+	ClassDB::bind_method(D_METHOD("add_packet_callback"), &Graph::add_packet_callback);
+	ClassDB::bind_method(D_METHOD("start"), &Graph::start);
+	ClassDB::bind_method(D_METHOD("add_packet"), &Graph::add_packet);
+	ClassDB::bind_method(D_METHOD("stop"), &Graph::stop);
 }
 
-void Graph::_init() {
+Graph::Graph() {
 #if !MEDIAPIPE_DISABLE_GPU
 	auto create_gpu_resources = mediapipe::GpuResources::Create();
-	ERR_FAIL_COND_V(!create_gpu_resources.ok(), ERR_PRINT(create_gpu_resources.status().ToString().data()));
+	if (!create_gpu_resources.ok()) {
+		ERR_PRINT(create_gpu_resources.status().ToString().data());
+	}
 	gpu_resources = create_gpu_resources.value();
 #endif
+}
+
+Graph::~Graph() {
+	stop();
 }
 
 void Graph::initialize(String graph_path, bool as_text) {
 	graph_config = nullptr;
 	packet_callbacks.clear();
 	std::string graph_contents;
-	absl::Status get_resource_contents = mediapipe::GetResourceContents(graph_path.alloc_c_string(), &graph_contents, !as_text);
+	absl::Status get_resource_contents = mediapipe::GetResourceContents(graph_path.utf8().get_data(), &graph_contents, !as_text);
 	ERR_FAIL_COND_V(!get_resource_contents.ok(), ERR_PRINT(get_resource_contents.ToString().data()));
 	mediapipe::CalculatorGraphConfig config;
 	bool parse_graph_config;
@@ -90,7 +97,7 @@ void Graph::add_packet_callback(String stream_name, Object *object, String metho
 	ERR_FAIL_COND(!is_initialized());
 	ERR_FAIL_COND(!has_output_stream(stream_name));
 	std::string side_packet_name;
-	mediapipe::tool::AddCallbackCalculator(stream_name.alloc_c_string(), graph_config.get(), &side_packet_name, true);
+	mediapipe::tool::AddCallbackCalculator(stream_name.utf8().get_data(), graph_config.get(), &side_packet_name, true);
 	packet_callbacks.emplace(
 			side_packet_name,
 			mediapipe::MakePacket<std::function<void(const mediapipe::Packet &)>>(
@@ -98,8 +105,8 @@ void Graph::add_packet_callback(String stream_name, Object *object, String metho
 						if (object == nullptr) {
 							return;
 						}
-						Ref<Packet> p = Packet::_new(packet);
-						object->call_deferred(method, Array::make(stream_name, p));
+						Ref<Packet> p = new Packet(packet);
+						object->call_deferred(method, stream_name, p);
 					}));
 }
 
@@ -113,16 +120,16 @@ void Graph::start(Dictionary side_packets) {
 			Variant value = side_packets[key];
 			switch (value.get_type()) {
 				case Variant::Type::BOOL: {
-					packets[key.alloc_c_string()] = mediapipe::MakePacket<bool>(static_cast<bool>(value));
+					packets[key.utf8().get_data()] = mediapipe::MakePacket<bool>(static_cast<bool>(value));
 					break;
 				}
 				case Variant::Type::INT: {
-					packets[key.alloc_c_string()] = mediapipe::MakePacket<int>(static_cast<int>(value));
+					packets[key.utf8().get_data()] = mediapipe::MakePacket<int>(static_cast<int>(value));
 					break;
 				}
 				case Variant::Type::STRING: {
 					String str = value;
-					packets[key.alloc_c_string()] = mediapipe::MakePacket<std::string>(str.alloc_c_string());
+					packets[key.utf8().get_data()] = mediapipe::MakePacket<std::string>(str.utf8().get_data());
 					break;
 				}
 				default:
@@ -145,7 +152,7 @@ void Graph::start(Dictionary side_packets) {
 void Graph::add_packet(String stream_name, Ref<Packet> packet) {
 	ERR_FAIL_COND(!is_running());
 	ERR_FAIL_COND(packet.is_null());
-	absl::Status add_packet = running_graph->AddPacketToInputStream(stream_name.alloc_c_string(), packet->get_packet());
+	absl::Status add_packet = running_graph->AddPacketToInputStream(stream_name.utf8().get_data(), packet->get_packet());
 	ERR_FAIL_COND_V(!add_packet.ok(), ERR_PRINT(add_packet.ToString().data()));
 }
 

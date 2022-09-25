@@ -1,6 +1,6 @@
 #include "camera_helper.h"
 
-#include "OS.hpp"
+#include "godot_cpp/classes/time.hpp"
 
 #include "mediapipe/gpu/gpu_buffer.h"
 #include "../framework/packet.h"
@@ -29,7 +29,7 @@ using namespace godot;
            fromConnection:(AVCaptureConnection*)connection {
     CVPixelBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     Ref<Packet> packet = Packet::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(imageBuffer));
-    packet->set_timestamp(OS::get_singleton()->get_ticks_usec());
+    packet->set_timestamp(Time::get_singleton()->get_ticks_usec());
     self.graph->add_packet(self.stream_name, packet);
 }
 @end
@@ -121,13 +121,11 @@ class CameraHelper::CameraHelperImpl {
         OutputDelegate *delegate;
 };
 
-CameraHelper::CameraHelper() = default;
-
-CameraHelper::~CameraHelper() = default;
-
-void CameraHelper::_init() {
+CameraHelper::CameraHelper() {
     impl = std::make_unique<CameraHelperImpl>();
 }
+
+CameraHelper::~CameraHelper() = default;
 
 bool CameraHelper::permission_granted() {
     return impl->permission_granted();

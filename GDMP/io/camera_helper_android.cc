@@ -1,7 +1,7 @@
 #include "camera_helper.h"
 
-#include "Engine.hpp"
-#include "OS.hpp"
+#include "godot_cpp/classes/engine.hpp"
+#include "godot_cpp/classes/time.hpp"
 
 #include "mediapipe/framework/packet.h"
 #include "mediapipe/gpu/gl_texture_buffer.h"
@@ -106,7 +106,7 @@ class CameraHelper::CameraHelperImpl {
 			mediapipe::GpuBuffer gpu_frame = mediapipe::GpuBuffer(mediapipe::GlTextureBuffer::Wrap(
 					GL_TEXTURE_2D, name, width, height, mediapipe::GpuBufferFormat::kBGRA32, gl_context, callback));
 			Ref<Packet> packet = Packet::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame));
-			size_t timestamp = OS::get_singleton()->get_ticks_usec();
+			size_t timestamp = Time::get_singleton()->get_ticks_usec();
 			packet->set_timestamp(timestamp);
 			graph->add_packet(stream_name, packet);
 		}
@@ -126,11 +126,7 @@ extern "C" JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nat
 	caller->on_new_frame(pEnv, frame, name, width, height);
 }
 
-CameraHelper::CameraHelper() = default;
-
-CameraHelper::~CameraHelper() = default;
-
-void CameraHelper::_init() {
+CameraHelper::CameraHelper() {
 	impl = std::make_unique<CameraHelperImpl>();
 	if (impl->android_plugin) {
 		impl->android_plugin->connect(
@@ -139,6 +135,8 @@ void CameraHelper::_init() {
 				"camera_permission_denied", this, "emit_signal", Array::make("permission_denied"));
 	}
 }
+
+CameraHelper::~CameraHelper() = default;
 
 bool CameraHelper::permission_granted() {
 	return impl->permission_granted();

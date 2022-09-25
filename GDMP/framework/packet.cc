@@ -6,24 +6,24 @@
 
 using namespace godot;
 
-void Packet::_register_methods() {
-	register_method("is_empty", &Packet::is_empty);
-	register_method("get_image", &Packet::get_image);
-	register_method("get_proto", &Packet::get_proto);
-	register_method("get_proto_vector", &Packet::get_proto_vector);
-	register_method("make", &Packet::make);
-	register_method("make_image", &Packet::make_image);
-	register_method("get_timestamp", &Packet::get_timestamp);
-	register_method("set_timestamp", &Packet::set_timestamp);
+void Packet::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("is_empty"), &Packet::is_empty);
+	ClassDB::bind_method(D_METHOD("get_image"), &Packet::get_image);
+	ClassDB::bind_method(D_METHOD("get_proto"), &Packet::get_proto);
+	ClassDB::bind_method(D_METHOD("get_proto_vector"), &Packet::get_proto_vector);
+	ClassDB::bind_method(D_METHOD("make"), &Packet::make);
+	ClassDB::bind_method(D_METHOD("make_image"), &Packet::make_image);
+	ClassDB::bind_method(D_METHOD("get_timestamp"), &Packet::get_timestamp);
+	ClassDB::bind_method(D_METHOD("set_timestamp"), &Packet::set_timestamp);
 }
 
-Packet *Packet::_new(const mediapipe::Packet &packet) {
-	Packet *p = Packet::_new();
-	p->packet = packet;
-	return p;
+Packet::Packet() = default;
+
+Packet::Packet(const mediapipe::Packet &packet) {
+	this->packet = packet;
 }
 
-void Packet::_init(){};
+Packet::~Packet() = default;
 
 bool Packet::is_empty() {
 	return packet.IsEmpty();
@@ -36,11 +36,11 @@ Ref<Image> Packet::get_image() {
 	return to_image(image_frame);
 }
 
-PoolByteArray Packet::get_proto() {
-	PoolByteArray data;
+PackedByteArray Packet::get_proto() {
+	PackedByteArray data;
 	ERR_FAIL_COND_V(!packet.ValidateAsProtoMessageLite().ok(), data);
 	data.resize(packet.GetProtoMessageLite().ByteSizeLong());
-	packet.GetProtoMessageLite().SerializeToArray(data.write().ptr(), data.size());
+	packet.GetProtoMessageLite().SerializeToArray(data.ptrw(), data.size());
 	return data;
 }
 
@@ -50,9 +50,9 @@ Array Packet::get_proto_vector() {
 	ERR_FAIL_COND_V(!get_proto_vector.ok(), data);
 	auto proto_vector = get_proto_vector.value();
 	for (auto message : proto_vector) {
-		PoolByteArray proto_bytes;
+		PackedByteArray proto_bytes;
 		proto_bytes.resize(message->ByteSizeLong());
-		message->SerializeToArray(proto_bytes.write().ptr(), proto_bytes.size());
+		message->SerializeToArray(proto_bytes.ptrw(), proto_bytes.size());
 		data.push_back(proto_bytes);
 	}
 	return data;
@@ -66,12 +66,12 @@ void Packet::make(Variant value) {
 		case Variant::Type::INT:
 			packet = mediapipe::MakePacket<int>(value);
 			break;
-		case Variant::Type::REAL:
+		case Variant::Type::FLOAT:
 			packet = mediapipe::MakePacket<float>(value);
 			break;
 		case Variant::Type::STRING: {
 			String string = value;
-			packet = mediapipe::MakePacket<std::string>(string.alloc_c_string());
+			packet = mediapipe::MakePacket<std::string>(string.utf8().get_data());
 			break;
 		}
 		default:

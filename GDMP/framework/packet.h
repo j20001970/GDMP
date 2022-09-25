@@ -3,27 +3,28 @@
 
 #include <memory>
 
-#include "Array.hpp"
-#include "Godot.hpp"
-#include "Image.hpp"
-#include "PoolArrays.hpp"
-#include "Ref.hpp"
-#include "Reference.hpp"
-#include "Variant.hpp"
+#include "godot_cpp/classes/image.hpp"
+#include "godot_cpp/classes/ref.hpp"
+#include "godot_cpp/classes/ref_counted.hpp"
+#include "godot_cpp/core/binder_common.hpp"
+#include "godot_cpp/variant/packed_byte_array.hpp"
+#include "godot_cpp/variant/variant.hpp"
 
 #include "mediapipe/framework/formats/image_frame.h"
 #include "mediapipe/framework/packet.h"
 
-namespace godot {
+using namespace godot;
 
-class Packet : public Reference {
-		GODOT_CLASS(Packet, Reference)
+class Packet : public RefCounted {
+		GDCLASS(Packet, RefCounted)
+
+	protected:
+		static void _bind_methods();
 
 	public:
-		static void _register_methods();
-		static Packet *_new(const mediapipe::Packet &packet);
-
-		void _init();
+		Packet();
+		Packet(const mediapipe::Packet &packet);
+		~Packet();
 
 		// Check if the packet is empty.
 		bool is_empty();
@@ -32,7 +33,7 @@ class Packet : public Reference {
 		// For getting GPU frame, refer to GPUHelper::get_gpu_frame
 		Ref<Image> get_image();
 		// Get serialized proto byte array from packet.
-		PoolByteArray get_proto();
+		PackedByteArray get_proto();
 		// Get array of serialized proto bytes from packet,
 		Array get_proto_vector();
 
@@ -55,7 +56,5 @@ class Packet : public Reference {
 	private:
 		mediapipe::Packet packet;
 };
-
-} //namespace godot
 
 #endif

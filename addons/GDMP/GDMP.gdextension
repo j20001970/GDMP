@@ -1,0 +1,8 @@
+[configuration]
+
+entry_symbol = "mediapipe_library_init"
+
+[libraries]
+
+linux.debug.x86_64 = "res://addons/GDMP/libs/linux/x86_64/libGDMP.so"
+linux.release.x86_64 = "res://addons/GDMP/libs/linux/x86_64/libGDMP.so"

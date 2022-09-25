@@ -9,19 +9,19 @@
 
 using namespace godot;
 
-void GPUHelper::_register_methods() {
-	register_method("initialize", &GPUHelper::initialize);
-	register_method("get_gpu_frame", &GPUHelper::get_gpu_frame);
-	register_method("make_packet_from_image", &GPUHelper::make_packet_from_image);
+void GPUHelper::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("initialize"), &GPUHelper::initialize);
+	ClassDB::bind_method(D_METHOD("get_gpu_frame"), &GPUHelper::get_gpu_frame);
+	ClassDB::bind_method(D_METHOD("make_packet_from_image"), &GPUHelper::make_packet_from_image);
 }
 
-GPUHelper *GPUHelper::_new(mediapipe::GpuResources *gpu_resource) {
-	GPUHelper *helper = GPUHelper::_new();
-	helper->gpu_helper.InitializeForTest(gpu_resource);
-	return helper;
+GPUHelper::GPUHelper() = default;
+
+GPUHelper::GPUHelper(mediapipe::GpuResources *gpu_resource) {
+	gpu_helper.InitializeForTest(gpu_resource);
 }
 
-void GPUHelper::_init() {}
+GPUHelper::~GPUHelper() = default;
 
 void GPUHelper::initialize(Ref<Graph> graph) {
 	gpu_helper.InitializeForTest(graph->get_gpu_resources().get());
@@ -63,5 +63,5 @@ Ref<Packet> GPUHelper::make_packet_from_image(Ref<Image> image) {
 
 Ref<Packet> GPUHelper::make_packet_from_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
 	auto gpu_frame = gpu_helper.GpuBufferWithImageFrame(std::move(image_frame));
-	return Ref<Packet>(Packet::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame)));
+	return new Packet(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame));
 }

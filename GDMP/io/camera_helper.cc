@@ -2,16 +2,16 @@
 
 using namespace godot;
 
-void CameraHelper::_register_methods() {
-	register_method("permission_granted", &CameraHelper::permission_granted);
-	register_method("request_permission", &CameraHelper::request_permission);
-	register_method("set_graph", &CameraHelper::set_graph);
-	register_method("set_mirrored", &CameraHelper::set_mirrored);
-	register_method("start", &CameraHelper::start);
-	register_method("close", &CameraHelper::close);
+void CameraHelper::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("permission_granted"), &CameraHelper::permission_granted);
+	ClassDB::bind_method(D_METHOD("request_permission"), &CameraHelper::request_permission);
+	ClassDB::bind_method(D_METHOD("set_graph"), &CameraHelper::set_graph);
+	ClassDB::bind_method(D_METHOD("set_mirrored"), &CameraHelper::set_mirrored);
+	ClassDB::bind_method(D_METHOD("start"), &CameraHelper::start);
+	ClassDB::bind_method(D_METHOD("close"), &CameraHelper::close);
 #if !MEDIAPIPE_DISABLE_GPU
-	register_method("set_use_gpu", &CameraHelper::set_use_gpu);
+	ClassDB::bind_method(D_METHOD("set_use_gpu"), &CameraHelper::set_use_gpu);
 #endif
-	register_signal<CameraHelper>("permission_granted");
-	register_signal<CameraHelper>("permission_denied");
+	ClassDB::add_signal(get_class_static(), "permission_granted");
+	ClassDB::add_signal(get_class_static(), "permission_denied");
 }

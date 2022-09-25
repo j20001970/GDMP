@@ -1,4 +1,8 @@
-#include "Godot.hpp"
+#include "godot/gdnative_interface.h"
+
+#include "godot_cpp/core/defs.hpp"
+#include "godot_cpp/core/class_db.hpp"
+#include "godot_cpp/godot.hpp"
 
 #include "framework/graph.h"
 #include "framework/packet.h"
@@ -13,49 +17,62 @@
 #include "proto/location_data.h"
 #include "proto/rect.h"
 
-extern "C" void GDN_EXPORT mediapipe_gdnative_init(godot_gdnative_init_options *o) {
-	godot::Godot::gdnative_init(o);
-}
+using namespace godot;
 
-extern "C" void GDN_EXPORT mediapipe_gdnative_terminate(godot_gdnative_terminate_options *o) {
-	godot::Godot::gdnative_terminate(o);
-}
-
-extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
-	godot::Godot::nativescript_init(handle);
+void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
+	if (p_level != godot::MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
 	// Framework
-	godot::register_class<godot::Packet>();
-	godot::register_class<godot::Graph>();
+	ClassDB::register_class<Graph>();
+	ClassDB::register_class<Packet>();
 #if !MEDIAPIPE_DISABLE_GPU
-	godot::register_class<godot::GPUHelper>();
+	ClassDB::register_class<GPUHelper>();
 #endif
 	// I/O
-	godot::register_class<godot::CameraHelper>();
+	ClassDB::register_class<CameraHelper>();
 	// Classification
-	godot::register_class<godot::Classification>();
-	godot::register_class<godot::ClassificationList>();
-	godot::register_class<godot::ClassificationListCollection>();
+	ClassDB::register_class<Classification>();
+	ClassDB::register_class<ClassificationList>();
+	ClassDB::register_class<ClassificationListCollection>();
 	// Deteciton
-	godot::register_class<godot::AssociatedDetection>();
-	godot::register_class<godot::Detection>();
-	godot::register_class<godot::DetectionList>();
+	ClassDB::register_class<AssociatedDetection>();
+	ClassDB::register_class<Detection>();
+	ClassDB::register_class<DetectionList>();
 	// Landmark
-	godot::register_class<godot::Landmark>();
-	godot::register_class<godot::LandmarkList>();
-	godot::register_class<godot::LandmarkListCollection>();
-	godot::register_class<godot::NormalizedLandmark>();
-	godot::register_class<godot::NormalizedLandmarkList>();
-	godot::register_class<godot::NormalizedLandmarkListCollection>();
+	ClassDB::register_class<Landmark>();
+	ClassDB::register_class<LandmarkList>();
+	ClassDB::register_class<LandmarkListCollection>();
+	ClassDB::register_class<NormalizedLandmark>();
+	ClassDB::register_class<NormalizedLandmarkList>();
+	ClassDB::register_class<NormalizedLandmarkListCollection>();
 	// LocationData
-	godot::register_class<godot::BoundingBox>();
-	godot::register_class<godot::RelativeBoundingBox>();
-	godot::register_class<godot::BinaryMask>();
-	godot::register_class<godot::RelativeKeypoint>();
-	godot::register_class<godot::LocationData>();
+	ClassDB::register_class<BoundingBox>();
+	ClassDB::register_class<RelativeBoundingBox>();
+	ClassDB::register_class<BinaryMask>();
+	ClassDB::register_class<RelativeKeypoint>();
+	ClassDB::register_class<LocationData>();
 	// Rasterization
-	godot::register_class<godot::Interval>();
-	godot::register_class<godot::Rasterization>();
+	ClassDB::register_class<Interval>();
+	ClassDB::register_class<Rasterization>();
 	// Rect
-	godot::register_class<godot::Rect>();
-	godot::register_class<godot::NormalizedRect>();
+	ClassDB::register_class<Rect>();
+	ClassDB::register_class<NormalizedRect>();
+}
+
+void uninitialize_mediapipe_module(ModuleInitializationLevel p_level) {
+	if (p_level != godot::MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
+}
+
+extern "C" GDNativeBool GDN_EXPORT mediapipe_library_init(
+		const GDNativeInterface *p_interface,
+		const GDNativeExtensionClassLibraryPtr p_library,
+		GDNativeInitialization *r_initialization) {
+	GDExtensionBinding::InitObject init_obj(p_interface, p_library, r_initialization);
+	init_obj.register_initializer(initialize_mediapipe_module);
+	init_obj.register_terminator(uninitialize_mediapipe_module);
+	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
+	return init_obj.init();
 }

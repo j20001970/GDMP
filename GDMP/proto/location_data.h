@@ -1,7 +1,7 @@
 #ifndef GDMP_LOCATION_DATA
 #define GDMP_LOCATION_DATA
 
-#include "Reference.hpp"
+#include "godot_cpp/classes/ref_counted.hpp"
 
 #include "mediapipe/framework/formats/location_data.pb.h"
 
@@ -11,15 +11,15 @@
 
 namespace godot {
 
-class BoundingBox : public Reference {
+class BoundingBox : public RefCounted {
 		GDMP_PROTO_WRAPPER(BoundingBox, mediapipe::LocationData::BoundingBox)
 		GDMP_RAW_FIELD(xmin)
 		GDMP_RAW_FIELD(ymin)
 		GDMP_RAW_FIELD(width)
 		GDMP_RAW_FIELD(height)
 
-	public:
-		static void _register_methods() {
+	protected:
+		static void _bind_methods() {
 			GDMP_REGISTER_PROTO(BoundingBox)
 			GDMP_REGISTER_FIELD(xmin, BoundingBox)
 			GDMP_REGISTER_FIELD(ymin, BoundingBox)
@@ -28,15 +28,15 @@ class BoundingBox : public Reference {
 		}
 };
 
-class RelativeBoundingBox : public Reference {
+class RelativeBoundingBox : public RefCounted {
 		GDMP_PROTO_WRAPPER(RelativeBoundingBox, mediapipe::LocationData::RelativeBoundingBox)
 		GDMP_RAW_FIELD(xmin)
 		GDMP_RAW_FIELD(ymin)
 		GDMP_RAW_FIELD(width)
 		GDMP_RAW_FIELD(height)
 
-	public:
-		static void _register_methods() {
+	protected:
+		static void _bind_methods() {
 			GDMP_REGISTER_PROTO(RelativeBoundingBox)
 			GDMP_REGISTER_FIELD(xmin, RelativeBoundingBox)
 			GDMP_REGISTER_FIELD(ymin, RelativeBoundingBox)
@@ -45,28 +45,28 @@ class RelativeBoundingBox : public Reference {
 		}
 };
 
-class BinaryMask : public Reference {
+class BinaryMask : public RefCounted {
 		GDMP_PROTO_WRAPPER(BinaryMask, mediapipe::LocationData::BinaryMask)
 		GDMP_RAW_FIELD(width)
 		GDMP_RAW_FIELD(height)
 
-	public:
-		static void _register_methods() {
+	protected:
+		static void _bind_methods() {
 			GDMP_REGISTER_PROTO(BinaryMask)
 			GDMP_REGISTER_FIELD(width, BinaryMask)
 			GDMP_REGISTER_FIELD(height, BinaryMask)
 		}
 };
 
-class RelativeKeypoint : public Reference {
+class RelativeKeypoint : public RefCounted {
 		GDMP_PROTO_WRAPPER(RelativeKeypoint, mediapipe::LocationData::RelativeKeypoint)
 		GDMP_RAW_FIELD(x)
 		GDMP_RAW_FIELD(y)
 		GDMP_STRING_FIELD(keypoint_label)
 		GDMP_RAW_FIELD(score)
 
-	public:
-		static void _register_methods() {
+	protected:
+		static void _bind_methods() {
 			GDMP_REGISTER_PROTO(RelativeKeypoint)
 			GDMP_REGISTER_FIELD(x, RelativeKeypoint)
 			GDMP_REGISTER_FIELD(y, RelativeKeypoint)
@@ -75,7 +75,7 @@ class RelativeKeypoint : public Reference {
 		}
 };
 
-class LocationData : public Reference {
+class LocationData : public RefCounted {
 		GDMP_PROTO_WRAPPER(LocationData, mediapipe::LocationData)
 		void set_format(Variant value) {
 			_data.set_format(static_cast<mediapipe::LocationData_Format>(static_cast<int>(value)));
@@ -88,8 +88,8 @@ class LocationData : public Reference {
 		GDMP_PROTO_FIELD(mask, BinaryMask)
 		GDMP_REPEATED_PROTO_FIELD(relative_keypoints, RelativeKeypoint)
 
-	public:
-		static void _register_methods() {
+	protected:
+		static void _bind_methods() {
 			GDMP_REGISTER_PROTO(LocationData)
 			GDMP_REGISTER_FIELD(format, LocationData);
 			GDMP_REGISTER_FIELD(bounding_box, LocationData)

@@ -3,10 +3,10 @@
 
 #include <memory>
 
-#include "Godot.hpp"
-#include "Image.hpp"
-#include "Ref.hpp"
-#include "Reference.hpp"
+#include "godot_cpp/classes/image.hpp"
+#include "godot_cpp/classes/ref.hpp"
+#include "godot_cpp/classes/ref_counted.hpp"
+#include "godot_cpp/core/binder_common.hpp"
 
 #include "mediapipe/framework/formats/image_frame.h"
 #include "mediapipe/gpu/gl_calculator_helper.h"
@@ -17,14 +17,16 @@
 
 namespace godot {
 
-class GPUHelper : public Reference {
-		GODOT_CLASS(GPUHelper, Reference)
+class GPUHelper : public RefCounted {
+		GDCLASS(GPUHelper, RefCounted)
+
+	protected:
+		static void _bind_methods();
 
 	public:
-		static void _register_methods();
-		static GPUHelper *_new(mediapipe::GpuResources *gpu_resource);
-
-		void _init();
+		GPUHelper();
+		GPUHelper(mediapipe::GpuResources *gpu_resource);
+		~GPUHelper();
 
 		// Initialize GPU helper with given graph.
 		void initialize(Ref<Graph> graph);

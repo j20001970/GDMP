@@ -3,28 +3,26 @@
 
 #include <memory>
 
-#include "Godot.hpp"
-#include "PoolArrays.hpp"
-#include "Ref.hpp"
-#include "Reference.hpp"
-#include "String.hpp"
+#include "godot_cpp/classes/ref.hpp"
+#include "godot_cpp/classes/ref_counted.hpp"
+#include "godot_cpp/core/binder_common.hpp"
+#include "godot_cpp/variant/string.hpp"
 
 #include "../framework/graph.h"
 
 namespace godot {
 
-class CameraHelper : public Reference {
-		GODOT_CLASS(CameraHelper, Reference)
+class CameraHelper : public RefCounted {
+		GDCLASS(CameraHelper, RefCounted)
+
+	protected:
+		static void _bind_methods();
 
 	public:
 		class CameraHelperImpl;
 
-		static void _register_methods();
-
 		CameraHelper();
 		~CameraHelper();
-
-		void _init();
 
 		// Return true if camera permission is granted.
 		// Always return true if there is no permission model.

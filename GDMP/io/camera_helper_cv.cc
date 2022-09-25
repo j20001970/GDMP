@@ -2,7 +2,7 @@
 
 #include <thread>
 
-#include "OS.hpp"
+#include "godot_cpp/classes/time.hpp"
 
 #include "mediapipe/framework/formats/image_frame.h"
 #include "mediapipe/framework/formats/image_frame_opencv.h"
@@ -45,7 +45,7 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 			ERR_FAIL_COND(!isOpened());
 			thread = std::thread([this, size]() -> void {
 #if !MEDIAPIPE_DISABLE_GPU
-				Ref<GPUHelper> gpu_helper = GPUHelper::_new(graph->get_gpu_resources().get());
+				Ref<GPUHelper> gpu_helper = new GPUHelper(graph->get_gpu_resources().get());
 				auto cv_format = use_gpu ? cv::COLOR_BGR2RGBA : cv::COLOR_BGR2RGB;
 				auto image_format = use_gpu ? mediapipe::ImageFormat::SRGBA : mediapipe::ImageFormat::SRGB;
 #else
@@ -65,8 +65,8 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 							mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
 					cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
 					video_frame.copyTo(input_frame_mat);
-					Ref<Packet> packet = Packet::_new();
-					int64_t frame_timestamp_us = OS::get_singleton()->get_ticks_usec();
+					Ref<Packet> packet = new Packet();
+					int64_t frame_timestamp_us = Time::get_singleton()->get_ticks_usec();
 #if !MEDIAPIPE_DISABLE_GPU
 					if (use_gpu)
 						packet = gpu_helper->make_packet_from_image_frame(std::move(input_frame));
@@ -103,13 +103,11 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 #endif
 };
 
-CameraHelper::CameraHelper() = default;
-
-CameraHelper::~CameraHelper() = default;
-
-void CameraHelper::_init() {
+CameraHelper::CameraHelper() {
 	impl = std::make_unique<CameraHelperImpl>();
 }
+
+CameraHelper::~CameraHelper() = default;
 
 bool CameraHelper::permission_granted() {
 	return true;
