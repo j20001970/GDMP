@@ -5,7 +5,6 @@
 #include <thread>
 
 #include "Array.hpp"
-#include "File.hpp"
 #include "Variant.hpp"
 
 #include "mediapipe/framework/packet.h"

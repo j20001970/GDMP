@@ -5,6 +5,7 @@
 
 #include "Dictionary.hpp"
 #include "Godot.hpp"
+#include "Object.hpp"
 #include "Ref.hpp"
 #include "Reference.hpp"
 #include "String.hpp"
