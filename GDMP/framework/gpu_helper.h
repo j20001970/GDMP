@@ -1,6 +1,8 @@
 #ifndef GDMP_GPU_HELPER
 #define GDMP_GPU_HELPER
 
+#include <memory>
+
 #include "Godot.hpp"
 #include "Image.hpp"
 #include "Ref.hpp"

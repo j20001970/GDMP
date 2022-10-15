@@ -1,12 +1,15 @@
 #ifndef GDMP_PACKET
 #define GDMP_PACKET
 
+#include <memory>
+
 #include "Array.hpp"
 #include "Godot.hpp"
 #include "Image.hpp"
 #include "PoolArrays.hpp"
 #include "Ref.hpp"
 #include "Reference.hpp"
+#include "Variant.hpp"
 
 #include "mediapipe/framework/formats/image_frame.h"
 #include "mediapipe/framework/packet.h"

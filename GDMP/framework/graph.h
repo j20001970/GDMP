@@ -1,6 +1,7 @@
 #ifndef GDMP_GRAPH
 #define GDMP_GRAPH
 
+#include <map>
 #include <memory>
 
 #include "Dictionary.hpp"
