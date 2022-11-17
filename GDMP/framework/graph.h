@@ -4,10 +4,10 @@
 #include <map>
 #include <memory>
 
-#include "godot_cpp/classes/object.hpp"
 #include "godot_cpp/classes/ref.hpp"
 #include "godot_cpp/classes/ref_counted.hpp"
 #include "godot_cpp/core/binder_common.hpp"
+#include "godot_cpp/variant/callable.hpp"
 #include "godot_cpp/variant/dictionary.hpp"
 #include "godot_cpp/variant/string.hpp"
 
@@ -45,7 +45,7 @@ class Graph : public RefCounted {
 		// Always return false if graph config is not initialized.
 		bool has_output_stream(String stream_name);
 		// Add a packet callback for given stream_name.
-		void add_packet_callback(String stream_name, Object *object, String method);
+		void add_packet_callback(String stream_name, Callable callback);
 		// Start the calculator graph for sending packets to input stream,
 		// with side_packets for setting input side packet value.
 		void start(Dictionary side_packets);

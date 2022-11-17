@@ -92,7 +92,7 @@ bool Graph::has_output_stream(String stream_name) {
 	return false;
 }
 
-void Graph::add_packet_callback(String stream_name, Object *object, String method) {
+void Graph::add_packet_callback(String stream_name, Callable callback) {
 	ERR_FAIL_COND(!is_initialized());
 	ERR_FAIL_COND(!has_output_stream(stream_name));
 	std::string side_packet_name;
@@ -100,12 +100,9 @@ void Graph::add_packet_callback(String stream_name, Object *object, String metho
 	packet_callbacks.emplace(
 			side_packet_name,
 			mediapipe::MakePacket<std::function<void(const mediapipe::Packet &)>>(
-					[this, stream_name, object, method](const mediapipe::Packet &packet) -> void {
-						if (object == nullptr) {
-							return;
-						}
+					[this, stream_name, callback](const mediapipe::Packet &packet) -> void {
 						Ref<Packet> p = new Packet(packet);
-						object->call_deferred(method, stream_name, p);
+						callback.callv(Array::make(stream_name, p));
 					}));
 }
 
