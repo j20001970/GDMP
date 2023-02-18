@@ -1,7 +1,7 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -274,6 +274,12 @@ new_local_repository(
+@@ -286,6 +286,12 @@ new_local_repository(
      path = "C:\\opencv\\build",
  )
  
@@ -25,7 +25,7 @@ diff --git a/mediapipe/util/BUILD b/mediapipe/util/BUILD
          "//mediapipe:android": ["resource_util_android.cc"],
          "//mediapipe/framework:android_no_jni": ["resource_util_loonix.cc"],
          "//mediapipe:ios": ["resource_util_apple.cc"],
-@@ -210,6 +211,9 @@ cc_library(
+@@ -211,6 +212,9 @@ cc_library(
          "//conditions:default": [
              "@com_google_absl//absl/flags:flag",
          ],
