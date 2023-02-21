@@ -12,6 +12,6 @@ void CameraHelper::_bind_methods() {
 #if !MEDIAPIPE_DISABLE_GPU
 	ClassDB::bind_method(D_METHOD("set_use_gpu"), &CameraHelper::set_use_gpu);
 #endif
-	ClassDB::add_signal(get_class_static(), "permission_granted");
-	ClassDB::add_signal(get_class_static(), "permission_denied");
+	ADD_SIGNAL(MethodInfo("permission_granted"));
+	ADD_SIGNAL(MethodInfo("permission_denied"));
 }
