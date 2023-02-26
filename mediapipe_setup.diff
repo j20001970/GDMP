@@ -1,7 +1,7 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -286,6 +286,12 @@ new_local_repository(
+@@ -285,6 +285,12 @@ new_local_repository(
      path = "C:\\opencv\\build",
  )
  
