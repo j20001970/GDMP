@@ -54,7 +54,7 @@ cc_library(
         "//mediapipe/GDMP/proto:location_data",
         "//mediapipe/GDMP/proto:rasterization",
         "//mediapipe/GDMP/proto:rect",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
     ] + select({
         "//mediapipe/gpu:disable_gpu": [],
         "//conditions:default": ["//mediapipe/GDMP/framework:gpu_helper"],

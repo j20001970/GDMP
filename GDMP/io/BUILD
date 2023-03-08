@@ -5,7 +5,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/GDMP/framework:graph",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
     ] + select({
         "//mediapipe:android": [":camera_helper_android"],
         "//mediapipe:ios": [":camera_helper_ios"],
@@ -23,7 +23,7 @@ cc_library(
         "//mediapipe/gpu:gl_texture_buffer",
         "//mediapipe/gpu:gpu_buffer",
         "//mediapipe/gpu:gpu_buffer_format",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
     ],
 )
 

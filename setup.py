@@ -19,11 +19,6 @@ else:
     print("'git' or 'patch' cannot be found for patching mediapipe workspace.")
     sys.exit(-1)
 
-# Copy godot.BUILD to mediapipe/third_party
-godot_build = os.path.join(os.path.dirname(__file__), 'godot.BUILD')
-third_party_dir = os.path.join(mediapipe_dir, 'third_party')
-copy(godot_build, third_party_dir)
-
 # Symlink or copy GDMP source code to mediapipe workspace
 try:
     copy_dir = os.path.join(os.path.dirname(__file__), 'GDMP')

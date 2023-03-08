@@ -8,7 +8,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework/formats:classification_cc_proto",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
     ],
 )
 
@@ -23,7 +23,7 @@ cc_library(
     deps = [
         ":location_data",
         "//mediapipe/framework/formats:detection_cc_proto",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
     ],
 )
 
@@ -37,7 +37,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework/formats:landmark_cc_proto",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
     ],
 )
 
@@ -52,7 +52,7 @@ cc_library(
     deps = [
         ":rasterization",
         "//mediapipe/framework/formats:location_data_cc_proto",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
     ],
 )
 
@@ -66,7 +66,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework/formats/annotation:rasterization_cc_proto",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
     ],
 )
 
@@ -80,6 +80,6 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework/formats:rect_cc_proto",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
     ],
 )
