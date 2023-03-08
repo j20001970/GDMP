@@ -11,7 +11,7 @@ cc_library(
         "//mediapipe/framework/port:status",
         "//mediapipe/framework/tool:sink",
         "//mediapipe/util:resource_util",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
     ] + select({
         "//mediapipe/gpu:disable_gpu": [],
         "//conditions:default": ["//mediapipe/gpu:gpu_shared_data_internal"],
@@ -31,7 +31,7 @@ cc_library(
         "//mediapipe/gpu:gl_calculator_helper",
         "//mediapipe/gpu:gpu_buffer",
         "//mediapipe/gpu:gpu_shared_data_internal",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
     ] + select({
         "//conditions:default": [],
         "//mediapipe:apple": ["//mediapipe/objc:util"],
@@ -47,6 +47,6 @@ cc_library(
         "//mediapipe/GDMP/util:image",
         "//mediapipe/framework:packet",
         "//mediapipe/framework/formats:image_frame",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
     ],
 )

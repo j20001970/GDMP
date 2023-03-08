@@ -6,8 +6,8 @@ diff --git a/WORKSPACE b/WORKSPACE
  )
  
 +new_local_repository(
-+    name = "godot",
-+    build_file = "@//third_party:godot.BUILD",
++    name = "godot-cpp",
++    build_file = "@//mediapipe/GDMP:godot-cpp.BUILD",
 +    path = "../godot-cpp",
 +)
 +
@@ -35,18 +35,3 @@ diff --git a/mediapipe/util/BUILD b/mediapipe/util/BUILD
          "//mediapipe:android": [
              "//mediapipe/util/android:asset_manager_util",
              "//mediapipe/util/android/file/base",
-diff --git a/third_party/BUILD b/third_party/BUILD
---- a/third_party/BUILD
-+++ b/third_party/BUILD
-@@ -317,3 +317,11 @@ java_library(
-         "@maven//:com_google_auto_value_auto_value_annotations",
-     ],
- )
-+
-+cc_library(
-+    name = "godot",
-+    visibility = ["//visibility:public"],
-+    deps = [
-+        "@godot//:godot",
-+    ],
-+)

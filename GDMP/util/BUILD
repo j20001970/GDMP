@@ -4,7 +4,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework/formats:image_frame",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
     ],
 )
 
@@ -15,7 +15,7 @@ cc_library(
     deps = [
         "//mediapipe/framework/port:status",
         "//mediapipe/framework/port:statusor",
-        "//third_party:godot",
+        "@godot-cpp//:godot",
         "@com_google_absl//absl/strings",
     ] + select({
         "//mediapipe:android": [
