@@ -69,7 +69,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 3. To load a MediaPipe graph:
 
     ```gdscript
-    var graph : GDMP.Graph = GDMP.Graph.new()
+    var graph : Graph = Graph.new()
     # to load text graph
     graph.initialize("res://path/to/your/graph.pbtxt", true)
     # to load binary graph
@@ -79,14 +79,14 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 4. To add a packet callback to the graph's output stream:
 
     ```gdscript
-    graph.add_packet_callback("stream_name", target_object, "target_method")
+    graph.add_packet_callback("stream_name", target_object.target_method)
     ```
 5. To use the packet from graph callback(NormalizedLandmarkList for example):
 
     ```gdscript
     func _on_new_landmarks(stream_name : String, packet) -> void:
-        var bytes : PoolByteArray = packet.get_proto()
-        var landmarks = GDMP.NormalizedLandmarkList.new()
+        var bytes : PackedByteArray = packet.get_proto()
+        var landmarks = NormalizedLandmarkList.new()
         landmarks.from_bytes(bytes)
         for i in range(landmarks.landmark_size()):
             var landmark = landmarks.get_landmark(i)
@@ -95,7 +95,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 6. Start the graph and camera for sending video frames to the graph:
 
     ```gdscript
-    var camera_helper : GDMP.CameraHelper = GDMP.CameraHelper.new()
+    var camera_helper : CameraHelper = CameraHelper.new()
     camera_helper.set_graph(graph, "input_video")
     graph.start()
     if camera_helper.permission_granted():
