@@ -12,6 +12,5 @@ void CameraHelper::_register_methods() {
 #if !MEDIAPIPE_DISABLE_GPU
 	register_method("set_use_gpu", &CameraHelper::set_use_gpu);
 #endif
-	register_signal<CameraHelper>("permission_granted");
-	register_signal<CameraHelper>("permission_denied");
+	register_signal<CameraHelper>("permission_result");
 }

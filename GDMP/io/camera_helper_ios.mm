@@ -53,12 +53,7 @@ class CameraHelper::CameraHelperImpl {
         void request_permission(CameraHelper *camera_helper) {
             [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
                                      completionHandler:^(BOOL granted) {
-                if(granted) {
-                    camera_helper->emit_signal("permission_granted");
-                }
-                else {
-                    camera_helper->emit_signal("permission_denied");
-                }
+                camera_helper->emit_signal("permission_result", granted);
             }];
         }
 
