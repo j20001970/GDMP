@@ -130,9 +130,9 @@ CameraHelper::CameraHelper() {
 	impl = std::make_unique<CameraHelperImpl>();
 	if (impl->android_plugin) {
 		impl->android_plugin->connect(
-				"camera_permission_granted", this, "emit_signal", Array::make("permission_granted"));
+				"camera_permission_granted", this, "emit_signal", Array::make("permission_result", true));
 		impl->android_plugin->connect(
-				"camera_permission_denied", this, "emit_signal", Array::make("permission_denied"));
+				"camera_permission_denied", this, "emit_signal", Array::make("permission_result", false));
 	}
 }
 
