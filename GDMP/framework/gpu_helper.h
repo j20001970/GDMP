@@ -17,25 +17,25 @@
 
 namespace godot {
 
-class GPUHelper : public RefCounted {
-		GDCLASS(GPUHelper, RefCounted)
+class MediaPipeGPUHelper : public RefCounted {
+		GDCLASS(MediaPipeGPUHelper, RefCounted)
 
 	protected:
 		static void _bind_methods();
 
 	public:
-		GPUHelper();
-		GPUHelper(mediapipe::GpuResources *gpu_resource);
-		~GPUHelper();
+		MediaPipeGPUHelper();
+		MediaPipeGPUHelper(mediapipe::GpuResources *gpu_resource);
+		~MediaPipeGPUHelper();
 
 		// Initialize GPU helper with given graph.
-		void initialize(Ref<Graph> graph);
+		void initialize(Ref<MediaPipeGraph> graph);
 		// Get GPU frame from GpuBuffer packet and convert to godot::Image
-		Ref<Image> get_gpu_frame(Ref<Packet> packet);
+		Ref<Image> get_gpu_frame(Ref<MediaPipePacket> packet);
 		// Make a mediapipe::GpuBuffer packet from godot::Image
-		Ref<Packet> make_packet_from_image(Ref<Image> image);
+		Ref<MediaPipePacket> make_packet_from_image(Ref<Image> image);
 		// Make a mediapipe::GpuBuffer packet from mediapipe::ImageFrame
-		Ref<Packet> make_packet_from_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame);
+		Ref<MediaPipePacket> make_packet_from_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame);
 
 	private:
 		mediapipe::GlCalculatorHelper gpu_helper;

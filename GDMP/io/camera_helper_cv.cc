@@ -18,7 +18,7 @@
 
 using namespace godot;
 
-class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
+class MediaPipeCameraHelper::CameraHelperImpl : public cv::VideoCapture {
 	public:
 		CameraHelperImpl() {
 #if !MEDIAPIPE_DISABLE_GPU
@@ -26,7 +26,7 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 #endif
 		}
 
-		void set_graph(Ref<Graph> graph, String stream_name) {
+		void set_graph(Ref<MediaPipeGraph> graph, String stream_name) {
 			this->graph = graph;
 			this->stream_name = stream_name;
 		}
@@ -45,7 +45,7 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 			ERR_FAIL_COND(!isOpened());
 			thread = std::thread([this, size]() -> void {
 #if !MEDIAPIPE_DISABLE_GPU
-				Ref<GPUHelper> gpu_helper = new GPUHelper(graph->get_gpu_resources().get());
+				Ref<MediaPipeGPUHelper> gpu_helper = new MediaPipeGPUHelper(graph->get_gpu_resources().get());
 				auto cv_format = use_gpu ? cv::COLOR_BGR2RGBA : cv::COLOR_BGR2RGB;
 				auto image_format = use_gpu ? mediapipe::ImageFormat::SRGBA : mediapipe::ImageFormat::SRGB;
 #else
@@ -65,7 +65,7 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 							mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
 					cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
 					video_frame.copyTo(input_frame_mat);
-					Ref<Packet> packet = new Packet();
+					Ref<MediaPipePacket> packet = new MediaPipePacket();
 					int64_t frame_timestamp_us = Time::get_singleton()->get_ticks_usec();
 #if !MEDIAPIPE_DISABLE_GPU
 					if (use_gpu)
@@ -97,45 +97,45 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 		bool flip;
 		std::thread thread;
 		String stream_name;
-		Ref<Graph> graph;
+		Ref<MediaPipeGraph> graph;
 #if !MEDIAPIPE_DISABLE_GPU
 		bool use_gpu;
 #endif
 };
 
-CameraHelper::CameraHelper() {
+MediaPipeCameraHelper::MediaPipeCameraHelper() {
 	impl = std::make_unique<CameraHelperImpl>();
 }
 
-CameraHelper::~CameraHelper() = default;
+MediaPipeCameraHelper::~MediaPipeCameraHelper() = default;
 
-bool CameraHelper::permission_granted() {
+bool MediaPipeCameraHelper::permission_granted() {
 	return true;
 }
 
-void CameraHelper::request_permission() {
+void MediaPipeCameraHelper::request_permission() {
 }
 
-void CameraHelper::set_graph(Ref<Graph> graph, String stream_name) {
+void MediaPipeCameraHelper::set_graph(Ref<MediaPipeGraph> graph, String stream_name) {
 	impl->set_graph(graph, stream_name);
 }
 
-void CameraHelper::set_mirrored(bool value) {
+void MediaPipeCameraHelper::set_mirrored(bool value) {
 	impl->set_flip(value);
 }
 
-void CameraHelper::start(int index, Vector2 size) {
+void MediaPipeCameraHelper::start(int index, Vector2 size) {
 	impl->start(index, size);
 }
 
-void CameraHelper::close() {
+void MediaPipeCameraHelper::close() {
 	if (impl) {
 		impl->close();
 	}
 }
 
 #if !MEDIAPIPE_DISABLE_GPU
-void CameraHelper::set_use_gpu(bool use_gpu) {
+void MediaPipeCameraHelper::set_use_gpu(bool use_gpu) {
 	impl->set_use_gpu(use_gpu);
 }
 #endif

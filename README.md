@@ -69,7 +69,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 3. To load a MediaPipe graph:
 
     ```gdscript
-    var graph : Graph = Graph.new()
+    var graph : MediaPipeGraph = MediaPipeGraph.new()
     # to load text graph
     graph.initialize("res://path/to/your/graph.pbtxt", true)
     # to load binary graph
@@ -95,7 +95,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 6. Start the graph and camera for sending video frames to the graph:
 
     ```gdscript
-    var camera_helper : CameraHelper = CameraHelper.new()
+    var camera_helper : MediaPipeCameraHelper = MediaPipeCameraHelper.new()
     camera_helper.set_graph(graph, "input_video")
     graph.start()
     if camera_helper.permission_granted():

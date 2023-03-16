@@ -14,19 +14,19 @@
 
 using namespace godot;
 
-void Graph::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("initialize"), &Graph::initialize);
-	ClassDB::bind_method(D_METHOD("is_initialized"), &Graph::is_initialized);
-	ClassDB::bind_method(D_METHOD("is_running"), &Graph::is_running);
-	ClassDB::bind_method(D_METHOD("has_input_stream"), &Graph::has_input_stream);
-	ClassDB::bind_method(D_METHOD("has_output_stream"), &Graph::has_output_stream);
-	ClassDB::bind_method(D_METHOD("add_packet_callback"), &Graph::add_packet_callback);
-	ClassDB::bind_method(D_METHOD("start"), &Graph::start);
-	ClassDB::bind_method(D_METHOD("add_packet"), &Graph::add_packet);
-	ClassDB::bind_method(D_METHOD("stop"), &Graph::stop);
+void MediaPipeGraph::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("initialize"), &MediaPipeGraph::initialize);
+	ClassDB::bind_method(D_METHOD("is_initialized"), &MediaPipeGraph::is_initialized);
+	ClassDB::bind_method(D_METHOD("is_running"), &MediaPipeGraph::is_running);
+	ClassDB::bind_method(D_METHOD("has_input_stream"), &MediaPipeGraph::has_input_stream);
+	ClassDB::bind_method(D_METHOD("has_output_stream"), &MediaPipeGraph::has_output_stream);
+	ClassDB::bind_method(D_METHOD("add_packet_callback"), &MediaPipeGraph::add_packet_callback);
+	ClassDB::bind_method(D_METHOD("start"), &MediaPipeGraph::start);
+	ClassDB::bind_method(D_METHOD("add_packet"), &MediaPipeGraph::add_packet);
+	ClassDB::bind_method(D_METHOD("stop"), &MediaPipeGraph::stop);
 }
 
-Graph::Graph() {
+MediaPipeGraph::MediaPipeGraph() {
 #if !MEDIAPIPE_DISABLE_GPU
 	auto create_gpu_resources = mediapipe::GpuResources::Create();
 	if (!create_gpu_resources.ok()) {
@@ -36,11 +36,11 @@ Graph::Graph() {
 #endif
 }
 
-Graph::~Graph() {
+MediaPipeGraph::~MediaPipeGraph() {
 	stop();
 }
 
-void Graph::initialize(String graph_path, bool as_text) {
+void MediaPipeGraph::initialize(String graph_path, bool as_text) {
 	graph_config = nullptr;
 	packet_callbacks.clear();
 	std::string graph_contents;
@@ -57,15 +57,15 @@ void Graph::initialize(String graph_path, bool as_text) {
 	graph_config = std::make_unique<mediapipe::CalculatorGraphConfig>(config);
 }
 
-bool Graph::is_initialized() {
+bool MediaPipeGraph::is_initialized() {
 	return graph_config != nullptr;
 }
 
-bool Graph::is_running() {
+bool MediaPipeGraph::is_running() {
 	return running_graph != nullptr;
 }
 
-bool Graph::has_input_stream(String stream_name) {
+bool MediaPipeGraph::has_input_stream(String stream_name) {
 	ERR_FAIL_COND_V(!is_initialized(), false);
 	for (std::string input : graph_config->input_stream()) {
 		if (String(input.data()) == stream_name) {
@@ -75,7 +75,7 @@ bool Graph::has_input_stream(String stream_name) {
 	return false;
 }
 
-bool Graph::has_output_stream(String stream_name) {
+bool MediaPipeGraph::has_output_stream(String stream_name) {
 	ERR_FAIL_COND_V(!is_initialized(), false);
 	for (std::string output : graph_config->output_stream()) {
 		if (String(output.data()) == stream_name) {
@@ -92,7 +92,7 @@ bool Graph::has_output_stream(String stream_name) {
 	return false;
 }
 
-void Graph::add_packet_callback(String stream_name, Callable callback) {
+void MediaPipeGraph::add_packet_callback(String stream_name, Callable callback) {
 	ERR_FAIL_COND(!is_initialized());
 	ERR_FAIL_COND(!has_output_stream(stream_name));
 	std::string side_packet_name;
@@ -101,12 +101,12 @@ void Graph::add_packet_callback(String stream_name, Callable callback) {
 			side_packet_name,
 			mediapipe::MakePacket<std::function<void(const mediapipe::Packet &)>>(
 					[this, stream_name, callback](const mediapipe::Packet &packet) -> void {
-						Ref<Packet> p = new Packet(packet);
+						Ref<MediaPipePacket> p = new MediaPipePacket(packet);
 						callback.callv(Array::make(stream_name, p));
 					}));
 }
 
-void Graph::start(Dictionary side_packets) {
+void MediaPipeGraph::start(Dictionary side_packets) {
 	ERR_FAIL_COND(!is_initialized());
 	stop();
 	std::map<std::string, mediapipe::Packet> packets;
@@ -145,14 +145,14 @@ void Graph::start(Dictionary side_packets) {
 	ERR_FAIL_COND_V(!start_graph.ok(), ERR_PRINT(start_graph.ToString().data()));
 }
 
-void Graph::add_packet(String stream_name, Ref<Packet> packet) {
+void MediaPipeGraph::add_packet(String stream_name, Ref<MediaPipePacket> packet) {
 	ERR_FAIL_COND(!is_running());
 	ERR_FAIL_COND(packet.is_null());
 	absl::Status add_packet = running_graph->AddPacketToInputStream(stream_name.utf8().get_data(), packet->get_packet());
 	ERR_FAIL_COND_V(!add_packet.ok(), ERR_PRINT(add_packet.ToString().data()));
 }
 
-void Graph::stop() {
+void MediaPipeGraph::stop() {
 	if (!is_running()) {
 		return;
 	}
@@ -169,7 +169,7 @@ void Graph::stop() {
 }
 
 #if !MEDIAPIPE_DISABLE_GPU
-std::shared_ptr<mediapipe::GpuResources> Graph::get_gpu_resources() {
+std::shared_ptr<mediapipe::GpuResources> MediaPipeGraph::get_gpu_resources() {
 	return gpu_resources;
 }
 #endif

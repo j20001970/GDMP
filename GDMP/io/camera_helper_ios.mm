@@ -12,12 +12,12 @@ using namespace godot;
 
 @class OutputDelegate;
 @interface OutputDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
-@property(nonatomic) Ref<Graph> graph;
+@property(nonatomic) Ref<MediaPipeGraph> graph;
 @property(nonatomic) String stream_name;
 @end
 
 @implementation OutputDelegate
-- (instancetype)init:(Ref<Graph>)graph
+- (instancetype)init:(Ref<MediaPipeGraph>)graph
     StreamName:(String)stream_name{
     self = [super init];
     self.graph = graph;
@@ -28,13 +28,13 @@ using namespace godot;
     didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
            fromConnection:(AVCaptureConnection*)connection {
     CVPixelBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    Ref<Packet> packet = Packet::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(imageBuffer));
+    Ref<MediaPipePacket> packet = MediaPipePacket::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(imageBuffer));
     packet->set_timestamp(Time::get_singleton()->get_ticks_usec());
     self.graph->add_packet(self.stream_name, packet);
 }
 @end
 
-class CameraHelper::CameraHelperImpl {
+class MediaPipeCameraHelper::CameraHelperImpl {
     public:
         CameraHelperImpl() {
             dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(
@@ -50,14 +50,14 @@ class CameraHelper::CameraHelperImpl {
             return status == AVAuthorizationStatusAuthorized;
         }
 
-        void request_permission(CameraHelper *camera_helper) {
+        void request_permission(MediaPipeCameraHelper *camera_helper) {
             [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
                                      completionHandler:^(BOOL granted) {
                 camera_helper->emit_signal("permission_result", granted);
             }];
         }
 
-        void set_graph(Ref<Graph> graph, String stream_name) {
+        void set_graph(Ref<MediaPipeGraph> graph, String stream_name) {
             delegate = [[OutputDelegate alloc] init:graph
             StreamName:stream_name];
         }
@@ -116,36 +116,36 @@ class CameraHelper::CameraHelperImpl {
         OutputDelegate *delegate;
 };
 
-CameraHelper::CameraHelper() {
+MediaPipeCameraHelper::MediaPipeCameraHelper() {
     impl = std::make_unique<CameraHelperImpl>();
 }
 
-CameraHelper::~CameraHelper() = default;
+MediaPipeCameraHelper::~MediaPipeCameraHelper() = default;
 
-bool CameraHelper::permission_granted() {
+bool MediaPipeCameraHelper::permission_granted() {
     return impl->permission_granted();
 }
 
-void CameraHelper::request_permission() {
+void MediaPipeCameraHelper::request_permission() {
     impl->request_permission(this);
 }
 
-void CameraHelper::set_graph(Ref<Graph> graph, String stream_name) {
+void MediaPipeCameraHelper::set_graph(Ref<MediaPipeGraph> graph, String stream_name) {
     impl->set_graph(graph, stream_name);
 }
 
-void CameraHelper::set_mirrored(bool value) {
+void MediaPipeCameraHelper::set_mirrored(bool value) {
 }
 
-void CameraHelper::start(int index, Vector2 size) {
+void MediaPipeCameraHelper::start(int index, Vector2 size) {
     impl->start(index, size);
 }
 
-void CameraHelper::close() {
+void MediaPipeCameraHelper::close() {
     impl->close();
 }
 
 #if !MEDIAPIPE_DISABLE_GPU
-void CameraHelper::set_use_gpu(bool use_gpu) {
+void MediaPipeCameraHelper::set_use_gpu(bool use_gpu) {
 }
 #endif

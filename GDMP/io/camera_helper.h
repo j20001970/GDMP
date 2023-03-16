@@ -12,8 +12,8 @@
 
 namespace godot {
 
-class CameraHelper : public RefCounted {
-		GDCLASS(CameraHelper, RefCounted)
+class MediaPipeCameraHelper : public RefCounted {
+		GDCLASS(MediaPipeCameraHelper, RefCounted)
 
 	protected:
 		static void _bind_methods();
@@ -21,8 +21,8 @@ class CameraHelper : public RefCounted {
 	public:
 		class CameraHelperImpl;
 
-		CameraHelper();
-		~CameraHelper();
+		MediaPipeCameraHelper();
+		~MediaPipeCameraHelper();
 
 		// Return true if camera permission is granted.
 		// Always return true if there is no permission model.
@@ -31,7 +31,7 @@ class CameraHelper : public RefCounted {
 		// No-op if there is no permission model.
 		void request_permission();
 		// Set the target graph to send video frames to with stream name.
-		void set_graph(Ref<Graph> graph, String stream_name);
+		void set_graph(Ref<MediaPipeGraph> graph, String stream_name);
 		// Set whether to flip video frames horizontally.
 		// Only works on non-mobile platforms.
 		void set_mirrored(bool value);

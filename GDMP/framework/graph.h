@@ -21,15 +21,15 @@
 
 using namespace godot;
 
-class Graph : public RefCounted {
-		GDCLASS(Graph, RefCounted)
+class MediaPipeGraph : public RefCounted {
+		GDCLASS(MediaPipeGraph, RefCounted)
 
 	protected:
 		static void _bind_methods();
 
 	public:
-		Graph();
-		~Graph();
+		MediaPipeGraph();
+		~MediaPipeGraph();
 
 		// Initialize the calculator graph config with the file in graph_path.
 		// Depending on as_text, the graph file must be in either text (pbtxt) or binary (binarypb) format.
@@ -50,7 +50,7 @@ class Graph : public RefCounted {
 		// with side_packets for setting input side packet value.
 		void start(Dictionary side_packets);
 		// Add a packet to graph input stream.
-		void add_packet(String stream_name, Ref<Packet> packet);
+		void add_packet(String stream_name, Ref<MediaPipePacket> packet);
 		// Stop the graph.
 		void stop();
 #if !MEDIAPIPE_DISABLE_GPU

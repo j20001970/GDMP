@@ -16,16 +16,16 @@
 
 using namespace godot;
 
-class Packet : public RefCounted {
-		GDCLASS(Packet, RefCounted)
+class MediaPipePacket : public RefCounted {
+		GDCLASS(MediaPipePacket, RefCounted)
 
 	protected:
 		static void _bind_methods();
 
 	public:
-		Packet();
-		Packet(const mediapipe::Packet &packet);
-		~Packet();
+		MediaPipePacket();
+		MediaPipePacket(const mediapipe::Packet &packet);
+		~MediaPipePacket();
 
 		// Check if the packet is empty.
 		bool is_empty();

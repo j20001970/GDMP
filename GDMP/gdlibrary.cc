@@ -24,13 +24,13 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 		return;
 	}
 	// Framework
-	ClassDB::register_class<Graph>();
-	ClassDB::register_class<Packet>();
+	ClassDB::register_class<MediaPipeGraph>();
+	ClassDB::register_class<MediaPipePacket>();
 #if !MEDIAPIPE_DISABLE_GPU
-	ClassDB::register_class<GPUHelper>();
+	ClassDB::register_class<MediaPipeGPUHelper>();
 #endif
 	// I/O
-	ClassDB::register_class<CameraHelper>();
+	ClassDB::register_class<MediaPipeCameraHelper>();
 	// Classification
 	ClassDB::register_class<Classification>();
 	ClassDB::register_class<ClassificationList>();

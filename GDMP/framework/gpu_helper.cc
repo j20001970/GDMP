@@ -9,25 +9,25 @@
 
 using namespace godot;
 
-void GPUHelper::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("initialize"), &GPUHelper::initialize);
-	ClassDB::bind_method(D_METHOD("get_gpu_frame"), &GPUHelper::get_gpu_frame);
-	ClassDB::bind_method(D_METHOD("make_packet_from_image"), &GPUHelper::make_packet_from_image);
+void MediaPipeGPUHelper::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("initialize"), &MediaPipeGPUHelper::initialize);
+	ClassDB::bind_method(D_METHOD("get_gpu_frame"), &MediaPipeGPUHelper::get_gpu_frame);
+	ClassDB::bind_method(D_METHOD("make_packet_from_image"), &MediaPipeGPUHelper::make_packet_from_image);
 }
 
-GPUHelper::GPUHelper() = default;
+MediaPipeGPUHelper::MediaPipeGPUHelper() = default;
 
-GPUHelper::GPUHelper(mediapipe::GpuResources *gpu_resource) {
+MediaPipeGPUHelper::MediaPipeGPUHelper(mediapipe::GpuResources *gpu_resource) {
 	gpu_helper.InitializeForTest(gpu_resource);
 }
 
-GPUHelper::~GPUHelper() = default;
+MediaPipeGPUHelper::~MediaPipeGPUHelper() = default;
 
-void GPUHelper::initialize(Ref<Graph> graph) {
+void MediaPipeGPUHelper::initialize(Ref<MediaPipeGraph> graph) {
 	gpu_helper.InitializeForTest(graph->get_gpu_resources().get());
 }
 
-Ref<Image> GPUHelper::get_gpu_frame(Ref<Packet> packet) {
+Ref<Image> MediaPipeGPUHelper::get_gpu_frame(Ref<MediaPipePacket> packet) {
 	Ref<Image> image;
 	ERR_FAIL_COND_V(!packet->get_packet().ValidateAsType<mediapipe::GpuBuffer>().ok(), image);
 	auto &gpu_frame = packet->get_packet().Get<mediapipe::GpuBuffer>();
@@ -57,11 +57,11 @@ Ref<Image> GPUHelper::get_gpu_frame(Ref<Packet> packet) {
 	return image;
 }
 
-Ref<Packet> GPUHelper::make_packet_from_image(Ref<Image> image) {
+Ref<MediaPipePacket> MediaPipeGPUHelper::make_packet_from_image(Ref<Image> image) {
 	return make_packet_from_image_frame(std::move(to_image_frame(image)));
 }
 
-Ref<Packet> GPUHelper::make_packet_from_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
+Ref<MediaPipePacket> MediaPipeGPUHelper::make_packet_from_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
 	auto gpu_frame = gpu_helper.GpuBufferWithImageFrame(std::move(image_frame));
-	return new Packet(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame));
+	return new MediaPipePacket(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame));
 }

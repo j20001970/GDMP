@@ -12,7 +12,7 @@
 
 using namespace godot;
 
-class CameraHelper::CameraHelperImpl {
+class MediaPipeCameraHelper::CameraHelperImpl {
 	public:
 		Object *android_plugin;
 
@@ -61,7 +61,7 @@ class CameraHelper::CameraHelperImpl {
 			env->CallStaticVoidMethod(cls, method, activity);
 		}
 
-		void set_graph(Ref<Graph> graph, String stream_name) {
+		void set_graph(Ref<MediaPipeGraph> graph, String stream_name) {
 			this->graph = graph;
 			this->stream_name = stream_name;
 		}
@@ -105,7 +105,7 @@ class CameraHelper::CameraHelperImpl {
 			}
 			mediapipe::GpuBuffer gpu_frame = mediapipe::GpuBuffer(mediapipe::GlTextureBuffer::Wrap(
 					GL_TEXTURE_2D, name, width, height, mediapipe::GpuBufferFormat::kBGRA32, gl_context, callback));
-			Ref<Packet> packet = Packet::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame));
+			Ref<MediaPipePacket> packet = MediaPipePacket::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame));
 			size_t timestamp = Time::get_singleton()->get_ticks_usec();
 			packet->set_timestamp(timestamp);
 			graph->add_packet(stream_name, packet);
@@ -114,19 +114,19 @@ class CameraHelper::CameraHelperImpl {
 	private:
 		static jclass camera_class;
 		jobject camera = nullptr;
-		Ref<Graph> graph;
+		Ref<MediaPipeGraph> graph;
 		String stream_name;
 };
 
-jclass CameraHelper::CameraHelperImpl::camera_class = nullptr;
+jclass MediaPipeCameraHelper::CameraHelperImpl::camera_class = nullptr;
 
 extern "C" JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nativeOnNewFrame(
 		JNIEnv *pEnv, jobject jCaller, jlong cppCaller, jobject frame, jint name, jint width, jint height) {
-	auto caller = (CameraHelper::CameraHelperImpl *)(cppCaller);
+	auto caller = (MediaPipeCameraHelper::CameraHelperImpl *)(cppCaller);
 	caller->on_new_frame(pEnv, frame, name, width, height);
 }
 
-CameraHelper::CameraHelper() {
+MediaPipeCameraHelper::CameraHelper() {
 	impl = std::make_unique<CameraHelperImpl>();
 	if (impl->android_plugin) {
 		impl->android_plugin->connect(
@@ -136,32 +136,32 @@ CameraHelper::CameraHelper() {
 	}
 }
 
-CameraHelper::~CameraHelper() = default;
+MediaPipeCameraHelper::~MediaPipeCameraHelper() = default;
 
-bool CameraHelper::permission_granted() {
+bool MediaPipeCameraHelper::permission_granted() {
 	return impl->permission_granted();
 }
 
-void CameraHelper::request_permission() {
+void MediaPipeCameraHelper::request_permission() {
 	impl->request_permission();
 }
 
-void CameraHelper::set_graph(Ref<Graph> graph, String stream_name) {
+void MediaPipeCameraHelper::set_graph(Ref<MediaPipeGraph> graph, String stream_name) {
 	impl->set_graph(graph, stream_name);
 }
 
-void CameraHelper::set_mirrored(bool value) {
+void MediaPipeCameraHelper::set_mirrored(bool value) {
 }
 
-void CameraHelper::start(int index, Vector2 size) {
+void MediaPipeCameraHelper::start(int index, Vector2 size) {
 	impl->start(index, size);
 }
 
-void CameraHelper::close() {
+void MediaPipeCameraHelper::close() {
 	impl->close();
 }
 
 #if !MEDIAPIPE_DISABLE_GPU
-void CameraHelper::set_use_gpu(bool use_gpu) {
+void MediaPipeCameraHelper::set_use_gpu(bool use_gpu) {
 }
 #endif

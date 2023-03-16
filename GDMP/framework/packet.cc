@@ -6,37 +6,37 @@
 
 using namespace godot;
 
-void Packet::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("is_empty"), &Packet::is_empty);
-	ClassDB::bind_method(D_METHOD("get_image"), &Packet::get_image);
-	ClassDB::bind_method(D_METHOD("get_proto"), &Packet::get_proto);
-	ClassDB::bind_method(D_METHOD("get_proto_vector"), &Packet::get_proto_vector);
-	ClassDB::bind_method(D_METHOD("make"), &Packet::make);
-	ClassDB::bind_method(D_METHOD("make_image"), &Packet::make_image);
-	ClassDB::bind_method(D_METHOD("get_timestamp"), &Packet::get_timestamp);
-	ClassDB::bind_method(D_METHOD("set_timestamp"), &Packet::set_timestamp);
+void MediaPipePacket::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("is_empty"), &MediaPipePacket::is_empty);
+	ClassDB::bind_method(D_METHOD("get_image"), &MediaPipePacket::get_image);
+	ClassDB::bind_method(D_METHOD("get_proto"), &MediaPipePacket::get_proto);
+	ClassDB::bind_method(D_METHOD("get_proto_vector"), &MediaPipePacket::get_proto_vector);
+	ClassDB::bind_method(D_METHOD("make"), &MediaPipePacket::make);
+	ClassDB::bind_method(D_METHOD("make_image"), &MediaPipePacket::make_image);
+	ClassDB::bind_method(D_METHOD("get_timestamp"), &MediaPipePacket::get_timestamp);
+	ClassDB::bind_method(D_METHOD("set_timestamp"), &MediaPipePacket::set_timestamp);
 }
 
-Packet::Packet() = default;
+MediaPipePacket::MediaPipePacket() = default;
 
-Packet::Packet(const mediapipe::Packet &packet) {
+MediaPipePacket::MediaPipePacket(const mediapipe::Packet &packet) {
 	this->packet = packet;
 }
 
-Packet::~Packet() = default;
+MediaPipePacket::~MediaPipePacket() = default;
 
-bool Packet::is_empty() {
+bool MediaPipePacket::is_empty() {
 	return packet.IsEmpty();
 }
 
-Ref<Image> Packet::get_image() {
+Ref<Image> MediaPipePacket::get_image() {
 	Ref<Image> image;
 	ERR_FAIL_COND_V(!packet.ValidateAsType<mediapipe::ImageFrame>().ok(), image);
 	auto &image_frame = get_packet().Get<mediapipe::ImageFrame>();
 	return to_image(image_frame);
 }
 
-PackedByteArray Packet::get_proto() {
+PackedByteArray MediaPipePacket::get_proto() {
 	PackedByteArray data;
 	ERR_FAIL_COND_V(!packet.ValidateAsProtoMessageLite().ok(), data);
 	data.resize(packet.GetProtoMessageLite().ByteSizeLong());
@@ -44,7 +44,7 @@ PackedByteArray Packet::get_proto() {
 	return data;
 }
 
-Array Packet::get_proto_vector() {
+Array MediaPipePacket::get_proto_vector() {
 	Array data;
 	auto get_proto_vector = packet.GetVectorOfProtoMessageLitePtrs();
 	ERR_FAIL_COND_V(!get_proto_vector.ok(), data);
@@ -58,7 +58,7 @@ Array Packet::get_proto_vector() {
 	return data;
 }
 
-void Packet::make(Variant value) {
+void MediaPipePacket::make(Variant value) {
 	switch (value.get_type()) {
 		case Variant::Type::BOOL:
 			packet = mediapipe::MakePacket<bool>(value);
@@ -80,22 +80,22 @@ void Packet::make(Variant value) {
 	}
 }
 
-void Packet::make_image(Ref<Image> image) {
+void MediaPipePacket::make_image(Ref<Image> image) {
 	make_image_frame(std::move(to_image_frame(image)));
 }
 
-void Packet::make_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
+void MediaPipePacket::make_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
 	packet = mediapipe::Adopt(image_frame.release());
 }
 
-int64_t Packet::get_timestamp() {
+int64_t MediaPipePacket::get_timestamp() {
 	return packet.Timestamp().Microseconds();
 }
 
-void Packet::set_timestamp(int64_t timestamp) {
+void MediaPipePacket::set_timestamp(int64_t timestamp) {
 	packet = packet.At(mediapipe::Timestamp(timestamp));
 }
 
-mediapipe::Packet Packet::get_packet() {
+mediapipe::Packet MediaPipePacket::get_packet() {
 	return packet;
 }
