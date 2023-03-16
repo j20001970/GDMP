@@ -69,7 +69,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 3. To load a MediaPipe graph:
 
     ```gdscript
-    var graph : GDMP.Graph = GDMP.Graph.new()
+    var graph : MediaPipe.Graph = MediaPipe.Graph.new()
     # to load text graph
     graph.initialize("res://path/to/your/graph.pbtxt", true)
     # to load binary graph
@@ -86,7 +86,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
     ```gdscript
     func _on_new_landmarks(stream_name : String, packet) -> void:
         var bytes : PoolByteArray = packet.get_proto()
-        var landmarks = GDMP.NormalizedLandmarkList.new()
+        var landmarks = MediaPipe.NormalizedLandmarkList.new()
         landmarks.from_bytes(bytes)
         for i in range(landmarks.landmark_size()):
             var landmark = landmarks.get_landmark(i)
@@ -95,11 +95,11 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 6. Start the graph and camera for sending video frames to the graph:
 
     ```gdscript
-    var camera_helper : GDMP.CameraHelper = GDMP.CameraHelper.new()
+    var camera_helper : MediaPipe.CameraHelper = MediaPipe.CameraHelper.new()
     camera_helper.set_graph(graph, "input_video")
     graph.start()
     if camera_helper.permission_granted():
-        camera_helper.start(GDMP.CAMERA_FACING_FRONT, Vector2(640, 480))
+        camera_helper.start(MediaPipe.CAMERA_FACING_FRONT, Vector2(640, 480))
     else:
         camera_helper.connect("permission_result", self, "_on_permission_result")
         camera_helper.request_permission()
@@ -110,7 +110,7 @@ To handle camera permission result callback:
     func _on_permission_result(granted : bool):
         if granted:
             print("permission granted")
-            camera_helper.start(GDMP.CAMERA_FACING_FRONT, Vector2(640, 480))
+            camera_helper.start(MediaPipe.CAMERA_FACING_FRONT, Vector2(640, 480))
         else:
             print("permission denied")
     ```
