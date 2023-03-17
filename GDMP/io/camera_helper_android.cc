@@ -105,7 +105,7 @@ class MediaPipeCameraHelper::CameraHelperImpl {
 			}
 			mediapipe::GpuBuffer gpu_frame = mediapipe::GpuBuffer(mediapipe::GlTextureBuffer::Wrap(
 					GL_TEXTURE_2D, name, width, height, mediapipe::GpuBufferFormat::kBGRA32, gl_context, callback));
-			Ref<MediaPipePacket> packet = MediaPipePacket::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame));
+			Ref<MediaPipePacket> packet = memnew(MediaPipePacket(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame)));
 			size_t timestamp = Time::get_singleton()->get_ticks_usec();
 			packet->set_timestamp(timestamp);
 			graph->add_packet(stream_name, packet);

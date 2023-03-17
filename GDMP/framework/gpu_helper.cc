@@ -63,5 +63,5 @@ Ref<MediaPipePacket> MediaPipeGPUHelper::make_packet_from_image(Ref<Image> image
 
 Ref<MediaPipePacket> MediaPipeGPUHelper::make_packet_from_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
 	auto gpu_frame = gpu_helper.GpuBufferWithImageFrame(std::move(image_frame));
-	return new MediaPipePacket(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame));
+	return memnew(MediaPipePacket(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame)));
 }

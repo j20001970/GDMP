@@ -101,7 +101,7 @@ void MediaPipeGraph::add_packet_callback(String stream_name, Callable callback) 
 			side_packet_name,
 			mediapipe::MakePacket<std::function<void(const mediapipe::Packet &)>>(
 					[this, stream_name, callback](const mediapipe::Packet &packet) -> void {
-						Ref<MediaPipePacket> p = new MediaPipePacket(packet);
+						Ref<MediaPipePacket> p = memnew(MediaPipePacket(packet));
 						callback.callv(Array::make(stream_name, p));
 					}));
 }

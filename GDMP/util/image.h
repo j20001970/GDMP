@@ -1,7 +1,6 @@
 #ifndef GDMP_IMAGE_UTIL
 #define GDMP_IMAGE_UTIL
 
-// #include "Godot.hpp"
 #include "godot_cpp/classes/image.hpp"
 #include "godot_cpp/classes/ref.hpp"
 #include "godot_cpp/variant/packed_byte_array.hpp"
@@ -13,7 +12,6 @@ namespace godot {
 // Convert mediapipe::ImageFrame to godot::Image.
 // The image format must be either ImageFormat::SRGB or ImageFormat::SRGBA.
 inline Ref<Image> to_image(const mediapipe::ImageFrame &image_frame) {
-	Ref<Image> image = Ref<Image>(new Image());
 	Image::Format image_format;
 	switch (image_frame.Format()) {
 		case mediapipe::ImageFormat::SRGB:
@@ -24,13 +22,12 @@ inline Ref<Image> to_image(const mediapipe::ImageFrame &image_frame) {
 			break;
 		default:
 			ERR_PRINT("Unsupported type to convert image.");
-			return image;
+			return Ref<Image>();
 	}
 	PackedByteArray data;
 	data.resize(image_frame.PixelDataSize());
 	image_frame.CopyToBuffer(data.ptrw(), data.size());
-	image->create_from_data(image_frame.Width(), image_frame.Height(), false, image_format, data);
-	return image;
+	return Image::create_from_data(image_frame.Width(), image_frame.Height(), false, image_format, data);
 }
 
 // Convert godot::Image to mediapipe::ImageFrame.

@@ -45,7 +45,7 @@ class MediaPipeCameraHelper::CameraHelperImpl : public cv::VideoCapture {
 			ERR_FAIL_COND(!isOpened());
 			thread = std::thread([this, size]() -> void {
 #if !MEDIAPIPE_DISABLE_GPU
-				Ref<MediaPipeGPUHelper> gpu_helper = new MediaPipeGPUHelper(graph->get_gpu_resources().get());
+				Ref<MediaPipeGPUHelper> gpu_helper = memnew(MediaPipeGPUHelper(graph->get_gpu_resources().get()));
 				auto cv_format = use_gpu ? cv::COLOR_BGR2RGBA : cv::COLOR_BGR2RGB;
 				auto image_format = use_gpu ? mediapipe::ImageFormat::SRGBA : mediapipe::ImageFormat::SRGB;
 #else
@@ -65,7 +65,7 @@ class MediaPipeCameraHelper::CameraHelperImpl : public cv::VideoCapture {
 							mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
 					cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
 					video_frame.copyTo(input_frame_mat);
-					Ref<MediaPipePacket> packet = new MediaPipePacket();
+					Ref<MediaPipePacket> packet = memnew(MediaPipePacket());
 					int64_t frame_timestamp_us = Time::get_singleton()->get_ticks_usec();
 #if !MEDIAPIPE_DISABLE_GPU
 					if (use_gpu)

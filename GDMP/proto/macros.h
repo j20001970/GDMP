@@ -17,16 +17,15 @@ public:                                                          \
 	NAME() = default;                                            \
 	~NAME() = default;                                           \
 	NAME(CLASS data) {                                           \
-		NAME *p = new NAME();                                    \
-		p->_data = data;                                         \
+		_data = data;                                         	 \
 	}                                                            \
 	/* Parse the serialized proto data from given byte array. */ \
 	void from_bytes(PackedByteArray data) {                      \
 		_data.ParseFromArray(data.ptr(), data.size());           \
 	}                                                            \
 	/* Create a packet object that contains the proto data. */   \
-	Ref<MediaPipePacket> make_packet() {                                  \
-		return new MediaPipePacket(mediapipe::MakePacket<CLASS>(_data));  \
+	Ref<MediaPipePacket> make_packet() {						 \
+		return memnew(MediaPipePacket(mediapipe::MakePacket<CLASS>(_data)));\
 	}                                                            \
 	/* Get the serialized proto data byte array. */              \
 	PackedByteArray to_bytes() {                                 \
@@ -96,8 +95,7 @@ private:                                                         \
 #define GDMP_PROTO_FIELD(NAME, CLASS)             \
 	Variant get_##NAME() {                        \
 		if (_data.has_##NAME()) {                 \
-			CLASS *ref = new CLASS(_data.NAME()); \
-			return Variant(Ref<CLASS>(ref));      \
+			return Variant(memnew(CLASS(_data.NAME())));\
 		} else {                                  \
 			return Variant();                     \
 		}                                         \
@@ -131,8 +129,7 @@ private:                                                         \
 #define GDMP_REPEATED_PROTO_FIELD(NAME, CLASS)     \
 	_REPEATED_FIELD(NAME)                          \
 	Ref<CLASS> get_##NAME(int index) {             \
-		CLASS *ref = new CLASS(_data.NAME(index)); \
-		return Ref<CLASS>(ref);                    \
+		return memnew(CLASS(_data.NAME(index)));   \
 	}
 
 #endif

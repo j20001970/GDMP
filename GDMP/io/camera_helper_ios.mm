@@ -28,7 +28,7 @@ using namespace godot;
     didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
            fromConnection:(AVCaptureConnection*)connection {
     CVPixelBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    Ref<MediaPipePacket> packet = MediaPipePacket::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(imageBuffer));
+    Ref<MediaPipePacket> packet = memnew(MediaPipePacket(mediapipe::MakePacket<mediapipe::GpuBuffer>(imageBuffer)));
     packet->set_timestamp(Time::get_singleton()->get_ticks_usec());
     self.graph->add_packet(self.stream_name, packet);
 }
