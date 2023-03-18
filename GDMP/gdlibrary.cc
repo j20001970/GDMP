@@ -1,10 +1,12 @@
 #include "gdextension_interface.h"
 
-#include "godot_cpp/core/defs.hpp"
+#include "godot_cpp/classes/resource_loader.hpp"
 #include "godot_cpp/core/class_db.hpp"
+#include "godot_cpp/core/defs.hpp"
 #include "godot_cpp/godot.hpp"
 
 #include "framework/graph.h"
+#include "framework/graph_config.h"
 #include "framework/packet.h"
 #include "io/camera_helper.h"
 #if !MEDIAPIPE_DISABLE_GPU
@@ -19,12 +21,15 @@
 
 using namespace godot;
 
+static Ref<ResourceFormatLoaderMediaPipeGraphConfig> graph_config_loader;
+
 void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	if (p_level != godot::MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
 	// Framework
 	ClassDB::register_class<MediaPipeGraph>();
+	ClassDB::register_class<MediaPipeGraphConfig>();
 	ClassDB::register_class<MediaPipePacket>();
 #if !MEDIAPIPE_DISABLE_GPU
 	ClassDB::register_class<MediaPipeGPUHelper>();
@@ -58,12 +63,18 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	// Rect
 	ClassDB::register_class<Rect>();
 	ClassDB::register_class<NormalizedRect>();
+	// ResourceFormatLoader
+	ClassDB::register_class<ResourceFormatLoaderMediaPipeGraphConfig>();
+	graph_config_loader.instantiate();
+	ResourceLoader::get_singleton()->add_resource_format_loader(graph_config_loader);
 }
 
 void uninitialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	if (p_level != godot::MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
+	ResourceLoader::get_singleton()->remove_resource_format_loader(graph_config_loader);
+	graph_config_loader.unref();
 }
 
 extern "C" GDExtensionBool GDE_EXPORT mediapipe_library_init(

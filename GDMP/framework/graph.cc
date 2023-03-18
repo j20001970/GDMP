@@ -7,10 +7,8 @@
 #include "godot_cpp/variant/variant.hpp"
 
 #include "mediapipe/framework/packet.h"
-#include "mediapipe/framework/port/parse_text_proto.h"
 #include "mediapipe/framework/port/status.h"
 #include "mediapipe/framework/tool/sink.h"
-#include "mediapipe/util/resource_util.h"
 
 using namespace godot;
 
@@ -40,21 +38,10 @@ MediaPipeGraph::~MediaPipeGraph() {
 	stop();
 }
 
-void MediaPipeGraph::initialize(String graph_path, bool as_text) {
+void MediaPipeGraph::initialize(Ref<MediaPipeGraphConfig> config) {
 	graph_config = nullptr;
 	packet_callbacks.clear();
-	std::string graph_contents;
-	absl::Status get_resource_contents = mediapipe::GetResourceContents(graph_path.utf8().get_data(), &graph_contents, !as_text);
-	ERR_FAIL_COND_V(!get_resource_contents.ok(), ERR_PRINT(get_resource_contents.ToString().data()));
-	mediapipe::CalculatorGraphConfig config;
-	bool parse_graph_config;
-	if (as_text) {
-		parse_graph_config = mediapipe::ParseTextProto(graph_contents, &config);
-	} else {
-		parse_graph_config = config.ParseFromArray(graph_contents.data(), graph_contents.size());
-	}
-	ERR_FAIL_COND(!parse_graph_config);
-	graph_config = std::make_unique<mediapipe::CalculatorGraphConfig>(config);
+	graph_config = std::make_unique<mediapipe::CalculatorGraphConfig>(config->get_config());
 }
 
 bool MediaPipeGraph::is_initialized() {
