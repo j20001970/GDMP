@@ -13,6 +13,7 @@
 
 #include "mediapipe/framework/calculator_graph.h"
 
+#include "graph_config.h"
 #include "packet.h"
 
 #if !MEDIAPIPE_DISABLE_GPU
@@ -31,7 +32,7 @@ class Graph : public Reference {
 
 		// Initialize the calculator graph config with the file in graph_path.
 		// Depending on as_text, the graph file must be in either text (pbtxt) or binary (binarypb) format.
-		void initialize(String graph_path, bool as_text);
+		void initialize(Ref<GraphConfig> config);
 		// Check if the graph config has initialized.
 		bool is_initialized();
 		// Check if the graph is running.

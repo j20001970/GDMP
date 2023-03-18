@@ -1,6 +1,7 @@
 #include "Godot.hpp"
 
 #include "framework/graph.h"
+#include "framework/graph_config.h"
 #include "framework/packet.h"
 #include "io/camera_helper.h"
 #if !MEDIAPIPE_DISABLE_GPU
@@ -24,8 +25,9 @@ extern "C" void GDN_EXPORT mediapipe_gdnative_terminate(godot_gdnative_terminate
 extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	godot::Godot::nativescript_init(handle);
 	// Framework
-	godot::register_class<godot::Packet>();
 	godot::register_class<godot::Graph>();
+	godot::register_class<godot::GraphConfig>();
+	godot::register_class<godot::Packet>();
 #if !MEDIAPIPE_DISABLE_GPU
 	godot::register_class<godot::GPUHelper>();
 #endif

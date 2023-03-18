@@ -69,11 +69,13 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 3. To load a MediaPipe graph:
 
     ```gdscript
+    # load graph config in text or binary format
+    var config : MediaPipe.GraphConfig = MediaPipe.GraphConfig.new()
+    config.load("res://path/to/your/graph.pbtxt", false)
+    config.load("res://path/to/your/graph.binarypb", true)
+    # initialize mediapipe graph with graph config
     var graph : MediaPipe.Graph = MediaPipe.Graph.new()
-    # to load text graph
-    graph.initialize("res://path/to/your/graph.pbtxt", true)
-    # to load binary graph
-    graph.initialize("res://path/to/your/graph.binarypb", false)
+    graph.initialize(config)
     ```
 
 4. To add a packet callback to the graph's output stream:

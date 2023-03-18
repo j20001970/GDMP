@@ -4,18 +4,29 @@ cc_library(
     hdrs = ["graph.h"],
     visibility = ["//visibility:public"],
     deps = [
+        ":graph_config",
         ":packet",
         "//mediapipe/framework:calculator_graph",
         "//mediapipe/framework:packet",
-        "//mediapipe/framework/port:parse_text_proto",
         "//mediapipe/framework/port:status",
         "//mediapipe/framework/tool:sink",
-        "//mediapipe/util:resource_util",
         "@godot-cpp//:godot",
     ] + select({
         "//mediapipe/gpu:disable_gpu": [],
         "//conditions:default": ["//mediapipe/gpu:gpu_shared_data_internal"],
     }),
+)
+
+cc_library(
+    name = "graph_config",
+    srcs = ["graph_config.cc"],
+    hdrs = ["graph_config.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//mediapipe/framework:calculator_cc_proto",
+        "//mediapipe/framework/port:parse_text_proto",
+        "@godot-cpp//:godot",
+    ],
 )
 
 cc_library(

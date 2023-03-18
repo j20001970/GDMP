@@ -46,6 +46,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/GDMP/framework:graph",
+        "//mediapipe/GDMP/framework:graph_config",
         "//mediapipe/GDMP/framework:packet",
         "//mediapipe/GDMP/io:camera_helper",
         "//mediapipe/GDMP/proto:classification",

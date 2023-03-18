@@ -7,6 +7,7 @@ enum {
 
 # Framework
 const Graph : NativeScript = preload("framework/Graph.gdns")
+const GraphConfig : NativeScript = preload("framework/GraphConfig.gdns")
 const Packet : NativeScript = preload("framework/Packet.gdns")
 const GPUHelper : NativeScript = preload("framework/GPUHelper.gdns")
 
