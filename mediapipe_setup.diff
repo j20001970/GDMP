@@ -1,10 +1,10 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -285,6 +285,12 @@ new_local_repository(
+@@ -355,6 +355,12 @@ new_local_repository(
      path = "C:\\opencv\\build",
  )
- 
+
 +new_local_repository(
 +    name = "godot-cpp",
 +    build_file = "@//mediapipe/GDMP:godot-cpp.BUILD",
@@ -17,7 +17,7 @@ diff --git a/WORKSPACE b/WORKSPACE
 diff --git a/mediapipe/util/BUILD b/mediapipe/util/BUILD
 --- a/mediapipe/util/BUILD
 +++ b/mediapipe/util/BUILD
-@@ -178,6 +178,7 @@ cc_library(
+@@ -190,6 +190,7 @@ cc_library(
          "resource_util_internal.h",
      ] + select({
          "//conditions:default": ["resource_util_default.cc"],
@@ -25,7 +25,7 @@ diff --git a/mediapipe/util/BUILD b/mediapipe/util/BUILD
          "//mediapipe:android": ["resource_util_android.cc"],
          "//mediapipe/framework:android_no_jni": ["resource_util_loonix.cc"],
          "//mediapipe:ios": ["resource_util_apple.cc"],
-@@ -211,6 +212,9 @@ cc_library(
+@@ -223,6 +224,9 @@ cc_library(
          "//conditions:default": [
              "@com_google_absl//absl/flags:flag",
          ],
