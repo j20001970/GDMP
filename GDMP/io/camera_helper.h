@@ -19,6 +19,11 @@ class MediaPipeCameraHelper : public RefCounted {
 		static void _bind_methods();
 
 	public:
+		enum CameraFacing {
+			FACING_FRONT,
+			FACING_BACK
+		};
+
 		class CameraHelperImpl;
 
 		MediaPipeCameraHelper();
@@ -55,5 +60,7 @@ class MediaPipeCameraHelper : public RefCounted {
 };
 
 } //namespace godot
+
+VARIANT_ENUM_CAST(MediaPipeCameraHelper::CameraFacing);
 
 #endif
