@@ -7,7 +7,7 @@
 
 #include "macros.h"
 
-namespace godot {
+using namespace godot;
 
 class Interval : public RefCounted {
 		GDMP_PROTO_WRAPPER(Interval, mediapipe::Rasterization::Interval)
@@ -34,7 +34,5 @@ class Rasterization : public RefCounted {
 			GDMP_REGISTER_REPEATED_FIELD(interval, Rasterization)
 		}
 };
-
-} //namespace godot
 
 #endif

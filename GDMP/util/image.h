@@ -7,7 +7,7 @@
 
 #include "mediapipe/framework/formats/image_frame.h"
 
-namespace godot {
+using namespace godot;
 
 // Convert mediapipe::ImageFrame to godot::Image.
 // The image format must be either ImageFormat::SRGB or ImageFormat::SRGBA.
@@ -50,7 +50,5 @@ inline std::unique_ptr<mediapipe::ImageFrame> to_image_frame(Ref<Image> image) {
 			image->get_data().ptr(), mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
 	return image_frame;
 };
-
-} //namespace godot
 
 #endif

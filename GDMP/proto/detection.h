@@ -9,7 +9,7 @@
 
 #include "macros.h"
 
-namespace godot {
+using namespace godot;
 
 class AssociatedDetection : public RefCounted {
 		GDMP_PROTO_WRAPPER(AssociatedDetection, mediapipe::Detection::AssociatedDetection)
@@ -63,7 +63,5 @@ class DetectionList : public RefCounted {
 			GDMP_REGISTER_REPEATED_FIELD(detection, DetectionList)
 		}
 };
-
-} //namespace godot
 
 #endif

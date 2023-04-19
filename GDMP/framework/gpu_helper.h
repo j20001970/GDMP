@@ -15,7 +15,7 @@
 #include "graph.h"
 #include "packet.h"
 
-namespace godot {
+using namespace godot;
 
 class MediaPipeGPUHelper : public RefCounted {
 		GDCLASS(MediaPipeGPUHelper, RefCounted)
@@ -40,7 +40,5 @@ class MediaPipeGPUHelper : public RefCounted {
 	private:
 		mediapipe::GlCalculatorHelper gpu_helper;
 };
-
-} //namespace godot
 
 #endif

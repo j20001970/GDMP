@@ -7,7 +7,7 @@
 
 #include "macros.h"
 
-namespace godot {
+using namespace godot;
 
 class Classification : public RefCounted {
 		GDMP_PROTO_WRAPPER(Classification, mediapipe::Classification)
@@ -47,7 +47,5 @@ class ClassificationListCollection : public RefCounted {
 			GDMP_REGISTER_REPEATED_FIELD(classification_list, ClassificationListCollection)
 		}
 };
-
-} //namespace godot
 
 #endif

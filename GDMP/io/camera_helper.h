@@ -10,7 +10,7 @@
 
 #include "../framework/graph.h"
 
-namespace godot {
+using namespace godot;
 
 class MediaPipeCameraHelper : public RefCounted {
 		GDCLASS(MediaPipeCameraHelper, RefCounted)
@@ -58,8 +58,6 @@ class MediaPipeCameraHelper : public RefCounted {
 	private:
 		std::unique_ptr<CameraHelperImpl> impl;
 };
-
-} //namespace godot
 
 VARIANT_ENUM_CAST(MediaPipeCameraHelper::CameraFacing);
 

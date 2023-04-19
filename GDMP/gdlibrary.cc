@@ -24,9 +24,9 @@ using namespace godot;
 static Ref<ResourceFormatLoaderMediaPipeGraphConfig> graph_config_loader;
 
 void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
-	if (p_level != godot::MODULE_INITIALIZATION_LEVEL_SCENE) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
-	}
+
 	// Framework
 	ClassDB::register_class<MediaPipeGraph>();
 	ClassDB::register_class<MediaPipeGraphConfig>();
@@ -70,9 +70,9 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 }
 
 void uninitialize_mediapipe_module(ModuleInitializationLevel p_level) {
-	if (p_level != godot::MODULE_INITIALIZATION_LEVEL_SCENE) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
-	}
+
 	ResourceLoader::get_singleton()->remove_resource_format_loader(graph_config_loader);
 	graph_config_loader.unref();
 }
