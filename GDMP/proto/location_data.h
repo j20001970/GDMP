@@ -9,7 +9,7 @@
 
 #include "macros.h"
 
-namespace godot {
+using namespace godot;
 
 class BoundingBox : public Reference {
 		GDMP_PROTO_WRAPPER(BoundingBox, mediapipe::LocationData::BoundingBox)
@@ -98,7 +98,5 @@ class LocationData : public Reference {
 			GDMP_REGISTER_REPEATED_FIELD(relative_keypoints, LocationData)
 		}
 };
-
-} //namespace godot
 
 #endif

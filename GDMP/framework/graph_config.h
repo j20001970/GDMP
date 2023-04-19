@@ -9,7 +9,7 @@
 
 #include "mediapipe/framework/calculator.pb.h"
 
-namespace godot {
+using namespace godot;
 
 class GraphConfig : public Resource {
 		GODOT_CLASS(GraphConfig, Resource)
@@ -36,7 +36,5 @@ class GraphConfig : public Resource {
 	private:
 		mediapipe::CalculatorGraphConfig config;
 };
-
-} //namespace godot
 
 #endif

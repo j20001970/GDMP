@@ -7,7 +7,7 @@
 
 #include "macros.h"
 
-namespace godot {
+using namespace godot;
 
 class Rect : public Reference {
 		GDMP_PROTO_WRAPPER(Rect, mediapipe::Rect)
@@ -51,5 +51,4 @@ class NormalizedRect : public Reference {
 		}
 };
 
-} //namespace godot
 #endif

@@ -20,7 +20,7 @@
 #include "mediapipe/gpu/gpu_shared_data_internal.h"
 #endif
 
-namespace godot {
+using namespace godot;
 
 class Graph : public Reference {
 		GODOT_CLASS(Graph, Reference)
@@ -65,7 +65,5 @@ class Graph : public Reference {
 		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
 #endif
 };
-
-} //namespace godot
 
 #endif

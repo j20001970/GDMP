@@ -11,7 +11,7 @@
 
 #include "../framework/graph.h"
 
-namespace godot {
+using namespace godot;
 
 class CameraHelper : public Reference {
 		GODOT_CLASS(CameraHelper, Reference)
@@ -55,7 +55,5 @@ class CameraHelper : public Reference {
 	private:
 		std::unique_ptr<CameraHelperImpl> impl;
 };
-
-} //namespace godot
 
 #endif

@@ -15,7 +15,7 @@
 #include "graph.h"
 #include "packet.h"
 
-namespace godot {
+using namespace godot;
 
 class GPUHelper : public Reference {
 		GODOT_CLASS(GPUHelper, Reference)
@@ -38,7 +38,5 @@ class GPUHelper : public Reference {
 	private:
 		mediapipe::GlCalculatorHelper gpu_helper;
 };
-
-} //namespace godot
 
 #endif

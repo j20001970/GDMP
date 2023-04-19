@@ -7,7 +7,7 @@
 
 #include "macros.h"
 
-namespace godot {
+using namespace godot;
 
 class Landmark : public Reference {
 		GDMP_PROTO_WRAPPER(Landmark, mediapipe::Landmark)
@@ -90,7 +90,5 @@ class NormalizedLandmarkListCollection : public Reference {
 			GDMP_REGISTER_REPEATED_FIELD(landmark_list, NormalizedLandmarkListCollection)
 		}
 };
-
-} //namespace godot
 
 #endif
