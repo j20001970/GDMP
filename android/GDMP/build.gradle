@@ -9,16 +9,8 @@ android {
         targetSdk 32
         versionCode 2
         versionName "0.2"
-
-        consumerProguardFiles "consumer-rules.pro"
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
@@ -26,9 +18,10 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    compileOnly files('libs/godot-lib.release.aar')
+    compileOnly fileTree(dir: "libs", includes: ["godot-lib.*.aar"])
+    debugCompileOnly fileTree(dir: "libs/debug", includes: ["godot-lib.*.aar"])
+    releaseCompileOnly fileTree(dir: "libs/release", includes: ["godot-lib.*.aar"])
     // MediaPipe deps
     implementation 'com.google.flogger:flogger:0.3.1'
     implementation 'com.google.flogger:flogger-system-backend:0.3.1'

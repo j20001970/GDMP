@@ -17,9 +17,9 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 
 ## Building for Android
 1. Refer to [Prerequisite](https://google.github.io/mediapipe/getting_started/android.html#prerequisite) section for Java and Android SDK & NDK setup.
-2. Copy or symlink godot-lib to `android/GDMP/libs` directory as dependency, and rename the file to `godot-lib.release.aar`.
+2. Copy or symlink godot-lib to `android/GDMP/libs` as dependency.
 
-    godot-lib can be obtained from [godotengine.org](https://godotengine.org/download) or from your project's `android/build/libs/release` if Android build template is installed.
+    godot-lib can be obtained from [godotengine.org](https://godotengine.org/download) or from your project's `android/build/libs` if Android build template is installed.
 
 3. Build GDMP AAR using Android Studio or gradlew, copy the release variant AAR located in `android/GDMP/build/outputs/aar` to your project's `android/plugins` directory.
 4. Copy `plugins/GDMP.gdap` to your project's `android/plugins` directory.
