@@ -1,2 +1,1 @@
-include ':GDMP'
-rootProject.name = "GDMP_aar"
+rootProject.name = "GDMP"

@@ -1,1 +1,0 @@
-../../../../../../../../../mediapipe/mediapipe/java/com/google/mediapipe/components/TextureFrameConsumer.java
