@@ -1,0 +1,8 @@
+[gd_resource type="NativeScript" load_steps=2 format=2]
+
+[ext_resource path="res://addons/GDMP/GDMP.gdnlib" type="GDNativeLibrary" id=1]
+
+[resource]
+resource_name = "GPUResources"
+class_name = "GPUResources"
+library = ExtResource( 1 )

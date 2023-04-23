@@ -3,6 +3,7 @@
 #include "framework/graph.h"
 #include "framework/graph_config.h"
 #include "framework/packet.h"
+#include "gpu/gpu_resources.h"
 #include "io/camera_helper.h"
 #if !MEDIAPIPE_DISABLE_GPU
 #include "framework/gpu_helper.h"
@@ -33,6 +34,8 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 #if !MEDIAPIPE_DISABLE_GPU
 	register_class<GPUHelper>();
 #endif
+	// GPU
+	godot::register_class<GPUResources>();
 	// I/O
 	register_class<CameraHelper>();
 	// Classification
