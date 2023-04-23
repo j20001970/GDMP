@@ -48,6 +48,7 @@ cc_library(
         "//mediapipe/GDMP/framework:graph",
         "//mediapipe/GDMP/framework:graph_config",
         "//mediapipe/GDMP/framework:packet",
+        "//mediapipe/GDMP/gpu:gpu_resources",
         "//mediapipe/GDMP/io:camera_helper",
         "//mediapipe/GDMP/proto:classification",
         "//mediapipe/GDMP/proto:detection",
