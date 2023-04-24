@@ -22,15 +22,10 @@ void Graph::_register_methods() {
 	register_method("start", &Graph::start);
 	register_method("add_packet", &Graph::add_packet);
 	register_method("stop", &Graph::stop);
+	register_method("set_gpu_resources", &Graph::set_gpu_resources);
 }
 
-void Graph::_init() {
-#if !MEDIAPIPE_DISABLE_GPU
-	auto create_gpu_resources = mediapipe::GpuResources::Create();
-	ERR_FAIL_COND_V(!create_gpu_resources.ok(), ERR_PRINT(create_gpu_resources.status().ToString().data()));
-	gpu_resources = create_gpu_resources.value();
-#endif
-}
+void Graph::_init() {}
 
 void Graph::initialize(Ref<GraphConfig> config) {
 	graph_config = nullptr;
@@ -121,7 +116,9 @@ void Graph::start(Dictionary side_packets) {
 		running_graph = std::make_unique<mediapipe::CalculatorGraph>();
 		MP_RETURN_IF_ERROR(running_graph->Initialize(*graph_config, packet_callbacks));
 #if !MEDIAPIPE_DISABLE_GPU
-		MP_RETURN_IF_ERROR(running_graph->SetGpuResources(gpu_resources));
+		if (!gpu_resources.is_null()) {
+			MP_RETURN_IF_ERROR(running_graph->SetGpuResources(gpu_resources->get_gpu_resources()));
+		}
 #endif
 		MP_RETURN_IF_ERROR(running_graph->StartRun(packets));
 		return absl::OkStatus();
@@ -152,8 +149,12 @@ void Graph::stop() {
 	}).join();
 }
 
+void Graph::set_gpu_resources(Ref<GPUResources> gpu_resources) {
+	this->gpu_resources = gpu_resources;
+}
+
 #if !MEDIAPIPE_DISABLE_GPU
 std::shared_ptr<mediapipe::GpuResources> Graph::get_gpu_resources() {
-	return gpu_resources;
+	return gpu_resources->get_gpu_resources();
 }
 #endif
