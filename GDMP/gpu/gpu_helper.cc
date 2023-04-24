@@ -23,8 +23,9 @@ MediaPipeGPUHelper::MediaPipeGPUHelper(mediapipe::GpuResources *gpu_resource) {
 
 MediaPipeGPUHelper::~MediaPipeGPUHelper() = default;
 
-void MediaPipeGPUHelper::initialize(Ref<MediaPipeGraph> graph) {
-	gpu_helper.InitializeForTest(graph->get_gpu_resources().get());
+void MediaPipeGPUHelper::initialize(Ref<MediaPipeGPUResources> gpu_resources) {
+	ERR_FAIL_COND(gpu_resources.is_null());
+	gpu_helper.InitializeForTest(gpu_resources->get_gpu_resources().get());
 }
 
 Ref<Image> MediaPipeGPUHelper::get_gpu_frame(Ref<MediaPipePacket> packet) {

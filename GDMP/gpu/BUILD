@@ -21,8 +21,8 @@ cc_library(
     hdrs = ["gpu_helper.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/GDMP/framework:graph",
         "//mediapipe/GDMP/framework:packet",
+        "//mediapipe/GDMP/gpu:gpu_resources",
         "//mediapipe/GDMP/util:image",
         "//mediapipe/framework/formats:image_frame",
         "//mediapipe/gpu:gl_calculator_helper",
