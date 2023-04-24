@@ -76,6 +76,9 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
     # initialize mediapipe graph with graph config
     var graph : MediaPipe.Graph = MediaPipe.Graph.new()
     graph.initialize(config)
+    # initialize GPU resources
+    var gpu_resources : MediaPipe.GPUResources = MediaPipe.GPUResources.new()
+    graph.set_gpu_resources(gpu_resources)
     ```
 
 4. To add a packet callback to the graph's output stream:
