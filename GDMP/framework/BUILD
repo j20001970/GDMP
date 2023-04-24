@@ -6,6 +6,7 @@ cc_library(
     deps = [
         ":graph_config",
         ":packet",
+        "//mediapipe/GDMP/gpu:gpu_resources",
         "//mediapipe/framework:calculator_graph",
         "//mediapipe/framework:packet",
         "//mediapipe/framework/port:status",

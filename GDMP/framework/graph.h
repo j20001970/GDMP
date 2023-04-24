@@ -14,6 +14,7 @@
 #include "mediapipe/framework/calculator_graph.h"
 
 #include "graph_config.h"
+#include "mediapipe/GDMP/gpu/gpu_resources.h"
 #include "packet.h"
 
 #if !MEDIAPIPE_DISABLE_GPU
@@ -54,6 +55,8 @@ class MediaPipeGraph : public RefCounted {
 		void add_packet(String stream_name, Ref<MediaPipePacket> packet);
 		// Stop the graph.
 		void stop();
+		// Set GPU resources.
+		void set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources);
 #if !MEDIAPIPE_DISABLE_GPU
 		// Get mediapipe GPU resources.
 		std::shared_ptr<mediapipe::GpuResources> get_gpu_resources();
@@ -63,9 +66,7 @@ class MediaPipeGraph : public RefCounted {
 		std::unique_ptr<mediapipe::CalculatorGraph> running_graph;
 		std::unique_ptr<mediapipe::CalculatorGraphConfig> graph_config;
 		std::map<std::string, mediapipe::Packet> packet_callbacks;
-#if !MEDIAPIPE_DISABLE_GPU
-		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
-#endif
+		Ref<MediaPipeGPUResources> gpu_resources;
 };
 
 #endif

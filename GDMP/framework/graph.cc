@@ -22,17 +22,10 @@ void MediaPipeGraph::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("start"), &MediaPipeGraph::start);
 	ClassDB::bind_method(D_METHOD("add_packet"), &MediaPipeGraph::add_packet);
 	ClassDB::bind_method(D_METHOD("stop"), &MediaPipeGraph::stop);
+	ClassDB::bind_method(D_METHOD("set_gpu_resources"), &MediaPipeGraph::set_gpu_resources);
 }
 
-MediaPipeGraph::MediaPipeGraph() {
-#if !MEDIAPIPE_DISABLE_GPU
-	auto create_gpu_resources = mediapipe::GpuResources::Create();
-	if (!create_gpu_resources.ok()) {
-		ERR_PRINT(create_gpu_resources.status().ToString().data());
-	}
-	gpu_resources = create_gpu_resources.value();
-#endif
-}
+MediaPipeGraph::MediaPipeGraph() = default;
 
 MediaPipeGraph::~MediaPipeGraph() {
 	stop();
@@ -124,7 +117,9 @@ void MediaPipeGraph::start(Dictionary side_packets) {
 		running_graph = std::make_unique<mediapipe::CalculatorGraph>();
 		MP_RETURN_IF_ERROR(running_graph->Initialize(*graph_config, packet_callbacks));
 #if !MEDIAPIPE_DISABLE_GPU
-		MP_RETURN_IF_ERROR(running_graph->SetGpuResources(gpu_resources));
+		if (!gpu_resources.is_null()) {
+			MP_RETURN_IF_ERROR(running_graph->SetGpuResources(gpu_resources->get_gpu_resources()));
+		}
 #endif
 		MP_RETURN_IF_ERROR(running_graph->StartRun(packets));
 		return absl::OkStatus();
@@ -155,8 +150,12 @@ void MediaPipeGraph::stop() {
 	}).join();
 }
 
+void MediaPipeGraph::set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
+	this->gpu_resources = gpu_resources;
+}
+
 #if !MEDIAPIPE_DISABLE_GPU
 std::shared_ptr<mediapipe::GpuResources> MediaPipeGraph::get_gpu_resources() {
-	return gpu_resources;
+	return gpu_resources->get_gpu_resources();
 }
 #endif
