@@ -14,50 +14,52 @@
 #include "proto/location_data.h"
 #include "proto/rect.h"
 
+using namespace godot;
+
 extern "C" void GDN_EXPORT mediapipe_gdnative_init(godot_gdnative_init_options *o) {
-	godot::Godot::gdnative_init(o);
+	Godot::gdnative_init(o);
 }
 
 extern "C" void GDN_EXPORT mediapipe_gdnative_terminate(godot_gdnative_terminate_options *o) {
-	godot::Godot::gdnative_terminate(o);
+	Godot::gdnative_terminate(o);
 }
 
 extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
-	godot::Godot::nativescript_init(handle);
+	Godot::nativescript_init(handle);
 	// Framework
-	godot::register_class<Graph>();
-	godot::register_class<GraphConfig>();
-	godot::register_class<Packet>();
+	register_class<Graph>();
+	register_class<GraphConfig>();
+	register_class<Packet>();
 #if !MEDIAPIPE_DISABLE_GPU
-	godot::register_class<GPUHelper>();
+	register_class<GPUHelper>();
 #endif
 	// I/O
-	godot::register_class<CameraHelper>();
+	register_class<CameraHelper>();
 	// Classification
-	godot::register_class<Classification>();
-	godot::register_class<ClassificationList>();
-	godot::register_class<ClassificationListCollection>();
+	register_class<Classification>();
+	register_class<ClassificationList>();
+	register_class<ClassificationListCollection>();
 	// Deteciton
-	godot::register_class<AssociatedDetection>();
-	godot::register_class<Detection>();
-	godot::register_class<DetectionList>();
+	register_class<AssociatedDetection>();
+	register_class<Detection>();
+	register_class<DetectionList>();
 	// Landmark
-	godot::register_class<Landmark>();
-	godot::register_class<LandmarkList>();
-	godot::register_class<LandmarkListCollection>();
-	godot::register_class<NormalizedLandmark>();
-	godot::register_class<NormalizedLandmarkList>();
-	godot::register_class<NormalizedLandmarkListCollection>();
+	register_class<Landmark>();
+	register_class<LandmarkList>();
+	register_class<LandmarkListCollection>();
+	register_class<NormalizedLandmark>();
+	register_class<NormalizedLandmarkList>();
+	register_class<NormalizedLandmarkListCollection>();
 	// LocationData
-	godot::register_class<BoundingBox>();
-	godot::register_class<RelativeBoundingBox>();
-	godot::register_class<BinaryMask>();
-	godot::register_class<RelativeKeypoint>();
-	godot::register_class<LocationData>();
+	register_class<BoundingBox>();
+	register_class<RelativeBoundingBox>();
+	register_class<BinaryMask>();
+	register_class<RelativeKeypoint>();
+	register_class<LocationData>();
 	// Rasterization
-	godot::register_class<Interval>();
-	godot::register_class<Rasterization>();
+	register_class<Interval>();
+	register_class<Rasterization>();
 	// Rect
-	godot::register_class<Rect>();
-	godot::register_class<NormalizedRect>();
+	register_class<Rect>();
+	register_class<NormalizedRect>();
 }
