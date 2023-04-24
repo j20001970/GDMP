@@ -13,7 +13,7 @@
 
 #include "../framework/packet.h"
 #if !MEDIAPIPE_DISABLE_GPU
-#include "../framework/gpu_helper.h"
+#include "mediapipe/GDMP/gpu/gpu_helper.h"
 #endif
 
 using namespace godot;

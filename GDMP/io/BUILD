@@ -41,7 +41,7 @@ cc_library(
         "//mediapipe/framework/port:opencv_video",
     ] + select({
         "//mediapipe/gpu:disable_gpu": [],
-        "//conditions:default": ["//mediapipe/GDMP/framework:gpu_helper"],
+        "//conditions:default": ["//mediapipe/GDMP/gpu:gpu_helper"],
     }),
 )
 
@@ -49,6 +49,9 @@ objc_library(
     name = "camera_helper_ios",
     srcs = ["camera_helper_ios.mm"],
     hdrs = ["camera_helper.h"],
+    copts = [
+        "-std=c++17",
+    ],
     sdk_frameworks = [
         "Accelerate",
         "AVFoundation",
@@ -58,8 +61,5 @@ objc_library(
     deps = [
         "//mediapipe/GDMP/framework:graph",
         "//mediapipe/GDMP/framework:packet",
-    ],
-    copts = [
-        "-std=c++17",
     ],
 )

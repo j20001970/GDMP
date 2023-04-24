@@ -59,7 +59,7 @@ cc_library(
         "@godot-cpp//:godot",
     ] + select({
         "//mediapipe/gpu:disable_gpu": [],
-        "//conditions:default": ["//mediapipe/GDMP/framework:gpu_helper"],
+        "//conditions:default": ["//mediapipe/GDMP/gpu:gpu_helper"],
     }) + CALCULATORS,
     alwayslink = 1,
 )

@@ -11,7 +11,7 @@
 #include "gpu/gpu_resources.h"
 #include "io/camera_helper.h"
 #if !MEDIAPIPE_DISABLE_GPU
-#include "framework/gpu_helper.h"
+#include "gpu/gpu_helper.h"
 #endif
 
 #include "proto/classification.h"
