@@ -12,8 +12,8 @@
 #include "mediapipe/gpu/gl_calculator_helper.h"
 #include "mediapipe/gpu/gpu_shared_data_internal.h"
 
-#include "graph.h"
-#include "packet.h"
+#include "mediapipe/GDMP/framework/graph.h"
+#include "mediapipe/GDMP/framework/packet.h"
 
 using namespace godot;
 
