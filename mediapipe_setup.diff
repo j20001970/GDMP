@@ -1,9 +1,9 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -355,6 +355,12 @@ new_local_repository(
-     path = "C:\\opencv\\build",
- )
+@@ -2,6 +2,20 @@ workspace(name = "mediapipe")
+ 
+ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
  
 +new_local_repository(
 +    name = "godot-cpp",
@@ -11,9 +11,17 @@ diff --git a/WORKSPACE b/WORKSPACE
 +    path = "../godot-cpp",
 +)
 +
- http_archive(
-     name = "android_opencv",
-     build_file = "@//third_party:opencv_android.BUILD",
++http_archive(
++    name = "hedron_compile_commands",
++    url = "https://github.com/hedronvision/bazel-compile-commands-extractor/archive/main.zip",
++    strip_prefix = "bazel-compile-commands-extractor-main",
++)
++load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_setup")
++hedron_compile_commands_setup()
++
+ # Protobuf expects an //external:python_headers target
+ bind(
+     name = "python_headers",
 diff --git a/mediapipe/util/BUILD b/mediapipe/util/BUILD
 --- a/mediapipe/util/BUILD
 +++ b/mediapipe/util/BUILD
