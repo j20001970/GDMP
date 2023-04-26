@@ -12,6 +12,7 @@
   "packages" : [
     "mediapipe/GDMP",
     "mediapipe/GDMP/framework",
+    "mediapipe/GDMP/gpu",
     "mediapipe/GDMP/io",
     "mediapipe/GDMP/proto",
     "mediapipe/GDMP/util"

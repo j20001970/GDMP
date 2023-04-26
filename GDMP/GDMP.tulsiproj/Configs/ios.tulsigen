@@ -2,6 +2,7 @@
   "additionalFilePaths" : [
     "mediapipe/GDMP/BUILD",
     "mediapipe/GDMP/framework/BUILD",
+    "mediapipe/GDMP/gpu/BUILD",
     "mediapipe/GDMP/io/BUILD",
     "mediapipe/GDMP/proto/BUILD",
     "mediapipe/GDMP/util/BUILD"
@@ -57,6 +58,7 @@
   "sourceFilters" : [
     "mediapipe/GDMP",
     "mediapipe/GDMP/framework",
+    "mediapipe/GDMP/gpu",
     "mediapipe/GDMP/io",
     "mediapipe/GDMP/proto",
     "mediapipe/GDMP/util"
