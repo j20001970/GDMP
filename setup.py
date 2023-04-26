@@ -38,10 +38,3 @@ try:
 except:
     print("Error: Unable to symlink GDMP source to mediapipe workspace.")
     sys.exit(-1)
-
-# Symlink external dependencies
-try:
-    external_dir = path.join(mediapipe_dir, "external")
-    symlink("bazel-out/../../../external", external_dir, True)
-except:
-    print("Failed to symlink external dependencies, skipping.")
