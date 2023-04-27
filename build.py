@@ -1,46 +1,55 @@
 #!/usr/bin/python
-import os
-import subprocess
+
 import sys
 from argparse import ArgumentParser
+from os import chdir, path
 from shutil import which
+from subprocess import run
 
-mediapipe_dir = os.path.join(os.path.dirname(__file__), 'mediapipe')
+mediapipe_dir = path.join(path.dirname(__file__), 'mediapipe')
+
+targets = {}
+targets['desktop'] = targets['android'] = '//mediapipe/GDMP:GDMP'
+targets['compile_commands'] = '//mediapipe/GDMP:refresh_compile_commands'
+
+target_commands = {
+    'desktop': ['build', '-c', 'opt', '--define', 'GODOT=1'],
+    'android': [
+        'build', '-c', 'opt', '--define', 'GODOT=1',
+        '--crosstool_top=//external:android/crosstool',
+        '--host_crosstool_top=@bazel_tools//tools/cpp:toolchain',
+        '--copt', '-fPIC',
+        '--cpu=arm64-v8a',
+    ],
+    'compile_commands': ['run']
+}
+
+desktop_commands = {
+    'linux': [
+        '--copt', '-DMESA_EGL_NO_X11_HEADERS',
+        '--copt', '-DEGL_NO_X11',
+        '--copt', '-fPIC',
+    ],
+    'win32': ['--define', 'MEDIAPIPE_DISABLE_GPU=1']
+}
 
 parser = ArgumentParser()
-parser.add_argument('target', choices=['android', 'desktop'], help='target to build')
+parser.add_argument('target', choices=list(targets), help='build target')
 args = parser.parse_args()
 
 # check bazel executable
 bazel_exec = which('bazelisk') or which('bazel')
 if bazel_exec is None:
-    print("Cannot find bazel, please check bazel is installed and is in environment paths.")
+    print("Error: Cannot find bazel, please check bazel is installed and is in environment paths.")
     sys.exit(-1)
 
-try:
-    # whcih target to build
-    bazel_args = [bazel_exec, 'build', '-c', 'opt', '--define', 'GODOT=1']
-    if args.target.lower() == 'android':
-        bazel_args.extend([\
-            '--host_crosstool_top=@bazel_tools//tools/cpp:toolchain', \
-            '--crosstool_top=//external:android/crosstool', \
-            '--cpu=arm64-v8a', \
-            '--copt', '-fPIC'])
-    elif args.target.lower() == 'desktop':
-        if sys.platform.startswith("linux"):
-            bazel_args.extend([\
-                '--copt', '-DMESA_EGL_NO_X11_HEADERS', \
-                '--copt', '-DEGL_NO_X11', \
-                '--copt', '-fPIC'])
-        elif sys.platform.startswith("win32"):
-            bazel_args.extend([\
-                '--define', 'MEDIAPIPE_DISABLE_GPU=1'])
-    else:
-        print("unknown target, exiting.")
-        sys.exit(-1)
-    bazel_args.extend(['//mediapipe/GDMP:GDMP'])
-    os.chdir(mediapipe_dir)
-    subprocess.run(bazel_args)
-except Exception as e:
-    print(e)
-    sys.exit(-1)
+bazel_args = [bazel_exec]
+bazel_args.extend(target_commands[args.target])
+
+if args.target == 'desktop':
+    platform = sys.platform
+    bazel_args.extend(desktop_commands[platform])
+
+bazel_args.append(targets[args.target])
+chdir(mediapipe_dir)
+run(bazel_args)
