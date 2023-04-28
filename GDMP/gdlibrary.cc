@@ -8,11 +8,9 @@
 #include "framework/graph.h"
 #include "framework/graph_config.h"
 #include "framework/packet.h"
+#include "gpu/gpu_helper.h"
 #include "gpu/gpu_resources.h"
 #include "io/camera_helper.h"
-#if !MEDIAPIPE_DISABLE_GPU
-#include "gpu/gpu_helper.h"
-#endif
 
 #include "proto/classification.h"
 #include "proto/detection.h"
@@ -32,10 +30,8 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<MediaPipeGraph>();
 	ClassDB::register_class<MediaPipeGraphConfig>();
 	ClassDB::register_class<MediaPipePacket>();
-#if !MEDIAPIPE_DISABLE_GPU
-	ClassDB::register_class<MediaPipeGPUHelper>();
-#endif
 	// GPU
+	ClassDB::register_class<MediaPipeGPUHelper>();
 	ClassDB::register_class<MediaPipeGPUResources>();
 	// I/O
 	ClassDB::register_class<MediaPipeCameraHelper>();
