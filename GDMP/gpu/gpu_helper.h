@@ -6,7 +6,6 @@
 #include "godot_cpp/classes/image.hpp"
 #include "godot_cpp/classes/ref.hpp"
 #include "godot_cpp/classes/ref_counted.hpp"
-#include "godot_cpp/core/binder_common.hpp"
 
 #include "mediapipe/framework/formats/image_frame.h"
 #if !MEDIAPIPE_DISABLE_GPU

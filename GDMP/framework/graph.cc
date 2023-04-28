@@ -3,6 +3,7 @@
 #include <string>
 #include <thread>
 
+#include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/variant/array.hpp"
 #include "godot_cpp/variant/variant.hpp"
 

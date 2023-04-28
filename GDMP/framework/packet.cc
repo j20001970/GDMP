@@ -2,7 +2,9 @@
 
 #include <vector>
 
-#include "../util/image.h"
+#include "godot_cpp/core/class_db.hpp"
+
+#include "mediapipe/GDMP/util/image.h"
 
 using namespace godot;
 

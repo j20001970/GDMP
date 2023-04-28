@@ -4,7 +4,6 @@
 #include <memory>
 
 #include "godot_cpp/classes/ref_counted.hpp"
-#include "godot_cpp/core/binder_common.hpp"
 
 #if !MEDIAPIPE_DISABLE_GPU
 #include "mediapipe/gpu/gpu_shared_data_internal.h"

@@ -10,7 +10,7 @@ cc_library(
         "gen/src/*/*.cpp",
     ]),
     hdrs = glob([
-        "gdextension/gdextension_interface.h",
+        "gdextension/*.h",
         "include/godot_cpp/*.hpp",
         "include/godot_cpp/*/*.hpp",
         "gen/include/godot_cpp/*/*.hpp",

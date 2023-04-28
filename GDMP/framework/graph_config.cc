@@ -1,8 +1,9 @@
-#include <string>
-
 #include "graph_config.h"
 
+#include <string>
+
 #include "godot_cpp/classes/file_access.hpp"
+#include "godot_cpp/core/class_db.hpp"
 
 #include "mediapipe/framework/port/parse_text_proto.h"
 

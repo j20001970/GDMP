@@ -8,7 +8,7 @@
 #include "godot_cpp/core/binder_common.hpp"
 #include "godot_cpp/variant/string.hpp"
 
-#include "../framework/graph.h"
+#include "mediapipe/GDMP/framework/graph.h"
 
 using namespace godot;
 

@@ -3,11 +3,11 @@
 
 #include "godot_cpp/classes/ref.hpp"
 #include "godot_cpp/classes/ref_counted.hpp"
-#include "godot_cpp/core/binder_common.hpp"
+#include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/variant/packed_byte_array.hpp"
 #include "godot_cpp/variant/variant.hpp"
 
-#include "../framework/packet.h"
+#include "mediapipe/GDMP/framework/packet.h"
 
 // Define a Godot wrapper class that contains a mediapipe proto type.
 #define GDMP_PROTO_WRAPPER(NAME, CLASS)                          \

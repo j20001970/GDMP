@@ -1,5 +1,7 @@
 #include "camera_helper.h"
 
+#include "godot_cpp/core/class_db.hpp"
+
 using namespace godot;
 
 void MediaPipeCameraHelper::_bind_methods() {

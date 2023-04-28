@@ -15,8 +15,8 @@ cc_library(
     deps = [
         "//mediapipe/framework/port:status",
         "//mediapipe/framework/port:statusor",
-        "@godot-cpp//:godot",
         "@com_google_absl//absl/strings",
+        "@godot-cpp//:godot",
     ] + select({
         "//mediapipe:android": [
             "//mediapipe/util/android/file/base",

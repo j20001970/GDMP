@@ -1,11 +1,13 @@
 #include "gpu_helper.h"
 
+#include "godot_cpp/core/class_db.hpp"
+
 #include "mediapipe/gpu/gpu_buffer.h"
 #ifdef __APPLE__
 #include "mediapipe/objc/util.h"
 #endif
 
-#include "../util/image.h"
+#include "mediapipe/GDMP/util/image.h"
 
 using namespace godot;
 
