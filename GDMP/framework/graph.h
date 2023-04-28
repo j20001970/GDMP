@@ -12,14 +12,13 @@
 #include "String.hpp"
 
 #include "mediapipe/framework/calculator_graph.h"
-
-#include "graph_config.h"
-#include "mediapipe/GDMP/gpu/gpu_resources.h"
-#include "packet.h"
-
 #if !MEDIAPIPE_DISABLE_GPU
 #include "mediapipe/gpu/gpu_shared_data_internal.h"
 #endif
+
+#include "mediapipe/GDMP/framework/graph_config.h"
+#include "mediapipe/GDMP/framework/packet.h"
+#include "mediapipe/GDMP/gpu/gpu_resources.h"
 
 using namespace godot;
 

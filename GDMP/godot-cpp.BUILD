@@ -5,8 +5,7 @@ exports_files(["LICENSE"])
 cc_library(
     name = "godot",
     srcs = glob([
-        "src/core/*.cpp",
-        "src/gen/*.cpp",
+        "src/*/*.cpp",
     ]),
     hdrs = glob([
         "godot-headers/*.h",

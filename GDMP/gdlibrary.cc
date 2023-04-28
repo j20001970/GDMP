@@ -1,17 +1,19 @@
+#include "gdnative/gdnative.h"
+
 #include "Godot.hpp"
+#include "GodotGlobal.hpp"
 
-#include "framework/graph.h"
-#include "framework/graph_config.h"
-#include "framework/packet.h"
-#include "gpu/gpu_helper.h"
-#include "gpu/gpu_resources.h"
-#include "io/camera_helper.h"
-
-#include "proto/classification.h"
-#include "proto/detection.h"
-#include "proto/landmark.h"
-#include "proto/location_data.h"
-#include "proto/rect.h"
+#include "mediapipe/GDMP/framework/graph.h"
+#include "mediapipe/GDMP/framework/graph_config.h"
+#include "mediapipe/GDMP/framework/packet.h"
+#include "mediapipe/GDMP/gpu/gpu_helper.h"
+#include "mediapipe/GDMP/gpu/gpu_resources.h"
+#include "mediapipe/GDMP/io/camera_helper.h"
+#include "mediapipe/GDMP/proto/classification.h"
+#include "mediapipe/GDMP/proto/detection.h"
+#include "mediapipe/GDMP/proto/landmark.h"
+#include "mediapipe/GDMP/proto/location_data.h"
+#include "mediapipe/GDMP/proto/rect.h"
 
 using namespace godot;
 

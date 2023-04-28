@@ -1,6 +1,6 @@
-#include <string>
-
 #include "graph_config.h"
+
+#include <string>
 
 #include "File.hpp"
 

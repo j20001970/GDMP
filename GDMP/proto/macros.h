@@ -6,7 +6,7 @@
 #include "Ref.hpp"
 #include "Variant.hpp"
 
-#include "../framework/packet.h"
+#include "mediapipe/GDMP/framework/packet.h"
 
 // Define a Godot wrapper class that contains a mediapipe proto type.
 #define GDMP_PROTO_WRAPPER(NAME, CLASS)                           \
