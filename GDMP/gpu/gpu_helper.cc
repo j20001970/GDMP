@@ -15,21 +15,28 @@ void GPUHelper::_register_methods() {
 	register_method("make_packet_from_image", &GPUHelper::make_packet_from_image);
 }
 
+#if !MEDIAPIPE_DISABLE_GPU
 GPUHelper *GPUHelper::_new(mediapipe::GpuResources *gpu_resource) {
 	GPUHelper *helper = GPUHelper::_new();
 	helper->gpu_helper.InitializeForTest(gpu_resource);
 	return helper;
 }
+#endif
 
 void GPUHelper::_init() {}
 
 void GPUHelper::initialize(Ref<GPUResources> gpu_resources) {
+#if !MEDIAPIPE_DISABLE_GPU
 	ERR_FAIL_COND(gpu_resources.is_null());
 	gpu_helper.InitializeForTest(gpu_resources->get_gpu_resources().get());
+#else
+	ERR_PRINT("GPU support is disabled in this build.");
+#endif
 }
 
 Ref<Image> GPUHelper::get_gpu_frame(Ref<Packet> packet) {
 	Ref<Image> image;
+#if !MEDIAPIPE_DISABLE_GPU
 	ERR_FAIL_COND_V(!packet->get_packet().ValidateAsType<mediapipe::GpuBuffer>().ok(), image);
 	auto &gpu_frame = packet->get_packet().Get<mediapipe::GpuBuffer>();
 	std::unique_ptr<mediapipe::ImageFrame> image_frame;
@@ -55,6 +62,9 @@ Ref<Image> GPUHelper::get_gpu_frame(Ref<Packet> packet) {
 	});
 #endif
 	image = to_image(*image_frame);
+#else
+	ERR_PRINT("GPU support is disabled in this build.");
+#endif
 	return image;
 }
 
@@ -63,6 +73,12 @@ Ref<Packet> GPUHelper::make_packet_from_image(Ref<Image> image) {
 }
 
 Ref<Packet> GPUHelper::make_packet_from_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
+	Ref<Packet> packet;
+#if !MEDIAPIPE_DISABLE_GPU
 	auto gpu_frame = gpu_helper.GpuBufferWithImageFrame(std::move(image_frame));
-	return Ref<Packet>(Packet::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame)));
+	packet = Ref<Packet>(Packet::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame)));
+#else
+	ERR_PRINT("GPU support is disabled in this build.");
+#endif
+	return packet;
 }

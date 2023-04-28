@@ -70,6 +70,7 @@ cc_library(
         "//mediapipe/GDMP/framework:graph",
         "//mediapipe/GDMP/framework:graph_config",
         "//mediapipe/GDMP/framework:packet",
+        "//mediapipe/GDMP/gpu:gpu_helper",
         "//mediapipe/GDMP/gpu:gpu_resources",
         "//mediapipe/GDMP/io:camera_helper",
         "//mediapipe/GDMP/proto:classification",
@@ -79,10 +80,7 @@ cc_library(
         "//mediapipe/GDMP/proto:rasterization",
         "//mediapipe/GDMP/proto:rect",
         "@godot-cpp//:godot",
-    ] + select({
-        "//mediapipe/gpu:disable_gpu": [],
-        "//conditions:default": ["//mediapipe/GDMP/gpu:gpu_helper"],
-    }) + CALCULATORS,
+    ] + CALCULATORS,
     alwayslink = 1,
 )
 

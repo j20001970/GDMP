@@ -25,12 +25,16 @@ cc_library(
         "//mediapipe/GDMP/gpu:gpu_resources",
         "//mediapipe/GDMP/util:image",
         "//mediapipe/framework/formats:image_frame",
-        "//mediapipe/gpu:gl_calculator_helper",
-        "//mediapipe/gpu:gpu_buffer",
-        "//mediapipe/gpu:gpu_shared_data_internal",
         "@godot-cpp//:godot",
     ] + select({
-        "//conditions:default": [],
+        "//mediapipe/gpu:disable_gpu": [],
+        "//conditions:default": [
+            "//mediapipe/gpu:gl_calculator_helper",
+            "//mediapipe/gpu:gpu_buffer",
+            "//mediapipe/gpu:gpu_shared_data_internal",
+        ],
+    }) + select({
         "//mediapipe:apple": ["//mediapipe/objc:util"],
+        "//conditions:default": [],
     }),
 )
