@@ -11,7 +11,7 @@ mediapipe_dir = path.join(path.dirname(__file__), 'mediapipe')
 targets = {
     'desktop': '//mediapipe/GDMP/desktop:GDMP',
     'android': '//mediapipe/GDMP/android:GDMP',
-    'compile_commands': 'refresh_compile_commands',
+    'compile_commands': '//mediapipe/GDMP:refresh_compile_commands',
 }
 
 target_commands = {
