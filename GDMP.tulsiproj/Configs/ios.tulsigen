@@ -8,7 +8,7 @@
     "mediapipe/GDMP/util/BUILD"
   ],
   "buildTargets" : [
-    "//mediapipe/GDMP:GDMP_ios"
+    "//mediapipe/GDMP/ios:GDMP"
   ],
   "optionSet" : {
     "BazelBuildOptionsDebug" : {
