@@ -1,3 +1,5 @@
+"""GDMP configuration"""
+
 CALCULATORS = [
     # place the calculator dependencies here
 ]

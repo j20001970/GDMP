@@ -1,6 +1,6 @@
 load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile_commands")
 load("@build_bazel_rules_apple//apple:ios.bzl", "ios_static_framework")
-load("//mediapipe/GDMP:calculators.bzl", "CALCULATORS", "DATA")
+load("//mediapipe/GDMP:GDMP.bzl", "CALCULATORS", "DATA")
 
 alias(
     name = "godot",
@@ -62,7 +62,7 @@ refresh_compile_commands(
 )
 
 cc_library(
-    name = "GDMP_deps",
+    name = "GDMP",
     srcs = ["gdlibrary.cc"],
     data = DATA,
     visibility = ["//visibility:public"],
@@ -84,16 +84,6 @@ cc_library(
     alwayslink = 1,
 )
 
-cc_binary(
-    name = "GDMP",
-    linkopts = select({
-        "//conditions:default": ["-s"],
-    }),
-    linkshared = 1,
-    visibility = ["//visibility:public"],
-    deps = [":GDMP_deps"],
-)
-
 ios_static_framework(
     name = "GDMP_ios",
     families = [
@@ -101,5 +91,5 @@ ios_static_framework(
         "ipad",
     ],
     minimum_os_version = "11.0",
-    deps = [":GDMP_deps"],
+    deps = [":GDMP"],
 )

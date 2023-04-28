@@ -8,9 +8,11 @@ from subprocess import run
 
 mediapipe_dir = path.join(path.dirname(__file__), 'mediapipe')
 
-targets = {}
-targets['desktop'] = targets['android'] = '//mediapipe/GDMP:GDMP'
-targets['compile_commands'] = '//mediapipe/GDMP:refresh_compile_commands'
+targets = {
+    'desktop': '//mediapipe/GDMP/desktop:GDMP',
+    'android': '//mediapipe/GDMP/android:GDMP',
+    'compile_commands': 'refresh_compile_commands',
+}
 
 target_commands = {
     'desktop': ['build', '-c', 'opt', '--define', 'GODOT=1'],
