@@ -31,8 +31,7 @@ class Graph : public Reference {
 
 		void _init();
 
-		// Initialize the calculator graph config with the file in graph_path.
-		// Depending on as_text, the graph file must be in either text (pbtxt) or binary (binarypb) format.
+		// Initialize the graph from graph config.
 		void initialize(Ref<GraphConfig> config);
 		// Check if the graph config has initialized.
 		bool is_initialized();
