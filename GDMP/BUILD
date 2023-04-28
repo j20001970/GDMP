@@ -1,5 +1,4 @@
 load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile_commands")
-load("@build_bazel_rules_apple//apple:ios.bzl", "ios_static_framework")
 load("//mediapipe/GDMP:GDMP.bzl", "CALCULATORS", "DATA")
 
 alias(
@@ -82,14 +81,4 @@ cc_library(
         "@godot-cpp//:godot",
     ] + CALCULATORS,
     alwayslink = 1,
-)
-
-ios_static_framework(
-    name = "GDMP_ios",
-    families = [
-        "iphone",
-        "ipad",
-    ],
-    minimum_os_version = "11.0",
-    deps = [":GDMP"],
 )
