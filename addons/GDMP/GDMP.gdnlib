@@ -10,7 +10,7 @@ reloadable=true
 Android.arm64-v8a="res://addons/GDMP/libs/android/arm64-v8a/libGDMP.so"
 Windows.64="res://addons/GDMP/libs/windows/x86_64/GDMP.dll"
 X11.64="res://addons/GDMP/libs/linux/x86_64/libGDMP.so"
-iOS.arm64="res://addons/GDMP/libs/ios/GDMP_ios.a"
+iOS.arm64="res://addons/GDMP/libs/ios/GDMP.a"
 
 [dependencies]
 
