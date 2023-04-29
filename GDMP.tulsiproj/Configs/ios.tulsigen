@@ -1,14 +1,14 @@
 {
   "additionalFilePaths" : [
-    "mediapipe/GDMP/BUILD",
-    "mediapipe/GDMP/framework/BUILD",
-    "mediapipe/GDMP/gpu/BUILD",
-    "mediapipe/GDMP/io/BUILD",
-    "mediapipe/GDMP/proto/BUILD",
-    "mediapipe/GDMP/util/BUILD"
+    "GDMP/BUILD",
+    "GDMP/framework/BUILD",
+    "GDMP/gpu/BUILD",
+    "GDMP/io/BUILD",
+    "GDMP/proto/BUILD",
+    "GDMP/util/BUILD"
   ],
   "buildTargets" : [
-    "//mediapipe/GDMP/ios:GDMP"
+    "//GDMP/ios:GDMP"
   ],
   "optionSet" : {
     "BazelBuildOptionsDebug" : {
@@ -56,11 +56,11 @@
   },
   "projectName" : "GDMP",
   "sourceFilters" : [
-    "mediapipe/GDMP",
-    "mediapipe/GDMP/framework",
-    "mediapipe/GDMP/gpu",
-    "mediapipe/GDMP/io",
-    "mediapipe/GDMP/proto",
-    "mediapipe/GDMP/util"
+    "GDMP",
+    "GDMP/framework",
+    "GDMP/gpu",
+    "GDMP/io",
+    "GDMP/proto",
+    "GDMP/util"
   ]
 }

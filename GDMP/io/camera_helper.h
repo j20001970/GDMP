@@ -9,7 +9,7 @@
 #include "Reference.hpp"
 #include "String.hpp"
 
-#include "mediapipe/GDMP/framework/graph.h"
+#include "GDMP/framework/graph.h"
 
 using namespace godot;
 

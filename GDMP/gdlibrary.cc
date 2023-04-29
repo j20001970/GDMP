@@ -3,17 +3,17 @@
 #include "Godot.hpp"
 #include "GodotGlobal.hpp"
 
-#include "mediapipe/GDMP/framework/graph.h"
-#include "mediapipe/GDMP/framework/graph_config.h"
-#include "mediapipe/GDMP/framework/packet.h"
-#include "mediapipe/GDMP/gpu/gpu_helper.h"
-#include "mediapipe/GDMP/gpu/gpu_resources.h"
-#include "mediapipe/GDMP/io/camera_helper.h"
-#include "mediapipe/GDMP/proto/classification.h"
-#include "mediapipe/GDMP/proto/detection.h"
-#include "mediapipe/GDMP/proto/landmark.h"
-#include "mediapipe/GDMP/proto/location_data.h"
-#include "mediapipe/GDMP/proto/rect.h"
+#include "GDMP/framework/graph.h"
+#include "GDMP/framework/graph_config.h"
+#include "GDMP/framework/packet.h"
+#include "GDMP/gpu/gpu_helper.h"
+#include "GDMP/gpu/gpu_resources.h"
+#include "GDMP/io/camera_helper.h"
+#include "GDMP/proto/classification.h"
+#include "GDMP/proto/detection.h"
+#include "GDMP/proto/landmark.h"
+#include "GDMP/proto/location_data.h"
+#include "GDMP/proto/rect.h"
 
 using namespace godot;
 

@@ -22,7 +22,7 @@ else:
 
 # Symlink GDMP source code to mediapipe workspace
 src_dir = path.join(path.dirname(__file__), 'GDMP')
-dst_dir = path.join(mediapipe_dir, 'mediapipe', 'GDMP')
+dst_dir = path.join(mediapipe_dir, 'GDMP')
 if path.isdir(dst_dir):
     try:
         unlink(dst_dir)

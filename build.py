@@ -9,9 +9,9 @@ from subprocess import run
 mediapipe_dir = path.join(path.dirname(__file__), 'mediapipe')
 
 targets = {
-    'desktop': '//mediapipe/GDMP/desktop:GDMP',
-    'android': '//mediapipe/GDMP/android:GDMP',
-    'compile_commands': '//mediapipe/GDMP:refresh_compile_commands',
+    'desktop': '//GDMP/desktop:GDMP',
+    'android': '//GDMP/android:GDMP',
+    'compile_commands': '//GDMP:refresh_compile_commands',
 }
 
 target_commands = {

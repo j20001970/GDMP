@@ -7,7 +7,7 @@
 
 #include "mediapipe/gpu/gpu_buffer.h"
 
-#include "mediapipe/GDMP/framework/packet.h"
+#include "GDMP/framework/packet.h"
 
 using namespace godot;
 

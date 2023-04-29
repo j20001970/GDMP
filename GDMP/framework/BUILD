@@ -6,11 +6,8 @@ cc_library(
     deps = [
         ":graph_config",
         ":packet",
-        "//mediapipe/GDMP/gpu:gpu_resources",
-        "//mediapipe/framework:calculator_graph",
-        "//mediapipe/framework:packet",
-        "//mediapipe/framework/port:status",
-        "//mediapipe/framework/tool:sink",
+        "//GDMP/gpu:gpu_resources",
+        "//mediapipe/framework:calculator_framework",
         "@godot-cpp//:godot",
     ] + select({
         "//mediapipe/gpu:disable_gpu": [],
@@ -36,7 +33,7 @@ cc_library(
     hdrs = ["packet.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/GDMP/util:image",
+        "//GDMP/util:image",
         "//mediapipe/framework:packet",
         "//mediapipe/framework/formats:image_frame",
         "@godot-cpp//:godot",
