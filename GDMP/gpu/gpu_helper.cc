@@ -2,7 +2,9 @@
 
 #include "godot_cpp/core/class_db.hpp"
 
+#if !MEDIAPIPE_DISABLE_GPU
 #include "mediapipe/gpu/gpu_buffer.h"
+#endif
 #ifdef __APPLE__
 #include "mediapipe/objc/util.h"
 #endif
