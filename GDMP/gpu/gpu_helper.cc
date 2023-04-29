@@ -1,6 +1,8 @@
 #include "gpu_helper.h"
 
+#if !MEDIAPIPE_DISABLE_GPU
 #include "mediapipe/gpu/gpu_buffer.h"
+#endif
 #ifdef __APPLE__
 #include "mediapipe/objc/util.h"
 #endif
