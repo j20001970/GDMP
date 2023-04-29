@@ -5,7 +5,7 @@
 #include "mediapipe/objc/util.h"
 #endif
 
-#include "mediapipe/GDMP/util/image.h"
+#include "GDMP/util/image.h"
 
 using namespace godot;
 

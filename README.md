@@ -28,7 +28,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
     ```
     build.py android
     ```
-    to build android library, generated file will be located in `mediapipe/bazel-bin/mediapipe/GDMP/android`, copy the library to your project's `addons/GDMP/libs/android/arm64-v8a`
+    to build android library, generated file will be located in `mediapipe/bazel-bin/GDMP/android`, copy the library to your project's `addons/GDMP/libs/android/arm64-v8a`
 
     (Optional) also copy `libopencv_java3.so` to the project and add it as GDNative library dependencies if OpenCV is used in calculators.
 
@@ -48,7 +48,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
     ```
     build.py desktop
     ```
-    to build desktop library, generated file will be located in `mediapipe/bazel-bin/mediapipe/GDMP/desktop`, copy the library to your project's `addons/GDMP/libs/linux/x86_64`
+    to build desktop library, generated file will be located in `mediapipe/bazel-bin/GDMP/desktop`, copy the library to your project's `addons/GDMP/libs/linux/x86_64`
 
 ## Building for Windows
 1. Install [MSYS2](https://www.msys2.org) and add `<msys2 path>\usr\bin` to your `PATH` environment variable.
@@ -59,7 +59,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
     ```
     build.py desktop
     ```
-    to build desktop library, generated file will be located in `mediapipe/bazel-bin/mediapipe/GDMP/desktop`, copy the library to your project's `addons/GDMP/libs/windows/x86_64`
+    to build desktop library, generated file will be located in `mediapipe/bazel-bin/GDMP/desktop`, copy the library to your project's `addons/GDMP/libs/windows/x86_64`
 
     (Optional) also copy `opencv_world3410.dll` to the project and add it as GDNative library dependencies if OpenCV is used in calculators.
 

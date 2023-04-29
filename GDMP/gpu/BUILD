@@ -5,8 +5,8 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":gpu_resources",
-        "//mediapipe/GDMP/framework:packet",
-        "//mediapipe/GDMP/util:image",
+        "//GDMP/framework:packet",
+        "//GDMP/util:image",
         "//mediapipe/framework/formats:image_frame",
         "@godot-cpp//:godot",
     ] + select({

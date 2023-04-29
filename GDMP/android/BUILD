@@ -5,5 +5,5 @@ cc_binary(
     }),
     linkshared = 1,
     visibility = ["//visibility:public"],
-    deps = ["//mediapipe/GDMP"],
+    deps = ["//GDMP"],
 )
