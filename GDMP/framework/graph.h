@@ -15,9 +15,9 @@
 #include "mediapipe/gpu/gpu_shared_data_internal.h"
 #endif
 
-#include "mediapipe/GDMP/gpu/gpu_resources.h"
-#include "mediapipe/GDMP/framework/graph_config.h"
-#include "mediapipe/GDMP/framework/packet.h"
+#include "GDMP/framework/graph_config.h"
+#include "GDMP/framework/packet.h"
+#include "GDMP/gpu/gpu_resources.h"
 
 using namespace godot;
 

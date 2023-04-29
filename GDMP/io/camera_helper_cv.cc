@@ -11,9 +11,9 @@
 #include "mediapipe/framework/port/opencv_imgproc_inc.h"
 #include "mediapipe/framework/port/opencv_video_inc.h"
 
-#include "mediapipe/GDMP/framework/packet.h"
+#include "GDMP/framework/packet.h"
 #if !MEDIAPIPE_DISABLE_GPU
-#include "mediapipe/GDMP/gpu/gpu_helper.h"
+#include "GDMP/gpu/gpu_helper.h"
 #endif
 
 using namespace godot;
