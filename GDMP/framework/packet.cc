@@ -4,7 +4,7 @@
 
 #include "godot_cpp/core/class_db.hpp"
 
-#include "mediapipe/GDMP/util/image.h"
+#include "GDMP/util/image.h"
 
 using namespace godot;
 

@@ -7,7 +7,7 @@
 #include "godot_cpp/variant/packed_byte_array.hpp"
 #include "godot_cpp/variant/variant.hpp"
 
-#include "mediapipe/GDMP/framework/packet.h"
+#include "GDMP/framework/packet.h"
 
 // Define a Godot wrapper class that contains a mediapipe proto type.
 #define GDMP_PROTO_WRAPPER(NAME, CLASS)                          \

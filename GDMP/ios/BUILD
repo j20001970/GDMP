@@ -7,5 +7,5 @@ ios_static_framework(
         "ipad",
     ],
     minimum_os_version = "11.0",
-    deps = ["//mediapipe/GDMP"],
+    deps = ["//GDMP"],
 )

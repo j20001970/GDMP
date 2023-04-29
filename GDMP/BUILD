@@ -1,5 +1,5 @@
 load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile_commands")
-load("//mediapipe/GDMP:GDMP.bzl", "CALCULATORS", "DATA")
+load("//GDMP:GDMP.bzl", "CALCULATORS", "DATA")
 
 alias(
     name = "godot",
@@ -45,18 +45,18 @@ cc_library(
     data = DATA,
     visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/GDMP/framework:graph",
-        "//mediapipe/GDMP/framework:graph_config",
-        "//mediapipe/GDMP/framework:packet",
-        "//mediapipe/GDMP/gpu:gpu_helper",
-        "//mediapipe/GDMP/gpu:gpu_resources",
-        "//mediapipe/GDMP/io:camera_helper",
-        "//mediapipe/GDMP/proto:classification",
-        "//mediapipe/GDMP/proto:detection",
-        "//mediapipe/GDMP/proto:landmark",
-        "//mediapipe/GDMP/proto:location_data",
-        "//mediapipe/GDMP/proto:rasterization",
-        "//mediapipe/GDMP/proto:rect",
+        "//GDMP/framework:graph",
+        "//GDMP/framework:graph_config",
+        "//GDMP/framework:packet",
+        "//GDMP/gpu:gpu_helper",
+        "//GDMP/gpu:gpu_resources",
+        "//GDMP/io:camera_helper",
+        "//GDMP/proto:classification",
+        "//GDMP/proto:detection",
+        "//GDMP/proto:landmark",
+        "//GDMP/proto:location_data",
+        "//GDMP/proto:rasterization",
+        "//GDMP/proto:rect",
         "@godot-cpp//:godot",
     ] + CALCULATORS,
     alwayslink = 1,
@@ -65,14 +65,14 @@ cc_library(
 refresh_compile_commands(
     name = "refresh_compile_commands",
     targets = {
-        "//mediapipe/GDMP:GDMP": """
+        "//GDMP:GDMP": """
         --define GODOT=1
         --copt -Ibazel-bin
         --copt -Ibazel-bin/external/com_github_gflags_gflags/_virtual_includes/gflags
         --copt -Ibazel-bin/external/com_github_glog_glog/_virtual_includes/default_glog_headers
         --copt -Ibazel-bin/external/com_github_glog_glog_no_gflags/_virtual_includes/default_glog_headers
         """,
-        "//mediapipe/GDMP/io:camera_helper_android": """
+        "//GDMP/io:camera_helper_android": """
         --define GODOT=1
         --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
         --crosstool_top=//external:android/crosstool
