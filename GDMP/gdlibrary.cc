@@ -17,6 +17,7 @@
 #include "GDMP/proto/landmark.h"
 #include "GDMP/proto/location_data.h"
 #include "GDMP/proto/rect.h"
+#include "GDMP/proto/proto.h"
 #include "GDMP/util/resource_util.h"
 
 using namespace godot;
@@ -30,6 +31,7 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<MediaPipeGraphConfig>();
 	ClassDB::register_class<MediaPipeImage>();
 	ClassDB::register_class<MediaPipePacket>();
+	ClassDB::register_class<MediaPipeProto>();
 	// GPU
 	ClassDB::register_class<MediaPipeGPUHelper>();
 	ClassDB::register_class<MediaPipeGPUResources>();
