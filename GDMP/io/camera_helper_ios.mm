@@ -33,7 +33,7 @@
 }
 @end
 
-class CameraHelper::CameraHelperImpl {
+class CameraHelper::Impl {
     private:
         AVCaptureSession* session;
         AVCaptureDeviceInput* videoDeviceInput;
@@ -42,13 +42,13 @@ class CameraHelper::CameraHelperImpl {
         OutputDelegate *delegate;
 
     public:
-        CameraHelperImpl() {
+        Impl() {
             dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(
                 DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, /*relative_priority=*/0);
             delegateQueue = dispatch_queue_create("org.godotengine.gdmp.delegateQueue", qosAttribute);
         }
 
-        ~CameraHelperImpl() {
+        ~Impl() {
         }
 
         bool permission_granted() {
@@ -120,7 +120,7 @@ CameraHelper::CameraHelper() = default;
 CameraHelper::~CameraHelper() = default;
 
 void CameraHelper::_init() {
-    impl = std::make_unique<CameraHelperImpl>();
+    impl = std::make_unique<Impl>();
 }
 
 bool CameraHelper::permission_granted() {

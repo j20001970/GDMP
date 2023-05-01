@@ -10,7 +10,7 @@
 
 #include "GDMP/framework/packet.h"
 
-class CameraHelper::CameraHelperImpl {
+class CameraHelper::Impl {
 	private:
 		static jclass camera_class;
 
@@ -20,7 +20,7 @@ class CameraHelper::CameraHelperImpl {
 		String stream_name;
 
 	public:
-		CameraHelperImpl(CameraHelper *camera_helper) {
+		Impl(CameraHelper *camera_helper) {
 			JNIEnv *env = android_api->godot_android_get_env();
 			if (env->IsSameObject(camera_class, NULL)) {
 				camera_class = reinterpret_cast<jclass>(
@@ -34,7 +34,7 @@ class CameraHelper::CameraHelperImpl {
 					"camera_permission_denied", camera_helper, "emit_signal", Array::make("permission_result", false));
 		}
 
-		~CameraHelperImpl() {}
+		~Impl() {}
 
 		jobject create_camera() {
 			jobject camera;
@@ -115,11 +115,11 @@ class CameraHelper::CameraHelperImpl {
 		}
 };
 
-jclass CameraHelper::CameraHelperImpl::camera_class = nullptr;
+jclass CameraHelper::Impl::camera_class = nullptr;
 
 extern "C" JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nativeOnNewFrame(
 		JNIEnv *pEnv, jobject jCaller, jlong cppCaller, jobject frame, jint name, jint width, jint height) {
-	auto caller = (CameraHelper::CameraHelperImpl *)(cppCaller);
+	auto caller = (CameraHelper::Impl *)(cppCaller);
 	caller->on_new_frame(pEnv, frame, name, width, height);
 }
 
@@ -128,7 +128,7 @@ CameraHelper::CameraHelper() = default;
 CameraHelper::~CameraHelper() = default;
 
 void CameraHelper::_init() {
-	impl = std::make_unique<CameraHelperImpl>(this);
+	impl = std::make_unique<Impl>(this);
 }
 
 bool CameraHelper::permission_granted() {

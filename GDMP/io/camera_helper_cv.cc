@@ -16,7 +16,7 @@
 #include "GDMP/gpu/gpu_helper.h"
 #endif
 
-class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
+class CameraHelper::Impl : public cv::VideoCapture {
 	private:
 		bool grab_frames;
 		bool flip;
@@ -28,7 +28,7 @@ class CameraHelper::CameraHelperImpl : public cv::VideoCapture {
 #endif
 
 	public:
-		CameraHelperImpl() {
+		Impl() {
 #if !MEDIAPIPE_DISABLE_GPU
 			use_gpu = true;
 #endif
@@ -107,7 +107,7 @@ CameraHelper::CameraHelper() = default;
 CameraHelper::~CameraHelper() = default;
 
 void CameraHelper::_init() {
-	impl = std::make_unique<CameraHelperImpl>();
+	impl = std::make_unique<Impl>();
 }
 
 bool CameraHelper::permission_granted() {

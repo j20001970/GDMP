@@ -17,10 +17,10 @@ class CameraHelper : public Reference {
 		GODOT_CLASS(CameraHelper, Reference)
 
 	public:
-		class CameraHelperImpl;
+		class Impl;
 
 	private:
-		std::unique_ptr<CameraHelperImpl> impl;
+		std::unique_ptr<Impl> impl;
 
 	public:
 		static void _register_methods();
