@@ -18,6 +18,9 @@ using namespace godot;
 class MediaPipePacket : public RefCounted {
 		GDCLASS(MediaPipePacket, RefCounted)
 
+	private:
+		mediapipe::Packet packet;
+
 	protected:
 		static void _bind_methods();
 
@@ -52,9 +55,6 @@ class MediaPipePacket : public RefCounted {
 
 		// Get actual mediapipe::Packet
 		mediapipe::Packet get_packet();
-
-	private:
-		mediapipe::Packet packet;
 };
 
 #endif

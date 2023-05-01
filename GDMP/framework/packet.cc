@@ -6,8 +6,6 @@
 
 #include "GDMP/util/image.h"
 
-using namespace godot;
-
 void MediaPipePacket::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_empty"), &MediaPipePacket::is_empty);
 	ClassDB::bind_method(D_METHOD("get_image"), &MediaPipePacket::get_image);

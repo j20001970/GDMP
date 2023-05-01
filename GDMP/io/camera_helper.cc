@@ -2,8 +2,6 @@
 
 #include "godot_cpp/core/class_db.hpp"
 
-using namespace godot;
-
 void MediaPipeCameraHelper::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("permission_granted"), &MediaPipeCameraHelper::permission_granted);
 	ClassDB::bind_method(D_METHOD("request_permission"), &MediaPipeCameraHelper::request_permission);

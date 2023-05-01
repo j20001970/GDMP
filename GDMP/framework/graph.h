@@ -24,6 +24,12 @@ using namespace godot;
 class MediaPipeGraph : public RefCounted {
 		GDCLASS(MediaPipeGraph, RefCounted)
 
+	private:
+		std::unique_ptr<mediapipe::CalculatorGraph> running_graph;
+		std::unique_ptr<mediapipe::CalculatorGraphConfig> graph_config;
+		std::map<std::string, mediapipe::Packet> packet_callbacks;
+		Ref<MediaPipeGPUResources> gpu_resources;
+
 	protected:
 		static void _bind_methods();
 
@@ -58,12 +64,6 @@ class MediaPipeGraph : public RefCounted {
 		// Get mediapipe GPU resources.
 		std::shared_ptr<mediapipe::GpuResources> get_gpu_resources();
 #endif
-
-	private:
-		std::unique_ptr<mediapipe::CalculatorGraph> running_graph;
-		std::unique_ptr<mediapipe::CalculatorGraphConfig> graph_config;
-		std::map<std::string, mediapipe::Packet> packet_callbacks;
-		Ref<MediaPipeGPUResources> gpu_resources;
 };
 
 #endif

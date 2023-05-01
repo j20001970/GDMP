@@ -7,8 +7,6 @@
 
 #include "mediapipe/framework/port/parse_text_proto.h"
 
-using namespace godot;
-
 void MediaPipeGraphConfig::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("has_input_stream"), &MediaPipeGraphConfig::has_input_stream);
 	ClassDB::bind_method(D_METHOD("has_output_stream"), &MediaPipeGraphConfig::has_output_stream);

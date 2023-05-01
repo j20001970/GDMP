@@ -13,7 +13,10 @@
 using namespace godot;
 
 class MediaPipeGraphConfig : public Resource {
-		GDCLASS(MediaPipeGraphConfig, Resource);
+		GDCLASS(MediaPipeGraphConfig, Resource)
+
+	private:
+		mediapipe::CalculatorGraphConfig config;
 
 	protected:
 		static void _bind_methods();
@@ -35,13 +38,10 @@ class MediaPipeGraphConfig : public Resource {
 
 		// Get underlying mediapipe::CalculatorGraphConfig
 		mediapipe::CalculatorGraphConfig get_config();
-
-	private:
-		mediapipe::CalculatorGraphConfig config;
 };
 
 class ResourceFormatLoaderMediaPipeGraphConfig : public ResourceFormatLoader {
-		GDCLASS(ResourceFormatLoaderMediaPipeGraphConfig, ResourceFormatLoader);
+		GDCLASS(ResourceFormatLoaderMediaPipeGraphConfig, ResourceFormatLoader)
 
 	protected:
 		static void _bind_methods();

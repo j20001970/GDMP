@@ -12,7 +12,12 @@
 using namespace godot;
 
 class MediaPipeGPUResources : public RefCounted {
-		GDCLASS(MediaPipeGPUResources, RefCounted);
+		GDCLASS(MediaPipeGPUResources, RefCounted)
+
+#if !MEDIAPIPE_DISABLE_GPU
+	private:
+		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
+#endif
 
 	protected:
 		static void _bind_methods();
@@ -23,9 +28,6 @@ class MediaPipeGPUResources : public RefCounted {
 
 #if !MEDIAPIPE_DISABLE_GPU
 		std::shared_ptr<mediapipe::GpuResources> get_gpu_resources();
-
-	private:
-		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
 #endif
 };
 

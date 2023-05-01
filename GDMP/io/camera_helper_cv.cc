@@ -16,9 +16,17 @@
 #include "GDMP/gpu/gpu_helper.h"
 #endif
 
-using namespace godot;
-
 class MediaPipeCameraHelper::CameraHelperImpl : public cv::VideoCapture {
+	private:
+		bool grab_frames;
+		bool flip;
+		std::thread thread;
+		String stream_name;
+		Ref<MediaPipeGraph> graph;
+#if !MEDIAPIPE_DISABLE_GPU
+		bool use_gpu;
+#endif
+
 	public:
 		CameraHelperImpl() {
 #if !MEDIAPIPE_DISABLE_GPU
@@ -86,20 +94,11 @@ class MediaPipeCameraHelper::CameraHelperImpl : public cv::VideoCapture {
 				release();
 			}
 		}
+
 #if !MEDIAPIPE_DISABLE_GPU
 		void set_use_gpu(bool use_gpu) {
 			this->use_gpu = use_gpu;
 		}
-#endif
-
-	private:
-		bool grab_frames;
-		bool flip;
-		std::thread thread;
-		String stream_name;
-		Ref<MediaPipeGraph> graph;
-#if !MEDIAPIPE_DISABLE_GPU
-		bool use_gpu;
 #endif
 };
 
@@ -113,8 +112,7 @@ bool MediaPipeCameraHelper::permission_granted() {
 	return true;
 }
 
-void MediaPipeCameraHelper::request_permission() {
-}
+void MediaPipeCameraHelper::request_permission() {}
 
 void MediaPipeCameraHelper::set_graph(Ref<MediaPipeGraph> graph, String stream_name) {
 	impl->set_graph(graph, stream_name);

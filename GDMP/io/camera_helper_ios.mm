@@ -9,8 +9,6 @@
 
 #include "GDMP/framework/packet.h"
 
-using namespace godot;
-
 @class OutputDelegate;
 @interface OutputDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
 @property(nonatomic) Ref<MediaPipeGraph> graph;
@@ -36,6 +34,13 @@ using namespace godot;
 @end
 
 class MediaPipeCameraHelper::CameraHelperImpl {
+    private:
+        AVCaptureSession* session;
+        AVCaptureDeviceInput* videoDeviceInput;
+        AVCaptureVideoDataOutput* videoDataOutput;
+        dispatch_queue_t delegateQueue;
+        OutputDelegate *delegate;
+
     public:
         CameraHelperImpl() {
             dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(
@@ -108,13 +113,6 @@ class MediaPipeCameraHelper::CameraHelperImpl {
                 session = nil;
             }
         }
-
-    private:
-        AVCaptureSession* session;
-        AVCaptureDeviceInput* videoDeviceInput;
-        AVCaptureVideoDataOutput* videoDataOutput;
-        dispatch_queue_t delegateQueue;
-        OutputDelegate *delegate;
 };
 
 MediaPipeCameraHelper::MediaPipeCameraHelper() {

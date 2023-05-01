@@ -21,6 +21,11 @@ using namespace godot;
 class MediaPipeGPUHelper : public RefCounted {
 		GDCLASS(MediaPipeGPUHelper, RefCounted)
 
+#if !MEDIAPIPE_DISABLE_GPU
+	private:
+		mediapipe::GlCalculatorHelper gpu_helper;
+#endif
+
 	protected:
 		static void _bind_methods();
 
@@ -39,11 +44,6 @@ class MediaPipeGPUHelper : public RefCounted {
 		Ref<MediaPipePacket> make_packet_from_image(Ref<Image> image);
 		// Make a mediapipe::GpuBuffer packet from mediapipe::ImageFrame
 		Ref<MediaPipePacket> make_packet_from_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame);
-
-#if !MEDIAPIPE_DISABLE_GPU
-	private:
-		mediapipe::GlCalculatorHelper gpu_helper;
-#endif
 };
 
 #endif

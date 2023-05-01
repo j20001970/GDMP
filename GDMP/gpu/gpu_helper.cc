@@ -11,8 +11,6 @@
 
 #include "GDMP/util/image.h"
 
-using namespace godot;
-
 void MediaPipeGPUHelper::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize"), &MediaPipeGPUHelper::initialize);
 	ClassDB::bind_method(D_METHOD("get_gpu_frame"), &MediaPipeGPUHelper::get_gpu_frame);

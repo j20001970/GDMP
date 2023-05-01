@@ -11,8 +11,6 @@
 #include "mediapipe/framework/port/status.h"
 #include "mediapipe/framework/tool/sink.h"
 
-using namespace godot;
-
 void MediaPipeGraph::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize"), &MediaPipeGraph::initialize);
 	ClassDB::bind_method(D_METHOD("is_initialized"), &MediaPipeGraph::is_initialized);

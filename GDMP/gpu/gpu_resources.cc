@@ -1,7 +1,5 @@
 #include "gpu_resources.h"
 
-using namespace godot;
-
 void MediaPipeGPUResources::_bind_methods() {}
 
 MediaPipeGPUResources::MediaPipeGPUResources() {

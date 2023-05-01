@@ -15,6 +15,12 @@ using namespace godot;
 class MediaPipeCameraHelper : public RefCounted {
 		GDCLASS(MediaPipeCameraHelper, RefCounted)
 
+	public:
+		class CameraHelperImpl;
+
+	private:
+		std::unique_ptr<CameraHelperImpl> impl;
+
 	protected:
 		static void _bind_methods();
 
@@ -23,8 +29,6 @@ class MediaPipeCameraHelper : public RefCounted {
 			FACING_FRONT,
 			FACING_BACK
 		};
-
-		class CameraHelperImpl;
 
 		MediaPipeCameraHelper();
 		~MediaPipeCameraHelper();
@@ -54,9 +58,6 @@ class MediaPipeCameraHelper : public RefCounted {
 		// No-op if platform doesn't support.
 		void set_use_gpu(bool use_gpu);
 #endif
-
-	private:
-		std::unique_ptr<CameraHelperImpl> impl;
 };
 
 VARIANT_ENUM_CAST(MediaPipeCameraHelper::CameraFacing);
