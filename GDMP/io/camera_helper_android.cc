@@ -2,6 +2,8 @@
 
 #include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/classes/time.hpp"
+#include "godot_cpp/variant/callable.hpp"
+#include "godot_cpp/variant/signal.hpp"
 
 #include "mediapipe/framework/packet.h"
 #include "mediapipe/gpu/gl_texture_buffer.h"
@@ -14,15 +16,16 @@ using namespace godot;
 
 class MediaPipeCameraHelper::CameraHelperImpl {
 	public:
-		Object *android_plugin;
-
-		CameraHelperImpl() {
+		CameraHelperImpl(MediaPipeCameraHelper *camera_helper) {
 			JNIEnv *env = android_api->godot_android_get_env();
 			if (env->IsSameObject(camera_class, NULL)) {
 				camera_class = reinterpret_cast<jclass>(
 						env->NewGlobalRef(env->FindClass("org/godotengine/gdmp/GDMPCameraHelper")));
 			}
 			android_plugin = Engine::get_singleton()->get_singleton("GDMP");
+			ERR_FAIL_COND(android_plugin == nullptr);
+			Signal(android_plugin, "camera_permission_granted").connect(Callable(camera_helper, "emit_signal").bind("permission_result", true));
+			Signal(android_plugin, "camera_permission_denied").connect(Callable(camera_helper, "emit_signal").bind("permission_result", false));
 		}
 
 		~CameraHelperImpl() {}
@@ -33,10 +36,9 @@ class MediaPipeCameraHelper::CameraHelperImpl {
 			// Create camera object in GL context so that it can get graph context on Java side.
 			context->Run([this, &camera]() -> void {
 				JNIEnv *env = android_api->godot_android_get_env();
-				jobject activity = android_api->godot_android_get_activity();
-				const char *sig = "(JLandroid/app/Activity;)V";
+				const char *sig = "(J)V";
 				jmethodID cnstr = env->GetMethodID(camera_class, "<init>", sig);
-				camera = env->NewObject(camera_class, cnstr, this, activity);
+				camera = env->NewObject(camera_class, cnstr, this);
 				camera = env->NewGlobalRef(camera);
 			});
 			return camera;
@@ -109,6 +111,7 @@ class MediaPipeCameraHelper::CameraHelperImpl {
 	private:
 		static jclass camera_class;
 		jobject camera = nullptr;
+		Object *android_plugin;
 		Ref<MediaPipeGraph> graph;
 		String stream_name;
 };
@@ -121,14 +124,8 @@ extern "C" JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nat
 	caller->on_new_frame(pEnv, frame, name, width, height);
 }
 
-MediaPipeCameraHelper::CameraHelper() {
-	impl = std::make_unique<CameraHelperImpl>();
-	if (impl->android_plugin) {
-		impl->android_plugin->connect(
-				"camera_permission_granted", this, "emit_signal", Array::make("permission_result", true));
-		impl->android_plugin->connect(
-				"camera_permission_denied", this, "emit_signal", Array::make("permission_result", false));
-	}
+MediaPipeCameraHelper::MediaPipeCameraHelper() {
+	impl = std::make_unique<CameraHelperImpl>(this);
 }
 
 MediaPipeCameraHelper::~MediaPipeCameraHelper() = default;

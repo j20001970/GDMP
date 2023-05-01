@@ -13,19 +13,45 @@ import org.godotengine.godot.plugin.SignalInfo;
 import java.util.Set;
 
 public class GDMP extends GodotPlugin {
-    private static String TAG = "GDMP";
-    // Godot activity
-    private Godot godot;
+    private static GDMP singleton;
 
     static {
         System.loadLibrary("GDMP");
     }
 
+    private final Godot godot;
+
     public GDMP(Godot godot) {
         super(godot);
         this.godot = godot;
+        singleton = this;
     }
 
+    public static GDMP getSingleton() {
+        return singleton;
+    }
+
+    @Override
+    public Godot getGodot() {
+        return godot;
+    }
+
+    @Override
+    public void onMainRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        for (int i = 0; i < permissions.length; i++) {
+            switch (permissions[i]) {
+                case permission.CAMERA:
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        emitSignal("camera_permission_granted");
+                    } else {
+                        emitSignal("camera_permission_denied");
+                    }
+                    break;
+            }
+        }
+    }
+
+    @NonNull
     @Override
     public String getPluginName() {
         return "GDMP";
@@ -38,31 +64,5 @@ public class GDMP extends GodotPlugin {
         signals.add(new SignalInfo("camera_permission_granted"));
         signals.add(new SignalInfo("camera_permission_denied"));
         return signals;
-    }
-
-    @Override
-    public void onMainResume() {
-        super.onMainResume();
-    }
-
-    @Override
-    public void onMainPause() {
-        super.onMainPause();
-    }
-
-    @Override
-    public void onMainRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onMainRequestPermissionsResult(requestCode, permissions, grantResults);
-        for (int i = 0; i < permissions.length; i++) {
-            switch (permissions[i]) {
-                case permission.CAMERA:
-                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                        emitSignal("camera_permission_granted");
-                    } else {
-                        emitSignal("camera_permission_denied");
-                    }
-                    break;
-            }
-        }
     }
 }

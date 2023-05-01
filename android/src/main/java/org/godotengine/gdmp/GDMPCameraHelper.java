@@ -31,28 +31,6 @@ import javax.microedition.khronos.egl.EGLSurface;
 public class GDMPCameraHelper implements TextureFrameConsumer {
     private static final String TAG = "GDMPCameraHelper";
 
-    private static final class SingleThreadHandlerExecutor implements Executor {
-        private final HandlerThread handlerThread;
-        private final Handler handler;
-
-        SingleThreadHandlerExecutor(String threadName, int priority) {
-            handlerThread = new HandlerThread(threadName, priority);
-            handlerThread.start();
-            handler = new Handler(handlerThread.getLooper());
-        }
-
-        @Override
-        public void execute(Runnable command) {
-            if (!handler.post(command)) {
-                throw new RejectedExecutionException(handlerThread.getName() + " is shutting down.");
-            }
-        }
-
-        boolean shutdown() {
-            return handlerThread.quitSafely();
-        }
-    }
-
     private final long nativeCallerPtr;
     private final Activity activity;
     private final EglManager eglManager;
@@ -62,9 +40,9 @@ public class GDMPCameraHelper implements TextureFrameConsumer {
     private ProcessCameraProvider cameraProvider;
     private Preview preview;
 
-    public GDMPCameraHelper(long nativeCallerPtr, Activity activity) {
+    public GDMPCameraHelper(long nativeCallerPtr) {
         this.nativeCallerPtr = nativeCallerPtr;
-        this.activity = activity;
+        activity = GDMP.getSingleton().getGodot().getActivity();
         // Get graph GL context by getting current context.
         eglManager = new EglManager(EGL14.eglGetCurrentContext());
         converter = new ExternalTextureConverter(eglManager.getContext());
@@ -140,5 +118,27 @@ public class GDMPCameraHelper implements TextureFrameConsumer {
         nativeOnNewFrame(nativeCallerPtr, frame, frame.getTextureName(), frame.getWidth(), frame.getHeight());
     }
 
-    public native void nativeOnNewFrame(long nativeCallerPtr, TextureFrame frame, int name, int width, int height);
+    private native void nativeOnNewFrame(long nativeCallerPtr, TextureFrame frame, int name, int width, int height);
+
+    private static final class SingleThreadHandlerExecutor implements Executor {
+        private final HandlerThread handlerThread;
+        private final Handler handler;
+
+        SingleThreadHandlerExecutor(String threadName, int priority) {
+            handlerThread = new HandlerThread(threadName, priority);
+            handlerThread.start();
+            handler = new Handler(handlerThread.getLooper());
+        }
+
+        @Override
+        public void execute(Runnable command) {
+            if (!handler.post(command)) {
+                throw new RejectedExecutionException(handlerThread.getName() + " is shutting down.");
+            }
+        }
+
+        boolean shutdown() {
+            return handlerThread.quitSafely();
+        }
+    }
 }
