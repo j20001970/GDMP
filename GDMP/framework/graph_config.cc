@@ -6,8 +6,6 @@
 
 #include "mediapipe/framework/port/parse_text_proto.h"
 
-using namespace godot;
-
 void GraphConfig::_register_methods() {
 	register_method("has_input_stream", &GraphConfig::has_input_stream);
 	register_method("has_output_stream", &GraphConfig::has_output_stream);

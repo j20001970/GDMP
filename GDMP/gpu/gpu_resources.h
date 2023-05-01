@@ -13,7 +13,12 @@
 using namespace godot;
 
 class GPUResources : public Reference {
-		GODOT_CLASS(GPUResources, Reference);
+		GODOT_CLASS(GPUResources, Reference)
+
+#if !MEDIAPIPE_DISABLE_GPU
+	private:
+		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
+#endif
 
 	public:
 		static void _register_methods();
@@ -22,9 +27,6 @@ class GPUResources : public Reference {
 
 #if !MEDIAPIPE_DISABLE_GPU
 		std::shared_ptr<mediapipe::GpuResources> get_gpu_resources();
-
-	private:
-		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
 #endif
 };
 

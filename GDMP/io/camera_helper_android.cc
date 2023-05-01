@@ -10,9 +10,15 @@
 
 #include "GDMP/framework/packet.h"
 
-using namespace godot;
-
 class CameraHelper::CameraHelperImpl {
+	private:
+		static jclass camera_class;
+
+		jobject camera = nullptr;
+		Object *android_plugin;
+		Ref<Graph> graph;
+		String stream_name;
+
 	public:
 		CameraHelperImpl(CameraHelper *camera_helper) {
 			JNIEnv *env = android_api->godot_android_get_env();
@@ -107,13 +113,6 @@ class CameraHelper::CameraHelperImpl {
 			packet->set_timestamp(timestamp);
 			graph->add_packet(stream_name, packet);
 		}
-
-	private:
-		static jclass camera_class;
-		jobject camera = nullptr;
-		Object *android_plugin;
-		Ref<Graph> graph;
-		String stream_name;
 };
 
 jclass CameraHelper::CameraHelperImpl::camera_class = nullptr;
@@ -144,8 +143,7 @@ void CameraHelper::set_graph(Ref<Graph> graph, String stream_name) {
 	impl->set_graph(graph, stream_name);
 }
 
-void CameraHelper::set_mirrored(bool value) {
-}
+void CameraHelper::set_mirrored(bool value) {}
 
 void CameraHelper::start(int index, Vector2 size) {
 	impl->start(index, size);

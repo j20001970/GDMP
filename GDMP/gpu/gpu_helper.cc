@@ -9,8 +9,6 @@
 
 #include "GDMP/util/image.h"
 
-using namespace godot;
-
 void GPUHelper::_register_methods() {
 	register_method("initialize", &GPUHelper::initialize);
 	register_method("get_gpu_frame", &GPUHelper::get_gpu_frame);

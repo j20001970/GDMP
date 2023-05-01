@@ -25,6 +25,12 @@ using namespace godot;
 class Graph : public Reference {
 		GODOT_CLASS(Graph, Reference)
 
+	private:
+		std::unique_ptr<mediapipe::CalculatorGraph> running_graph;
+		std::unique_ptr<mediapipe::CalculatorGraphConfig> graph_config;
+		std::map<std::string, mediapipe::Packet> packet_callbacks;
+		Ref<GPUResources> gpu_resources;
+
 	public:
 		static void _register_methods();
 
@@ -57,12 +63,6 @@ class Graph : public Reference {
 		// Get mediapipe GPU resources.
 		std::shared_ptr<mediapipe::GpuResources> get_gpu_resources();
 #endif
-
-	private:
-		std::unique_ptr<mediapipe::CalculatorGraph> running_graph;
-		std::unique_ptr<mediapipe::CalculatorGraphConfig> graph_config;
-		std::map<std::string, mediapipe::Packet> packet_callbacks;
-		Ref<GPUResources> gpu_resources;
 };
 
 #endif

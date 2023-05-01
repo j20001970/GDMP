@@ -10,8 +10,6 @@
 #include "mediapipe/framework/port/status.h"
 #include "mediapipe/framework/tool/sink.h"
 
-using namespace godot;
-
 void Graph::_register_methods() {
 	register_method("initialize", &Graph::initialize);
 	register_method("is_initialized", &Graph::is_initialized);

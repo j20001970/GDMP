@@ -1,7 +1,5 @@
 #include "camera_helper.h"
 
-using namespace godot;
-
 void CameraHelper::_register_methods() {
 	register_method("permission_granted", &CameraHelper::permission_granted);
 	register_method("request_permission", &CameraHelper::request_permission);

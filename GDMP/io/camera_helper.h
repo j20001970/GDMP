@@ -19,6 +19,10 @@ class CameraHelper : public Reference {
 	public:
 		class CameraHelperImpl;
 
+	private:
+		std::unique_ptr<CameraHelperImpl> impl;
+
+	public:
 		static void _register_methods();
 
 		CameraHelper();
@@ -51,9 +55,6 @@ class CameraHelper : public Reference {
 		// No-op if platform doesn't support.
 		void set_use_gpu(bool use_gpu);
 #endif
-
-	private:
-		std::unique_ptr<CameraHelperImpl> impl;
 };
 
 #endif

@@ -19,6 +19,9 @@ using namespace godot;
 class Packet : public Reference {
 		GODOT_CLASS(Packet, Reference)
 
+	private:
+		mediapipe::Packet packet;
+
 	public:
 		static void _register_methods();
 		static Packet *_new(const mediapipe::Packet &packet);
@@ -51,9 +54,6 @@ class Packet : public Reference {
 
 		// Get actual mediapipe::Packet
 		mediapipe::Packet get_packet();
-
-	private:
-		mediapipe::Packet packet;
 };
 
 #endif

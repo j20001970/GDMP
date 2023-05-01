@@ -4,8 +4,6 @@
 
 #include "GDMP/util/image.h"
 
-using namespace godot;
-
 void Packet::_register_methods() {
 	register_method("is_empty", &Packet::is_empty);
 	register_method("get_image", &Packet::get_image);
@@ -23,7 +21,7 @@ Packet *Packet::_new(const mediapipe::Packet &packet) {
 	return p;
 }
 
-void Packet::_init(){};
+void Packet::_init() {}
 
 bool Packet::is_empty() {
 	return packet.IsEmpty();

@@ -1,7 +1,5 @@
 #include "gpu_resources.h"
 
-using namespace godot;
-
 void GPUResources::_register_methods() {}
 
 void GPUResources::_init() {

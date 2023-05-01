@@ -14,6 +14,9 @@ using namespace godot;
 class GraphConfig : public Resource {
 		GODOT_CLASS(GraphConfig, Resource)
 
+	private:
+		mediapipe::CalculatorGraphConfig config;
+
 	public:
 		static void _register_methods();
 		static GraphConfig *_new(mediapipe::CalculatorGraphConfig config);
@@ -32,9 +35,6 @@ class GraphConfig : public Resource {
 
 		// Get underlying mediapipe::CalculatorGraphConfig
 		mediapipe::CalculatorGraphConfig get_config();
-
-	private:
-		mediapipe::CalculatorGraphConfig config;
 };
 
 #endif
