@@ -25,8 +25,7 @@ class CameraHelper::CameraHelperImpl {
 			android_plugin = Engine::get_singleton()->get_singleton("GDMP");
 		}
 
-		~CameraHelperImpl() {
-		}
+		~CameraHelperImpl() {}
 
 		jobject create_camera() {
 			jobject camera;
@@ -44,21 +43,17 @@ class CameraHelper::CameraHelperImpl {
 		}
 
 		bool permission_granted() {
-			JNIEnv *env = android_api->godot_android_get_env();
-			jobject activity = android_api->godot_android_get_activity();
-			jclass cls = env->FindClass("com/google/mediapipe/components/PermissionHelper");
-			jmethodID method = env->GetStaticMethodID(
-					cls, "cameraPermissionsGranted", "(Landroid/app/Activity;)Z");
-			return env->CallStaticBooleanMethod(cls, method, activity);
+			PoolStringArray permissions = OS::get_singleton()->get_granted_permissions();
+			for (int i = 0; i < permissions.size(); i++) {
+				const String &permission = permissions[i];
+				if (permission == "android.permission.CAMERA")
+					return true;
+			}
+			return false;
 		}
 
 		void request_permission() {
-			JNIEnv *env = android_api->godot_android_get_env();
-			jobject activity = android_api->godot_android_get_activity();
-			jclass cls = env->FindClass("com/google/mediapipe/components/PermissionHelper");
-			jmethodID method = env->GetStaticMethodID(
-					cls, "checkAndRequestCameraPermissions", "(Landroid/app/Activity;)V");
-			env->CallStaticVoidMethod(cls, method, activity);
+			OS::get_singleton()->request_permission("CAMERA");
 		}
 
 		void set_graph(Ref<Graph> graph, String stream_name) {
