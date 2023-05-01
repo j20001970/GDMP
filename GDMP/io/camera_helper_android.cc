@@ -12,7 +12,7 @@
 
 #include "GDMP/framework/packet.h"
 
-class MediaPipeCameraHelper::CameraHelperImpl {
+class MediaPipeCameraHelper::Impl {
 	private:
 		static jclass camera_class;
 
@@ -22,7 +22,7 @@ class MediaPipeCameraHelper::CameraHelperImpl {
 		String stream_name;
 
 	public:
-		CameraHelperImpl(MediaPipeCameraHelper *camera_helper) {
+		Impl(MediaPipeCameraHelper *camera_helper) {
 			JNIEnv *env = android_api->godot_android_get_env();
 			if (env->IsSameObject(camera_class, NULL)) {
 				camera_class = reinterpret_cast<jclass>(
@@ -34,7 +34,7 @@ class MediaPipeCameraHelper::CameraHelperImpl {
 			Signal(android_plugin, "camera_permission_denied").connect(Callable(camera_helper, "emit_signal").bind("permission_result", false));
 		}
 
-		~CameraHelperImpl() {}
+		~Impl() {}
 
 		jobject create_camera() {
 			jobject camera;
@@ -115,7 +115,7 @@ class MediaPipeCameraHelper::CameraHelperImpl {
 		}
 };
 
-jclass MediaPipeCameraHelper::CameraHelperImpl::camera_class = nullptr;
+jclass MediaPipeCameraHelper::Impl::camera_class = nullptr;
 
 extern "C" JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nativeOnNewFrame(
 		JNIEnv *pEnv, jobject jCaller, jlong cppCaller, jobject frame, jint name, jint width, jint height) {
