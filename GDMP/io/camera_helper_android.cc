@@ -14,15 +14,18 @@ using namespace godot;
 
 class CameraHelper::CameraHelperImpl {
 	public:
-		Object *android_plugin;
-
-		CameraHelperImpl() {
+		CameraHelperImpl(CameraHelper *camera_helper) {
 			JNIEnv *env = android_api->godot_android_get_env();
 			if (env->IsSameObject(camera_class, NULL)) {
 				camera_class = reinterpret_cast<jclass>(
 						env->NewGlobalRef(env->FindClass("org/godotengine/gdmp/GDMPCameraHelper")));
 			}
 			android_plugin = Engine::get_singleton()->get_singleton("GDMP");
+			ERR_FAIL_COND(android_plugin == nullptr);
+			android_plugin->connect(
+					"camera_permission_granted", camera_helper, "emit_signal", Array::make("permission_result", true));
+			android_plugin->connect(
+					"camera_permission_denied", camera_helper, "emit_signal", Array::make("permission_result", false));
 		}
 
 		~CameraHelperImpl() {}
@@ -33,10 +36,9 @@ class CameraHelper::CameraHelperImpl {
 			// Create camera object in GL context so that it can get graph context on Java side.
 			context->Run([this, &camera]() -> void {
 				JNIEnv *env = android_api->godot_android_get_env();
-				jobject activity = android_api->godot_android_get_activity();
-				const char *sig = "(JLandroid/app/Activity;)V";
+				const char *sig = "(J)V";
 				jmethodID cnstr = env->GetMethodID(camera_class, "<init>", sig);
-				camera = env->NewObject(camera_class, cnstr, this, activity);
+				camera = env->NewObject(camera_class, cnstr, this);
 				camera = env->NewGlobalRef(camera);
 			});
 			return camera;
@@ -109,6 +111,7 @@ class CameraHelper::CameraHelperImpl {
 	private:
 		static jclass camera_class;
 		jobject camera = nullptr;
+		Object *android_plugin;
 		Ref<Graph> graph;
 		String stream_name;
 };
@@ -126,13 +129,7 @@ CameraHelper::CameraHelper() = default;
 CameraHelper::~CameraHelper() = default;
 
 void CameraHelper::_init() {
-	impl = std::make_unique<CameraHelperImpl>();
-	if (impl->android_plugin) {
-		impl->android_plugin->connect(
-				"camera_permission_granted", this, "emit_signal", Array::make("permission_result", true));
-		impl->android_plugin->connect(
-				"camera_permission_denied", this, "emit_signal", Array::make("permission_result", false));
-	}
+	impl = std::make_unique<CameraHelperImpl>(this);
 }
 
 bool CameraHelper::permission_granted() {
