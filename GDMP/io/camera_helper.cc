@@ -7,8 +7,6 @@ void CameraHelper::_register_methods() {
 	register_method("set_mirrored", &CameraHelper::set_mirrored);
 	register_method("start", &CameraHelper::start);
 	register_method("close", &CameraHelper::close);
-#if !MEDIAPIPE_DISABLE_GPU
-	register_method("set_use_gpu", &CameraHelper::set_use_gpu);
-#endif
+	register_method("set_gpu_resources", &CameraHelper::set_gpu_resources);
 	register_signal<CameraHelper>("permission_result");
 }

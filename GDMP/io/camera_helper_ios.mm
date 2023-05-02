@@ -35,11 +35,11 @@
 
 class CameraHelper::Impl {
     private:
-        AVCaptureSession* session;
         AVCaptureDeviceInput* videoDeviceInput;
+        AVCaptureSession* session;
         AVCaptureVideoDataOutput* videoDataOutput;
-        dispatch_queue_t delegateQueue;
         OutputDelegate *delegate;
+        dispatch_queue_t delegateQueue;
 
     public:
         Impl() {
@@ -48,8 +48,7 @@ class CameraHelper::Impl {
             delegateQueue = dispatch_queue_create("org.godotengine.gdmp.delegateQueue", qosAttribute);
         }
 
-        ~Impl() {
-        }
+        ~Impl() {}
 
         bool permission_granted() {
             AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
@@ -146,7 +145,4 @@ void CameraHelper::close() {
     impl->close();
 }
 
-#if !MEDIAPIPE_DISABLE_GPU
-void CameraHelper::set_use_gpu(bool use_gpu) {
-}
-#endif
+void CameraHelper::set_gpu_resources(Ref<GPUResources> gpu_resources) {}

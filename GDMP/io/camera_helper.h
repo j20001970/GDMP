@@ -10,6 +10,7 @@
 #include "String.hpp"
 
 #include "GDMP/framework/graph.h"
+#include "GDMP/gpu/gpu_resources.h"
 
 using namespace godot;
 
@@ -50,11 +51,9 @@ class CameraHelper : public Reference {
 		void start(int index, Vector2 size);
 		// Close camera.
 		void close();
-#if !MEDIAPIPE_DISABLE_GPU
-		// Set camera helper to produce either GPU (mediapipe::GpuBuffer) or CPU (mediapipe::ImageFrame) image packet.
-		// No-op if platform doesn't support.
-		void set_use_gpu(bool use_gpu);
-#endif
+		// Set GPU resources to produce mediapipe::GpuBuffer packets.
+		// Depending on platforms, it might be required to set GPU resources to start camera.
+		void set_gpu_resources(Ref<GPUResources> gpu_resources);
 };
 
 #endif
