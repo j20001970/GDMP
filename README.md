@@ -1,9 +1,12 @@
 # GDMP
-GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScript.
+GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
+
+**NOTICE:** This branch is for Godot 4.0 (GDExtension) and later.
+- For Godot 3.x (GDNative) version, please refer to `3.x` branch.
 
 ## Getting Started
 1. Install [Bazelisk](https://docs.bazel.build/versions/main/install-bazelisk.html) or bazel version that meets MediaPipe requirement.
-2. Refer to [Installation](https://google.github.io/mediapipe/getting_started/install.html) for OpenCV and FFmpeg setup.
+2. Refer to [Installation](https://developers.google.com/mediapipe/framework/getting_started/install) for OpenCV and FFmpeg setup.
 3. Locate your Godot executable and run `godot --dump-extension-api` to get a copy of extension_api.json for current Godot version,
     then go to `godot-cpp` directory and run:
 
@@ -16,7 +19,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
 6. Copy `addons/GDMP` to your project's directory.
 
 ## Building for Android
-1. Refer to [Prerequisite](https://google.github.io/mediapipe/getting_started/android.html#prerequisite) section for Java and Android SDK & NDK setup.
+1. Refer to [Prerequisite](https://developers.google.com/mediapipe/framework/getting_started/android#prerequisite) section for Java and Android SDK & NDK setup.
 2. Copy or symlink godot-lib to `android/libs` as dependency.
 
     godot-lib can be obtained from [godotengine.org](https://godotengine.org/download) or from your project's `android/build/libs` if Android build template is installed.
@@ -107,7 +110,7 @@ GDMP is a plugin for Godot 3.3+ that allows utilizing MediaPipe graphs in GDScri
         camera_helper.connect("permission_result", self._on_permission_result)
         camera_helper.request_permission()
     ```
-To handle camera permission result callback:
+7. To handle camera permission result callback:
 
     ```gdscript
     func _on_permission_result(granted : bool):
