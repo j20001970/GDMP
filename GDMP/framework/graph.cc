@@ -116,9 +116,8 @@ void MediaPipeGraph::start(Dictionary side_packets) {
 		running_graph = std::make_unique<mediapipe::CalculatorGraph>();
 		MP_RETURN_IF_ERROR(running_graph->Initialize(*graph_config, packet_callbacks));
 #if !MEDIAPIPE_DISABLE_GPU
-		if (!gpu_resources.is_null()) {
-			MP_RETURN_IF_ERROR(running_graph->SetGpuResources(gpu_resources->get_gpu_resources()));
-		}
+		if (gpu_resources != nullptr)
+			MP_RETURN_IF_ERROR(running_graph->SetGpuResources(gpu_resources));
 #endif
 		MP_RETURN_IF_ERROR(running_graph->StartRun(packets));
 		return absl::OkStatus();
@@ -150,11 +149,11 @@ void MediaPipeGraph::stop() {
 }
 
 void MediaPipeGraph::set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
-	this->gpu_resources = gpu_resources;
-}
-
 #if !MEDIAPIPE_DISABLE_GPU
-std::shared_ptr<mediapipe::GpuResources> MediaPipeGraph::get_gpu_resources() {
-	return gpu_resources->get_gpu_resources();
-}
+	if (gpu_resources.is_null()) {
+		this->gpu_resources = nullptr;
+		return;
+	}
+	this->gpu_resources = gpu_resources->get_gpu_resources();
 #endif
+}

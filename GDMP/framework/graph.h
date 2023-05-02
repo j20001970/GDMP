@@ -25,10 +25,12 @@ class MediaPipeGraph : public RefCounted {
 		GDCLASS(MediaPipeGraph, RefCounted)
 
 	private:
+		std::map<std::string, mediapipe::Packet> packet_callbacks;
 		std::unique_ptr<mediapipe::CalculatorGraph> running_graph;
 		std::unique_ptr<mediapipe::CalculatorGraphConfig> graph_config;
-		std::map<std::string, mediapipe::Packet> packet_callbacks;
-		Ref<MediaPipeGPUResources> gpu_resources;
+#if !MEDIAPIPE_DISABLE_GPU
+		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
+#endif
 
 	protected:
 		static void _bind_methods();
@@ -60,10 +62,6 @@ class MediaPipeGraph : public RefCounted {
 		void stop();
 		// Set GPU resources.
 		void set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources);
-#if !MEDIAPIPE_DISABLE_GPU
-		// Get mediapipe GPU resources.
-		std::shared_ptr<mediapipe::GpuResources> get_gpu_resources();
-#endif
 };
 
 #endif
