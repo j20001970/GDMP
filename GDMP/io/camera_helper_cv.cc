@@ -18,21 +18,17 @@
 
 class MediaPipeCameraHelper::Impl : public cv::VideoCapture {
 	private:
-		bool grab_frames;
-		bool flip;
-		std::thread thread;
 		String stream_name;
 		Ref<MediaPipeGraph> graph;
+		bool flip;
+		bool grab_frames;
 #if !MEDIAPIPE_DISABLE_GPU
-		bool use_gpu;
+		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
 #endif
+		std::thread thread;
 
 	public:
-		Impl() {
-#if !MEDIAPIPE_DISABLE_GPU
-			use_gpu = true;
-#endif
-		}
+		Impl() {}
 
 		void set_graph(Ref<MediaPipeGraph> graph, String stream_name) {
 			this->graph = graph;
@@ -52,13 +48,15 @@ class MediaPipeCameraHelper::Impl : public cv::VideoCapture {
 			set(cv::CAP_PROP_FRAME_HEIGHT, size.y);
 			ERR_FAIL_COND(!isOpened());
 			thread = std::thread([this, size]() -> void {
-#if !MEDIAPIPE_DISABLE_GPU
-				Ref<MediaPipeGPUHelper> gpu_helper = memnew(MediaPipeGPUHelper(graph->get_gpu_resources().get()));
-				auto cv_format = use_gpu ? cv::COLOR_BGR2RGBA : cv::COLOR_BGR2RGB;
-				auto image_format = use_gpu ? mediapipe::ImageFormat::SRGBA : mediapipe::ImageFormat::SRGB;
-#else
 				auto cv_format = cv::COLOR_BGR2RGB;
 				auto image_format = mediapipe::ImageFormat::SRGB;
+#if !MEDIAPIPE_DISABLE_GPU
+				Ref<MediaPipeGPUHelper> gpu_helper;
+				if (gpu_resources != nullptr) {
+					cv_format = cv::COLOR_BGR2RGBA;
+					image_format = mediapipe::ImageFormat::SRGBA;
+					gpu_helper = Ref(memnew(MediaPipeGPUHelper(gpu_resources.get())));
+				}
 #endif
 				grab_frames = true;
 				while (grab_frames) {
@@ -76,7 +74,7 @@ class MediaPipeCameraHelper::Impl : public cv::VideoCapture {
 					Ref<MediaPipePacket> packet = memnew(MediaPipePacket());
 					int64_t frame_timestamp_us = Time::get_singleton()->get_ticks_usec();
 #if !MEDIAPIPE_DISABLE_GPU
-					if (use_gpu)
+					if (gpu_helper.is_valid())
 						packet = gpu_helper->make_packet_from_image_frame(std::move(input_frame));
 					else
 #endif
@@ -95,11 +93,15 @@ class MediaPipeCameraHelper::Impl : public cv::VideoCapture {
 			}
 		}
 
+		void set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
 #if !MEDIAPIPE_DISABLE_GPU
-		void set_use_gpu(bool use_gpu) {
-			this->use_gpu = use_gpu;
-		}
+			if (gpu_resources.is_null()) {
+				this->gpu_resources = nullptr;
+				return;
+			}
+			this->gpu_resources = gpu_resources->get_gpu_resources();
 #endif
+		}
 };
 
 MediaPipeCameraHelper::MediaPipeCameraHelper() {
@@ -132,8 +134,6 @@ void MediaPipeCameraHelper::close() {
 	}
 }
 
-#if !MEDIAPIPE_DISABLE_GPU
-void MediaPipeCameraHelper::set_use_gpu(bool use_gpu) {
-	impl->set_use_gpu(use_gpu);
+void MediaPipeCameraHelper::set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
+	impl->set_gpu_resources(gpu_resources);
 }
-#endif

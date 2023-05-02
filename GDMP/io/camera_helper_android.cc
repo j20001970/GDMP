@@ -16,10 +16,11 @@ class MediaPipeCameraHelper::Impl {
 	private:
 		static jclass camera_class;
 
-		jobject camera = nullptr;
 		Object *android_plugin;
 		Ref<MediaPipeGraph> graph;
 		String stream_name;
+		jobject camera = nullptr;
+		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
 
 	public:
 		Impl(MediaPipeCameraHelper *camera_helper) {
@@ -38,8 +39,8 @@ class MediaPipeCameraHelper::Impl {
 
 		jobject create_camera() {
 			jobject camera;
-			auto context = graph->get_gpu_resources()->gl_context();
-			// Create camera object in GL context so that it can get graph context on Java side.
+			auto context = gpu_resources->gl_context();
+			// Create camera object in GL context so that it can get GL context on Java side.
 			context->Run([this, &camera]() -> void {
 				JNIEnv *env = android_api->godot_android_get_env();
 				const char *sig = "(J)V";
@@ -72,6 +73,7 @@ class MediaPipeCameraHelper::Impl {
 		void start(int index, Vector2 size) {
 			ERR_FAIL_COND(graph.is_null());
 			ERR_FAIL_COND(!permission_granted());
+			ERR_FAIL_COND(gpu_resources == nullptr);
 			close();
 			JNIEnv *env = android_api->godot_android_get_env();
 			camera = create_camera();
@@ -90,8 +92,16 @@ class MediaPipeCameraHelper::Impl {
 			}
 		}
 
+		void set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
+			if (gpu_resources.is_null()) {
+				this->gpu_resources = nullptr;
+				return;
+			}
+			this->gpu_resources = gpu_resources->get_gpu_resources();
+		}
+
 		void on_new_frame(JNIEnv *env, jobject frame, int name, int width, int height) {
-			auto gl_context = graph->get_gpu_resources()->gl_context();
+			auto gl_context = gpu_resources->gl_context();
 			mediapipe::GlTextureBuffer::DeletionCallback callback;
 			if (frame) {
 				jobject java_frame = env->NewGlobalRef(frame);
@@ -151,7 +161,6 @@ void MediaPipeCameraHelper::close() {
 	impl->close();
 }
 
-#if !MEDIAPIPE_DISABLE_GPU
-void MediaPipeCameraHelper::set_use_gpu(bool use_gpu) {
+void MediaPipeCameraHelper::set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
+	impl->set_gpu_resources(gpu_resources);
 }
-#endif
