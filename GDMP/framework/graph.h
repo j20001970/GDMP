@@ -26,10 +26,12 @@ class Graph : public Reference {
 		GODOT_CLASS(Graph, Reference)
 
 	private:
+		std::map<std::string, mediapipe::Packet> packet_callbacks;
 		std::unique_ptr<mediapipe::CalculatorGraph> running_graph;
 		std::unique_ptr<mediapipe::CalculatorGraphConfig> graph_config;
-		std::map<std::string, mediapipe::Packet> packet_callbacks;
-		Ref<GPUResources> gpu_resources;
+#if !MEDIAPIPE_DISABLE_GPU
+		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
+#endif
 
 	public:
 		static void _register_methods();
@@ -59,10 +61,6 @@ class Graph : public Reference {
 		void stop();
 		// Set GPU resources.
 		void set_gpu_resources(Ref<GPUResources> gpu_resources);
-#if !MEDIAPIPE_DISABLE_GPU
-		// Get mediapipe GPU resources.
-		std::shared_ptr<mediapipe::GpuResources> get_gpu_resources();
-#endif
 };
 
 #endif
