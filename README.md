@@ -83,14 +83,14 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 
     ```gdscript
     # load graph config in text or binary format
-    var config : MediaPipe.GraphConfig = MediaPipe.GraphConfig.new()
+    var config = MediaPipe.GraphConfig.new()
     config.load("res://path/to/your/graph.pbtxt", false)
     config.load("res://path/to/your/graph.binarypb", true)
     # initialize mediapipe graph with graph config
-    var graph : MediaPipe.Graph = MediaPipe.Graph.new()
+    var graph = MediaPipe.Graph.new()
     graph.initialize(config)
     # initialize GPU resources
-    var gpu_resources : MediaPipe.GPUResources = MediaPipe.GPUResources.new()
+    var gpu_resources = MediaPipe.GPUResources.new()
     graph.set_gpu_resources(gpu_resources)
     ```
 
@@ -102,8 +102,8 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 5. To use the packet from graph callback(NormalizedLandmarkList for example):
 
     ```gdscript
-    func _on_new_landmarks(stream_name : String, packet) -> void:
-        var bytes : PoolByteArray = packet.get_proto()
+    func _on_new_landmarks(stream_name: String, packet):
+        var bytes: PoolByteArray = packet.get_proto()
         var landmarks = MediaPipe.NormalizedLandmarkList.new()
         landmarks.from_bytes(bytes)
         for i in range(landmarks.landmark_size()):
@@ -113,7 +113,7 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 6. Start the graph and camera for sending video frames to the graph:
 
     ```gdscript
-    var camera_helper : MediaPipe.CameraHelper = MediaPipe.CameraHelper.new()
+    var camera_helper = MediaPipe.CameraHelper.new()
     camera_helper.set_graph(graph, "input_video")
     graph.start()
     if camera_helper.permission_granted():
@@ -125,7 +125,7 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 7. To handle camera permission result callback:
 
     ```gdscript
-    func _on_permission_result(granted : bool):
+    func _on_permission_result(granted: bool):
         if granted:
             print("permission granted")
             camera_helper.start(MediaPipe.CAMERA_FACING_FRONT, Vector2(640, 480))
