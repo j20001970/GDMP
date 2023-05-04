@@ -11,19 +11,17 @@ mediapipe_dir = path.join(path.dirname(__file__), 'mediapipe')
 targets = {
     'desktop': '//GDMP/desktop:GDMP',
     'android': '//GDMP/android:GDMP',
-    'compile_commands': '//GDMP:refresh_compile_commands',
 }
 
 target_commands = {
-    'desktop': ['build', '-c', 'opt', '--define', 'GODOT=1'],
+    'desktop': ['-c', 'opt', '--define', 'GODOT=1'],
     'android': [
-        'build', '-c', 'opt', '--define', 'GODOT=1',
+        '-c', 'opt', '--define', 'GODOT=1',
         '--crosstool_top=//external:android/crosstool',
         '--host_crosstool_top=@bazel_tools//tools/cpp:toolchain',
         '--copt', '-fPIC',
         '--cpu=arm64-v8a',
     ],
-    'compile_commands': ['run']
 }
 
 desktop_commands = {
@@ -49,7 +47,7 @@ if bazel_exec is None:
     print("Error: Cannot find bazel, please check bazel is installed and is in environment paths.")
     sys.exit(-1)
 
-bazel_args = [bazel_exec]
+bazel_args = [bazel_exec, 'build']
 bazel_args.extend(target_commands[args.target])
 
 if args.target == 'desktop':
