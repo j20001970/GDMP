@@ -86,12 +86,12 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 
     ```gdscript
     # load graph config in text or binary format
-    var config : MediaPipeGraphConfig = load("res://path/to/your/graph.pbtxt")
+    var config: MediaPipeGraphConfig = load("res://path/to/your/graph.pbtxt")
     # initialize mediapipe graph with graph config
-    var graph : MediaPipeGraph = MediaPipeGraph.new()
+    var graph: MediaPipeGraph = MediaPipeGraph.new()
     graph.initialize(config)
     # initialize GPU resources
-    var gpu_resources : MediaPipeGPUResources = MediaPipeGPUResources.new()
+    var gpu_resources: MediaPipeGPUResources = MediaPipeGPUResources.new()
     graph.set_gpu_resources(gpu_resources)
     ```
 
@@ -103,18 +103,18 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 5. To use the packet from graph callback(NormalizedLandmarkList for example):
 
     ```gdscript
-    func _on_new_landmarks(stream_name : String, packet) -> void:
-        var bytes : PackedByteArray = packet.get_proto()
-        var landmarks = NormalizedLandmarkList.new()
+    func _on_new_landmarks(stream_name: String, packet: MediaPipePacket):
+        var bytes: PackedByteArray = packet.get_proto()
+        var landmarks: NormalizedLandmarkList = NormalizedLandmarkList.new()
         landmarks.from_bytes(bytes)
         for i in range(landmarks.landmark_size()):
-            var landmark = landmarks.get_landmark(i)
+            var landmark: NormalizedLandmark = landmarks.get_landmark(i)
             print("x:%f, y:%f, z:%f" % [landmark.get_x(), landmark.get_y(), landmark.get_z()])
     ```
 6. Start the graph and camera for sending video frames to the graph:
 
     ```gdscript
-    var camera_helper : MediaPipeCameraHelper = MediaPipeCameraHelper.new()
+    var camera_helper: MediaPipeCameraHelper = MediaPipeCameraHelper.new()
     camera_helper.set_graph(graph, "input_video")
     graph.start()
     if camera_helper.permission_granted():
@@ -126,7 +126,7 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 7. To handle camera permission result callback:
 
     ```gdscript
-    func _on_permission_result(granted : bool):
+    func _on_permission_result(granted: bool):
         if granted:
             print("permission granted")
             camera_helper.start(MediaPipeCameraHelper.FACING_FRONT, Vector2(640, 480))
