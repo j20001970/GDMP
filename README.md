@@ -2,40 +2,42 @@
 GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 
 ## Getting Started
-1. Install [Bazelisk](https://docs.bazel.build/versions/main/install-bazelisk.html) or bazel version that meets MediaPipe requirement.
-2. Refer to [Installation](https://developers.google.com/mediapipe/framework/getting_started/install) for OpenCV and FFmpeg setup.
-3. Locate your Godot executable and run `godot --gdnative-generate-json-api api.json` to get a copy of api.json for current Godot version,
-    then go to `godot-cpp` directory and run:
+1. Clone the repository, remember to **initialize the submodules**.
+
+    `git submodule update --init --recursive`
+2. Install [Bazelisk](https://bazel.build/install/bazelisk) or Bazel version that meets MediaPipe requirement.
+3. Follow [godot-cpp README](https://github.com/godotengine/godot-cpp/tree/3.x#updating-the-apijson-file) to generate `api.json` for your Godot version, then go to `godot-cpp` directory and run:
 
     ```
     python -c "from binding_generator import *; generate_bindings('/path/to/your/api.json', True)"
     ```
-    to generate Godot C++ bindings directly, replacing `/path/to/your/api.json` with the path to your api.json
-4. Run `setup.py`, the script will apply necessary changes, setup source code and external dependencies in mediapipe workspace.
-5. Place calculator dependencies in `GDMP/GDMP.bzl`
-6. Copy `addons/GDMP` to your project's directory.
+
+    to generate Godot C++ bindings directly, replacing `/path/to/your/api.json` with the path to your `api.json`
+4. Run `setup.py`, the script will apply necessary changes and setup source code to `mediapipe` workspace.
+5. Add calculator dependencies in `GDMP/GDMP.bzl`
+6. Copy `addons` to your Godot project's root directory.
 
 ## Building for Android
 1. Refer to [Prerequisite](https://developers.google.com/mediapipe/framework/getting_started/android#prerequisite) section for Java and Android SDK & NDK setup.
 2. Copy or symlink godot-lib to `android/libs` as dependency.
 
-    godot-lib can be obtained from [godotengine.org](https://godotengine.org/download) or from your project's `android/build/libs` if Android build template is installed.
-
-3. Build GDMP AAR using Android Studio or gradlew, copy the release variant AAR located in `android/build/outputs/aar` to your project's `android/plugins` directory.
-4. Copy `plugins/GDMP.gdap` to your project's `android/plugins` directory.
+    godot-lib can be obtained from [godotengine.org](https://godotengine.org/download) or from your Godot project's `android/build/libs` if Android build template is installed.
+3. Build GDMP AAR using Android Studio or gradlew, copy the release variant AAR located in `android/build/outputs/aar` to your Godot project's `android/plugins` directory.
+4. Copy `plugins/GDMP.gdap` to your Godot project's `android/plugins` directory.
 5. Run:
 
     ```
     build.py android
     ```
-    to build android library, generated file will be located in `mediapipe/bazel-bin/GDMP/android`, copy the library to your project's `addons/GDMP/libs/android/arm64-v8a`
+
+    to build android library, then copy `mediapipe/bazel-bin/GDMP/android/libGDMP.so` to your Godot project's `addons/GDMP/libs/android/arm64-v8a`
 
     (Optional) also copy `libopencv_java3.so` to the project and add it as GDNative library dependencies if OpenCV is used in calculators.
 
 ## Building for iOS
 1. Comment out `macos` and `ios` part of select() in `srcs` and `deps` attributes from `resource_util` in `mediapipe/mediapipe/util/BUILD`, this step is required before the ambiguous match problem is solved.
 2. Use [Tulsi](https://tulsi.bazel.build) project to generate Xcode project.
-3. Build `GDMP` static framework target, copy the library from the framework to your project's `addons/GDMP/libs/ios` **and rename it with .a extension**, so that Godot will treat it like static library instead of dynamic when exporting to Xcode.
+3. Build `GDMP` static framework target, copy the library from the framework to your Godot project's `addons/GDMP/libs/ios` **and rename it with .a extension**, so that Godot will treat it like static library instead of dynamic when exporting to Xcode.
 
     (Optional) also copy `opencv2.a` to the project and add it as GDNative library dependencies if OpenCV is used in calculators.
 4. After exporting Godot project to Xcode, add necessary frameworks in order to build the app, and go to `Other Linker Flags` in `Build Settings` to force load the static library, for example:
@@ -43,23 +45,34 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
     `-force_load $(PROJECT_DIR)/path/to/your/GDMP.a`
 
 ## Building for Linux
-1. Run:
+1. Install OpenCV and FFmpeg, then modify `mediapipe/third_party/opencv_linux.BUILD` to make OpenCV visible to Bazel.
+2. Run:
 
     ```
     build.py desktop
     ```
-    to build desktop library, generated file will be located in `mediapipe/bazel-bin/GDMP/desktop`, copy the library to your project's `addons/GDMP/libs/linux/x86_64`
+
+    to build desktop library, then copy `mediapipe/bazel-bin/GDMP/desktop/libGDMP.so` to your Godot project's `addons/GDMP/libs/linux/x86_64`
 
 ## Building for Windows
-1. Install [MSYS2](https://www.msys2.org) and add `<msys2 path>\usr\bin` to your `PATH` environment variable.
-2. Add `PYTHON_BIN_PATH` environment variable that point to your python.exe.
-3. Check that MSVC compiler and Windows SDK is installed, and refer to [Bazel documentation](https://docs.bazel.build/versions/main/windows.html#build-c-with-msvc) for setting Bazel related environment variables.
+1. Install MSVC compiler and Windows SDK, then setting `BAZEL_VC` environment variable pointing to your VC installation.
+
+    Refer to [Bazel documentation](https://bazel.build/configure/windows#build_cpp) for more details.
+2. Bash is required for building MediaPipe, make sure `bash` is in `PATH` or setting `BAZEL_SH` environment variable pointing to it.
+
+    Bash can be installed from [Git for Windows](https://gitforwindows.org) or [MSYS2](https://www.msys2.org)
+3. Install OpenCV and configure `mediapipe` workspace:
+    - Modify `mediapipe/WORKSPACE` for `path` under `windows_opencv` if OpenCV is not installed on `C:\opencv`
+    - Modify `OPENCV_VERSION` in `mediapipe/thrid_party/opencv_windows.BUILD` if OpenCV version is not `3.4.10`
+
+    Refer to [MediaPipe documentation](https://developers.google.com/mediapipe/framework/getting_started/install#installing_on_windows) for more details.
 4. Run:
 
     ```
     build.py desktop
     ```
-    to build desktop library, generated file will be located in `mediapipe/bazel-bin/GDMP/desktop`, copy the library to your project's `addons/GDMP/libs/windows/x86_64`
+
+    to build desktop library, then copy `mediapipe/bazel-bin/GDMP/desktop/GDMP.dll` to your Godot project's `addons/GDMP/libs/windows/x86_64`
 
     (Optional) also copy `opencv_world3410.dll` to the project and add it as GDNative library dependencies if OpenCV is used in calculators.
 
