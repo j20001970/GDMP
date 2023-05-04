@@ -32,7 +32,11 @@ desktop_commands = {
         '--copt', '-DEGL_NO_X11',
         '--copt', '-fPIC',
     ],
-    'win32': ['--define', 'MEDIAPIPE_DISABLE_GPU=1']
+    'win32': [
+        '--action_env',
+        'PYTHON_BIN_PATH=%s' % sys.executable.replace('\\', '\\\\'),
+        '--define', 'MEDIAPIPE_DISABLE_GPU=1'
+    ],
 }
 
 parser = ArgumentParser()
