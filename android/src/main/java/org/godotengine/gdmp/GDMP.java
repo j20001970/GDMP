@@ -68,4 +68,12 @@ public class GDMP extends GodotPlugin {
         signals.add(new SignalInfo("camera_permission_denied"));
         return signals;
     }
+
+    @NonNull
+    @Override
+    public Set<String> getPluginGDExtensionLibrariesPaths() {
+        ArraySet paths = new ArraySet<String>();
+        paths.add("addons/GDMP/GDMP.gdextension");
+        return paths;
+    }
 }

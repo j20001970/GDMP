@@ -25,17 +25,14 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 2. Copy or symlink godot-lib to `android/libs` as dependency.
 
     godot-lib can be obtained from [godotengine.org](https://godotengine.org/download) or from your Godot project's `android/build/libs` if Android build template is installed.
-3. Build GDMP AAR using Android Studio or gradlew, copy the release variant AAR located in `android/build/outputs/aar` to your Godot project's `android/plugins` directory.
-4. Copy `plugins/GDMP.gdap` to your Godot project's `android/plugins` directory.
-5. Run:
+3. Run:
 
     ```
     build.py android
     ```
 
-    to build android library, then copy `mediapipe/bazel-bin/GDMP/android/libGDMP.so` to your Godot project's `addons/GDMP/libs/android/arm64-v8a`
-
-    (Optional) also copy `libopencv_java3.so` to the project and add it as GDNative library dependencies if OpenCV is used in calculators.
+    to build android library, then copy `mediapipe/bazel-bin/GDMP/android/libGDMP.so` and `libopencv_java3.so` to `android/src/main/jniLibs/arm64-v8a`
+4. Build GDMP aar with Android Studio or Gradle using the `android` project, then copy the built `release` variant aar located in `android/build/outputs/aar` and `plugins/GDMP.gdap` to your Godot project's `android/plugins`
 
 ## Building for iOS
 1. Comment out `macos` and `ios` part of select() in `srcs` and `deps` attributes from `resource_util` in `mediapipe/mediapipe/util/BUILD`, this step is required before the ambiguous match problem is solved.

@@ -1,0 +1,14 @@
+[configuration]
+
+entry_symbol = "mediapipe_library_init"
+
+[libraries]
+
+android.debug.arm32 = "res://addons/GDMP/libs/armeabi-v7a/libGDMP.so"
+android.release.arm32 = "res://addons/GDMP/libs/armeabi-v7a/libGDMP.so"
+android.debug.arm64 = "res://addons/GDMP/libs/arm64-v8a/libGDMP.so"
+android.release.arm64 = "res://addons/GDMP/libs/arm64-v8a/libGDMP.so"
+android.debug.x86_32 = "res://addons/GDMP/libs/x86/libGDMP.so"
+android.release.x86_32 = "res://addons/GDMP/libs/x86/libGDMP.so"
+android.debug.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.so"
+android.release.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.so"
