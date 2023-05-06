@@ -36,6 +36,7 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.guava:guava:27.0.1-android'
     compileOnly fileTree(dir: "libs", includes: ["godot-lib.*.aar"])
     debugCompileOnly fileTree(dir: "libs/debug", includes: ["godot-lib.*.aar"])
     releaseCompileOnly fileTree(dir: "libs/release", includes: ["godot-lib.*.aar"])
