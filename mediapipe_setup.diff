@@ -22,24 +22,3 @@ diff --git a/WORKSPACE b/WORKSPACE
  # Protobuf expects an //external:python_headers target
  bind(
      name = "python_headers",
-diff --git a/mediapipe/util/BUILD b/mediapipe/util/BUILD
---- a/mediapipe/util/BUILD
-+++ b/mediapipe/util/BUILD
-@@ -190,6 +190,7 @@ cc_library(
-         "resource_util_internal.h",
-     ] + select({
-         "//conditions:default": ["resource_util_default.cc"],
-+        "//GDMP:godot": [],
-         "//mediapipe:android": ["resource_util_android.cc"],
-         "//mediapipe/framework:android_no_jni": ["resource_util_loonix.cc"],
-         "//mediapipe:ios": ["resource_util_apple.cc"],
-@@ -223,6 +224,9 @@ cc_library(
-         "//conditions:default": [
-             "@com_google_absl//absl/flags:flag",
-         ],
-+        "//GDMP:godot": [
-+            "//GDMP/util:resource_util_godot",
-+        ],
-         "//mediapipe:android": [
-             "//mediapipe/util/android:asset_manager_util",
-             "//mediapipe/util/android/file/base",

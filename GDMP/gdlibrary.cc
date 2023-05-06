@@ -14,6 +14,7 @@
 #include "GDMP/proto/landmark.h"
 #include "GDMP/proto/location_data.h"
 #include "GDMP/proto/rect.h"
+#include "GDMP/util/resource_util.h"
 
 using namespace godot;
 
@@ -63,4 +64,6 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	// Rect
 	register_class<Rect>();
 	register_class<NormalizedRect>();
+	// ResourceProvider
+	set_resource_provider();
 }
