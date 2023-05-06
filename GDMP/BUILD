@@ -57,6 +57,7 @@ cc_library(
         "//GDMP/proto:location_data",
         "//GDMP/proto:rasterization",
         "//GDMP/proto:rect",
+        "//GDMP/util:resource_util",
         "@godot-cpp//:godot",
     ] + CALCULATORS,
     alwayslink = 1,
