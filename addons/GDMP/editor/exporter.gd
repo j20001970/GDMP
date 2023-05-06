@@ -1,15 +1,15 @@
 extends EditorExportPlugin
 
-func _export_begin(features : PackedStringArray, is_debug : bool, path : String, flags : int) -> void:
-	var exports : PackedStringArray = find_files("res://", ["binarypb", "pbtxt", "tflite"])
+func _export_begin(features: PackedStringArray, is_debug: bool, path: String, flags: int) -> void:
+	var exports: PackedStringArray = find_files("res://", ["binarypb", "pbtxt", "tflite"])
 	for file in exports:
-		var f = FileAccess.open(file, FileAccess.READ)
+		var f: FileAccess = FileAccess.open(file, FileAccess.READ)
 		if not f.is_open():
 			printerr("GDMP exporter: Failed to read %s: %d" % [file, f.get_open_error()])
 			continue
 		add_file(file, f.get_buffer(f.get_length()), false)
 
-func find_files(path : String, extenstions : PackedStringArray) -> PackedStringArray:
+func find_files(path: String, extenstions: PackedStringArray) -> PackedStringArray:
 	var files : PackedStringArray = []
 	var dir : DirAccess = DirAccess.open(path)
 	if not dir:
@@ -29,3 +29,6 @@ func find_files(path : String, extenstions : PackedStringArray) -> PackedStringA
 				files.append(next)
 		dir.list_dir_end()
 	return files
+
+func _get_name() -> String:
+	return "GDMP"
