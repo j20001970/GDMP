@@ -9,18 +9,14 @@ cc_library(
 )
 
 cc_library(
-    name = "resource_util_godot",
-    srcs = ["resource_util_godot.cc"],
+    name = "resource_util",
+    srcs = ["resource_util.cc"],
+    hdrs = ["resource_util.h"],
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/framework/port:status",
-        "//mediapipe/framework/port:statusor",
-        "@com_google_absl//absl/strings",
+        "//mediapipe/util:resource_util",
+        "//mediapipe/util:resource_util_custom",
         "@godot-cpp//:godot",
-    ] + select({
-        "//mediapipe:android": [
-            "//mediapipe/util/android/file/base",
-        ],
-        "//conditions:default": [],
-    }),
+    ],
 )

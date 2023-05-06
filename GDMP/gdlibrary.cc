@@ -16,6 +16,7 @@
 #include "GDMP/proto/landmark.h"
 #include "GDMP/proto/location_data.h"
 #include "GDMP/proto/rect.h"
+#include "GDMP/util/resource_util.h"
 
 using namespace godot;
 
@@ -62,6 +63,8 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	// ResourceFormatLoader
 	ClassDB::register_class<ResourceFormatLoaderMediaPipeGraphConfig>();
 	ResourceFormatLoaderMediaPipeGraphConfig::register_loader();
+	// ResourceProvider
+	set_resource_provider();
 }
 
 void uninitialize_mediapipe_module(ModuleInitializationLevel p_level) {
