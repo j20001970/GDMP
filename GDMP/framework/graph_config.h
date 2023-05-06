@@ -1,8 +1,11 @@
 #ifndef GDMP_GRAPH_CONFIG
 #define GDMP_GRAPH_CONFIG
 
+#include "godot_cpp/classes/global_constants.hpp"
+#include "godot_cpp/classes/ref.hpp"
 #include "godot_cpp/classes/resource.hpp"
 #include "godot_cpp/classes/resource_format_loader.hpp"
+#include "godot_cpp/variant/packed_byte_array.hpp"
 #include "godot_cpp/variant/packed_string_array.hpp"
 #include "godot_cpp/variant/string.hpp"
 #include "godot_cpp/variant/string_name.hpp"
@@ -43,10 +46,16 @@ class MediaPipeGraphConfig : public Resource {
 class ResourceFormatLoaderMediaPipeGraphConfig : public ResourceFormatLoader {
 		GDCLASS(ResourceFormatLoaderMediaPipeGraphConfig, ResourceFormatLoader)
 
+	private:
+		static Ref<ResourceFormatLoaderMediaPipeGraphConfig> singleton;
+
 	protected:
 		static void _bind_methods();
 
 	public:
+		static void register_loader();
+		static void unregister_loader();
+
 		virtual Variant _load(const String &path, const String &original_path, bool use_sub_threads, int32_t cache_mode);
 		virtual PackedStringArray _get_recognized_extensions();
 		virtual bool _handles_type(const StringName &type);

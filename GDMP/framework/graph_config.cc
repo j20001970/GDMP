@@ -3,6 +3,7 @@
 #include <string>
 
 #include "godot_cpp/classes/file_access.hpp"
+#include "godot_cpp/classes/resource_loader.hpp"
 #include "godot_cpp/core/class_db.hpp"
 
 #include "mediapipe/framework/port/parse_text_proto.h"
@@ -77,7 +78,20 @@ mediapipe::CalculatorGraphConfig MediaPipeGraphConfig::get_config() {
 	return config;
 }
 
-void ResourceFormatLoaderMediaPipeGraphConfig::_bind_methods() {
+void ResourceFormatLoaderMediaPipeGraphConfig::_bind_methods() {}
+
+void ResourceFormatLoaderMediaPipeGraphConfig::register_loader() {
+	if (singleton.is_null()) {
+		singleton.instantiate();
+		ResourceLoader::get_singleton()->add_resource_format_loader(singleton);
+	}
+}
+
+void ResourceFormatLoaderMediaPipeGraphConfig::unregister_loader() {
+	if (singleton.is_valid()) {
+		ResourceLoader::get_singleton()->remove_resource_format_loader(singleton);
+		singleton.unref();
+	}
 }
 
 Variant ResourceFormatLoaderMediaPipeGraphConfig::_load(const String &path, const String &original_path, bool use_sub_threads, int32_t cache_mode) {
@@ -107,3 +121,5 @@ bool ResourceFormatLoaderMediaPipeGraphConfig::_handles_type(const StringName &t
 String ResourceFormatLoaderMediaPipeGraphConfig::_get_resource_type(const String &path) {
 	return "Resource";
 }
+
+Ref<ResourceFormatLoaderMediaPipeGraphConfig> ResourceFormatLoaderMediaPipeGraphConfig::singleton = Ref<ResourceFormatLoaderMediaPipeGraphConfig>();

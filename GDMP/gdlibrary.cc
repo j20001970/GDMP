@@ -19,8 +19,6 @@
 
 using namespace godot;
 
-static Ref<ResourceFormatLoaderMediaPipeGraphConfig> graph_config_loader;
-
 void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
@@ -63,16 +61,14 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<NormalizedRect>();
 	// ResourceFormatLoader
 	ClassDB::register_class<ResourceFormatLoaderMediaPipeGraphConfig>();
-	graph_config_loader.instantiate();
-	ResourceLoader::get_singleton()->add_resource_format_loader(graph_config_loader);
+	ResourceFormatLoaderMediaPipeGraphConfig::register_loader();
 }
 
 void uninitialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
 
-	ResourceLoader::get_singleton()->remove_resource_format_loader(graph_config_loader);
-	graph_config_loader.unref();
+	ResourceFormatLoaderMediaPipeGraphConfig::unregister_loader();
 }
 
 extern "C" GDExtensionBool GDE_EXPORT mediapipe_library_init(
