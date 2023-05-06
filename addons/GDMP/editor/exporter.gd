@@ -10,6 +10,11 @@ func _export_begin(features: PoolStringArray, is_debug: bool, path: String, flag
 			continue
 		add_file(file, f.get_buffer(f.get_len()), false)
 
+func _export_file(path: String, type: String, features: PoolStringArray) -> void:
+	if path.get_file() == "GDMP.gdnlib":
+		if features.has("android"):
+			skip()
+
 func find_files(path: String, extenstions: PoolStringArray) -> PoolStringArray:
 	var files: PoolStringArray = []
 	var dir: Directory = Directory.new()
