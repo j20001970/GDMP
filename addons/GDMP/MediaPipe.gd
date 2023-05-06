@@ -6,46 +6,46 @@ enum {
 }
 
 # Framework
-const Graph : NativeScript = preload("framework/Graph.gdns")
-const GraphConfig : NativeScript = preload("framework/GraphConfig.gdns")
-const Packet : NativeScript = preload("framework/Packet.gdns")
+const Graph: NativeScript = preload("framework/Graph.gdns")
+const GraphConfig: NativeScript = preload("framework/GraphConfig.gdns")
+const Packet: NativeScript = preload("framework/Packet.gdns")
 
 # GPU
-const GPUHelper : NativeScript = preload("gpu/GPUHelper.gdns")
-const GPUResources : NativeScript = preload("gpu/GPUResources.gdns")
+const GPUHelper: NativeScript = preload("gpu/GPUHelper.gdns")
+const GPUResources: NativeScript = preload("gpu/GPUResources.gdns")
 
 # I/O
-const CameraHelper : NativeScript = preload("io/CameraHelper.gdns")
+const CameraHelper: NativeScript = preload("io/CameraHelper.gdns")
 
 # Classification
-const Classification : NativeScript = preload("proto/Classification.gdns")
-const ClassificationList : NativeScript = preload("proto/ClassificationList.gdns")
-const ClassificationListCollection : NativeScript = preload("proto/ClassificationListCollection.gdns")
+const Classification: NativeScript = preload("proto/Classification.gdns")
+const ClassificationList: NativeScript = preload("proto/ClassificationList.gdns")
+const ClassificationListCollection: NativeScript = preload("proto/ClassificationListCollection.gdns")
 
 # Detection
-const AssociatedDetection : NativeScript = preload("proto/AssociatedDetection.gdns")
-const Detection : NativeScript = preload("proto/Detection.gdns")
-const DetectionList : NativeScript = preload("proto/DetectionList.gdns")
+const AssociatedDetection: NativeScript = preload("proto/AssociatedDetection.gdns")
+const Detection: NativeScript = preload("proto/Detection.gdns")
+const DetectionList: NativeScript = preload("proto/DetectionList.gdns")
 
 # Landmark
-const Landmark : NativeScript = preload("proto/Landmark.gdns")
-const LandmarkList : NativeScript = preload("proto/LandmarkList.gdns")
-const LandmarkListCollection : NativeScript = preload("proto/LandmarkListCollection.gdns")
-const NormalizedLandmark : NativeScript = preload("proto/NormalizedLandmark.gdns")
-const NormalizedLandmarkList : NativeScript = preload("proto/NormalizedLandmarkList.gdns")
-const NormalizedLandmarkListCollection : NativeScript = preload("proto/NormalizedLandmarkListCollection.gdns")
+const Landmark: NativeScript = preload("proto/Landmark.gdns")
+const LandmarkList: NativeScript = preload("proto/LandmarkList.gdns")
+const LandmarkListCollection: NativeScript = preload("proto/LandmarkListCollection.gdns")
+const NormalizedLandmark: NativeScript = preload("proto/NormalizedLandmark.gdns")
+const NormalizedLandmarkList: NativeScript = preload("proto/NormalizedLandmarkList.gdns")
+const NormalizedLandmarkListCollection: NativeScript = preload("proto/NormalizedLandmarkListCollection.gdns")
 
 # LocationData
-const BoundingBox : NativeScript = preload("proto/BoundingBox.gdns")
-const RelativeBoundingBox : NativeScript = preload("proto/RelativeBoundingBox.gdns")
-const BinaryMask : NativeScript = preload("proto/BinaryMask.gdns")
-const RelativeKeypoint : NativeScript = preload("proto/RelativeKeypoint.gdns")
-const LocationData : NativeScript = preload("proto/LocationData.gdns")
+const BoundingBox: NativeScript = preload("proto/BoundingBox.gdns")
+const RelativeBoundingBox: NativeScript = preload("proto/RelativeBoundingBox.gdns")
+const BinaryMask: NativeScript = preload("proto/BinaryMask.gdns")
+const RelativeKeypoint: NativeScript = preload("proto/RelativeKeypoint.gdns")
+const LocationData: NativeScript = preload("proto/LocationData.gdns")
 
 # Rasterization
-const Interval : NativeScript = preload("proto/Interval.gdns")
-const Rasterization : NativeScript = preload("proto/Rasterization.gdns")
+const Interval: NativeScript = preload("proto/Interval.gdns")
+const Rasterization: NativeScript = preload("proto/Rasterization.gdns")
 
 # Rect
-const Rect : NativeScript = preload("proto/Rect.gdns")
-const NormalizedRect : NativeScript = preload("proto/NormalizedRect.gdns")
+const Rect: NativeScript = preload("proto/Rect.gdns")
+const NormalizedRect: NativeScript = preload("proto/NormalizedRect.gdns")
