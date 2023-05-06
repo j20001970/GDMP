@@ -14,9 +14,9 @@ targets = {
 }
 
 target_commands = {
-    'desktop': ['-c', 'opt', '--define', 'GODOT=1'],
+    'desktop': ['-c', 'opt'],
     'android': [
-        '-c', 'opt', '--define', 'GODOT=1',
+        '-c', 'opt',
         '--crosstool_top=//external:android/crosstool',
         '--host_crosstool_top=@bazel_tools//tools/cpp:toolchain',
         '--copt', '-fPIC',
