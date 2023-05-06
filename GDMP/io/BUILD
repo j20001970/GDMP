@@ -19,6 +19,7 @@ cc_library(
     srcs = ["camera_helper_android.cc"],
     hdrs = ["camera_helper.h"],
     deps = [
+        "//GDMP/android:jni",
         "//GDMP/framework:graph",
         "//GDMP/framework:packet",
         "//mediapipe/gpu:gl_texture_buffer",

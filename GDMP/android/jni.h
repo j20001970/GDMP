@@ -3,4 +3,6 @@
 
 #include <jni.h>
 
+extern JavaVM *jvm;
+
 #endif

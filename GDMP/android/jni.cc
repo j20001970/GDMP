@@ -3,6 +3,14 @@
 #include "mediapipe/java/com/google/mediapipe/framework/jni/jni_util.h"
 #include "mediapipe/util/android/asset_manager_util.h"
 
+extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+	JNIEnv *env;
+	if (vm->GetEnv((void **)&env, JNI_VERSION_1_6) != JNI_OK)
+		return JNI_ERR;
+	jvm = vm;
+	return JNI_VERSION_1_6;
+}
+
 #define ANDROID_ASSET_UTIL_METHOD(METHOD_NAME) \
 	Java_com_google_mediapipe_framework_AndroidAssetUtil_##METHOD_NAME
 

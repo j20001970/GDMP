@@ -1,7 +1,5 @@
 #include "camera_helper.h"
 
-#include <jni.h>
-
 #include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/classes/os.hpp"
 #include "godot_cpp/classes/time.hpp"
@@ -13,9 +11,8 @@
 #include "mediapipe/gpu/gpu_buffer.h"
 #include "mediapipe/gpu/gpu_buffer_format.h"
 
+#include "GDMP/android/jni.h"
 #include "GDMP/framework/packet.h"
-
-static JavaVM *jvm;
 
 class MediaPipeCameraHelper::Impl {
 	private:
@@ -31,16 +28,10 @@ class MediaPipeCameraHelper::Impl {
 			jint res = jvm->GetEnv((void **)env, JNI_VERSION_1_6);
 			if (res == JNI_EDETACHED) {
 				res = jvm->AttachCurrentThread(env, NULL);
-				if (res == JNI_OK)
-					return true;
-				else {
-					*env = NULL;
-					ERR_FAIL_COND_V(res != JNI_OK, false);
-					return false;
-				}
+				ERR_FAIL_COND_V(res != JNI_OK, false);
+				return true;
 			}
-			else
-				return false;
+			return false;
 		}
 
 	public:
@@ -156,14 +147,6 @@ class MediaPipeCameraHelper::Impl {
 };
 
 jclass MediaPipeCameraHelper::Impl::camera_class = nullptr;
-
-extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
-	JNIEnv *env;
-	if (vm->GetEnv((void **)&env, JNI_VERSION_1_6) != JNI_OK)
-		return JNI_ERR;
-	jvm = vm;
-	return JNI_VERSION_1_6;
-}
 
 extern "C" JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nativeOnNewFrame(
 		JNIEnv *pEnv, jobject jCaller, jlong cppCaller, jobject frame, jint name, jint width, jint height) {
