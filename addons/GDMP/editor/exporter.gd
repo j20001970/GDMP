@@ -12,7 +12,7 @@ func _export_begin(features: PoolStringArray, is_debug: bool, path: String, flag
 
 func _export_file(path: String, type: String, features: PoolStringArray) -> void:
 	if path.get_file() == "GDMP.gdnlib":
-		if features.has("android"):
+		if features.has("Android"):
 			skip()
 
 func find_files(path: String, extenstions: PoolStringArray) -> PoolStringArray:
