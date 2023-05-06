@@ -9,6 +9,11 @@ func _export_begin(features: PackedStringArray, is_debug: bool, path: String, fl
 			continue
 		add_file(file, f.get_buffer(f.get_length()), false)
 
+func _export_file(path: String, type: String, features: PackedStringArray) -> void:
+	if path.get_file() == "GDMP.gdextension":
+		if features.has("android"):
+			skip()
+
 func find_files(path: String, extenstions: PackedStringArray) -> PackedStringArray:
 	var files : PackedStringArray = []
 	var dir : DirAccess = DirAccess.open(path)
