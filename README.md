@@ -52,7 +52,7 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
     build.py desktop
     ```
 
-    to build desktop library, then copy `mediapipe/bazel-bin/GDMP/desktop/libGDMP.so` to your Godot project's `addons/GDMP/libs/linux/x86_64`
+    to build desktop library, then copy `mediapipe/bazel-bin/GDMP/desktop/libGDMP.so` to your Godot project's `addons/GDMP/libs/x86_64`
 
 ## Building for Windows
 1. Install MSVC compiler and Windows SDK, then setting `BAZEL_VC` environment variable pointing to your VC installation.
@@ -72,7 +72,7 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
     build.py desktop
     ```
 
-    to build desktop library, then copy `mediapipe/bazel-bin/GDMP/desktop/GDMP.dll` to your Godot project's `addons/GDMP/libs/windows/x86_64`
+    to build desktop library, then copy `mediapipe/bazel-bin/GDMP/desktop/GDMP.dll` to your Godot project's `addons/GDMP/libs/x86_64`
 
     (Optional) also copy `opencv_world3410.dll` to the project and add it as GDNative library dependencies if OpenCV is used in calculators.
 
