@@ -19,6 +19,7 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 4. Run `setup.py`, the script will apply necessary changes and setup source code to `mediapipe` workspace.
 5. Add calculator dependencies in `GDMP/GDMP.bzl`
 6. Copy `addons` to your Godot project's root directory.
+7. (Recommended) Set `GODOT_PROJECT` environment variable that points to your Godot project, the build script will try to automate copy process if it is detected.
 
 ## Building for Android
 1. Refer to [Prerequisite](https://developers.google.com/mediapipe/framework/getting_started/android#prerequisite) section for Java and Android SDK & NDK setup.
