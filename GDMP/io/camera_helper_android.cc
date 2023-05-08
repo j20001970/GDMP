@@ -14,9 +14,8 @@ class CameraHelper::Impl {
 	private:
 		static jclass camera_class;
 
+		CameraHelper *camera_helper;
 		Object *android_plugin;
-		Ref<Graph> graph;
-		String stream_name;
 		jobject camera = nullptr;
 		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
 
@@ -33,6 +32,7 @@ class CameraHelper::Impl {
 					"camera_permission_granted", camera_helper, "emit_signal", Array::make("permission_result", true));
 			android_plugin->connect(
 					"camera_permission_denied", camera_helper, "emit_signal", Array::make("permission_result", false));
+			this->camera_helper = camera_helper;
 		}
 
 		~Impl() {}
@@ -65,13 +65,7 @@ class CameraHelper::Impl {
 			OS::get_singleton()->request_permission("CAMERA");
 		}
 
-		void set_graph(Ref<Graph> graph, String stream_name) {
-			this->graph = graph;
-			this->stream_name = stream_name;
-		}
-
 		void start(int index, Vector2 size) {
-			ERR_FAIL_COND(graph.is_null());
 			ERR_FAIL_COND(!permission_granted());
 			ERR_FAIL_COND(gpu_resources == nullptr);
 			close();
@@ -121,7 +115,7 @@ class CameraHelper::Impl {
 			Ref<Packet> packet = Packet::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame));
 			size_t timestamp = OS::get_singleton()->get_ticks_usec();
 			packet->set_timestamp(timestamp);
-			graph->add_packet(stream_name, packet);
+			camera_helper->emit_signal("new_frame", packet);
 		}
 };
 
@@ -147,10 +141,6 @@ bool CameraHelper::permission_granted() {
 
 void CameraHelper::request_permission() {
 	impl->request_permission();
-}
-
-void CameraHelper::set_graph(Ref<Graph> graph, String stream_name) {
-	impl->set_graph(graph, stream_name);
 }
 
 void CameraHelper::set_mirrored(bool value) {}

@@ -4,7 +4,6 @@ cc_library(
     hdrs = ["camera_helper.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//GDMP/framework:graph",
         "//GDMP/gpu:gpu_resources",
         "@godot-cpp//:godot",
     ] + select({
@@ -19,8 +18,8 @@ cc_library(
     srcs = ["camera_helper_android.cc"],
     hdrs = ["camera_helper.h"],
     deps = [
-        "//GDMP/framework:graph",
         "//GDMP/framework:packet",
+        "//GDMP/gpu:gpu_resources",
         "//mediapipe/gpu:gl_texture_buffer",
         "//mediapipe/gpu:gpu_buffer",
         "//mediapipe/gpu:gpu_buffer_format",
@@ -33,8 +32,8 @@ cc_library(
     srcs = ["camera_helper_cv.cc"],
     hdrs = ["camera_helper.h"],
     deps = [
-        "//GDMP/framework:graph",
         "//GDMP/framework:packet",
+        "//GDMP/gpu:gpu_resources",
         "//mediapipe/framework/formats:image_frame",
         "//mediapipe/framework/formats:image_frame_opencv",
         "//mediapipe/framework/port:opencv_core",
@@ -60,7 +59,7 @@ objc_library(
         "CoreVideo",
     ],
     deps = [
-        "//GDMP/framework:graph",
         "//GDMP/framework:packet",
+        "//GDMP/gpu:gpu_resources",
     ],
 )

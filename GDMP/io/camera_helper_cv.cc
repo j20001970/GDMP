@@ -18,8 +18,7 @@
 
 class CameraHelper::Impl : public cv::VideoCapture {
 	private:
-		String stream_name;
-		Ref<Graph> graph;
+		CameraHelper *camera_helper;
 		bool flip;
 		bool grab_frames;
 #if !MEDIAPIPE_DISABLE_GPU
@@ -28,11 +27,8 @@ class CameraHelper::Impl : public cv::VideoCapture {
 		std::thread thread;
 
 	public:
-		Impl() {}
-
-		void set_graph(Ref<Graph> graph, String stream_name) {
-			this->graph = graph;
-			this->stream_name = stream_name;
+		Impl(CameraHelper *camera_helper) {
+			this->camera_helper = camera_helper;
 		}
 
 		void set_flip(bool value) {
@@ -40,7 +36,6 @@ class CameraHelper::Impl : public cv::VideoCapture {
 		}
 
 		void start(int index, Vector2 size) {
-			ERR_FAIL_COND(graph.is_null());
 			close();
 			open(index);
 			ERR_FAIL_COND(!isOpened());
@@ -80,7 +75,7 @@ class CameraHelper::Impl : public cv::VideoCapture {
 #endif
 						packet->make_image_frame(std::move(input_frame));
 					packet->set_timestamp(frame_timestamp_us);
-					graph->add_packet(stream_name, packet);
+					camera_helper->emit_signal("new_frame", packet);
 				}
 			});
 		}
@@ -109,7 +104,7 @@ CameraHelper::CameraHelper() = default;
 CameraHelper::~CameraHelper() = default;
 
 void CameraHelper::_init() {
-	impl = std::make_unique<Impl>();
+	impl = std::make_unique<Impl>(this);
 }
 
 bool CameraHelper::permission_granted() {
@@ -117,10 +112,6 @@ bool CameraHelper::permission_granted() {
 }
 
 void CameraHelper::request_permission() {}
-
-void CameraHelper::set_graph(Ref<Graph> graph, String stream_name) {
-	impl->set_graph(graph, stream_name);
-}
 
 void CameraHelper::set_mirrored(bool value) {
 	impl->set_flip(value);

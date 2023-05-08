@@ -11,16 +11,13 @@
 
 @class OutputDelegate;
 @interface OutputDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
-@property(nonatomic) Ref<Graph> graph;
-@property(nonatomic) String stream_name;
+@property(nonatomic) CameraHelper *camera_helper;
 @end
 
 @implementation OutputDelegate
-- (instancetype)init:(Ref<Graph>)graph
-    StreamName:(String)stream_name{
+- (instancetype)init:(CameraHelper *)camera_helper {
     self = [super init];
-    self.graph = graph;
-    self.stream_name = stream_name;
+    self.camera_helper = camera_helper;
   return self;
 }
 - (void)captureOutput:(AVCaptureOutput*)captureOutput
@@ -29,7 +26,7 @@
     CVPixelBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     Ref<Packet> packet = Packet::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(imageBuffer));
     packet->set_timestamp(OS::get_singleton()->get_ticks_usec());
-    self.graph->add_packet(self.stream_name, packet);
+    self.camera_helper->emit_signal("new_frame", packet);
 }
 @end
 
@@ -42,10 +39,11 @@ class CameraHelper::Impl {
         dispatch_queue_t delegateQueue;
 
     public:
-        Impl() {
+        Impl(CameraHelper *camera_helper) {
             dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(
                 DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, /*relative_priority=*/0);
             delegateQueue = dispatch_queue_create("org.godotengine.gdmp.delegateQueue", qosAttribute);
+            delegate = [[OutputDelegate alloc] init:camera_helper];
         }
 
         ~Impl() {}
@@ -60,11 +58,6 @@ class CameraHelper::Impl {
                                      completionHandler:^(BOOL granted) {
                 camera_helper->emit_signal("permission_result", granted);
             }];
-        }
-
-        void set_graph(Ref<Graph> graph, String stream_name) {
-            delegate = [[OutputDelegate alloc] init:graph
-            StreamName:stream_name];
         }
 
         void start(int index, Vector2 size) {
@@ -119,7 +112,7 @@ CameraHelper::CameraHelper() = default;
 CameraHelper::~CameraHelper() = default;
 
 void CameraHelper::_init() {
-    impl = std::make_unique<Impl>();
+    impl = std::make_unique<Impl>(this);
 }
 
 bool CameraHelper::permission_granted() {
@@ -130,12 +123,7 @@ void CameraHelper::request_permission() {
     impl->request_permission(this);
 }
 
-void CameraHelper::set_graph(Ref<Graph> graph, String stream_name) {
-    impl->set_graph(graph, stream_name);
-}
-
-void CameraHelper::set_mirrored(bool value) {
-}
+void CameraHelper::set_mirrored(bool value) {}
 
 void CameraHelper::start(int index, Vector2 size) {
     impl->start(index, size);
