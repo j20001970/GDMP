@@ -1,4 +1,19 @@
 cc_library(
+    name = "image",
+    srcs = ["image.cc"],
+    hdrs = ["image.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":packet",
+        "//mediapipe/framework/formats:image",
+        "@godot-cpp//:godot",
+    ] + select({
+        "//mediapipe/gpu:disable_gpu": [],
+        "//conditions:default": ["//mediapipe/gpu:gpu_buffer"],
+    }),
+)
+
+cc_library(
     name = "graph",
     srcs = ["graph.cc"],
     hdrs = ["graph.h"],

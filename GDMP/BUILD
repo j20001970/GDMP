@@ -9,6 +9,7 @@ cc_library(
     deps = [
         "//GDMP/framework:graph",
         "//GDMP/framework:graph_config",
+        "//GDMP/framework:image",
         "//GDMP/framework:packet",
         "//GDMP/gpu:gpu_helper",
         "//GDMP/gpu:gpu_resources",

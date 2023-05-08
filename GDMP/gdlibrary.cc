@@ -7,6 +7,7 @@
 
 #include "GDMP/framework/graph.h"
 #include "GDMP/framework/graph_config.h"
+#include "GDMP/framework/image.h"
 #include "GDMP/framework/packet.h"
 #include "GDMP/gpu/gpu_helper.h"
 #include "GDMP/gpu/gpu_resources.h"
@@ -27,6 +28,7 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	// Framework
 	ClassDB::register_class<MediaPipeGraph>();
 	ClassDB::register_class<MediaPipeGraphConfig>();
+	ClassDB::register_class<MediaPipeImage>();
 	ClassDB::register_class<MediaPipePacket>();
 	// GPU
 	ClassDB::register_class<MediaPipeGPUHelper>();
