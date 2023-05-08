@@ -18,9 +18,8 @@ class MediaPipeCameraHelper::Impl {
 	private:
 		static jclass camera_class;
 
+		MediaPipeCameraHelper *camera_helper;
 		Object *android_plugin;
-		Ref<MediaPipeGraph> graph;
-		String stream_name;
 		jobject camera = nullptr;
 		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
 
@@ -46,6 +45,7 @@ class MediaPipeCameraHelper::Impl {
 			ERR_FAIL_COND(android_plugin == nullptr);
 			Signal(android_plugin, "camera_permission_granted").connect(Callable((Object *)camera_helper, "emit_signal").bindv(Array::make("permission_result", true)));
 			Signal(android_plugin, "camera_permission_denied").connect(Callable((Object *)camera_helper, "emit_signal").bindv(Array::make("permission_result", false)));
+			this->camera_helper = camera_helper;
 		}
 
 		~Impl() {}
@@ -81,13 +81,7 @@ class MediaPipeCameraHelper::Impl {
 			OS::get_singleton()->request_permission("CAMERA");
 		}
 
-		void set_graph(Ref<MediaPipeGraph> graph, String stream_name) {
-			this->graph = graph;
-			this->stream_name = stream_name;
-		}
-
 		void start(int index, Vector2 size) {
-			ERR_FAIL_COND(graph.is_null());
 			ERR_FAIL_COND(!permission_granted());
 			ERR_FAIL_COND(gpu_resources == nullptr);
 			close();
@@ -142,7 +136,7 @@ class MediaPipeCameraHelper::Impl {
 			Ref<MediaPipePacket> packet = memnew(MediaPipePacket(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame)));
 			size_t timestamp = Time::get_singleton()->get_ticks_usec();
 			packet->set_timestamp(timestamp);
-			graph->add_packet(stream_name, packet);
+			camera_helper->emit_signal("new_frame", packet);
 		}
 };
 
@@ -166,10 +160,6 @@ bool MediaPipeCameraHelper::permission_granted() {
 
 void MediaPipeCameraHelper::request_permission() {
 	impl->request_permission();
-}
-
-void MediaPipeCameraHelper::set_graph(Ref<MediaPipeGraph> graph, String stream_name) {
-	impl->set_graph(graph, stream_name);
 }
 
 void MediaPipeCameraHelper::set_mirrored(bool value) {}

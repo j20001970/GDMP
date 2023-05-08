@@ -113,23 +113,25 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 
     ```gdscript
     var camera_helper: MediaPipeCameraHelper = MediaPipeCameraHelper.new()
-    camera_helper.set_graph(graph, "input_video")
+    camera_helper.new_frame.connect(self._on_camera_new_frame)
     graph.start()
     if camera_helper.permission_granted():
         camera_helper.start(MediaPipeCameraHelper.FACING_FRONT, Vector2(640, 480))
     else:
-        camera_helper.connect("permission_result", self._on_permission_result)
+        camera_helper.permission_result.connect(self._on_permission_result)
         camera_helper.request_permission()
     ```
-7. To handle camera permission result callback:
+7. To handle camera permission result and new frame callback:
 
     ```gdscript
-    func _on_permission_result(granted: bool):
+    func _on_permission_result(granted: bool) -> void:
         if granted:
             print("permission granted")
             camera_helper.start(MediaPipeCameraHelper.FACING_FRONT, Vector2(640, 480))
         else:
             print("permission denied")
+    func _on_camera_new_frame(packet: MediaPipePacket) -> void:
+        graph.add_packet("input_video", packet)
     ```
 
 ## Disclaimer

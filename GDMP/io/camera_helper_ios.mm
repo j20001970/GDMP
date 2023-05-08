@@ -11,16 +11,13 @@
 
 @class OutputDelegate;
 @interface OutputDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
-@property(nonatomic) Ref<MediaPipeGraph> graph;
-@property(nonatomic) String stream_name;
+@property(nonatomic) MediaPipeCameraHelper *camera_helper;
 @end
 
 @implementation OutputDelegate
-- (instancetype)init:(Ref<MediaPipeGraph>)graph
-    StreamName:(String)stream_name{
+- (instancetype)init:(MediaPipeCameraHelper *)camera_helper {
     self = [super init];
-    self.graph = graph;
-    self.stream_name = stream_name;
+    self.camera_helper = camera_helper;
   return self;
 }
 - (void)captureOutput:(AVCaptureOutput*)captureOutput
@@ -29,7 +26,7 @@
     CVPixelBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     Ref<MediaPipePacket> packet = memnew(MediaPipePacket(mediapipe::MakePacket<mediapipe::GpuBuffer>(imageBuffer)));
     packet->set_timestamp(Time::get_singleton()->get_ticks_usec());
-    self.graph->add_packet(self.stream_name, packet);
+    self.camera_helper->emit_signal("new_frame", packet);
 }
 @end
 
@@ -42,10 +39,11 @@ class MediaPipeCameraHelper::Impl {
         dispatch_queue_t delegateQueue;
 
     public:
-        Impl() {
+        Impl(MediaPipeCameraHelper *camera_helper) {
             dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(
                 DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, /*relative_priority=*/0);
             delegateQueue = dispatch_queue_create("org.godotengine.gdmp.delegateQueue", qosAttribute);
+            delegate = [[OutputDelegate alloc] init:camera_helper];
         }
 
         ~Impl() {}
@@ -60,11 +58,6 @@ class MediaPipeCameraHelper::Impl {
                                      completionHandler:^(BOOL granted) {
                 camera_helper->emit_signal("permission_result", granted);
             }];
-        }
-
-        void set_graph(Ref<MediaPipeGraph> graph, String stream_name) {
-            delegate = [[OutputDelegate alloc] init:graph
-            StreamName:stream_name];
         }
 
         void start(int index, Vector2 size) {
@@ -115,7 +108,7 @@ class MediaPipeCameraHelper::Impl {
 };
 
 MediaPipeCameraHelper::MediaPipeCameraHelper() {
-    impl = std::make_unique<Impl>();
+    impl = std::make_unique<Impl>(this);
 }
 
 MediaPipeCameraHelper::~MediaPipeCameraHelper() = default;
@@ -128,12 +121,7 @@ void MediaPipeCameraHelper::request_permission() {
     impl->request_permission(this);
 }
 
-void MediaPipeCameraHelper::set_graph(Ref<MediaPipeGraph> graph, String stream_name) {
-    impl->set_graph(graph, stream_name);
-}
-
-void MediaPipeCameraHelper::set_mirrored(bool value) {
-}
+void MediaPipeCameraHelper::set_mirrored(bool value) {}
 
 void MediaPipeCameraHelper::start(int index, Vector2 size) {
     impl->start(index, size);
