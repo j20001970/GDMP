@@ -1,7 +1,6 @@
 cc_library(
-    name = "jni",
-    srcs = ["jni.cc"],
-    hdrs = ["jni.h"],
+    name = "asset_util",
+    srcs = ["asset_util.cc"],
     visibility = ["//visibility:public"],
     deps = [
         "//mediapipe/java/com/google/mediapipe/framework/jni:jni_util",
@@ -18,7 +17,7 @@ cc_binary(
     linkshared = 1,
     visibility = ["//visibility:public"],
     deps = [
-        ":jni",
+        ":asset_util",
         "//GDMP",
     ],
 )

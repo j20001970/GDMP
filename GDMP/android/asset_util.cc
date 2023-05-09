@@ -1,5 +1,3 @@
-#include "jni.h"
-
 #include "mediapipe/java/com/google/mediapipe/framework/jni/jni_util.h"
 #include "mediapipe/util/android/asset_manager_util.h"
 
