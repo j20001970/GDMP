@@ -21,3 +21,8 @@ jobs:
   build-ios:
     name: 🍏 Build iOS
     uses: ./.github/workflows/build-ios.yml
+
+  # Build the Web Artifacts
+  build-web:
+    name: 🌐 Build Web
+    uses: ./.github/workflows/build-web.yml
