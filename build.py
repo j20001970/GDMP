@@ -18,6 +18,7 @@ TARGETS = {
     "android": "//GDMP/android:GDMP",
     "desktop": "//GDMP/desktop:GDMP",
     "ios": "//GDMP/ios:GDMP",
+    "web": "//GDMP/web:GDMP",
 }
 
 TARGET_ARGS = {
@@ -39,6 +40,15 @@ TARGET_ARGS = {
     "ios": [
         "--apple_generate_dsym=false",
         "--config=ios",
+    ],
+    "web": [
+        "--crosstool_top=@emsdk//emscripten_toolchain:everything",
+        "--host_crosstool_top=@bazel_tools//tools/cpp:toolchain",
+        "--spawn_strategy=local",
+        "--copt=-fPIC",
+        "--copt=-pthread",
+        "--define=MEDIAPIPE_DISABLE_GPU=1",
+        "--define=MEDIAPIPE_DISABLE_OPENCV=1",
     ],
 }
 
@@ -119,6 +129,9 @@ def get_build_cmds(args: Namespace) -> list[Callable]:
         return cmds
     elif target == "ios" and arch:
         build_args.append(f"--ios_multi_cpus={arch}")
+    elif target == "web":
+        em_cache_dir = path.expanduser("~/.cache/emscripten_cache")
+        build_args.extend(["--action_env", f"EM_CACHE={em_cache_dir}"])
     build_args.append(TARGETS[target])
     cmd = bazel_build(build_args)
     cmds.append(cmd)
@@ -177,6 +190,13 @@ def copy_ios(args: Namespace):
         f.extractall(output)
 
 
+def copy_web(args: Namespace):
+    output: str = args.output
+    src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/web/GDMP.wasm")
+    dst = path.join(output, "GDMP.web.wasm")
+    copyfile(src, dst)
+
+
 def copy_output(args: Namespace):
     target: str = args.target
     output: str = args.output
@@ -187,6 +207,7 @@ def copy_output(args: Namespace):
         "android": copy_android,
         "desktop": copy_desktop,
         "ios": copy_ios,
+        "web": copy_web,
     }
     copy_actions[target](args)
 
