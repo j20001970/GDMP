@@ -1,0 +1,26 @@
+diff --git a/mediapipe/calculators/tensor/BUILD b/mediapipe/calculators/tensor/BUILD
+--- a/mediapipe/calculators/tensor/BUILD
++++ b/mediapipe/calculators/tensor/BUILD
+@@ -1322,6 +1322,9 @@ cc_library(
+         "//mediapipe:ios": [
+             "//mediapipe/util/android/file/base",
+         ],
++        "//GDMP:web": [
++            "//mediapipe/util/android/file/base",
++        ],
+         "//conditions:default": [
+             "//mediapipe/framework/port:file_helpers",
+         ],
+diff --git a/mediapipe/calculators/util/BUILD b/mediapipe/calculators/util/BUILD
+--- a/mediapipe/calculators/util/BUILD
++++ b/mediapipe/calculators/util/BUILD
+@@ -323,6 +323,9 @@ cc_library(
+         "//mediapipe:ios": [
+             "//mediapipe/util/android/file/base",
+         ],
++        "//GDMP:web": [
++            "//mediapipe/util/android/file/base",
++        ],
+         "//mediapipe:macos": [
+             "//mediapipe/framework/port:file_helpers",
+         ],

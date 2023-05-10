@@ -1,6 +1,14 @@
 load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile_commands")
 load("//GDMP:GDMP.bzl", "CALCULATORS", "DATA", "TASKS")
 
+config_setting(
+    name = "web",
+    values = {
+        "crosstool_top": "@emsdk//emscripten_toolchain:everything",
+    },
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
     name = "GDMP",
     srcs = ["gdlibrary.cc"],
