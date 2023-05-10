@@ -3,16 +3,13 @@
 #include <vector>
 
 #include "godot_cpp/core/class_db.hpp"
-
-#include "GDMP/util/image.h"
+#include "godot_cpp/variant/string.hpp"
 
 void MediaPipePacket::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_empty"), &MediaPipePacket::is_empty);
-	ClassDB::bind_method(D_METHOD("get_image"), &MediaPipePacket::get_image);
 	ClassDB::bind_method(D_METHOD("get_proto"), &MediaPipePacket::get_proto);
 	ClassDB::bind_method(D_METHOD("get_proto_vector"), &MediaPipePacket::get_proto_vector);
 	ClassDB::bind_method(D_METHOD("make"), &MediaPipePacket::make);
-	ClassDB::bind_method(D_METHOD("make_image"), &MediaPipePacket::make_image);
 	ClassDB::bind_method(D_METHOD("get_timestamp"), &MediaPipePacket::get_timestamp);
 	ClassDB::bind_method(D_METHOD("set_timestamp"), &MediaPipePacket::set_timestamp);
 }
@@ -27,13 +24,6 @@ MediaPipePacket::~MediaPipePacket() = default;
 
 bool MediaPipePacket::is_empty() {
 	return packet.IsEmpty();
-}
-
-Ref<Image> MediaPipePacket::get_image() {
-	Ref<Image> image;
-	ERR_FAIL_COND_V(!packet.ValidateAsType<mediapipe::ImageFrame>().ok(), image);
-	auto &image_frame = get_packet().Get<mediapipe::ImageFrame>();
-	return to_image(image_frame);
 }
 
 PackedByteArray MediaPipePacket::get_proto() {
@@ -78,14 +68,6 @@ void MediaPipePacket::make(Variant value) {
 			ERR_PRINT("Unsupported type to make packet.");
 			break;
 	}
-}
-
-void MediaPipePacket::make_image(Ref<Image> image) {
-	make_image_frame(std::move(to_image_frame(image)));
-}
-
-void MediaPipePacket::make_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
-	packet = mediapipe::Adopt(image_frame.release());
 }
 
 int64_t MediaPipePacket::get_timestamp() {

@@ -48,9 +48,7 @@ cc_library(
     hdrs = ["packet.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//GDMP/util:image",
         "//mediapipe/framework:packet",
-        "//mediapipe/framework/formats:image_frame",
         "@godot-cpp//:godot",
     ],
 )
