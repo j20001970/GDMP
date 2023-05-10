@@ -9,6 +9,7 @@ cc_library(
     ] + select({
         "//mediapipe:android": [":camera_helper_android"],
         "//mediapipe:ios": [":camera_helper_ios"],
+        "//GDMP/web:web": [],
         "//conditions:default": [":camera_helper_cv"],
     }),
 )

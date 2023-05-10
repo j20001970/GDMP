@@ -12,13 +12,19 @@ from subprocess import run
 mediapipe_dir = path.join(path.dirname(__file__), 'mediapipe')
 
 targets = {
-    'desktop': '//GDMP/desktop:GDMP',
     'android': '//GDMP/android:GDMP',
+    'desktop': '//GDMP/desktop:GDMP',
+    'web': '//GDMP/web:GDMP_wasm',
 }
 
 
 def get_build_args(target):
     target_commands = {
+        'android': [
+            '--config=android',
+            '--copt', '-fPIC',
+            '--cpu=arm64-v8a',
+        ],
         'desktop': {
             'linux': [
                 '--copt', '-DMESA_EGL_NO_X11_HEADERS',
@@ -31,10 +37,10 @@ def get_build_args(target):
                 '--copt', '-DNOMINMAX'
             ],
         },
-        'android': [
-            '--config=android',
-            '--copt', '-fPIC',
-            '--cpu=arm64-v8a',
+        'web': [
+            '--crosstool_top=@emsdk//emscripten_toolchain:everything',
+            '--host_crosstool_top=@bazel_tools//tools/cpp:toolchain',
+            '--define', 'MEDIAPIPE_DISABLE_GPU=1',
         ],
     }
     bazel_exec = which('bazelisk') or which('bazel')
@@ -89,6 +95,10 @@ def copy_desktop(src, dst):
     copy_to_godot(src, dst)
 
 
+def copy_web(src, dst):
+    pass
+
+
 def copy_output(target):
     target_outputs = {
         'android': path.join('bazel-bin', 'GDMP', 'android', 'libGDMP.so'),
@@ -96,14 +106,17 @@ def copy_output(target):
             'linux': path.join('bazel-bin', 'GDMP', 'desktop', 'libGDMP.so'),
             'win32': path.join('bazel-bin', 'GDMP', 'desktop', 'GDMP.dll'),
         },
+        'web': path.join('bazel-bin', 'GDMP', 'web', 'GDMP_wasm', 'GDMP.wasm'),
     }
     copy_actions = {
         'android': copy_android,
-        'desktop': copy_desktop
+        'desktop': copy_desktop,
+        'web': copy_web,
     }
     godot_output = {
         'android': path.join('android', 'plugins'),
         'desktop': path.join('addons', 'GDMP', 'libs'),
+        'web': path.join('addons', 'GDMP', 'libs'),
     }
     src = target_outputs[target]
     if target == 'desktop':
