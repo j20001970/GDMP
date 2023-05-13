@@ -60,7 +60,7 @@ Ref<Image> MediaPipeImage::get_godot_image() {
 	PackedByteArray data;
 	data.resize(image_frame->PixelDataSize());
 	image_frame->CopyToBuffer(data.ptrw(), data.size());
-	godot_image->set_data(image_frame->Width(), image_frame->Height(), false, image_format, data);
+	godot_image = godot::Image::create_from_data(image_frame->Width(), image_frame->Height(), false, image_format, data);
 	return godot_image;
 }
 
