@@ -5,6 +5,7 @@
 
 #include "GDMP/framework/graph.h"
 #include "GDMP/framework/graph_config.h"
+#include "GDMP/framework/image.h"
 #include "GDMP/framework/packet.h"
 #include "GDMP/gpu/gpu_helper.h"
 #include "GDMP/gpu/gpu_resources.h"
@@ -31,6 +32,7 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	// Framework
 	register_class<MediaPipeGraph>();
 	register_class<MediaPipeGraphConfig>();
+	register_class<MediaPipeImage>();
 	register_class<MediaPipePacket>();
 	// GPU
 	register_class<MediaPipeGPUHelper>();

@@ -8,6 +8,7 @@ enum {
 # Framework
 const Graph: NativeScript = preload("framework/MediaPipeGraph.gdns")
 const GraphConfig: NativeScript = preload("framework/MediaPipeGraphConfig.gdns")
+const Image: NativeScript = preload("framework/MediaPipeImage.gdns")
 const Packet: NativeScript = preload("framework/MediaPipePacket.gdns")
 
 # GPU
