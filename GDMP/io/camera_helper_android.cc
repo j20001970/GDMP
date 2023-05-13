@@ -3,12 +3,11 @@
 #include "Engine.hpp"
 #include "OS.hpp"
 
-#include "mediapipe/framework/packet.h"
 #include "mediapipe/gpu/gl_texture_buffer.h"
 #include "mediapipe/gpu/gpu_buffer.h"
 #include "mediapipe/gpu/gpu_buffer_format.h"
 
-#include "GDMP/framework/packet.h"
+#include "GDMP/framework/image.h"
 
 class MediaPipeCameraHelper::Impl {
 	private:
@@ -112,10 +111,8 @@ class MediaPipeCameraHelper::Impl {
 			}
 			mediapipe::GpuBuffer gpu_frame = mediapipe::GpuBuffer(mediapipe::GlTextureBuffer::Wrap(
 					GL_TEXTURE_2D, name, width, height, mediapipe::GpuBufferFormat::kBGRA32, gl_context, callback));
-			Ref<MediaPipePacket> packet = MediaPipePacket::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame));
-			size_t timestamp = OS::get_singleton()->get_ticks_usec();
-			packet->set_timestamp(timestamp);
-			camera_helper->emit_signal("new_frame", packet);
+			Ref<MediaPipeImage> image = MediaPipeImage::_new(gpu_frame);
+			camera_helper->emit_signal("new_frame", image);
 		}
 };
 

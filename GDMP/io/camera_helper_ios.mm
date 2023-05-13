@@ -3,11 +3,9 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
-#include "OS.hpp"
-
 #include "mediapipe/gpu/gpu_buffer.h"
 
-#include "GDMP/framework/packet.h"
+#include "GDMP/framework/image.h"
 
 @class OutputDelegate;
 @interface OutputDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
@@ -24,9 +22,8 @@
     didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
            fromConnection:(AVCaptureConnection*)connection {
     CVPixelBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    Ref<MediaPipePacket> packet = MediaPipePacket::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(imageBuffer));
-    packet->set_timestamp(OS::get_singleton()->get_ticks_usec());
-    self.camera_helper->emit_signal("new_frame", packet);
+    Ref<MediaPipeImage> image = MediaPipeImage::_new(imageBuffer);
+    self.camera_helper->emit_signal("new_frame", image);
 }
 @end
 
