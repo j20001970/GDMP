@@ -2,15 +2,13 @@
 
 #include <vector>
 
-#include "GDMP/util/image.h"
+#include "String.hpp"
 
 void MediaPipePacket::_register_methods() {
 	register_method("is_empty", &MediaPipePacket::is_empty);
-	register_method("get_image", &MediaPipePacket::get_image);
 	register_method("get_proto", &MediaPipePacket::get_proto);
 	register_method("get_proto_vector", &MediaPipePacket::get_proto_vector);
 	register_method("make", &MediaPipePacket::make);
-	register_method("make_image", &MediaPipePacket::make_image);
 	register_method("get_timestamp", &MediaPipePacket::get_timestamp);
 	register_method("set_timestamp", &MediaPipePacket::set_timestamp);
 }
@@ -25,13 +23,6 @@ void MediaPipePacket::_init() {}
 
 bool MediaPipePacket::is_empty() {
 	return packet.IsEmpty();
-}
-
-Ref<Image> MediaPipePacket::get_image() {
-	Ref<Image> image;
-	ERR_FAIL_COND_V(!packet.ValidateAsType<mediapipe::ImageFrame>().ok(), image);
-	auto &image_frame = get_packet().Get<mediapipe::ImageFrame>();
-	return to_image(image_frame);
 }
 
 PoolByteArray MediaPipePacket::get_proto() {
@@ -76,14 +67,6 @@ void MediaPipePacket::make(Variant value) {
 			ERR_PRINT("Unsupported type to make packet.");
 			break;
 	}
-}
-
-void MediaPipePacket::make_image(Ref<Image> image) {
-	make_image_frame(std::move(to_image_frame(image)));
-}
-
-void MediaPipePacket::make_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
-	packet = mediapipe::Adopt(image_frame.release());
 }
 
 int64_t MediaPipePacket::get_timestamp() {
