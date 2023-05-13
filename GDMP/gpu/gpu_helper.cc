@@ -7,18 +7,29 @@
 #include "mediapipe/objc/util.h"
 #endif
 
-#include "GDMP/util/image.h"
+mediapipe::GpuBuffer MediaPipeGPUHelper::get_gpu_buffer(mediapipe::Image image) {
+	mediapipe::GpuBuffer gpu_buffer;
+#if MEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER
+	gpu_buffer = image.GetGpuBuffer();
+#else
+	ERR_FAIL_COND_V(!gpu_helper.Initialized(), gpu_buffer);
+	gpu_helper.RunInGlContext([this, &image, &gpu_buffer]() -> void {
+		gpu_buffer = image.GetGpuBuffer();
+	});
+#endif
+	return gpu_buffer;
+}
 
 void MediaPipeGPUHelper::_register_methods() {
 	register_method("initialize", &MediaPipeGPUHelper::initialize);
-	register_method("get_gpu_frame", &MediaPipeGPUHelper::get_gpu_frame);
-	register_method("make_packet_from_image", &MediaPipeGPUHelper::make_packet_from_image);
+	register_method("make_gpu_image", &MediaPipeGPUHelper::make_gpu_image);
+	register_method("make_gpu_buffer_packet", &MediaPipeGPUHelper::make_gpu_buffer_packet);
 }
 
 #if !MEDIAPIPE_DISABLE_GPU
-MediaPipeGPUHelper *MediaPipeGPUHelper::_new(mediapipe::GpuResources *gpu_resource) {
+MediaPipeGPUHelper *MediaPipeGPUHelper::_new(mediapipe::GpuResources *gpu_resources) {
 	MediaPipeGPUHelper *helper = MediaPipeGPUHelper::_new();
-	helper->gpu_helper.InitializeForTest(gpu_resource);
+	helper->gpu_helper.InitializeForTest(gpu_resources);
 	return helper;
 }
 #endif
@@ -34,49 +45,27 @@ void MediaPipeGPUHelper::initialize(Ref<MediaPipeGPUResources> gpu_resources) {
 #endif
 }
 
-Ref<Image> MediaPipeGPUHelper::get_gpu_frame(Ref<MediaPipePacket> packet) {
-	Ref<Image> image;
+Ref<MediaPipeImage> MediaPipeGPUHelper::make_gpu_image(Ref<MediaPipeImage> image) {
+	Ref<MediaPipeImage> gpu_image;
 #if !MEDIAPIPE_DISABLE_GPU
-	ERR_FAIL_COND_V(!packet->get_packet().ValidateAsType<mediapipe::GpuBuffer>().ok(), image);
-	auto &gpu_frame = packet->get_packet().Get<mediapipe::GpuBuffer>();
-	std::unique_ptr<mediapipe::ImageFrame> image_frame;
-#if MEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER
-	image_frame = CreateImageFrameForCVPixelBuffer(mediapipe::GetCVPixelBufferRef(gpu_frame));
-#else
-	ERR_FAIL_COND_V(!gpu_helper.Initialized(), image);
-	gpu_helper.RunInGlContext([this, &gpu_frame, &image_frame]() -> void {
-		auto texture = gpu_helper.CreateSourceTexture(gpu_frame);
-		image_frame = std::make_unique<mediapipe::ImageFrame>(
-				mediapipe::ImageFormatForGpuBufferFormat(gpu_frame.format()),
-				gpu_frame.width(), gpu_frame.height(),
-				mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
-		gpu_helper.BindFramebuffer(texture);
-		const auto info = mediapipe::GlTextureInfoForGpuBufferFormat(
-				gpu_frame.format(), 0, gpu_helper.GetGlVersion());
-		glReadPixels(0, 0, texture.width(), texture.height(), info.gl_format,
-				info.gl_type, image_frame->MutablePixelData());
-		glFlush();
-		// We explicitly unbind framebuffer here, otherwise it can crash GPU inference on Android.
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		texture.Release();
-	});
-#endif
-	image = to_image(*image_frame);
+	ERR_FAIL_COND_V(image.is_null(), gpu_image);
+	if (image->is_gpu_image())
+		return image;
+
+	mediapipe::GpuBuffer gpu_buffer = get_gpu_buffer(image->get_mediapipe_image());
+	gpu_image = Ref(MediaPipeImage::_new(gpu_buffer));
 #else
 	ERR_PRINT("GPU support is disabled in this build.");
 #endif
-	return image;
+	return gpu_image;
 }
 
-Ref<MediaPipePacket> MediaPipeGPUHelper::make_packet_from_image(Ref<Image> image) {
-	return make_packet_from_image_frame(std::move(to_image_frame(image)));
-}
-
-Ref<MediaPipePacket> MediaPipeGPUHelper::make_packet_from_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
+Ref<MediaPipePacket> MediaPipeGPUHelper::make_gpu_buffer_packet(Ref<MediaPipeImage> image) {
 	Ref<MediaPipePacket> packet;
 #if !MEDIAPIPE_DISABLE_GPU
-	auto gpu_frame = gpu_helper.GpuBufferWithImageFrame(std::move(image_frame));
-	packet = Ref<MediaPipePacket>(MediaPipePacket::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame)));
+	ERR_FAIL_COND_V(image.is_null(), packet);
+	mediapipe::GpuBuffer gpu_buffer = get_gpu_buffer(image->get_mediapipe_image());
+	packet = Ref(MediaPipePacket::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_buffer)));
 #else
 	ERR_PRINT("GPU support is disabled in this build.");
 #endif
