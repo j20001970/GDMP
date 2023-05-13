@@ -5,9 +5,8 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":gpu_resources",
+        "//GDMP/framework:image",
         "//GDMP/framework:packet",
-        "//GDMP/util:image",
-        "//mediapipe/framework/formats:image_frame",
         "@godot-cpp//:godot",
     ] + select({
         "//mediapipe/gpu:disable_gpu": [],
