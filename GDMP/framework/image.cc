@@ -66,6 +66,7 @@ Ref<Image> MediaPipeImage::get_godot_image() {
 	PoolByteArray data;
 	data.resize(image_frame->PixelDataSize());
 	image_frame->CopyToBuffer(data.write().ptr(), data.size());
+	godot_image = Ref(godot::Image::_new());
 	godot_image->create_from_data(image_frame->Width(), image_frame->Height(), false, image_format, data);
 	return godot_image;
 }
