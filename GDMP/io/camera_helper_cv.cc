@@ -2,16 +2,13 @@
 
 #include <thread>
 
-#include "godot_cpp/classes/time.hpp"
-
 #include "mediapipe/framework/formats/image_frame.h"
 #include "mediapipe/framework/formats/image_frame_opencv.h"
-#include "mediapipe/framework/packet.h"
 #include "mediapipe/framework/port/opencv_core_inc.h"
 #include "mediapipe/framework/port/opencv_imgproc_inc.h"
 #include "mediapipe/framework/port/opencv_video_inc.h"
 
-#include "GDMP/framework/packet.h"
+#include "GDMP/framework/image.h"
 #if !MEDIAPIPE_DISABLE_GPU
 #include "GDMP/gpu/gpu_helper.h"
 #endif
@@ -61,21 +58,17 @@ class MediaPipeCameraHelper::Impl : public cv::VideoCapture {
 						cv::flip(video_frame, video_frame, 1);
 					}
 					cv::cvtColor(video_frame, video_frame, cv_format);
-					auto input_frame = std::make_unique<mediapipe::ImageFrame>(
+					auto input_frame = std::make_shared<mediapipe::ImageFrame>(
 							image_format, video_frame.cols, video_frame.rows,
 							mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
 					cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
 					video_frame.copyTo(input_frame_mat);
-					Ref<MediaPipePacket> packet = memnew(MediaPipePacket());
-					int64_t frame_timestamp_us = Time::get_singleton()->get_ticks_usec();
+					Ref<MediaPipeImage> image = memnew(MediaPipeImage(input_frame));
 #if !MEDIAPIPE_DISABLE_GPU
 					if (gpu_helper.is_valid())
-						packet = gpu_helper->make_packet_from_image_frame(std::move(input_frame));
-					else
+						image = gpu_helper->make_gpu_image(image);
 #endif
-						packet->make_image_frame(std::move(input_frame));
-					packet->set_timestamp(frame_timestamp_us);
-					camera_helper->emit_signal("new_frame", packet);
+					camera_helper->emit_signal("new_frame", image);
 				}
 			});
 		}

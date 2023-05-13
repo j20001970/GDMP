@@ -2,17 +2,15 @@
 
 #include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/classes/os.hpp"
-#include "godot_cpp/classes/time.hpp"
 #include "godot_cpp/variant/callable.hpp"
 #include "godot_cpp/variant/signal.hpp"
 
-#include "mediapipe/framework/packet.h"
 #include "mediapipe/gpu/gl_texture_buffer.h"
 #include "mediapipe/gpu/gpu_buffer.h"
 #include "mediapipe/gpu/gpu_buffer_format.h"
 
 #include "GDMP/android/jni.h"
-#include "GDMP/framework/packet.h"
+#include "GDMP/framework/image.h"
 
 class MediaPipeCameraHelper::Impl {
 	private:
@@ -133,10 +131,8 @@ class MediaPipeCameraHelper::Impl {
 			}
 			mediapipe::GpuBuffer gpu_frame = mediapipe::GpuBuffer(mediapipe::GlTextureBuffer::Wrap(
 					GL_TEXTURE_2D, name, width, height, mediapipe::GpuBufferFormat::kBGRA32, gl_context, callback));
-			Ref<MediaPipePacket> packet = memnew(MediaPipePacket(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame)));
-			size_t timestamp = Time::get_singleton()->get_ticks_usec();
-			packet->set_timestamp(timestamp);
-			camera_helper->emit_signal("new_frame", packet);
+			Ref<MediaPipeImage> image = memnew(MediaPipeImage(gpu_frame));
+			camera_helper->emit_signal("new_frame", image);
 		}
 };
 

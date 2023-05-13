@@ -3,11 +3,9 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
-#include "godot_cpp/classes/time.hpp"
-
 #include "mediapipe/gpu/gpu_buffer.h"
 
-#include "GDMP/framework/packet.h"
+#include "GDMP/framework/image.h"
 
 @class OutputDelegate;
 @interface OutputDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
@@ -24,9 +22,8 @@
     didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
            fromConnection:(AVCaptureConnection*)connection {
     CVPixelBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    Ref<MediaPipePacket> packet = memnew(MediaPipePacket(mediapipe::MakePacket<mediapipe::GpuBuffer>(imageBuffer)));
-    packet->set_timestamp(Time::get_singleton()->get_ticks_usec());
-    self.camera_helper->emit_signal("new_frame", packet);
+    Ref<MediaPipeImage> image = memnew(MediaPipeImage(imageBuffer));
+    self.camera_helper->emit_signal("new_frame", image);
 }
 @end
 

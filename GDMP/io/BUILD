@@ -19,7 +19,7 @@ cc_library(
     hdrs = ["camera_helper.h"],
     deps = [
         "//GDMP/android:jni",
-        "//GDMP/framework:packet",
+        "//GDMP/framework:image",
         "//GDMP/gpu:gpu_resources",
         "//mediapipe/gpu:gl_texture_buffer",
         "//mediapipe/gpu:gpu_buffer",
@@ -33,7 +33,7 @@ cc_library(
     srcs = ["camera_helper_cv.cc"],
     hdrs = ["camera_helper.h"],
     deps = [
-        "//GDMP/framework:packet",
+        "//GDMP/framework:image",
         "//GDMP/gpu:gpu_resources",
         "//mediapipe/framework/formats:image_frame",
         "//mediapipe/framework/formats:image_frame_opencv",
@@ -60,7 +60,7 @@ objc_library(
         "CoreVideo",
     ],
     deps = [
-        "//GDMP/framework:packet",
+        "//GDMP/framework:image",
         "//GDMP/gpu:gpu_resources",
     ],
 )
