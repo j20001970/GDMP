@@ -3,6 +3,6 @@
 [ext_resource path="res://addons/GDMP/GDMP.gdnlib" type="GDNativeLibrary" id=1]
 
 [resource]
-resource_name = "GraphConfig"
-class_name = "GraphConfig"
+resource_name = "MediaPipeGraph"
+class_name = "MediaPipeGraph"
 library = ExtResource( 1 )

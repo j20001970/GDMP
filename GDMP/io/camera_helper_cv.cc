@@ -16,9 +16,9 @@
 #include "GDMP/gpu/gpu_helper.h"
 #endif
 
-class CameraHelper::Impl : public cv::VideoCapture {
+class MediaPipeCameraHelper::Impl : public cv::VideoCapture {
 	private:
-		CameraHelper *camera_helper;
+		MediaPipeCameraHelper *camera_helper;
 		bool flip;
 		bool grab_frames;
 #if !MEDIAPIPE_DISABLE_GPU
@@ -27,7 +27,7 @@ class CameraHelper::Impl : public cv::VideoCapture {
 		std::thread thread;
 
 	public:
-		Impl(CameraHelper *camera_helper) {
+		Impl(MediaPipeCameraHelper *camera_helper) {
 			this->camera_helper = camera_helper;
 		}
 
@@ -46,11 +46,11 @@ class CameraHelper::Impl : public cv::VideoCapture {
 				auto cv_format = cv::COLOR_BGR2RGB;
 				auto image_format = mediapipe::ImageFormat::SRGB;
 #if !MEDIAPIPE_DISABLE_GPU
-				Ref<GPUHelper> gpu_helper;
+				Ref<MediaPipeGPUHelper> gpu_helper;
 				if (gpu_resources != nullptr) {
 					cv_format = cv::COLOR_BGR2RGBA;
 					image_format = mediapipe::ImageFormat::SRGBA;
-					gpu_helper = Ref<GPUHelper>(GPUHelper::_new(gpu_resources.get()));
+					gpu_helper = Ref(MediaPipeGPUHelper::_new(gpu_resources.get()));
 				}
 #endif
 				grab_frames = true;
@@ -66,7 +66,7 @@ class CameraHelper::Impl : public cv::VideoCapture {
 							mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
 					cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
 					video_frame.copyTo(input_frame_mat);
-					Ref<Packet> packet = Packet::_new();
+					Ref<MediaPipePacket> packet = MediaPipePacket::_new();
 					int64_t frame_timestamp_us = OS::get_singleton()->get_ticks_usec();
 #if !MEDIAPIPE_DISABLE_GPU
 					if (gpu_helper.is_valid())
@@ -88,7 +88,7 @@ class CameraHelper::Impl : public cv::VideoCapture {
 			}
 		}
 
-		void set_gpu_resources(Ref<GPUResources> gpu_resources) {
+		void set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
 #if !MEDIAPIPE_DISABLE_GPU
 			if (gpu_resources.is_null()) {
 				this->gpu_resources = nullptr;
@@ -99,34 +99,34 @@ class CameraHelper::Impl : public cv::VideoCapture {
 		}
 };
 
-CameraHelper::CameraHelper() = default;
+MediaPipeCameraHelper::MediaPipeCameraHelper() = default;
 
-CameraHelper::~CameraHelper() = default;
+MediaPipeCameraHelper::~MediaPipeCameraHelper() = default;
 
-void CameraHelper::_init() {
+void MediaPipeCameraHelper::_init() {
 	impl = std::make_unique<Impl>(this);
 }
 
-bool CameraHelper::permission_granted() {
+bool MediaPipeCameraHelper::permission_granted() {
 	return true;
 }
 
-void CameraHelper::request_permission() {}
+void MediaPipeCameraHelper::request_permission() {}
 
-void CameraHelper::set_mirrored(bool value) {
+void MediaPipeCameraHelper::set_mirrored(bool value) {
 	impl->set_flip(value);
 }
 
-void CameraHelper::start(int index, Vector2 size) {
+void MediaPipeCameraHelper::start(int index, Vector2 size) {
 	impl->start(index, size);
 }
 
-void CameraHelper::close() {
+void MediaPipeCameraHelper::close() {
 	if (impl) {
 		impl->close();
 	}
 }
 
-void CameraHelper::set_gpu_resources(Ref<GPUResources> gpu_resources) {
+void MediaPipeCameraHelper::set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
 	impl->set_gpu_resources(gpu_resources);
 }

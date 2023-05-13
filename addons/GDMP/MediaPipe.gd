@@ -6,16 +6,16 @@ enum {
 }
 
 # Framework
-const Graph: NativeScript = preload("framework/Graph.gdns")
-const GraphConfig: NativeScript = preload("framework/GraphConfig.gdns")
-const Packet: NativeScript = preload("framework/Packet.gdns")
+const Graph: NativeScript = preload("framework/MediaPipeGraph.gdns")
+const GraphConfig: NativeScript = preload("framework/MediaPipeGraphConfig.gdns")
+const Packet: NativeScript = preload("framework/MediaPipePacket.gdns")
 
 # GPU
-const GPUHelper: NativeScript = preload("gpu/GPUHelper.gdns")
-const GPUResources: NativeScript = preload("gpu/GPUResources.gdns")
+const GPUHelper: NativeScript = preload("gpu/MediaPipeGPUHelper.gdns")
+const GPUResources: NativeScript = preload("gpu/MediaPipeGPUResources.gdns")
 
 # I/O
-const CameraHelper: NativeScript = preload("io/CameraHelper.gdns")
+const CameraHelper: NativeScript = preload("io/MediaPipeCameraHelper.gdns")
 
 # Classification
 const Classification: NativeScript = preload("proto/Classification.gdns")

@@ -29,14 +29,14 @@ extern "C" void GDN_EXPORT mediapipe_gdnative_terminate(godot_gdnative_terminate
 extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	Godot::nativescript_init(handle);
 	// Framework
-	register_class<Graph>();
-	register_class<GraphConfig>();
-	register_class<Packet>();
+	register_class<MediaPipeGraph>();
+	register_class<MediaPipeGraphConfig>();
+	register_class<MediaPipePacket>();
 	// GPU
-	register_class<GPUHelper>();
-	register_class<GPUResources>();
+	register_class<MediaPipeGPUHelper>();
+	register_class<MediaPipeGPUResources>();
 	// I/O
-	register_class<CameraHelper>();
+	register_class<MediaPipeCameraHelper>();
 	// Classification
 	register_class<Classification>();
 	register_class<ClassificationList>();

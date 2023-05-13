@@ -23,8 +23,8 @@ public:                                                           \
 		_data.ParseFromArray(data.read().ptr(), data.size());     \
 	}                                                             \
 	/* Create a packet object that contains the proto data. */    \
-	Ref<Packet> make_packet() {                                   \
-		return Packet::_new(mediapipe::MakePacket<CLASS>(_data)); \
+	Ref<MediaPipePacket> make_packet() {                                   \
+		return MediaPipePacket::_new(mediapipe::MakePacket<CLASS>(_data)); \
 	}                                                             \
 	/* Get the serialized proto data byte array. */               \
 	PoolByteArray to_bytes() {                                    \

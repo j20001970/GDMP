@@ -11,15 +11,15 @@
 
 using namespace godot;
 
-class GraphConfig : public Resource {
-		GODOT_CLASS(GraphConfig, Resource)
+class MediaPipeGraphConfig : public Resource {
+		GODOT_CLASS(MediaPipeGraphConfig, Resource)
 
 	private:
 		mediapipe::CalculatorGraphConfig config;
 
 	public:
 		static void _register_methods();
-		static GraphConfig *_new(mediapipe::CalculatorGraphConfig config);
+		static MediaPipeGraphConfig *_new(mediapipe::CalculatorGraphConfig config);
 
 		void _init();
 

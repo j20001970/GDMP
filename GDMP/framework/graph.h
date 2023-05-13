@@ -22,8 +22,8 @@
 
 using namespace godot;
 
-class Graph : public Reference {
-		GODOT_CLASS(Graph, Reference)
+class MediaPipeGraph : public Reference {
+		GODOT_CLASS(MediaPipeGraph, Reference)
 
 	private:
 		std::map<std::string, mediapipe::Packet> packet_callbacks;
@@ -39,7 +39,7 @@ class Graph : public Reference {
 		void _init();
 
 		// Initialize the graph from graph config.
-		void initialize(Ref<GraphConfig> config);
+		void initialize(Ref<MediaPipeGraphConfig> config);
 		// Check if the graph config has initialized.
 		bool is_initialized();
 		// Check if the graph is running.
@@ -56,11 +56,11 @@ class Graph : public Reference {
 		// with side_packets for setting input side packet value.
 		void start(Dictionary side_packets);
 		// Add a packet to graph input stream.
-		void add_packet(String stream_name, Ref<Packet> packet);
+		void add_packet(String stream_name, Ref<MediaPipePacket> packet);
 		// Stop the graph.
 		void stop();
 		// Set GPU resources.
-		void set_gpu_resources(Ref<GPUResources> gpu_resources);
+		void set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources);
 };
 
 #endif

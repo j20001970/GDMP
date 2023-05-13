@@ -10,17 +10,17 @@
 
 #include "GDMP/framework/packet.h"
 
-class CameraHelper::Impl {
+class MediaPipeCameraHelper::Impl {
 	private:
 		static jclass camera_class;
 
-		CameraHelper *camera_helper;
+		MediaPipeCameraHelper *camera_helper;
 		Object *android_plugin;
 		jobject camera = nullptr;
 		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
 
 	public:
-		Impl(CameraHelper *camera_helper) {
+		Impl(MediaPipeCameraHelper *camera_helper) {
 			JNIEnv *env = android_api->godot_android_get_env();
 			if (env->IsSameObject(camera_class, NULL)) {
 				camera_class = reinterpret_cast<jclass>(
@@ -86,7 +86,7 @@ class CameraHelper::Impl {
 			}
 		}
 
-		void set_gpu_resources(Ref<GPUResources> gpu_resources) {
+		void set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
 			if (gpu_resources.is_null()) {
 				this->gpu_resources = nullptr;
 				return;
@@ -112,47 +112,47 @@ class CameraHelper::Impl {
 			}
 			mediapipe::GpuBuffer gpu_frame = mediapipe::GpuBuffer(mediapipe::GlTextureBuffer::Wrap(
 					GL_TEXTURE_2D, name, width, height, mediapipe::GpuBufferFormat::kBGRA32, gl_context, callback));
-			Ref<Packet> packet = Packet::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame));
+			Ref<MediaPipePacket> packet = MediaPipePacket::_new(mediapipe::MakePacket<mediapipe::GpuBuffer>(gpu_frame));
 			size_t timestamp = OS::get_singleton()->get_ticks_usec();
 			packet->set_timestamp(timestamp);
 			camera_helper->emit_signal("new_frame", packet);
 		}
 };
 
-jclass CameraHelper::Impl::camera_class = nullptr;
+jclass MediaPipeCameraHelper::Impl::camera_class = nullptr;
 
 extern "C" JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nativeOnNewFrame(
 		JNIEnv *pEnv, jobject jCaller, jlong cppCaller, jobject frame, jint name, jint width, jint height) {
-	auto caller = (CameraHelper::Impl *)(cppCaller);
+	auto caller = (MediaPipeCameraHelper::Impl *)(cppCaller);
 	caller->on_new_frame(pEnv, frame, name, width, height);
 }
 
-CameraHelper::CameraHelper() = default;
+MediaPipeCameraHelper::MediaPipeCameraHelper() = default;
 
-CameraHelper::~CameraHelper() = default;
+MediaPipeCameraHelper::~MediaPipeCameraHelper() = default;
 
-void CameraHelper::_init() {
+void MediaPipeCameraHelper::_init() {
 	impl = std::make_unique<Impl>(this);
 }
 
-bool CameraHelper::permission_granted() {
+bool MediaPipeCameraHelper::permission_granted() {
 	return impl->permission_granted();
 }
 
-void CameraHelper::request_permission() {
+void MediaPipeCameraHelper::request_permission() {
 	impl->request_permission();
 }
 
-void CameraHelper::set_mirrored(bool value) {}
+void MediaPipeCameraHelper::set_mirrored(bool value) {}
 
-void CameraHelper::start(int index, Vector2 size) {
+void MediaPipeCameraHelper::start(int index, Vector2 size) {
 	impl->start(index, size);
 }
 
-void CameraHelper::close() {
+void MediaPipeCameraHelper::close() {
 	impl->close();
 }
 
-void CameraHelper::set_gpu_resources(Ref<GPUResources> gpu_resources) {
+void MediaPipeCameraHelper::set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
 	impl->set_gpu_resources(gpu_resources);
 }

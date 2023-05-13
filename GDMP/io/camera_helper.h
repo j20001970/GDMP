@@ -14,8 +14,8 @@
 
 using namespace godot;
 
-class CameraHelper : public Reference {
-		GODOT_CLASS(CameraHelper, Reference)
+class MediaPipeCameraHelper : public Reference {
+		GODOT_CLASS(MediaPipeCameraHelper, Reference)
 
 	public:
 		class Impl;
@@ -26,8 +26,8 @@ class CameraHelper : public Reference {
 	public:
 		static void _register_methods();
 
-		CameraHelper();
-		~CameraHelper();
+		MediaPipeCameraHelper();
+		~MediaPipeCameraHelper();
 
 		void _init();
 
@@ -49,7 +49,7 @@ class CameraHelper : public Reference {
 		void close();
 		// Set GPU resources to produce mediapipe::GpuBuffer packets.
 		// Depending on platforms, it might be required to set GPU resources to start camera.
-		void set_gpu_resources(Ref<GPUResources> gpu_resources);
+		void set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources);
 };
 
 #endif

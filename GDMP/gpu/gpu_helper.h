@@ -19,8 +19,8 @@
 
 using namespace godot;
 
-class GPUHelper : public Reference {
-		GODOT_CLASS(GPUHelper, Reference)
+class MediaPipeGPUHelper : public Reference {
+		GODOT_CLASS(MediaPipeGPUHelper, Reference)
 
 #if !MEDIAPIPE_DISABLE_GPU
 	private:
@@ -30,19 +30,19 @@ class GPUHelper : public Reference {
 	public:
 		static void _register_methods();
 #if !MEDIAPIPE_DISABLE_GPU
-		static GPUHelper *_new(mediapipe::GpuResources *gpu_resource);
+		static MediaPipeGPUHelper *_new(mediapipe::GpuResources *gpu_resource);
 #endif
 
 		void _init();
 
 		// Initialize GPU helper from GPU resources.
-		void initialize(Ref<GPUResources> gpu_resources);
+		void initialize(Ref<MediaPipeGPUResources> gpu_resources);
 		// Get GPU frame from GpuBuffer packet and convert to godot::Image
-		Ref<Image> get_gpu_frame(Ref<Packet> packet);
+		Ref<Image> get_gpu_frame(Ref<MediaPipePacket> packet);
 		// Make a mediapipe::GpuBuffer packet from godot::Image
-		Ref<Packet> make_packet_from_image(Ref<Image> image);
+		Ref<MediaPipePacket> make_packet_from_image(Ref<Image> image);
 		// Make a mediapipe::GpuBuffer packet from mediapipe::ImageFrame
-		Ref<Packet> make_packet_from_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame);
+		Ref<MediaPipePacket> make_packet_from_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame);
 };
 
 #endif

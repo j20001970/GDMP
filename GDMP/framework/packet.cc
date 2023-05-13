@@ -4,37 +4,37 @@
 
 #include "GDMP/util/image.h"
 
-void Packet::_register_methods() {
-	register_method("is_empty", &Packet::is_empty);
-	register_method("get_image", &Packet::get_image);
-	register_method("get_proto", &Packet::get_proto);
-	register_method("get_proto_vector", &Packet::get_proto_vector);
-	register_method("make", &Packet::make);
-	register_method("make_image", &Packet::make_image);
-	register_method("get_timestamp", &Packet::get_timestamp);
-	register_method("set_timestamp", &Packet::set_timestamp);
+void MediaPipePacket::_register_methods() {
+	register_method("is_empty", &MediaPipePacket::is_empty);
+	register_method("get_image", &MediaPipePacket::get_image);
+	register_method("get_proto", &MediaPipePacket::get_proto);
+	register_method("get_proto_vector", &MediaPipePacket::get_proto_vector);
+	register_method("make", &MediaPipePacket::make);
+	register_method("make_image", &MediaPipePacket::make_image);
+	register_method("get_timestamp", &MediaPipePacket::get_timestamp);
+	register_method("set_timestamp", &MediaPipePacket::set_timestamp);
 }
 
-Packet *Packet::_new(const mediapipe::Packet &packet) {
-	Packet *p = Packet::_new();
+MediaPipePacket *MediaPipePacket::_new(const mediapipe::Packet &packet) {
+	MediaPipePacket *p = MediaPipePacket::_new();
 	p->packet = packet;
 	return p;
 }
 
-void Packet::_init() {}
+void MediaPipePacket::_init() {}
 
-bool Packet::is_empty() {
+bool MediaPipePacket::is_empty() {
 	return packet.IsEmpty();
 }
 
-Ref<Image> Packet::get_image() {
+Ref<Image> MediaPipePacket::get_image() {
 	Ref<Image> image;
 	ERR_FAIL_COND_V(!packet.ValidateAsType<mediapipe::ImageFrame>().ok(), image);
 	auto &image_frame = get_packet().Get<mediapipe::ImageFrame>();
 	return to_image(image_frame);
 }
 
-PoolByteArray Packet::get_proto() {
+PoolByteArray MediaPipePacket::get_proto() {
 	PoolByteArray data;
 	ERR_FAIL_COND_V(!packet.ValidateAsProtoMessageLite().ok(), data);
 	data.resize(packet.GetProtoMessageLite().ByteSizeLong());
@@ -42,7 +42,7 @@ PoolByteArray Packet::get_proto() {
 	return data;
 }
 
-Array Packet::get_proto_vector() {
+Array MediaPipePacket::get_proto_vector() {
 	Array data;
 	auto get_proto_vector = packet.GetVectorOfProtoMessageLitePtrs();
 	ERR_FAIL_COND_V(!get_proto_vector.ok(), data);
@@ -56,7 +56,7 @@ Array Packet::get_proto_vector() {
 	return data;
 }
 
-void Packet::make(Variant value) {
+void MediaPipePacket::make(Variant value) {
 	switch (value.get_type()) {
 		case Variant::Type::BOOL:
 			packet = mediapipe::MakePacket<bool>(value);
@@ -78,22 +78,22 @@ void Packet::make(Variant value) {
 	}
 }
 
-void Packet::make_image(Ref<Image> image) {
+void MediaPipePacket::make_image(Ref<Image> image) {
 	make_image_frame(std::move(to_image_frame(image)));
 }
 
-void Packet::make_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
+void MediaPipePacket::make_image_frame(std::unique_ptr<mediapipe::ImageFrame> image_frame) {
 	packet = mediapipe::Adopt(image_frame.release());
 }
 
-int64_t Packet::get_timestamp() {
+int64_t MediaPipePacket::get_timestamp() {
 	return packet.Timestamp().Microseconds();
 }
 
-void Packet::set_timestamp(int64_t timestamp) {
+void MediaPipePacket::set_timestamp(int64_t timestamp) {
 	packet = packet.At(mediapipe::Timestamp(timestamp));
 }
 
-mediapipe::Packet Packet::get_packet() {
+mediapipe::Packet MediaPipePacket::get_packet() {
 	return packet;
 }

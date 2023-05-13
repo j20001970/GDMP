@@ -12,8 +12,8 @@
 
 using namespace godot;
 
-class GPUResources : public Reference {
-		GODOT_CLASS(GPUResources, Reference)
+class MediaPipeGPUResources : public Reference {
+		GODOT_CLASS(MediaPipeGPUResources, Reference)
 
 #if !MEDIAPIPE_DISABLE_GPU
 	private:

@@ -16,15 +16,15 @@
 
 using namespace godot;
 
-class Packet : public Reference {
-		GODOT_CLASS(Packet, Reference)
+class MediaPipePacket : public Reference {
+		GODOT_CLASS(MediaPipePacket, Reference)
 
 	private:
 		mediapipe::Packet packet;
 
 	public:
 		static void _register_methods();
-		static Packet *_new(const mediapipe::Packet &packet);
+		static MediaPipePacket *_new(const mediapipe::Packet &packet);
 
 		void _init();
 
