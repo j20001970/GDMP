@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "godot_cpp/core/class_db.hpp"
-#include "godot_cpp/variant/string.hpp"
 
 void MediaPipePacket::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_empty"), &MediaPipePacket::is_empty);
@@ -26,26 +25,33 @@ bool MediaPipePacket::is_empty() {
 	return packet.IsEmpty();
 }
 
-PackedByteArray MediaPipePacket::get_proto() {
-	PackedByteArray data;
-	ERR_FAIL_COND_V(!packet.ValidateAsProtoMessageLite().ok(), data);
-	data.resize(packet.GetProtoMessageLite().ByteSizeLong());
-	packet.GetProtoMessageLite().SerializeToArray(data.ptrw(), data.size());
-	return data;
+Ref<MediaPipeProto> MediaPipePacket::get_proto(const String &type_name) {
+	Ref<MediaPipeProto> proto;
+	auto prototype = MediaPipeProto::get_prototype(type_name);
+	ERR_FAIL_COND_V(prototype == nullptr, proto);
+	ERR_FAIL_COND_V(!packet.ValidateAsProtoMessageLite().ok(), proto);
+	auto message = prototype->New();
+	message->ParseFromString(packet.GetProtoMessageLite().SerializeAsString());
+	proto = Ref(memnew(MediaPipeProto(message)));
+	return proto;
 }
 
-Array MediaPipePacket::get_proto_vector() {
-	Array data;
+TypedArray<MediaPipeProto> MediaPipePacket::get_proto_vector(const String &type_name) {
+	TypedArray<MediaPipeProto> array;
+	auto prototype = MediaPipeProto::get_prototype(type_name);
+	ERR_FAIL_COND_V(prototype == nullptr, array);
 	auto get_proto_vector = packet.GetVectorOfProtoMessageLitePtrs();
-	ERR_FAIL_COND_V(!get_proto_vector.ok(), data);
+	ERR_FAIL_COND_V(!get_proto_vector.ok(), array);
 	auto proto_vector = get_proto_vector.value();
-	for (auto message : proto_vector) {
-		PackedByteArray proto_bytes;
-		proto_bytes.resize(message->ByteSizeLong());
-		message->SerializeToArray(proto_bytes.ptrw(), proto_bytes.size());
-		data.push_back(proto_bytes);
+	array.resize(proto_vector.size());
+	for (int i = 0; i < proto_vector.size(); i++) {
+		auto message = proto_vector[i];
+		auto msg = prototype->New();
+		msg->ParseFromString(message->SerializeAsString());
+		Ref<MediaPipeProto> proto = memnew(MediaPipeProto(msg));
+		array[i] = proto;
 	}
-	return data;
+	return array;
 }
 
 void MediaPipePacket::make(Variant value) {

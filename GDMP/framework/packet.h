@@ -1,14 +1,15 @@
 #ifndef GDMP_PACKET
 #define GDMP_PACKET
 
-#include <memory>
-
+#include "godot_cpp/classes/ref.hpp"
 #include "godot_cpp/classes/ref_counted.hpp"
-#include "godot_cpp/variant/array.hpp"
-#include "godot_cpp/variant/packed_byte_array.hpp"
+#include "godot_cpp/variant/string.hpp"
+#include "godot_cpp/variant/typed_array.hpp"
 #include "godot_cpp/variant/variant.hpp"
 
 #include "mediapipe/framework/packet.h"
+
+#include "GDMP/proto/proto.h"
 
 using namespace godot;
 
@@ -29,10 +30,10 @@ class MediaPipePacket : public RefCounted {
 		// Check if the packet is empty.
 		bool is_empty();
 
-		// Get serialized proto byte array from packet.
-		PackedByteArray get_proto();
-		// Get array of serialized proto bytes from packet.
-		Array get_proto_vector();
+		// Get proto from packet.
+		Ref<MediaPipeProto> get_proto(const String &type_name);
+		// Get array of proto from packet.
+		TypedArray<MediaPipeProto> get_proto_vector(const String &type_name);
 
 		// Make a packet from variant.
 		void make(Variant value);
