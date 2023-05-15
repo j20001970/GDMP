@@ -1,9 +1,14 @@
 """GDMP configuration"""
 
 CALCULATORS = [
-    # place the calculator dependencies here
+    # Put additional calculator dependencies here.
 ]
 
 DATA = [
-    # place the data used by calculator dependencies here
+    # Put additional data used by tasks or calculator dependencies here.
+]
+
+# List of enabled tasks.
+TASKS = [
+    "//GDMP/tasks/vision:face_detector",
 ]
