@@ -1,5 +1,5 @@
 load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile_commands")
-load("//GDMP:GDMP.bzl", "CALCULATORS", "DATA")
+load("//GDMP:GDMP.bzl", "CALCULATORS", "DATA", "TASKS")
 
 cc_library(
     name = "GDMP",
@@ -23,7 +23,7 @@ cc_library(
         "//GDMP/tasks/containers:landmark",
         "//GDMP/util:resource_util",
         "@godot-cpp//:godot",
-    ] + CALCULATORS,
+    ] + CALCULATORS + TASKS,
     alwayslink = 1,
 )
 

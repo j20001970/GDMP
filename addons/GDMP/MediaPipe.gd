@@ -47,3 +47,6 @@ const Landmark: NativeScript = preload("tasks/containers/MediaPipeLandmark.gdns"
 const Landmarks: NativeScript = preload("tasks/containers/MediaPipeLandmarks.gdns")
 const NormalizedLandmark: NativeScript = preload("tasks/containers/MediaPipeNormalizedLandmark.gdns")
 const NormalizedLandmarks: NativeScript = preload("tasks/containers/MediaPipeNormalizedLandmarks.gdns")
+
+# Vision Tasks
+const FaceDetector: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeFaceDetector.gdns")
