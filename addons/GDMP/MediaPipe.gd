@@ -1,8 +1,22 @@
 extends Node
 
-enum {
-	CAMERA_FACING_FRONT,
-	CAMERA_FACING_BACK
+enum CameraFacing {
+	FACING_FRONT,
+	FACING_BACK,
+}
+
+enum TaskDelegate {
+	DELEGATE_CPU,
+	DELEGATE_GPU,
+	DELEGATE_EDGETPU_NNAPI,
+}
+
+enum TaskRunningMode {
+	RUNNING_MODE_AUDIO_CLIPS = 1,
+	RUNNING_MODE_AUDIO_STREAM = 2,
+	RUNNING_MODE_IMAGE = 1,
+	RUNNINE_MODE_VIDEO = 2,
+	RUNNING_MODE_LIVE_STREAM = 3,
 }
 
 # Framework
@@ -18,3 +32,6 @@ const GPUResources: NativeScript = preload("gpu/MediaPipeGPUResources.gdns")
 
 # I/O
 const CameraHelper: NativeScript = preload("io/MediaPipeCameraHelper.gdns")
+
+# Tasks
+const TaskBaseOptions: NativeScript = preload("tasks/MediaPipeTaskBaseOptions.gdns")

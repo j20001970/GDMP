@@ -11,6 +11,7 @@
 #include "GDMP/gpu/gpu_resources.h"
 #include "GDMP/io/camera_helper.h"
 #include "GDMP/proto/proto.h"
+#include "GDMP/tasks/task.h"
 #include "GDMP/util/resource_util.h"
 
 using namespace godot;
@@ -38,4 +39,7 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	register_class<MediaPipeCameraHelper>();
 	// ResourceProvider
 	set_resource_provider();
+	// Tasks
+	MediaPipeTask::register_tasks();
+	register_class<MediaPipeTaskBaseOptions>();
 }
