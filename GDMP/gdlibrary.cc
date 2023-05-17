@@ -15,6 +15,7 @@
 #include "GDMP/proto/landmark.h"
 #include "GDMP/proto/location_data.h"
 #include "GDMP/proto/rect.h"
+#include "GDMP/proto/proto.h"
 #include "GDMP/util/resource_util.h"
 
 using namespace godot;
@@ -34,6 +35,7 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	register_class<MediaPipeGraphConfig>();
 	register_class<MediaPipeImage>();
 	register_class<MediaPipePacket>();
+	register_class<MediaPipeProto>();
 	// GPU
 	register_class<MediaPipeGPUHelper>();
 	register_class<MediaPipeGPUResources>();

@@ -20,6 +20,7 @@ cc_library(
         "//GDMP/proto:location_data",
         "//GDMP/proto:rasterization",
         "//GDMP/proto:rect",
+        "//GDMP/proto:proto",
         "//GDMP/util:resource_util",
         "@godot-cpp//:godot",
     ] + CALCULATORS,
