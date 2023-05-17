@@ -14,6 +14,11 @@
 #include "GDMP/io/camera_helper.h"
 #include "GDMP/proto/proto.h"
 #include "GDMP/tasks/task.h"
+#include "GDMP/tasks/containers/category.h"
+#include "GDMP/tasks/containers/classification_result.h"
+#include "GDMP/tasks/containers/detection_result.h"
+#include "GDMP/tasks/containers/keypoint.h"
+#include "GDMP/tasks/containers/landmark.h"
 #include "GDMP/util/resource_util.h"
 
 using namespace godot;
@@ -42,6 +47,16 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<MediaPipeTask>(true);
 	MediaPipeTask::register_tasks();
 	ClassDB::register_class<MediaPipeTaskBaseOptions>();
+	ClassDB::register_class<MediaPipeCategory>();
+	ClassDB::register_class<MediaPipeClassifications>();
+	ClassDB::register_class<MediaPipeClassificationResult>();
+	ClassDB::register_class<MediaPipeDetection>();
+	ClassDB::register_class<MediaPipeDetectionResult>();
+	ClassDB::register_class<MediaPipeNormalizedKeypoint>();
+	ClassDB::register_class<MediaPipeLandmark>();
+	ClassDB::register_class<MediaPipeLandmarks>();
+	ClassDB::register_class<MediaPipeNormalizedLandmark>();
+	ClassDB::register_class<MediaPipeNormalizedLandmarks>();
 }
 
 void uninitialize_mediapipe_module(ModuleInitializationLevel p_level) {
