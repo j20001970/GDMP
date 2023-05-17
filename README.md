@@ -6,17 +6,16 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 
     `git submodule update --init --recursive`
 2. Install [Bazelisk](https://bazel.build/install/bazelisk) or Bazel version that meets MediaPipe requirement.
-3. Follow [godot-cpp README](https://github.com/godotengine/godot-cpp/tree/3.x#updating-the-apijson-file) to generate `api.json` for your Godot version, then go to `godot-cpp` directory and run:
+3. Run `setup.py` to generate the [godot-cpp](https://github.com/godotengine/godot-cpp) bindings as well as apply/setup source code to the `mediapipe` workspace. Run `setup.py --help` to view the various options.
 
-    ```
-    python -c "from binding_generator import *; generate_bindings('/path/to/your/api.json', True)"
-    ```
+Example:
+```
+./setup.py --godot-binary path/to/godot/binary
+```
 
-    to generate Godot C++ bindings directly, replacing `/path/to/your/api.json` with the path to your `api.json`
-4. Run `setup.py`, the script will apply necessary changes and setup source code to `mediapipe` workspace.
-5. Add calculator dependencies in `GDMP/GDMP.bzl`
-6. Copy `addons` to your Godot project's root directory.
-7. (Recommended) Set `GODOT_PROJECT` environment variable that points to your Godot project, the build script will try to automate copy process if it is detected.
+4. Add calculator dependencies in `GDMP/GDMP.bzl`
+5. Copy `addons` to your Godot project's root directory.
+6. (Recommended) Set `GODOT_PROJECT` environment variable that points to your Godot project, the build script will try to automate copy process if it is detected.
 
 ## Building for Android
 1. Refer to [Prerequisite](https://developers.google.com/mediapipe/framework/getting_started/android#prerequisite) section for Java and Android SDK & NDK setup.
@@ -61,7 +60,7 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
     Bash can be installed from [Git for Windows](https://gitforwindows.org) or [MSYS2](https://www.msys2.org)
 3. Install OpenCV and configure `mediapipe` workspace:
     - Modify `mediapipe/WORKSPACE` for `path` under `windows_opencv` if OpenCV is not installed on `C:\opencv`
-    - Modify `OPENCV_VERSION` in `mediapipe/thrid_party/opencv_windows.BUILD` if OpenCV version is not `3.4.10`
+    - Modify `OPENCV_VERSION` in `mediapipe/third_party/opencv_windows.BUILD` if OpenCV version is not `3.4.10`
 
     Refer to [MediaPipe documentation](https://developers.google.com/mediapipe/framework/getting_started/install#installing_on_windows) for more details.
 4. Run:
