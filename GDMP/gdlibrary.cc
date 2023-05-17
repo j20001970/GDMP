@@ -13,6 +13,7 @@
 #include "GDMP/gpu/gpu_resources.h"
 #include "GDMP/io/camera_helper.h"
 #include "GDMP/proto/proto.h"
+#include "GDMP/tasks/task.h"
 #include "GDMP/util/resource_util.h"
 
 using namespace godot;
@@ -37,6 +38,10 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	ResourceFormatLoaderMediaPipeGraphConfig::register_loader();
 	// ResourceProvider
 	set_resource_provider();
+	// Tasks
+	ClassDB::register_class<MediaPipeTask>(true);
+	MediaPipeTask::register_tasks();
+	ClassDB::register_class<MediaPipeTaskBaseOptions>();
 }
 
 void uninitialize_mediapipe_module(ModuleInitializationLevel p_level) {
