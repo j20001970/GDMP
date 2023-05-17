@@ -12,11 +12,6 @@
 #include "GDMP/gpu/gpu_helper.h"
 #include "GDMP/gpu/gpu_resources.h"
 #include "GDMP/io/camera_helper.h"
-#include "GDMP/proto/classification.h"
-#include "GDMP/proto/detection.h"
-#include "GDMP/proto/landmark.h"
-#include "GDMP/proto/location_data.h"
-#include "GDMP/proto/rect.h"
 #include "GDMP/proto/proto.h"
 #include "GDMP/util/resource_util.h"
 
@@ -37,33 +32,6 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<MediaPipeGPUResources>();
 	// I/O
 	ClassDB::register_class<MediaPipeCameraHelper>();
-	// Classification
-	ClassDB::register_class<Classification>();
-	ClassDB::register_class<ClassificationList>();
-	ClassDB::register_class<ClassificationListCollection>();
-	// Deteciton
-	ClassDB::register_class<AssociatedDetection>();
-	ClassDB::register_class<Detection>();
-	ClassDB::register_class<DetectionList>();
-	// Landmark
-	ClassDB::register_class<Landmark>();
-	ClassDB::register_class<LandmarkList>();
-	ClassDB::register_class<LandmarkListCollection>();
-	ClassDB::register_class<NormalizedLandmark>();
-	ClassDB::register_class<NormalizedLandmarkList>();
-	ClassDB::register_class<NormalizedLandmarkListCollection>();
-	// LocationData
-	ClassDB::register_class<BoundingBox>();
-	ClassDB::register_class<RelativeBoundingBox>();
-	ClassDB::register_class<BinaryMask>();
-	ClassDB::register_class<RelativeKeypoint>();
-	ClassDB::register_class<LocationData>();
-	// Rasterization
-	ClassDB::register_class<Interval>();
-	ClassDB::register_class<Rasterization>();
-	// Rect
-	ClassDB::register_class<Rect>();
-	ClassDB::register_class<NormalizedRect>();
 	// ResourceFormatLoader
 	ClassDB::register_class<ResourceFormatLoaderMediaPipeGraphConfig>();
 	ResourceFormatLoaderMediaPipeGraphConfig::register_loader();
