@@ -102,12 +102,11 @@ GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 
     ```gdscript
     func _on_new_landmarks(stream_name: String, packet: MediaPipePacket):
-        var bytes: PackedByteArray = packet.get_proto()
-        var landmarks: NormalizedLandmarkList = NormalizedLandmarkList.new()
-        landmarks.from_bytes(bytes)
-        for i in range(landmarks.landmark_size()):
-            var landmark: NormalizedLandmark = landmarks.get_landmark(i)
-            print("x:%f, y:%f, z:%f" % [landmark.get_x(), landmark.get_y(), landmark.get_z()])
+        var landmark_list: MediaPipeProto = packet.get_proto("mediapipe.NormalizedLandmarkList")
+        var landmarks: Array[MediaPipeProto] = landmark_list.get("landmark")
+        for landmark in landmarks:
+            var vector: Vector3 = Vector3(landmark.get("x"), landmark.get("y"), landmark.get("z"))
+            print("x:%f, y:%f, z:%f" % [vector.x, vector.y, vector.z])
     ```
 6. Start the graph and camera for sending video frames to the graph:
 
