@@ -30,9 +30,9 @@ class MediaPipePacket : public Reference {
 		bool is_empty();
 
 		// Get proto from packet.
-		Ref<MediaPipeProto> get_proto(const String &type_name);
+		Ref<MediaPipeProto> get_proto(String type_name);
 		// Get array of proto from packet.
-		Array get_proto_vector(const String &type_name);
+		Array get_proto_vector(String type_name);
 
 		// Make a packet from variant.
 		void make(Variant value);

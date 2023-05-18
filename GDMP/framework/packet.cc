@@ -23,7 +23,7 @@ bool MediaPipePacket::is_empty() {
 	return packet.IsEmpty();
 }
 
-Ref<MediaPipeProto> MediaPipePacket::get_proto(const String &type_name) {
+Ref<MediaPipeProto> MediaPipePacket::get_proto(String type_name) {
 	Ref<MediaPipeProto> proto;
 	auto prototype = MediaPipeProto::get_prototype(type_name);
 	ERR_FAIL_COND_V(prototype == nullptr, proto);
@@ -34,7 +34,7 @@ Ref<MediaPipeProto> MediaPipePacket::get_proto(const String &type_name) {
 	return proto;
 }
 
-Array MediaPipePacket::get_proto_vector(const String &type_name) {
+Array MediaPipePacket::get_proto_vector(String type_name) {
 	Array array;
 	auto prototype = MediaPipeProto::get_prototype(type_name);
 	ERR_FAIL_COND_V(prototype == nullptr, array);

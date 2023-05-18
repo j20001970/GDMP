@@ -18,11 +18,11 @@ class MediaPipeProto : public Reference {
 	private:
 		protobuf::Message *message;
 
-		const protobuf::FieldDescriptor *get_field_descriptor(const String &field_name);
+		const protobuf::FieldDescriptor *get_field_descriptor(String field_name);
 
 	public:
 		static void _register_methods();
-		static const protobuf::Message *get_prototype(const String &type_name);
+		static const protobuf::Message *get_prototype(String type_name);
 		static MediaPipeProto *_new(protobuf::Message *message);
 		static MediaPipeProto *_new(const protobuf::Message &message);
 
@@ -31,7 +31,7 @@ class MediaPipeProto : public Reference {
 		void _init();
 
 		// Initialize the proto with the given type name.
-		bool initialize(const String &type_name);
+		bool initialize(String type_name);
 		// Check if the proto is initialized with a valid type.
 		bool is_initialized();
 		// Get the name of the proto type.
@@ -40,18 +40,18 @@ class MediaPipeProto : public Reference {
 		// Get the list of field names for this proto.
 		PoolStringArray get_fields();
 		// Check if a field is repeated.
-		bool is_repeated_field(const String &field_name);
+		bool is_repeated_field(String field_name);
 		// Get the size of repeated field.
-		int get_field_size(const String &field_name);
+		int get_field_size(String field_name);
 
 		// Get the value from the field of the proto.
-		Variant get(const String &field_name);
+		Variant get(String field_name);
 		// Get the value of repeated field on index.
-		Variant get_repeated(const String &field_name, int index);
+		Variant get_repeated(String field_name, int index);
 
 		// Set the value of the field for the proto.
 		// Return true on success.
-		bool set(const String &field_name, Variant value);
+		bool set(String field_name, Variant value);
 
 		// Get a copy of the proto, passing ownership to caller.
 		protobuf::Message *get_proto();

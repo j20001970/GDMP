@@ -14,7 +14,7 @@ void MediaPipeProto::_register_methods() {
 	register_method("set", &MediaPipeProto::set);
 }
 
-const protobuf::Message *MediaPipeProto::get_prototype(const String &type_name) {
+const protobuf::Message *MediaPipeProto::get_prototype(String type_name) {
 	auto pool = protobuf::DescriptorPool::generated_pool();
 	auto desc = pool->FindMessageTypeByName(type_name.utf8().get_data());
 	ERR_FAIL_COND_V(desc == nullptr, nullptr);
@@ -44,14 +44,14 @@ MediaPipeProto::~MediaPipeProto() {
 		::free(message);
 }
 
-const protobuf::FieldDescriptor *MediaPipeProto::get_field_descriptor(const String &field_name) {
+const protobuf::FieldDescriptor *MediaPipeProto::get_field_descriptor(String field_name) {
 	ERR_FAIL_COND_V(message == nullptr, nullptr);
 	auto desc = message->GetDescriptor();
 	auto field = desc->FindFieldByName(field_name.utf8().get_data());
 	return field;
 }
 
-bool MediaPipeProto::initialize(const String &type_name) {
+bool MediaPipeProto::initialize(String type_name) {
 	ERR_FAIL_COND_V(message != nullptr, false);
 	auto prototype = get_prototype(type_name);
 	ERR_FAIL_COND_V(prototype == nullptr, false);
@@ -81,13 +81,13 @@ PoolStringArray MediaPipeProto::get_fields() {
 	return fields;
 }
 
-bool MediaPipeProto::is_repeated_field(const String &field_name) {
+bool MediaPipeProto::is_repeated_field(String field_name) {
 	auto field = get_field_descriptor(field_name);
 	ERR_FAIL_COND_V(field == nullptr, false);
 	return field->is_repeated();
 }
 
-int MediaPipeProto::get_field_size(const String &field_name) {
+int MediaPipeProto::get_field_size(String field_name) {
 	auto field = get_field_descriptor(field_name);
 	ERR_FAIL_COND_V(field == nullptr, 0);
 	ERR_FAIL_COND_V(!field->is_repeated(), 0);
@@ -95,7 +95,7 @@ int MediaPipeProto::get_field_size(const String &field_name) {
 	return refl->FieldSize(*message, field);
 }
 
-Variant MediaPipeProto::get(const String &field_name) {
+Variant MediaPipeProto::get(String field_name) {
 	auto field = get_field_descriptor(field_name);
 	ERR_FAIL_COND_V(field == nullptr, false);
 	if (field->is_repeated())
@@ -104,14 +104,14 @@ Variant MediaPipeProto::get(const String &field_name) {
 		return get_field(*message, field);
 }
 
-Variant MediaPipeProto::get_repeated(const String &field_name, int index) {
+Variant MediaPipeProto::get_repeated(String field_name, int index) {
 	auto field = get_field_descriptor(field_name);
 	ERR_FAIL_COND_V(field == nullptr, Variant());
 	ERR_FAIL_COND_V(!field->is_repeated(), Variant());
 	return get_repeated_field(*message, field, index);
 }
 
-bool MediaPipeProto::set(const String &field_name, Variant value) {
+bool MediaPipeProto::set(String field_name, Variant value) {
 	auto field = get_field_descriptor(field_name);
 	ERR_FAIL_COND_V(field == nullptr, false);
 	if (field->is_repeated()) {
