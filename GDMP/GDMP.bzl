@@ -11,4 +11,5 @@ DATA = [
 # List of enabled tasks.
 TASKS = [
     "//GDMP/tasks/vision:face_detector",
+    "//GDMP/tasks/vision:face_landmarker",
 ]
