@@ -1,14 +1,14 @@
 #include "packet.h"
 
-#include <vector>
-
 void MediaPipePacket::_register_methods() {
 	register_method("is_empty", &MediaPipePacket::is_empty);
+	register_method("get", &MediaPipePacket::get);
+	register_method("set", &MediaPipePacket::set);
 	register_method("get_proto", &MediaPipePacket::get_proto);
 	register_method("get_proto_vector", &MediaPipePacket::get_proto_vector);
-	register_method("make", &MediaPipePacket::make);
 	register_method("get_timestamp", &MediaPipePacket::get_timestamp);
 	register_method("set_timestamp", &MediaPipePacket::set_timestamp);
+	register_property<MediaPipePacket, int64_t>("timestamp", &MediaPipePacket::set_timestamp, &MediaPipePacket::get_timestamp, mediapipe::Timestamp::Unset().Value());
 }
 
 MediaPipePacket *MediaPipePacket::_new(const mediapipe::Packet &packet) {
@@ -21,6 +21,44 @@ void MediaPipePacket::_init() {}
 
 bool MediaPipePacket::is_empty() {
 	return packet.IsEmpty();
+}
+
+Variant MediaPipePacket::get() {
+	ERR_FAIL_COND_V(is_empty(), Variant());
+	if (packet.ValidateAsType<bool>().ok())
+		return packet.Get<bool>();
+	if (packet.ValidateAsType<int>().ok())
+		return packet.Get<int>();
+	if (packet.ValidateAsType<float>().ok())
+		return packet.Get<float>();
+	if (packet.ValidateAsType<std::string>().ok())
+		return packet.Get<std::string>().c_str();
+	ERR_PRINT("Unsupported type.");
+	return Variant();
+}
+
+bool MediaPipePacket::set(Variant value) {
+	mediapipe::Timestamp timestamp = packet.Timestamp();
+	switch (value.get_type()) {
+		case Variant::NIL:
+			packet = mediapipe::Packet();
+			return true;
+		case Variant::BOOL:
+			packet = mediapipe::MakePacket<bool>(value).At(timestamp);
+			return true;
+		case Variant::INT:
+			packet = mediapipe::MakePacket<int>(value).At(timestamp);
+			return true;
+		case Variant::REAL:
+			packet = mediapipe::MakePacket<float>(value).At(timestamp);
+			return true;
+		case Variant::STRING:
+			String string = value;
+			packet = mediapipe::MakePacket<std::string>(string.utf8().get_data()).At(timestamp);
+			return true;
+	}
+	ERR_PRINT("Unsupported type.");
+	return false;
 }
 
 Ref<MediaPipeProto> MediaPipePacket::get_proto(String type_name) {
@@ -52,33 +90,11 @@ Array MediaPipePacket::get_proto_vector(String type_name) {
 	return array;
 }
 
-void MediaPipePacket::make(Variant value) {
-	switch (value.get_type()) {
-		case Variant::Type::BOOL:
-			packet = mediapipe::MakePacket<bool>(value);
-			break;
-		case Variant::Type::INT:
-			packet = mediapipe::MakePacket<int>(value);
-			break;
-		case Variant::Type::REAL:
-			packet = mediapipe::MakePacket<float>(value);
-			break;
-		case Variant::Type::STRING: {
-			String string = value;
-			packet = mediapipe::MakePacket<std::string>(string.alloc_c_string());
-			break;
-		}
-		default:
-			ERR_PRINT("Unsupported type to make packet.");
-			break;
-	}
-}
-
 int64_t MediaPipePacket::get_timestamp() {
-	return packet.Timestamp().Microseconds();
+	return packet.Timestamp().Value();
 }
 
-void MediaPipePacket::set_timestamp(int64_t timestamp) {
+void MediaPipePacket::set_timestamp(long timestamp) {
 	packet = packet.At(mediapipe::Timestamp(timestamp));
 }
 

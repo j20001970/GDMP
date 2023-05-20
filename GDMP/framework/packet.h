@@ -29,16 +29,19 @@ class MediaPipePacket : public Reference {
 		// Check if the packet is empty.
 		bool is_empty();
 
+		// Get value from the packet.
+		Variant get();
+		// Set value of the packet, return true on success.
+		// If given value is null, clear the packet.
+		bool set(Variant value);
+
 		// Get proto from packet.
 		Ref<MediaPipeProto> get_proto(String type_name);
 		// Get array of proto from packet.
 		Array get_proto_vector(String type_name);
 
-		// Make a packet from variant.
-		void make(Variant value);
-
 		// Get packet timestamp in microseconds.
-		int64 get_timestamp();
+		int64_t get_timestamp();
 		// Set packet timestamp in microseconds.
 		void set_timestamp(int64_t timestamp);
 
