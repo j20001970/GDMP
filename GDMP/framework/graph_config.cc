@@ -9,11 +9,11 @@
 #include "mediapipe/framework/port/parse_text_proto.h"
 
 void MediaPipeGraphConfig::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("has_input_stream"), &MediaPipeGraphConfig::has_input_stream);
-	ClassDB::bind_method(D_METHOD("has_output_stream"), &MediaPipeGraphConfig::has_output_stream);
-	ClassDB::bind_method(D_METHOD("load"), &MediaPipeGraphConfig::load);
-	ClassDB::bind_method(D_METHOD("parse_bytes"), &MediaPipeGraphConfig::parse_bytes);
-	ClassDB::bind_method(D_METHOD("parse_text"), &MediaPipeGraphConfig::parse_text);
+	ClassDB::bind_method(D_METHOD("has_input_stream", "stream_name"), &MediaPipeGraphConfig::has_input_stream);
+	ClassDB::bind_method(D_METHOD("has_output_stream", "stream_name"), &MediaPipeGraphConfig::has_output_stream);
+	ClassDB::bind_method(D_METHOD("load", "path", "as_binary"), &MediaPipeGraphConfig::load);
+	ClassDB::bind_method(D_METHOD("parse_bytes", "data"), &MediaPipeGraphConfig::parse_bytes);
+	ClassDB::bind_method(D_METHOD("parse_text", "data"), &MediaPipeGraphConfig::parse_text);
 }
 
 MediaPipeGraphConfig::MediaPipeGraphConfig() = default;

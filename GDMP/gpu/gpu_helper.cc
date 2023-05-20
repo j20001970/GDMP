@@ -23,9 +23,9 @@ mediapipe::GpuBuffer MediaPipeGPUHelper::get_gpu_buffer(mediapipe::Image image) 
 }
 
 void MediaPipeGPUHelper::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("initialize"), &MediaPipeGPUHelper::initialize);
-	ClassDB::bind_method(D_METHOD("make_gpu_image"), &MediaPipeGPUHelper::make_gpu_image);
-	ClassDB::bind_method(D_METHOD("make_gpu_buffer_packet"), &MediaPipeGPUHelper::make_gpu_buffer_packet);
+	ClassDB::bind_method(D_METHOD("initialize", "gpu_resources"), &MediaPipeGPUHelper::initialize);
+	ClassDB::bind_method(D_METHOD("make_gpu_image", "image"), &MediaPipeGPUHelper::make_gpu_image);
+	ClassDB::bind_method(D_METHOD("make_gpu_buffer_packet", "image"), &MediaPipeGPUHelper::make_gpu_buffer_packet);
 }
 
 MediaPipeGPUHelper::MediaPipeGPUHelper() = default;

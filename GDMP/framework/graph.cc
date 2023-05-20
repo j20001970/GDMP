@@ -12,16 +12,16 @@
 #include "mediapipe/framework/tool/sink.h"
 
 void MediaPipeGraph::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("initialize"), &MediaPipeGraph::initialize);
+	ClassDB::bind_method(D_METHOD("initialize", "config"), &MediaPipeGraph::initialize);
 	ClassDB::bind_method(D_METHOD("is_initialized"), &MediaPipeGraph::is_initialized);
 	ClassDB::bind_method(D_METHOD("is_running"), &MediaPipeGraph::is_running);
-	ClassDB::bind_method(D_METHOD("has_input_stream"), &MediaPipeGraph::has_input_stream);
-	ClassDB::bind_method(D_METHOD("has_output_stream"), &MediaPipeGraph::has_output_stream);
-	ClassDB::bind_method(D_METHOD("add_packet_callback"), &MediaPipeGraph::add_packet_callback);
-	ClassDB::bind_method(D_METHOD("start"), &MediaPipeGraph::start);
-	ClassDB::bind_method(D_METHOD("add_packet"), &MediaPipeGraph::add_packet);
+	ClassDB::bind_method(D_METHOD("has_input_stream", "stream_name"), &MediaPipeGraph::has_input_stream);
+	ClassDB::bind_method(D_METHOD("has_output_stream", "stream_name"), &MediaPipeGraph::has_output_stream);
+	ClassDB::bind_method(D_METHOD("add_packet_callback", "stream_name", "callback"), &MediaPipeGraph::add_packet_callback);
+	ClassDB::bind_method(D_METHOD("start", "side_packets"), &MediaPipeGraph::start);
+	ClassDB::bind_method(D_METHOD("add_packet", "stream_name", "packet"), &MediaPipeGraph::add_packet);
 	ClassDB::bind_method(D_METHOD("stop"), &MediaPipeGraph::stop);
-	ClassDB::bind_method(D_METHOD("set_gpu_resources"), &MediaPipeGraph::set_gpu_resources);
+	ClassDB::bind_method(D_METHOD("set_gpu_resources", "gpu_resources"), &MediaPipeGraph::set_gpu_resources);
 }
 
 MediaPipeGraph::MediaPipeGraph() = default;

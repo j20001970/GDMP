@@ -6,10 +6,10 @@
 void MediaPipeImage::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_gpu_image"), &MediaPipeImage::is_gpu_image);
 	ClassDB::bind_method(D_METHOD("get_image"), &MediaPipeImage::get_godot_image);
-	ClassDB::bind_method(D_METHOD("set_image"), &MediaPipeImage::set_godot_image);
+	ClassDB::bind_method(D_METHOD("set_image", "image"), &MediaPipeImage::set_godot_image);
 	ClassDB::bind_method(D_METHOD("make_packet"), &MediaPipeImage::make_packet);
 	ClassDB::bind_method(D_METHOD("make_image_frame_packet"), &MediaPipeImage::make_image_frame_packet);
-	ClassDB::bind_method(D_METHOD("set_image_from_packet"), &MediaPipeImage::set_image_from_packet);
+	ClassDB::bind_method(D_METHOD("set_image_from_packet", "packet"), &MediaPipeImage::set_image_from_packet);
 }
 
 MediaPipeImage::MediaPipeImage() = default;

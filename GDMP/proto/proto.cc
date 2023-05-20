@@ -5,15 +5,15 @@
 #include "GDMP/proto/util.h"
 
 void MediaPipeProto::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("initialize"), &MediaPipeProto::initialize);
+	ClassDB::bind_method(D_METHOD("initialize", "type_name"), &MediaPipeProto::initialize);
 	ClassDB::bind_method(D_METHOD("is_initialized"), &MediaPipeProto::is_initialized);
 	ClassDB::bind_method(D_METHOD("get_type"), &MediaPipeProto::get_type);
 	ClassDB::bind_method(D_METHOD("get_fields"), &MediaPipeProto::get_fields);
-	ClassDB::bind_method(D_METHOD("is_repeated_field"), &MediaPipeProto::is_repeated_field);
-	ClassDB::bind_method(D_METHOD("get_field_size"), &MediaPipeProto::get_field_size);
-	ClassDB::bind_method(D_METHOD("get"), &MediaPipeProto::get);
-	ClassDB::bind_method(D_METHOD("get_repeated"), &MediaPipeProto::get_repeated);
-	ClassDB::bind_method(D_METHOD("set"), &MediaPipeProto::set);
+	ClassDB::bind_method(D_METHOD("is_repeated_field", "field_name"), &MediaPipeProto::is_repeated_field);
+	ClassDB::bind_method(D_METHOD("get_field_size", "field_name"), &MediaPipeProto::get_field_size);
+	ClassDB::bind_method(D_METHOD("get", "field_name"), &MediaPipeProto::get);
+	ClassDB::bind_method(D_METHOD("get_repeated", "field_name"), &MediaPipeProto::get_repeated);
+	ClassDB::bind_method(D_METHOD("set", "field_name", "value"), &MediaPipeProto::set);
 }
 
 const protobuf::Message *MediaPipeProto::get_prototype(const String &type_name) {
