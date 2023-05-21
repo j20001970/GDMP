@@ -2,6 +2,26 @@
 
 #include "godot_cpp/core/class_db.hpp"
 
+CameraHelperImpl::CameraHelperImpl(MediaPipeCameraHelper *camera_helper) {
+	this->camera_helper = camera_helper;
+}
+
+CameraHelperImpl::~CameraHelperImpl() {}
+
+bool CameraHelperImpl::permission_granted() {
+	return true;
+}
+
+void CameraHelperImpl::request_permission() {}
+
+void CameraHelperImpl::set_mirrored(bool value) {}
+
+void CameraHelperImpl::set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {}
+
+void CameraHelperImpl::start(int index, Vector2 size) {}
+
+void CameraHelperImpl::close() {}
+
 void MediaPipeCameraHelper::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("permission_granted"), &MediaPipeCameraHelper::permission_granted);
 	ClassDB::bind_method(D_METHOD("request_permission"), &MediaPipeCameraHelper::request_permission);

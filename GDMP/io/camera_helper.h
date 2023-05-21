@@ -12,11 +12,28 @@
 
 using namespace godot;
 
-class MediaPipeCameraHelper : public RefCounted {
-		GDCLASS(MediaPipeCameraHelper, RefCounted)
+class MediaPipeCameraHelper;
+
+class CameraHelperImpl {
+	protected:
+		MediaPipeCameraHelper *camera_helper;
 
 	public:
-		class Impl;
+		CameraHelperImpl(MediaPipeCameraHelper *camera_helper);
+		virtual ~CameraHelperImpl();
+
+		virtual bool permission_granted();
+		virtual void request_permission();
+
+		virtual void set_mirrored(bool value);
+		virtual void set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources);
+
+		virtual void start(int index, Vector2 size);
+		virtual void close();
+};
+
+class MediaPipeCameraHelper : public RefCounted {
+		GDCLASS(MediaPipeCameraHelper, RefCounted)
 
 	private:
 		std::unique_ptr<Impl> impl;
