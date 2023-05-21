@@ -5,18 +5,15 @@
 
 void MediaPipeImage::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_gpu_image"), &MediaPipeImage::is_gpu_image);
+	ClassDB::bind_method(D_METHOD("convert_to_cpu"), &MediaPipeImage::convert_to_cpu);
 	ClassDB::bind_method(D_METHOD("get_image"), &MediaPipeImage::get_godot_image);
 	ClassDB::bind_method(D_METHOD("set_image", "image"), &MediaPipeImage::set_godot_image);
-	ClassDB::bind_method(D_METHOD("make_packet"), &MediaPipeImage::make_packet);
-	ClassDB::bind_method(D_METHOD("make_image_frame_packet"), &MediaPipeImage::make_image_frame_packet);
+	ClassDB::bind_method(D_METHOD("get_packet"), &MediaPipeImage::get_packet);
+	ClassDB::bind_method(D_METHOD("get_image_frame_packet"), &MediaPipeImage::get_image_frame_packet);
 	ClassDB::bind_method(D_METHOD("set_image_from_packet", "packet"), &MediaPipeImage::set_image_from_packet);
 }
 
 MediaPipeImage::MediaPipeImage() = default;
-
-MediaPipeImage::MediaPipeImage(Ref<godot::Image> image) {
-	set_godot_image(image);
-}
 
 MediaPipeImage::MediaPipeImage(mediapipe::Image image) {
 	this->image = image;
@@ -32,16 +29,18 @@ MediaPipeImage::MediaPipeImage(mediapipe::GpuBuffer gpu_buffer) {
 }
 #endif
 
-MediaPipeImage::~MediaPipeImage() = default;
-
 bool MediaPipeImage::is_gpu_image() {
 	return image.UsesGpu();
+}
+
+void MediaPipeImage::convert_to_cpu() {
+	image.ConvertToCpu();
 }
 
 Ref<Image> MediaPipeImage::get_godot_image() {
 	Ref<Image> godot_image;
 	if (is_gpu_image())
-		ERR_FAIL_COND_V(!image.ConvertToCpu(), godot_image);
+		convert_to_cpu();
 
 	mediapipe::ImageFrameSharedPtr image_frame = image.GetImageFrameSharedPtr();
 	ERR_FAIL_COND_V(image_frame == nullptr, godot_image);
@@ -85,12 +84,12 @@ void MediaPipeImage::set_godot_image(Ref<godot::Image> image) {
 	this->image = mediapipe::Image(image_frame);
 }
 
-Ref<MediaPipePacket> MediaPipeImage::make_packet() {
+Ref<MediaPipePacket> MediaPipeImage::get_packet() {
 	mediapipe::Packet packet = mediapipe::MakePacket<mediapipe::Image>(image);
 	return memnew(MediaPipePacket(packet));
 }
 
-Ref<MediaPipePacket> MediaPipeImage::make_image_frame_packet() {
+Ref<MediaPipePacket> MediaPipeImage::get_image_frame_packet() {
 	Ref<MediaPipePacket> packet;
 	auto image_frame = image.GetImageFrameSharedPtr();
 	ERR_FAIL_COND_V(image_frame == nullptr, packet);
