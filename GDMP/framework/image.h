@@ -24,6 +24,9 @@ class MediaPipeImage : public RefCounted {
 		static void _bind_methods();
 
 	public:
+		static Ref<MediaPipeImage> create_from_image(Ref<godot::Image> image);
+		static Ref<MediaPipeImage> create_from_packet(Ref<MediaPipePacket> packet);
+
 		MediaPipeImage();
 		MediaPipeImage(mediapipe::Image image);
 		MediaPipeImage(mediapipe::ImageFrameSharedPtr image_frame);

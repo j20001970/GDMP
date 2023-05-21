@@ -4,6 +4,8 @@
 #include "godot_cpp/core/error_macros.hpp"
 
 void MediaPipeImage::_bind_methods() {
+	ClassDB::bind_static_method(MediaPipeImage::get_class_static(), D_METHOD("create_from_image", "image"), &MediaPipeImage::create_from_image);
+	ClassDB::bind_static_method(MediaPipeImage::get_class_static(), D_METHOD("create_from_packet", "packet"), &MediaPipeImage::create_from_packet);
 	ClassDB::bind_method(D_METHOD("is_gpu_image"), &MediaPipeImage::is_gpu_image);
 	ClassDB::bind_method(D_METHOD("convert_to_cpu"), &MediaPipeImage::convert_to_cpu);
 	ClassDB::bind_method(D_METHOD("get_image"), &MediaPipeImage::get_godot_image);
@@ -11,6 +13,18 @@ void MediaPipeImage::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_packet"), &MediaPipeImage::get_packet);
 	ClassDB::bind_method(D_METHOD("get_image_frame_packet"), &MediaPipeImage::get_image_frame_packet);
 	ClassDB::bind_method(D_METHOD("set_image_from_packet", "packet"), &MediaPipeImage::set_image_from_packet);
+}
+
+Ref<MediaPipeImage> MediaPipeImage::create_from_image(Ref<godot::Image> image) {
+	Ref<MediaPipeImage> img = memnew(MediaPipeImage());
+	img->set_godot_image(image);
+	return img;
+}
+
+Ref<MediaPipeImage> MediaPipeImage::create_from_packet(Ref<MediaPipePacket> packet) {
+	Ref<MediaPipeImage> img = memnew(MediaPipeImage());
+	img->set_image_from_packet(packet);
+	return img;
 }
 
 MediaPipeImage::MediaPipeImage() = default;
