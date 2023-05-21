@@ -13,9 +13,8 @@
 #include "GDMP/gpu/gpu_helper.h"
 #endif
 
-class MediaPipeCameraHelper::Impl : public cv::VideoCapture {
+class CameraHelperCV : public CameraHelperImpl, public cv::VideoCapture {
 	private:
-		MediaPipeCameraHelper *camera_helper;
 		bool flip;
 		bool grab_frames;
 #if !MEDIAPIPE_DISABLE_GPU
@@ -24,16 +23,34 @@ class MediaPipeCameraHelper::Impl : public cv::VideoCapture {
 		std::thread thread;
 
 	public:
-		Impl(MediaPipeCameraHelper *camera_helper) {
-			this->camera_helper = camera_helper;
+		CameraHelperCV(MediaPipeCameraHelper *camera_helper) :
+				CameraHelperImpl(camera_helper) {
+			flip = false;
 		}
 
-		void set_flip(bool value) {
-			this->flip = value;
+		~CameraHelperCV() = default;
+
+		bool permission_granted() {
+			return true;
+		}
+
+		void request_permission() {}
+
+		void set_mirrored(bool value) {
+			flip = value;
+		}
+
+		void set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
+#if !MEDIAPIPE_DISABLE_GPU
+			if (gpu_resources.is_null()) {
+				this->gpu_resources = nullptr;
+				return;
+			}
+			this->gpu_resources = gpu_resources->get_gpu_resources();
+#endif
 		}
 
 		void start(int index, Vector2 size) {
-			close();
 			open(index);
 			ERR_FAIL_COND(!isOpened());
 			set(cv::CAP_PROP_FRAME_WIDTH, size.x);
@@ -80,44 +97,10 @@ class MediaPipeCameraHelper::Impl : public cv::VideoCapture {
 				release();
 			}
 		}
-
-		void set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
-#if !MEDIAPIPE_DISABLE_GPU
-			if (gpu_resources.is_null()) {
-				this->gpu_resources = nullptr;
-				return;
-			}
-			this->gpu_resources = gpu_resources->get_gpu_resources();
-#endif
-		}
 };
 
 MediaPipeCameraHelper::MediaPipeCameraHelper() {
-	impl = std::make_unique<Impl>(this);
+	impl = std::make_unique<CameraHelperCV>(this);
 }
 
 MediaPipeCameraHelper::~MediaPipeCameraHelper() = default;
-
-bool MediaPipeCameraHelper::permission_granted() {
-	return true;
-}
-
-void MediaPipeCameraHelper::request_permission() {}
-
-void MediaPipeCameraHelper::set_mirrored(bool value) {
-	impl->set_flip(value);
-}
-
-void MediaPipeCameraHelper::start(int index, Vector2 size) {
-	impl->start(index, size);
-}
-
-void MediaPipeCameraHelper::close() {
-	if (impl) {
-		impl->close();
-	}
-}
-
-void MediaPipeCameraHelper::set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
-	impl->set_gpu_resources(gpu_resources);
-}

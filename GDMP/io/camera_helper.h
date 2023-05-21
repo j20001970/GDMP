@@ -36,7 +36,7 @@ class MediaPipeCameraHelper : public RefCounted {
 		GDCLASS(MediaPipeCameraHelper, RefCounted)
 
 	private:
-		std::unique_ptr<Impl> impl;
+		std::unique_ptr<CameraHelperImpl> impl;
 
 	protected:
 		static void _bind_methods();

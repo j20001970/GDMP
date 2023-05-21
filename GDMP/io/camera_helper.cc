@@ -34,3 +34,29 @@ void MediaPipeCameraHelper::_bind_methods() {
 	BIND_ENUM_CONSTANT(FACING_FRONT);
 	BIND_ENUM_CONSTANT(FACING_BACK);
 }
+
+bool MediaPipeCameraHelper::permission_granted() {
+	return impl->permission_granted();
+}
+
+void MediaPipeCameraHelper::request_permission() {
+	impl->request_permission();
+}
+
+void MediaPipeCameraHelper::set_mirrored(bool value) {
+	impl->set_mirrored(value);
+}
+
+void MediaPipeCameraHelper::set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
+	impl->set_gpu_resources(gpu_resources);
+}
+
+void MediaPipeCameraHelper::start(int index, Vector2 size) {
+	impl->close();
+	ERR_FAIL_COND(!permission_granted());
+	impl->start(index, size);
+}
+
+void MediaPipeCameraHelper::close() {
+	impl->close();
+}
