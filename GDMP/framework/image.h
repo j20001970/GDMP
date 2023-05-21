@@ -23,7 +23,6 @@ class MediaPipeImage : public Reference {
 
 	public:
 		static void _register_methods();
-		static MediaPipeImage *_new(Ref<godot::Image> image);
 		static MediaPipeImage *_new(mediapipe::Image image);
 		static MediaPipeImage *_new(mediapipe::ImageFrameSharedPtr image_frame);
 #if !MEDIAPIPE_DISABLE_GPU
@@ -34,6 +33,9 @@ class MediaPipeImage : public Reference {
 
 		// Check if the image is a GPU image.
 		bool is_gpu_image();
+		// Tranfer image data to CPU if it is a GPU image.
+		// For converting to GPU image, refer to MediaPipeGPUHelper::make_gpu_image.
+		void convert_to_cpu();
 
 		// Get a copy of godot::Image.
 		// Convert GPU image to CPU when necessary.
@@ -41,11 +43,11 @@ class MediaPipeImage : public Reference {
 		// Copy the data of godot::Image to the image.
 		void set_godot_image(Ref<godot::Image> image);
 
-		// Make a mediapipe::Image packet.
-		Ref<MediaPipePacket> make_packet();
-		// Make a mediapipe::ImageFrame packet.
+		// Get a mediapipe::Image packet from this image.
+		Ref<MediaPipePacket> get_packet();
+		// Get a mediapipe::ImageFrame packet from this image.
 		// For making mediapipe::GpuBuffer packet, refer to MediaPipeGPUHelper::make_gpu_buffer_packet.
-		Ref<MediaPipePacket> make_image_frame_packet();
+		Ref<MediaPipePacket> get_image_frame_packet();
 
 		// Set the image from a packet that contains either mediapipe::Image, mediapipe::ImageFrame or mediapipe::GpuBuffer.
 		void set_image_from_packet(Ref<MediaPipePacket> packet);

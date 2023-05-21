@@ -5,17 +5,12 @@
 
 void MediaPipeImage::_register_methods() {
 	register_method("is_gpu_image", &MediaPipeImage::is_gpu_image);
+	register_method("convert_to_cpu", &MediaPipeImage::convert_to_cpu);
 	register_method("get_image", &MediaPipeImage::get_godot_image);
 	register_method("set_image", &MediaPipeImage::set_godot_image);
-	register_method("make_packet", &MediaPipeImage::make_packet);
-	register_method("make_image_frame_packet", &MediaPipeImage::make_image_frame_packet);
+	register_method("get_packet", &MediaPipeImage::get_packet);
+	register_method("get_image_frame_packet", &MediaPipeImage::get_image_frame_packet);
 	register_method("set_image_from_packet", &MediaPipeImage::set_image_from_packet);
-}
-
-MediaPipeImage *MediaPipeImage::_new(Ref<godot::Image> image) {
-	MediaPipeImage *i = MediaPipeImage::_new();
-	i->set_godot_image(image);
-	return i;
 }
 
 MediaPipeImage *MediaPipeImage::_new(mediapipe::Image image) {
@@ -44,10 +39,14 @@ bool MediaPipeImage::is_gpu_image() {
 	return image.UsesGpu();
 }
 
+void MediaPipeImage::convert_to_cpu() {
+	image.ConvertToCpu();
+}
+
 Ref<Image> MediaPipeImage::get_godot_image() {
 	Ref<Image> godot_image;
 	if (is_gpu_image())
-		ERR_FAIL_COND_V(!image.ConvertToCpu(), godot_image);
+		convert_to_cpu();
 
 	mediapipe::ImageFrameSharedPtr image_frame = image.GetImageFrameSharedPtr();
 	ERR_FAIL_COND_V(image_frame == nullptr, godot_image);
@@ -92,12 +91,12 @@ void MediaPipeImage::set_godot_image(Ref<godot::Image> image) {
 	this->image = mediapipe::Image(image_frame);
 }
 
-Ref<MediaPipePacket> MediaPipeImage::make_packet() {
+Ref<MediaPipePacket> MediaPipeImage::get_packet() {
 	mediapipe::Packet packet = mediapipe::MakePacket<mediapipe::Image>(image);
 	return MediaPipePacket::_new(packet);
 }
 
-Ref<MediaPipePacket> MediaPipeImage::make_image_frame_packet() {
+Ref<MediaPipePacket> MediaPipeImage::get_image_frame_packet() {
 	Ref<MediaPipePacket> packet;
 	auto image_frame = image.GetImageFrameSharedPtr();
 	ERR_FAIL_COND_V(image_frame == nullptr, packet);
