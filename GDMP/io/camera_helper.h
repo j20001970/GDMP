@@ -39,7 +39,7 @@ class MediaPipeCameraHelper : public Reference {
 		class Impl;
 
 	private:
-		std::unique_ptr<Impl> impl;
+		std::unique_ptr<CameraHelperImpl> impl;
 
 	public:
 		static void _register_methods();

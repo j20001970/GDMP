@@ -30,3 +30,31 @@ void MediaPipeCameraHelper::_register_methods() {
 	register_signal<MediaPipeCameraHelper>("permission_result");
 	register_signal<MediaPipeCameraHelper>("new_frame");
 }
+
+void MediaPipeCameraHelper::_init() {}
+
+bool MediaPipeCameraHelper::permission_granted() {
+	return impl->permission_granted();
+}
+
+void MediaPipeCameraHelper::request_permission() {
+	impl->request_permission();
+}
+
+void MediaPipeCameraHelper::set_mirrored(bool value) {
+	impl->set_mirrored(value);
+}
+
+void MediaPipeCameraHelper::set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {
+	impl->set_gpu_resources(gpu_resources);
+}
+
+void MediaPipeCameraHelper::start(int index, Vector2 size) {
+	impl->close();
+	ERR_FAIL_COND(!permission_granted());
+	impl->start(index, size);
+}
+
+void MediaPipeCameraHelper::close() {
+	impl->close();
+}

@@ -27,7 +27,7 @@
 }
 @end
 
-class MediaPipeCameraHelper::Impl {
+class CameraHelperIOS : public CameraHelperImpl {
     private:
         AVCaptureDeviceInput* videoDeviceInput;
         AVCaptureSession* session;
@@ -36,14 +36,14 @@ class MediaPipeCameraHelper::Impl {
         dispatch_queue_t delegateQueue;
 
     public:
-        Impl(MediaPipeCameraHelper *camera_helper) {
+        CameraHelperIOS(MediaPipeCameraHelper *camera_helper) : CameraHelperImpl(camera_helper) {
             dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(
                 DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, /*relative_priority=*/0);
             delegateQueue = dispatch_queue_create("org.godotengine.gdmp.delegateQueue", qosAttribute);
             delegate = [[OutputDelegate alloc] init:camera_helper];
         }
 
-        ~Impl() {}
+        ~CameraHelperIOS() = default;
 
         bool permission_granted() {
             AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
@@ -59,8 +59,6 @@ class MediaPipeCameraHelper::Impl {
 
         void start(int index, Vector2 size) {
             ERR_FAIL_COND(delegate == nil);
-            ERR_FAIL_COND(!permission_granted());
-            close();
             session = [[AVCaptureSession alloc] init];
             AVCaptureDevicePosition position;
             if(index == 0) {
@@ -104,30 +102,8 @@ class MediaPipeCameraHelper::Impl {
         }
 };
 
-MediaPipeCameraHelper::MediaPipeCameraHelper() = default;
+MediaPipeCameraHelper::MediaPipeCameraHelper() {
+    impl = std::make_unique<CameraHelperIOS>(this);
+}
 
 MediaPipeCameraHelper::~MediaPipeCameraHelper() = default;
-
-void MediaPipeCameraHelper::_init() {
-    impl = std::make_unique<Impl>(this);
-}
-
-bool MediaPipeCameraHelper::permission_granted() {
-    return impl->permission_granted();
-}
-
-void MediaPipeCameraHelper::request_permission() {
-    impl->request_permission(this);
-}
-
-void MediaPipeCameraHelper::set_mirrored(bool value) {}
-
-void MediaPipeCameraHelper::start(int index, Vector2 size) {
-    impl->start(index, size);
-}
-
-void MediaPipeCameraHelper::close() {
-    impl->close();
-}
-
-void MediaPipeCameraHelper::set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources) {}
