@@ -16,7 +16,7 @@ current_platform = platform.system().lower()
 if current_platform == "windows":
     MEDIAPIPE_WORKSPACE_PATH = "mediapipe/WORKSPACE"
     DEFAULT_OPENCV_INSTALL_PATH_REPLACE = "path = \"C:\\\\opencv\\\\build\","
-    OPENCV_INSTALL_PATH_FORMAT = "path = \"{}\""
+    OPENCV_INSTALL_PATH_FORMAT = "path = \"{}\","
 
     OPENCV_BUILD_PATH = "mediapipe/third_party/opencv_windows.BUILD"
     DEFAULT_OPENCV_VERSION_REPLACE = "OPENCV_VERSION = \"3410\""
@@ -25,7 +25,7 @@ if current_platform == "windows":
 
 def generate_bindings(api_json_path: str) -> None:
     # Could use a contextmanager but that feels like overkill
-    os.chdir("godot-cpp/")
+    os.chdir(path.join(path.dirname(__file__), "godot-cpp"))
     sys.path.append(os.getcwd())
 
     import binding_generator as bg
@@ -95,12 +95,15 @@ def create_venv(current_platform: str) -> None:
         pip_bin = "{}/Scripts/pip.exe"
         activate_command = "source venv/Scripts/activate"
 
-    run("{} install -r requirements.txt".format(pip_bin.format(venv_path)), check=True)
+    run([pip_bin.format(venv_path), "install",
+        "-r", "requirements.txt"], check=True)
 
     print("\n++++++\nPlease activate the venv before building GDMP by running `{}`\n++++++\n".format(activate_command))
 
 
 if __name__ == "__main__":
+    os.chdir(path.dirname(__file__))
+
     parser = ArgumentParser()
 
     # Extension generation
@@ -117,6 +120,7 @@ if __name__ == "__main__":
                             help="Version of OpenCV to use. Defaults to {}".format(DEFAULT_OPENCV_VERSION))
 
         def symlinker(src_dir, dst_dir):
+            # Only works on Windows if the command is passed in this format
             run('mklink /J "%s" "%s"' %
                 (dst_dir, src_dir), check=True, shell=True)
     else:  # Linux/MacOS should work roughly the same
@@ -127,8 +131,10 @@ if __name__ == "__main__":
 
     api_json_path: str = args.extension_api_json
     if not args.extension_api_json:
-        run("{} --dump-extension-api".format(args.godot_binary), check=True)
-        api_json_path = path.join(path.dirname(__file__), "extension_api.json")
+        run([args.godot_binary, "--dump-extension-api", "--headless"], check=True)
+        api_json_path = path.join(os.getcwd(), "extension_api.json")
+    elif not path.isabs(api_json_path):
+        api_json_path = path.join(os.getcwd(), api_json_path)
 
     generate_bindings(api_json_path)
 
