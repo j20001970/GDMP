@@ -12,6 +12,11 @@
 #include "GDMP/io/camera_helper.h"
 #include "GDMP/proto/proto.h"
 #include "GDMP/tasks/task.h"
+#include "GDMP/tasks/containers/category.h"
+#include "GDMP/tasks/containers/classification_result.h"
+#include "GDMP/tasks/containers/detection_result.h"
+#include "GDMP/tasks/containers/keypoint.h"
+#include "GDMP/tasks/containers/landmark.h"
 #include "GDMP/util/resource_util.h"
 
 using namespace godot;
@@ -42,4 +47,14 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	// Tasks
 	MediaPipeTask::register_tasks();
 	register_class<MediaPipeTaskBaseOptions>();
+	register_class<MediaPipeCategory>();
+	register_class<MediaPipeClassifications>();
+	register_class<MediaPipeClassificationResult>();
+	register_class<MediaPipeDetection>();
+	register_class<MediaPipeDetectionResult>();
+	register_class<MediaPipeNormalizedKeypoint>();
+	register_class<MediaPipeLandmark>();
+	register_class<MediaPipeLandmarks>();
+	register_class<MediaPipeNormalizedLandmark>();
+	register_class<MediaPipeNormalizedLandmarks>();
 }
