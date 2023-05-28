@@ -6,3 +6,5 @@ entry_symbol = "mediapipe_library_init"
 
 linux.debug.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.so"
 linux.release.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.so"
+windows.debug.x86_64 = "res://addons/GDMP/libs/x86_64/GDMP.dll"
+windows.release.x86_64 = "res://addons/GDMP/libs/x86_64/GDMP.dll"
