@@ -1,39 +1,34 @@
 extends EditorExportPlugin
 
 func _export_begin(features: PackedStringArray, is_debug: bool, path: String, flags: int) -> void:
-	var exports: PackedStringArray = find_files("res://", ["binarypb", "pbtxt", "tflite"])
-	for file in exports:
-		var f: FileAccess = FileAccess.open(file, FileAccess.READ)
-		if not f.is_open():
-			printerr("GDMP exporter: Failed to read %s: %d" % [file, f.get_open_error()])
-			continue
-		add_file(file, f.get_buffer(f.get_length()), false)
+	var files := find_files("res://", ["binarypb", "pbtxt", "task", "tflite"])
+	for file in files:
+		var f := FileAccess.open(file, FileAccess.READ)
+		if f:
+			add_file(file, f.get_buffer(f.get_length()), false)
+		else:
+			printerr("GDMP: Failed to open %s: %d" % [file, FileAccess.get_open_error()])
 
 func _export_file(path: String, type: String, features: PackedStringArray) -> void:
 	if path.get_file() == "GDMP.gdextension":
 		if features.has("android"):
 			skip()
 
-func find_files(path: String, extenstions: PackedStringArray) -> PackedStringArray:
-	var files : PackedStringArray = []
-	var dir : DirAccess = DirAccess.open(path)
-	if not dir:
-		printerr("GDMP exporter: Failed to open %s: %d" % [path, dir.get_open_error()])
-	else:
-		dir.list_dir_begin()
-		var filename : String
-		while true:
-			filename = dir.get_next()
-			if filename.is_empty():
-				break
-			var next : String = "%s%s" if path.ends_with("/") else "%s/%s"
-			next = next % [path, filename]
-			if dir.dir_exists(filename) and not next == "res://android":
-				files.append_array(find_files(next, extenstions))
-			elif filename.get_extension() in extenstions:
-				files.append(next)
-		dir.list_dir_end()
-	return files
-
 func _get_name() -> String:
 	return "GDMP"
+
+func find_files(path: String, extenstions: PackedStringArray) -> PackedStringArray:
+	var files: PackedStringArray = []
+	var dir := DirAccess.open(path)
+	if dir:
+		for f in dir.get_files():
+			if f.get_extension() in extenstions:
+				files.append(path.path_join(f))
+		for d in dir.get_directories():
+			d = path.path_join(d)
+			if d.begins_with("res://android"):
+				continue
+			files.append_array(find_files(d, extenstions))
+	else:
+		printerr("GDMP: Failed to open %s: %d" % [path, DirAccess.get_open_error()])
+	return files
