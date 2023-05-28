@@ -35,17 +35,11 @@ class CameraHelperImpl {
 class MediaPipeCameraHelper : public Reference {
 		GODOT_CLASS(MediaPipeCameraHelper, Reference)
 
-	public:
-		class Impl;
-
 	private:
 		std::unique_ptr<CameraHelperImpl> impl;
 
 	public:
 		static void _register_methods();
-
-		MediaPipeCameraHelper();
-		~MediaPipeCameraHelper();
 
 		void _init();
 

@@ -31,8 +31,6 @@ void MediaPipeCameraHelper::_register_methods() {
 	register_signal<MediaPipeCameraHelper>("new_frame");
 }
 
-void MediaPipeCameraHelper::_init() {}
-
 bool MediaPipeCameraHelper::permission_granted() {
 	return impl->permission_granted();
 }

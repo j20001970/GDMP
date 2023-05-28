@@ -102,8 +102,6 @@ class CameraHelperIOS : public CameraHelperImpl {
         }
 };
 
-MediaPipeCameraHelper::MediaPipeCameraHelper() {
+void MediaPipeCameraHelper::_init() {
     impl = std::make_unique<CameraHelperIOS>(this);
 }
-
-MediaPipeCameraHelper::~MediaPipeCameraHelper() = default;

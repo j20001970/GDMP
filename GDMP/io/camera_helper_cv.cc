@@ -100,8 +100,6 @@ class CameraHelperCV : public CameraHelperImpl, public cv::VideoCapture {
 		}
 };
 
-MediaPipeCameraHelper::MediaPipeCameraHelper() {
+void MediaPipeCameraHelper::_init() {
 	impl = std::make_unique<CameraHelperCV>(this);
 }
-
-MediaPipeCameraHelper::~MediaPipeCameraHelper() = default;

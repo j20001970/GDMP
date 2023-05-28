@@ -121,8 +121,6 @@ extern "C" JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nat
 	caller->on_new_frame(pEnv, frame, name, width, height);
 }
 
-MediaPipeCameraHelper::MediaPipeCameraHelper() {
+void MediaPipeCameraHelper::_init() {
 	impl = std::make_unique<CameraHelperAndroid>(this);
 }
-
-MediaPipeCameraHelper::~MediaPipeCameraHelper() = default;
