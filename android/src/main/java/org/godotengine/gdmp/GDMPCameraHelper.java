@@ -106,7 +106,13 @@ public class GDMPCameraHelper implements TextureFrameConsumer {
 
     public void closeCamera() {
         if (cameraProvider != null && preview != null) {
-            cameraProvider.unbind(preview);
+            Executor mainThreadExecutor = ContextCompat.getMainExecutor(activity);
+            mainThreadExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    cameraProvider.unbind(preview);
+                }
+            });
         }
         if (converter != null) {
             converter.close();
