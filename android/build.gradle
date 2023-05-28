@@ -36,13 +36,13 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.guava:guava:27.0.1-android'
     compileOnly fileTree(dir: "libs", includes: ["godot-lib.*.aar"])
     debugCompileOnly fileTree(dir: "libs/debug", includes: ["godot-lib.*.aar"])
     releaseCompileOnly fileTree(dir: "libs/release", includes: ["godot-lib.*.aar"])
     // MediaPipe deps
     implementation 'com.google.flogger:flogger:0.3.1'
     implementation 'com.google.flogger:flogger-system-backend:0.3.1'
+    implementation 'com.google.guava:guava:27.0.1-android'
     // CameraX core library
     def camerax_version = "1.0.0-beta10"
     implementation "androidx.camera:camera-core:$camerax_version"
