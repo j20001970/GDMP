@@ -1,0 +1,117 @@
+---
+name: Build GDMP
+on:
+  workflow_dispatch:
+    inputs:
+      godot_version:
+        type: string
+        description: The major.minor.patch version in major.minor.patch format.
+        required: true
+      ref:
+        type: string
+        description: The branch or tag to checkout.
+        default: ''
+
+jobs:
+  build-gdmp:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          ref: ${{ inputs.ref }}
+      
+      - name: Try to restore Godot from cache
+        id: cached-godot
+        uses: actions/cache@v3
+        with:
+          path: ~/godot
+          key: ${{ matrix.os }}-godot-${{ inputs.godot_version }}
+
+      - name: Download and unzip Godot
+        if: ${{ steps.cached-godot.outputs.cache-hit != 'true' }}
+        shell: bash
+        run: python .github/download_godot.py --current-os ${{ matrix.os }} --godot-version ${{ inputs.godot_version }}
+
+      - name: Install deps Windows
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          choco install opencv --version 3.4.10
+          choco install llvm
+
+      - name: Install deps Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install libopencv-core-dev libopencv-highgui-dev libopencv-calib3d-dev libopencv-features2d-dev libopencv-imgproc-dev libopencv-video-dev ffmpeg libegl1-mesa-dev
+
+      # - name: Install OpenCV Mac
+      #   if: matrix.os == 'macos-latest'
+      #   shell: bash
+      #   run: brew install opencv
+
+      - name: Run setup.py for Windows
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: python setup.py --godot-binary ./godot --custom-opencv-dir C:\\tools\\opencv\\build
+
+      - name: Run setup.py for Unix
+        if: matrix.os != 'windows-latest'
+        shell: bash
+        run: python setup.py --godot-binary ./godot
+
+      - name: Build GDMP Windows
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          source ./venv/Scripts/activate
+          BAZEL_LLVM=/c/tools/llvm/bin python build.py desktop
+
+      - name: Build GDMP Unix
+        if: matrix.os != 'windows-latest'
+        shell: bash
+        run: |
+          source ./venv/bin/activate
+          python build.py desktop
+
+      - name: Set tar name
+        shell: bash
+        run: echo "PROJECT_TAR_NAME=gdmp_${{ matrix.os }}.tar.gz" >> $GITHUB_ENV
+
+      - name: Pack into tar.gz
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          mkdir -p addons/GDMP/lib/x86_64/
+          cp mediapipe/bazel-bin/GDMP/desktop/*.dll addons/GDMP/lib/x86_64/
+          tar -czvf ${{ env.PROJECT_TAR_NAME }} addons
+      
+      - name: Pack into tar.gz
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          mkdir -p addons/GDMP/lib/x86_64/
+          cp mediapipe/bazel-bin/GDMP/desktop/*.so addons/GDMP/lib/x86_64/
+          tar -czvf ${{ env.PROJECT_TAR_NAME }} addons
+      
+      # - name: Pack into tar.gz
+      #   if: matrix.os == 'macos'
+      #   shell: bash
+      #   run: |
+      #     mkdir -p addons/GDMP/lib/x86_64/
+      #     cp mediapipe/bazel-bin/GDMP/desktop/*.dylib addons/GDMP/lib/x86_64/
+      #     tar -czvf ${{ env.PROJECT_TAR_NAME }} addons
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.PROJECT_TAR_NAME }}
+          path: |
+            ${{ env.PROJECT_TAR_NAME }}
