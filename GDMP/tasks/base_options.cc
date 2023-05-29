@@ -43,8 +43,8 @@ void MediaPipeTaskBaseOptions::set_delegate(Delegate delegate) {
 
 std::unique_ptr<BaseOptions> MediaPipeTaskBaseOptions::get_base_options() {
 	std::unique_ptr<BaseOptions> base_options = std::make_unique<BaseOptions>();
-	std::string buffer((char *)model_asset_buffer.ptr(), model_asset_buffer.size());
-	base_options->model_asset_buffer = std::make_unique<std::string>(buffer);
+	if (model_asset_buffer.size())
+		base_options->model_asset_buffer = std::make_unique<std::string>((char *)model_asset_buffer.ptr(), model_asset_buffer.size());
 	base_options->model_asset_path = model_asset_path.utf8().get_data();
 	base_options->delegate = BaseOptions::Delegate(delegate);
 	return std::move(base_options);
