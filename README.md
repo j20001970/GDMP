@@ -29,7 +29,7 @@ Example:
     ```
 
     to build android library, then copy `mediapipe/bazel-bin/GDMP/android/libGDMP.so` and `libopencv_java3.so` to `android/src/main/jniLibs/arm64-v8a`
-4. Build GDMP aar with Android Studio or Gradle using the `android` project, then copy the built `release` variant aar located in `android/build/outputs/aar` and `plugins/GDMP.gdap` to your Godot project's `android/plugins`
+4. Build GDMP aar with Android Studio or Gradle using the `android` project, then copy the built `release` variant aar located in `android/build/outputs/aar` and `android/GDMP.gdap` to your Godot project's `android/plugins`
 
 ## Building for iOS
 1. Comment out `macos` and `ios` part of select() in `srcs` and `deps` attributes from `resource_util` in `mediapipe/mediapipe/util/BUILD`, this step is required before the ambiguous match problem is solved.

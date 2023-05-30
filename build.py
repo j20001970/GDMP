@@ -78,7 +78,7 @@ def copy_android(src, dst):
         output = path.join(android_project, 'build', 'outputs', 'aar')
         output = path.join(output, 'GDMP-release.aar')
         copy_to_godot(output, dst)
-        gdap = path.join(path.dirname(__file__), 'plugins', 'GDMP.gdap')
+        gdap = path.join(android_project, 'GDMP.gdap')
         copy_to_godot(gdap, dst)
 
 
