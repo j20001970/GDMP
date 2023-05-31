@@ -9,6 +9,9 @@ mediapipe_files(
         "face_landmarker_v2.task",
         "face_landmarker_v2_with_blendshapes.task",
         "hand_landmarker.task",
+        "mobilenet_v1_0.25_224_quant.tflite",
+        "mobilenet_v1_0.25_224_quant_with_dummy_score_calibration.tflite",
+        "mobilenet_v2_1.0_224.tflite",
     ],
 )
 
@@ -34,6 +37,15 @@ filegroup(
     name = "hand_landmarker_models",
     srcs = [
         "hand_landmarker.task",
+    ],
+)
+
+filegroup(
+    name = "image_classifier_models",
+    srcs = [
+        "mobilenet_v1_0.25_224_quant.tflite",
+        "mobilenet_v1_0.25_224_quant_with_dummy_score_calibration.tflite",
+        "mobilenet_v2_1.0_224.tflite",
     ],
 )
 
@@ -85,6 +97,23 @@ cc_library(
         "//GDMP/tasks/containers:classification_result",
         "//GDMP/tasks/containers:landmark",
         "//mediapipe/tasks/cc/vision/hand_landmarker",
+        "@godot-cpp//:godot",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
+    name = "image_classifier",
+    srcs = ["image_classifier.cc"],
+    hdrs = ["image_classifier.h"],
+    data = [":image_classifier_models"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":vision_task",
+        "//GDMP/framework:image",
+        "//GDMP/tasks:task",
+        "//GDMP/tasks/containers:classification_result",
+        "//mediapipe/tasks/cc/vision/image_classifier",
         "@godot-cpp//:godot",
     ],
     alwayslink = 1,
