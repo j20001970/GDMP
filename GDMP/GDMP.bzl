@@ -12,4 +12,5 @@ DATA = [
 TASKS = [
     "//GDMP/tasks/vision:face_detector",
     "//GDMP/tasks/vision:face_landmarker",
+    "//GDMP/tasks/vision:hand_landmarker",
 ]
