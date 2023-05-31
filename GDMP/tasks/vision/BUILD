@@ -8,6 +8,7 @@ mediapipe_files(
         "face_landmarker.task",
         "face_landmarker_v2.task",
         "face_landmarker_v2_with_blendshapes.task",
+        "hand_landmarker.task",
     ],
 )
 
@@ -26,6 +27,13 @@ filegroup(
         "face_landmarker.task",
         "face_landmarker_v2.task",
         "face_landmarker_v2_with_blendshapes.task",
+    ],
+)
+
+filegroup(
+    name = "hand_landmarker_models",
+    srcs = [
+        "hand_landmarker.task",
     ],
 )
 
@@ -59,6 +67,24 @@ cc_library(
         "//GDMP/tasks/containers:classification_result",
         "//GDMP/tasks/containers:landmark",
         "//mediapipe/tasks/cc/vision/face_landmarker",
+        "@godot-cpp//:godot",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
+    name = "hand_landmarker",
+    srcs = ["hand_landmarker.cc"],
+    hdrs = ["hand_landmarker.h"],
+    data = [":hand_landmarker_models"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":vision_task",
+        "//GDMP/framework:image",
+        "//GDMP/tasks:task",
+        "//GDMP/tasks/containers:classification_result",
+        "//GDMP/tasks/containers:landmark",
+        "//mediapipe/tasks/cc/vision/hand_landmarker",
         "@godot-cpp//:godot",
     ],
     alwayslink = 1,
