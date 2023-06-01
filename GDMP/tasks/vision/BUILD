@@ -18,6 +18,7 @@ mediapipe_files(
         "mobilenet_v1_0.25_224_quant.tflite",
         "mobilenet_v1_0.25_224_quant_with_dummy_score_calibration.tflite",
         "mobilenet_v2_1.0_224.tflite",
+        "mobilenet_v3_small_100_224_embedder.tflite",
         "pose_landmarker.task",
         "selfie_segm_128_128_3.tflite",
         "selfie_segm_144_256_3.tflite",
@@ -57,6 +58,13 @@ filegroup(
         "mobilenet_v1_0.25_224_quant.tflite",
         "mobilenet_v1_0.25_224_quant_with_dummy_score_calibration.tflite",
         "mobilenet_v2_1.0_224.tflite",
+    ],
+)
+
+filegroup(
+    name = "image_embedder_models",
+    srcs = [
+        "mobilenet_v3_small_100_224_embedder.tflite",
     ],
 )
 
@@ -154,6 +162,23 @@ cc_library(
         "//GDMP/tasks:task",
         "//GDMP/tasks/containers:classification_result",
         "//mediapipe/tasks/cc/vision/image_classifier",
+        "@godot-cpp//:godot",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
+    name = "image_embedder",
+    srcs = ["image_embedder.cc"],
+    hdrs = ["image_embedder.h"],
+    data = [":image_embedder_models"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":vision_task",
+        "//GDMP/framework:image",
+        "//GDMP/tasks:task",
+        "//GDMP/tasks/containers:embedding_result",
+        "//mediapipe/tasks/cc/vision/image_embedder",
         "@godot-cpp//:godot",
     ],
     alwayslink = 1,
