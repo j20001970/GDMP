@@ -35,6 +35,17 @@ cc_library(
 )
 
 cc_library(
+    name = "embedding_result",
+    srcs = ["embedding_result.cc"],
+    hdrs = ["embedding_result.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//mediapipe/tasks/cc/components/containers:embedding_result",
+        "@godot-cpp//:godot",
+    ],
+)
+
+cc_library(
     name = "keypoint",
     srcs = ["keypoint.cc"],
     hdrs = ["keypoint.h"],

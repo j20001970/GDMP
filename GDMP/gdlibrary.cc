@@ -17,6 +17,7 @@
 #include "GDMP/tasks/containers/category.h"
 #include "GDMP/tasks/containers/classification_result.h"
 #include "GDMP/tasks/containers/detection_result.h"
+#include "GDMP/tasks/containers/embedding_result.h"
 #include "GDMP/tasks/containers/keypoint.h"
 #include "GDMP/tasks/containers/landmark.h"
 #include "GDMP/util/resource_util.h"
@@ -52,6 +53,8 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<MediaPipeClassificationResult>();
 	ClassDB::register_class<MediaPipeDetection>();
 	ClassDB::register_class<MediaPipeDetectionResult>();
+	ClassDB::register_class<MediaPipeEmbedding>();
+	ClassDB::register_class<MediaPipeEmbeddingResult>();
 	ClassDB::register_class<MediaPipeNormalizedKeypoint>();
 	ClassDB::register_class<MediaPipeLandmark>();
 	ClassDB::register_class<MediaPipeLandmarks>();
