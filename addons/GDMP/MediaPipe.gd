@@ -41,6 +41,7 @@ const FaceDetector: NativeScript = preload("res://addons/GDMP/tasks/vision/Media
 const FaceLandmarker: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeFaceLandmarker.gdns")
 const HandLandmarker: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeHandLandmarker.gdns")
 const ImageClassifier: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeImageClassifier.gdns")
+const ImageEmbedder: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeImageEmbedder.gdns")
 const ImageSegmenter: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeImageSegmenter.gdns")
 const ObjectDetector: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeObjectDetector.gdns")
 const PoseLandmarker: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipePoseLandmarker.gdns")
