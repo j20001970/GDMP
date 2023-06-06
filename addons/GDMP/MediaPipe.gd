@@ -36,18 +36,6 @@ const CameraHelper: NativeScript = preload("io/MediaPipeCameraHelper.gdns")
 # Tasks
 const TaskBaseOptions: NativeScript = preload("tasks/MediaPipeTaskBaseOptions.gdns")
 
-# Task Containers
-const Category: NativeScript = preload("tasks/containers/MediaPipeCategory.gdns")
-const Classifications: NativeScript = preload("tasks/containers/MediaPipeClassifications.gdns")
-const ClassificationResult: NativeScript = preload("tasks/containers/MediaPipeClassificationResult.gdns")
-const Detection: NativeScript = preload("tasks/containers/MediaPipeDetection.gdns")
-const DetectionResult: NativeScript = preload("tasks/containers/MediaPipeDetectionResult.gdns")
-const NormalizedKeypoint: NativeScript = preload("tasks/containers/MediaPipeNormalizedKeypoint.gdns")
-const Landmark: NativeScript = preload("tasks/containers/MediaPipeLandmark.gdns")
-const Landmarks: NativeScript = preload("tasks/containers/MediaPipeLandmarks.gdns")
-const NormalizedLandmark: NativeScript = preload("tasks/containers/MediaPipeNormalizedLandmark.gdns")
-const NormalizedLandmarks: NativeScript = preload("tasks/containers/MediaPipeNormalizedLandmarks.gdns")
-
 # Vision Tasks
 const FaceDetector: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeFaceDetector.gdns")
 const FaceLandmarker: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeFaceLandmarker.gdns")
