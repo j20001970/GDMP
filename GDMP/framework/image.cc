@@ -50,21 +50,30 @@ Ref<Image> MediaPipeImage::get_godot_image() {
 
 	mediapipe::ImageFrameSharedPtr image_frame = image.GetImageFrameSharedPtr();
 	ERR_FAIL_COND_V(image_frame == nullptr, godot_image);
+	PoolByteArray data;
+	data.resize(image_frame->PixelDataSize());
 	Image::Format image_format;
 	switch (image.image_format()) {
 		case mediapipe::ImageFormat::SRGB:
 			image_format = Image::FORMAT_RGB8;
+			image_frame->CopyToBuffer(data.write().ptr(), data.size());
 			break;
 		case mediapipe::ImageFormat::SRGBA:
 			image_format = Image::FORMAT_RGBA8;
+			image_frame->CopyToBuffer(data.write().ptr(), data.size());
+			break;
+		case mediapipe::ImageFormat::GRAY8:
+			image_format = Image::FORMAT_L8;
+			image_frame->CopyToBuffer(data.write().ptr(), data.size());
+			break;
+		case mediapipe::ImageFormat::VEC32F1:
+			image_format = Image::FORMAT_RF;
+			image_frame->CopyToBuffer((float *)data.write().ptr(), data.size());
 			break;
 		default:
 			ERR_PRINT("Unsupported image format.");
 			return godot_image;
 	}
-	PoolByteArray data;
-	data.resize(image_frame->PixelDataSize());
-	image_frame->CopyToBuffer(data.write().ptr(), data.size());
 	godot_image = Ref(godot::Image::_new());
 	godot_image->create_from_data(image_frame->Width(), image_frame->Height(), false, image_format, data);
 	return godot_image;
@@ -74,11 +83,17 @@ void MediaPipeImage::set_godot_image(Ref<godot::Image> image) {
 	ERR_FAIL_COND(image.is_null());
 	mediapipe::ImageFormat::Format image_format;
 	switch (image->get_format()) {
+		case Image::FORMAT_L8:
+			image_format = mediapipe::ImageFormat::GRAY8;
+			break;
 		case Image::FORMAT_RGB8:
 			image_format = mediapipe::ImageFormat::SRGB;
 			break;
 		case Image::FORMAT_RGBA8:
 			image_format = mediapipe::ImageFormat::SRGBA;
+			break;
+		case Image::FORMAT_RF:
+			image_format = mediapipe::ImageFormat::VEC32F1;
 			break;
 		default:
 			ERR_PRINT("Unsupported image format.");
