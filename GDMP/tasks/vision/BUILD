@@ -18,6 +18,7 @@ mediapipe_files(
         "mobilenet_v1_0.25_224_quant.tflite",
         "mobilenet_v1_0.25_224_quant_with_dummy_score_calibration.tflite",
         "mobilenet_v2_1.0_224.tflite",
+        "pose_landmarker.task",
         "selfie_segm_128_128_3.tflite",
         "selfie_segm_144_256_3.tflite",
         "selfie_segmentation.tflite",
@@ -78,6 +79,13 @@ filegroup(
         "coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.tflite",
         "coco_ssd_mobilenet_v1_1.0_quant_2018_06_29_with_dummy_score_calibration.tflite",
         "efficientdet_lite0_fp16_no_nms.tflite",
+    ],
+)
+
+filegroup(
+    name = "pose_landmarker_models",
+    srcs = [
+        "pose_landmarker.task",
     ],
 )
 
@@ -179,6 +187,23 @@ cc_library(
         "//GDMP/tasks:task",
         "//GDMP/tasks/containers:detection_result",
         "//mediapipe/tasks/cc/vision/object_detector",
+        "@godot-cpp//:godot",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
+    name = "pose_landmarker",
+    srcs = ["pose_landmarker.cc"],
+    hdrs = ["pose_landmarker.h"],
+    data = [":pose_landmarker_models"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":vision_task",
+        "//GDMP/framework:image",
+        "//GDMP/tasks:task",
+        "//GDMP/tasks/containers:landmark",
+        "//mediapipe/tasks/cc/vision/pose_landmarker",
         "@godot-cpp//:godot",
     ],
     alwayslink = 1,
