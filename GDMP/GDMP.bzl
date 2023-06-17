@@ -15,4 +15,5 @@ TASKS = [
     "//GDMP/tasks/vision:hand_landmarker",
     "//GDMP/tasks/vision:image_classifier",
     "//GDMP/tasks/vision:image_segmenter",
+    "//GDMP/tasks/vision:object_detector",
 ]
