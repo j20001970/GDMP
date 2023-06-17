@@ -2,7 +2,11 @@ load("//mediapipe/framework/tool:mediapipe_files.bzl", "mediapipe_files")
 
 mediapipe_files(
     srcs = [
+        "coco_efficientdet_lite0_v1_1.0_quant_2021_09_06.tflite",
+        "coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.tflite",
+        "coco_ssd_mobilenet_v1_1.0_quant_2018_06_29_with_dummy_score_calibration.tflite",
         "deeplabv3.tflite",
+        "efficientdet_lite0_fp16_no_nms.tflite",
         "face_detection_full_range.tflite",
         "face_detection_full_range_sparse.tflite",
         "face_detection_short_range.tflite",
@@ -64,6 +68,16 @@ filegroup(
         "selfie_segm_144_256_3.tflite",
         "selfie_segmentation.tflite",
         "selfie_segmentation_landscape.tflite",
+    ],
+)
+
+filegroup(
+    name = "object_detector_models",
+    srcs = [
+        "coco_efficientdet_lite0_v1_1.0_quant_2021_09_06.tflite",
+        "coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.tflite",
+        "coco_ssd_mobilenet_v1_1.0_quant_2018_06_29_with_dummy_score_calibration.tflite",
+        "efficientdet_lite0_fp16_no_nms.tflite",
     ],
 )
 
@@ -148,6 +162,23 @@ cc_library(
         "//GDMP/framework:image",
         "//GDMP/tasks:task",
         "//mediapipe/tasks/cc/vision/image_segmenter",
+        "@godot-cpp//:godot",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
+    name = "object_detector",
+    srcs = ["object_detector.cc"],
+    hdrs = ["object_detector.h"],
+    data = [":object_detector_models"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":vision_task",
+        "//GDMP/framework:image",
+        "//GDMP/tasks:task",
+        "//GDMP/tasks/containers:detection_result",
+        "//mediapipe/tasks/cc/vision/object_detector",
         "@godot-cpp//:godot",
     ],
     alwayslink = 1,
