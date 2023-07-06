@@ -7,6 +7,7 @@ cc_library(
     srcs = glob([
         "src/*.cpp",
         "src/*/*.cpp",
+        "gen/src/*.cpp",
         "gen/src/*/*.cpp",
     ]),
     hdrs = glob([

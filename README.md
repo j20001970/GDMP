@@ -1,7 +1,7 @@
 # GDMP
 GDMP is a Godot 3.3+ plugin for utilizing MediaPipe graphs in GDScript.
 
-**NOTICE:** This branch is for Godot 4.0 (GDExtension) and later.
+**NOTICE:** This branch is for Godot 4.x (GDExtension) and later.
 - For Godot 3.x (GDNative) version, please refer to `3.x` branch.
 
 ## Getting Started
