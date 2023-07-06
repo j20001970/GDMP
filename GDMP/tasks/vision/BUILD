@@ -2,16 +2,22 @@ load("//mediapipe/framework/tool:mediapipe_files.bzl", "mediapipe_files")
 
 mediapipe_files(
     srcs = [
+        "deeplabv3.tflite",
         "face_detection_full_range.tflite",
         "face_detection_full_range_sparse.tflite",
         "face_detection_short_range.tflite",
         "face_landmarker.task",
         "face_landmarker_v2.task",
         "face_landmarker_v2_with_blendshapes.task",
+        "hair_segmentation.tflite",
         "hand_landmarker.task",
         "mobilenet_v1_0.25_224_quant.tflite",
         "mobilenet_v1_0.25_224_quant_with_dummy_score_calibration.tflite",
         "mobilenet_v2_1.0_224.tflite",
+        "selfie_segm_128_128_3.tflite",
+        "selfie_segm_144_256_3.tflite",
+        "selfie_segmentation.tflite",
+        "selfie_segmentation_landscape.tflite",
     ],
 )
 
@@ -46,6 +52,18 @@ filegroup(
         "mobilenet_v1_0.25_224_quant.tflite",
         "mobilenet_v1_0.25_224_quant_with_dummy_score_calibration.tflite",
         "mobilenet_v2_1.0_224.tflite",
+    ],
+)
+
+filegroup(
+    name = "image_segmenter_models",
+    srcs = [
+        "deeplabv3.tflite",
+        "hair_segmentation.tflite",
+        "selfie_segm_128_128_3.tflite",
+        "selfie_segm_144_256_3.tflite",
+        "selfie_segmentation.tflite",
+        "selfie_segmentation_landscape.tflite",
     ],
 )
 
@@ -114,6 +132,22 @@ cc_library(
         "//GDMP/tasks:task",
         "//GDMP/tasks/containers:classification_result",
         "//mediapipe/tasks/cc/vision/image_classifier",
+        "@godot-cpp//:godot",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
+    name = "image_segmenter",
+    srcs = ["image_segmenter.cc"],
+    hdrs = ["image_segmenter.h"],
+    data = [":image_segmenter_models"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":vision_task",
+        "//GDMP/framework:image",
+        "//GDMP/tasks:task",
+        "//mediapipe/tasks/cc/vision/image_segmenter",
         "@godot-cpp//:godot",
     ],
     alwayslink = 1,
