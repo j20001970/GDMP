@@ -13,6 +13,7 @@ mediapipe_files(
         "face_landmarker.task",
         "face_landmarker_v2.task",
         "face_landmarker_v2_with_blendshapes.task",
+        "gesture_recognizer.task",
         "hair_segmentation.tflite",
         "hand_landmarker.task",
         "mobilenet_v1_0.25_224_quant.tflite",
@@ -42,6 +43,13 @@ filegroup(
         "face_landmarker.task",
         "face_landmarker_v2.task",
         "face_landmarker_v2_with_blendshapes.task",
+    ],
+)
+
+filegroup(
+    name = "gesture_recognizer_models",
+    srcs = [
+        "gesture_recognizer.task",
     ],
 )
 
@@ -127,6 +135,23 @@ cc_library(
         "//GDMP/tasks/containers:classification_result",
         "//GDMP/tasks/containers:landmark",
         "//mediapipe/tasks/cc/vision/face_landmarker",
+        "@godot-cpp//:godot",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
+    name = "gesture_recognizer",
+    srcs = ["gesture_recognizer.cc"],
+    hdrs = ["gesture_recognizer.h"],
+    data = [":gesture_recognizer_models"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":vision_task",
+        "//GDMP/framework:image",
+        "//GDMP/proto",
+        "//GDMP/tasks:task",
+        "//mediapipe/tasks/cc/vision/gesture_recognizer",
         "@godot-cpp//:godot",
     ],
     alwayslink = 1,
