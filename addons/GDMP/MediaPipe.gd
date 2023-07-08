@@ -39,6 +39,7 @@ const TaskBaseOptions: NativeScript = preload("tasks/MediaPipeTaskBaseOptions.gd
 # Vision Tasks
 const FaceDetector: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeFaceDetector.gdns")
 const FaceLandmarker: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeFaceLandmarker.gdns")
+const GestureRecognizer: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeGestureRecognizer.gdns")
 const HandLandmarker: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeHandLandmarker.gdns")
 const ImageClassifier: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeImageClassifier.gdns")
 const ImageEmbedder: NativeScript = preload("res://addons/GDMP/tasks/vision/MediaPipeImageEmbedder.gdns")
