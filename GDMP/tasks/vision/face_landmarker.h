@@ -3,6 +3,8 @@
 
 #include "godot_cpp/classes/ref.hpp"
 #include "godot_cpp/classes/ref_counted.hpp"
+#include "godot_cpp/variant/array.hpp"
+#include "godot_cpp/variant/projection.hpp"
 #include "godot_cpp/variant/rect2.hpp"
 #include "godot_cpp/variant/typed_array.hpp"
 
@@ -31,8 +33,11 @@ class MediaPipeFaceLandmarkerResult : public RefCounted {
 
 		TypedArray<MediaPipeNormalizedLandmarks> get_face_landmarks();
 		TypedArray<MediaPipeClassifications> get_face_blendshapes();
+		// FIXME TypedArray<Projection> fails with a compilation error
+		Array get_facial_transformation_matrixes();
 
 		bool has_face_blendshapes();
+		bool has_facial_transformation_matrixes();
 };
 
 class MediaPipeFaceLandmarker : public MediaPipeTask {
@@ -45,7 +50,7 @@ class MediaPipeFaceLandmarker : public MediaPipeTask {
 		bool initialize(
 				Ref<MediaPipeTaskBaseOptions> base_options, VisionRunningMode running_mode,
 				int num_faces, float min_face_detection_confidence, float min_face_presence_confidence, float min_tracking_confidence,
-				bool output_face_blendshapes);
+				bool output_face_blendshapes, bool output_facial_transformation_matrixes);
 		Ref<MediaPipeFaceLandmarkerResult> detect(Ref<MediaPipeImage> image, Rect2 region_of_interest, int rotation_degrees);
 		Ref<MediaPipeFaceLandmarkerResult> detect_video(Ref<MediaPipeImage> image, uint64_t timestamp_ms, Rect2 region_of_interest, int rotation_degrees);
 		bool detect_async(Ref<MediaPipeImage> image, uint64_t timestamp_ms, Rect2 region_of_interest, int rotation_degrees);

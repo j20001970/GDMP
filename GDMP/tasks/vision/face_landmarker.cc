@@ -3,12 +3,16 @@
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/core/error_macros.hpp"
 
+#include "mediapipe/framework/formats/matrix.h"
+
 #include "GDMP/tasks/vision/vision_task.h"
 
 void MediaPipeFaceLandmarkerResult::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_face_landmarks"), &MediaPipeFaceLandmarkerResult::get_face_landmarks);
 	ClassDB::bind_method(D_METHOD("get_face_blendshapes"), &MediaPipeFaceLandmarkerResult::get_face_blendshapes);
 	ClassDB::bind_method(D_METHOD("has_face_blendshapes"), &MediaPipeFaceLandmarkerResult::has_face_blendshapes);
+	ClassDB::bind_method(D_METHOD("get_facial_transformation_matrixes"), &MediaPipeFaceLandmarkerResult::get_facial_transformation_matrixes);
+	ClassDB::bind_method(D_METHOD("has_facial_transformation_matrixes"), &MediaPipeFaceLandmarkerResult::has_facial_transformation_matrixes);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "face_landmarks", PROPERTY_HINT_ARRAY_TYPE, MediaPipeNormalizedLandmarks::get_class_static()), "", "get_face_landmarks");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "face_blendshapes", PROPERTY_HINT_ARRAY_TYPE, MediaPipeClassifications::get_class_static()), "", "get_face_blendshapes");
 }
@@ -43,12 +47,39 @@ bool MediaPipeFaceLandmarkerResult::has_face_blendshapes() {
 	return result.face_blendshapes.has_value();
 }
 
+Array MediaPipeFaceLandmarkerResult::get_facial_transformation_matrixes() {
+	Array array;
+	if (!has_facial_transformation_matrixes())
+		return array;
+
+	auto matrixes = result.facial_transformation_matrixes.value();
+	array.resize(matrixes.size());
+
+	for (int i = 0; i < matrixes.size(); i++) {
+		Projection projection;
+		auto matrix = matrixes[i];
+
+		for (int x = 0; x < 4; x++) {
+			for (int y = 0; y < 4; y++) {
+				projection.columns[x][y] = matrix(x, y);
+			}
+		}
+		array.push_back(projection);
+	}
+
+	return array;
+}
+
+bool MediaPipeFaceLandmarkerResult::has_facial_transformation_matrixes() {
+	return result.facial_transformation_matrixes.has_value();
+}
+
 void MediaPipeFaceLandmarker::_bind_methods() {
 	ClassDB::bind_method(D_METHOD(
 								 "initialize", "base_options", "running_mode",
 								 "num_faces", "min_face_detection_confidence", "min_face_presence_confidence", "min_tracking_confidence",
-								 "output_face_blendshapes"),
-			&MediaPipeFaceLandmarker::initialize, DEFVAL(RUNNING_MODE_IMAGE), DEFVAL(1), DEFVAL(0.5), DEFVAL(0.5), DEFVAL(0.5), DEFVAL(false));
+								 "output_face_blendshapes", "output_facial_transformation_matrixes"),
+			&MediaPipeFaceLandmarker::initialize, DEFVAL(RUNNING_MODE_IMAGE), DEFVAL(1), DEFVAL(0.5), DEFVAL(0.5), DEFVAL(0.5), DEFVAL(false), DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("detect", "image", "region_of_interest", "rotation_degrees"),
 			&MediaPipeFaceLandmarker::detect, DEFVAL(Rect2()), DEFVAL(0));
 	ClassDB::bind_method(D_METHOD("detect_video", "image", "timestamp_ms", "region_of_interest", "rotation_degrees"),
@@ -69,7 +100,7 @@ void MediaPipeFaceLandmarker::_register_task() {
 bool MediaPipeFaceLandmarker::initialize(
 		Ref<MediaPipeTaskBaseOptions> base_options, VisionRunningMode running_mode,
 		int num_faces, float min_face_detection_confidence, float min_face_presence_confidence, float min_tracking_confidence,
-		bool output_face_blendshapes) {
+		bool output_face_blendshapes, bool output_facial_transformation_matrixes) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<FaceLandmarkerOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
@@ -79,6 +110,7 @@ bool MediaPipeFaceLandmarker::initialize(
 	options->min_face_presence_confidence = min_face_presence_confidence;
 	options->min_tracking_confidence = min_tracking_confidence;
 	options->output_face_blendshapes = output_face_blendshapes;
+	options->output_facial_transformation_matrixes = output_facial_transformation_matrixes;
 	if (running_mode == RUNNING_MODE_LIVE_STREAM)
 		options->result_callback = [this](absl::StatusOr<FaceLandmarkerResult> result, const mediapipe::Image image, uint64_t timestamp_ms) {
 			Ref<MediaPipeFaceLandmarkerResult> callback_result;
