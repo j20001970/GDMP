@@ -15,6 +15,7 @@ void MediaPipeFaceLandmarkerResult::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("has_facial_transformation_matrixes"), &MediaPipeFaceLandmarkerResult::has_facial_transformation_matrixes);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "face_landmarks", PROPERTY_HINT_ARRAY_TYPE, MediaPipeNormalizedLandmarks::get_class_static()), "", "get_face_landmarks");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "face_blendshapes", PROPERTY_HINT_ARRAY_TYPE, MediaPipeClassifications::get_class_static()), "", "get_face_blendshapes");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "facial_transformation_matrixes"), "", "get_facial_transformation_matrixes");
 }
 
 MediaPipeFaceLandmarkerResult::MediaPipeFaceLandmarkerResult() = default;
@@ -64,7 +65,7 @@ Array MediaPipeFaceLandmarkerResult::get_facial_transformation_matrixes() {
 				projection.columns[x][y] = matrix(x, y);
 			}
 		}
-		array.push_back(projection);
+		array[i] = projection;
 	}
 
 	return array;
