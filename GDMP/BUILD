@@ -19,6 +19,7 @@ cc_library(
         "//GDMP/tasks/containers:category",
         "//GDMP/tasks/containers:classification_result",
         "//GDMP/tasks/containers:detection_result",
+        "//GDMP/tasks/containers:embedding_result",
         "//GDMP/tasks/containers:keypoint",
         "//GDMP/tasks/containers:landmark",
         "//GDMP/util:resource_util",

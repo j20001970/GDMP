@@ -15,6 +15,7 @@
 #include "GDMP/tasks/containers/category.h"
 #include "GDMP/tasks/containers/classification_result.h"
 #include "GDMP/tasks/containers/detection_result.h"
+#include "GDMP/tasks/containers/embedding_result.h"
 #include "GDMP/tasks/containers/keypoint.h"
 #include "GDMP/tasks/containers/landmark.h"
 #include "GDMP/util/resource_util.h"
@@ -52,6 +53,8 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	register_class<MediaPipeClassificationResult>();
 	register_class<MediaPipeDetection>();
 	register_class<MediaPipeDetectionResult>();
+	register_class<MediaPipeEmbedding>();
+	register_class<MediaPipeEmbeddingResult>();
 	register_class<MediaPipeNormalizedKeypoint>();
 	register_class<MediaPipeLandmark>();
 	register_class<MediaPipeLandmarks>();
