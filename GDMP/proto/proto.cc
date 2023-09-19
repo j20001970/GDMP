@@ -12,7 +12,7 @@ void MediaPipeProto::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_repeated_field", "field_name"), &MediaPipeProto::is_repeated_field);
 	ClassDB::bind_method(D_METHOD("get_field_size", "field_name"), &MediaPipeProto::get_field_size);
 	ClassDB::bind_method(D_METHOD("get", "field_name"), &MediaPipeProto::get);
-	ClassDB::bind_method(D_METHOD("get_repeated", "field_name"), &MediaPipeProto::get_repeated);
+	ClassDB::bind_method(D_METHOD("get_repeated", "field_name", "index"), &MediaPipeProto::get_repeated);
 	ClassDB::bind_method(D_METHOD("set", "field_name", "value"), &MediaPipeProto::set);
 }
 
