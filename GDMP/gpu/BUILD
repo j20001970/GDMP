@@ -16,7 +16,7 @@ cc_library(
             "//mediapipe/gpu:gpu_shared_data_internal",
         ],
     }) + select({
-        "//mediapipe:apple": ["//mediapipe/objc:util"],
+        "//mediapipe:apple": ["//mediapipe/objc:mediapipe_framework_ios"],
         "//conditions:default": [],
     }),
 )

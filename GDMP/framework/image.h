@@ -31,6 +31,9 @@ class MediaPipeImage : public RefCounted {
 		MediaPipeImage(mediapipe::Image image);
 		MediaPipeImage(mediapipe::ImageFrameSharedPtr image_frame);
 #if !MEDIAPIPE_DISABLE_GPU
+#if MEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER
+		MediaPipeImage(CVPixelBufferRef pixel_buffer);
+#endif
 		MediaPipeImage(mediapipe::GpuBuffer gpu_buffer);
 #endif
 
