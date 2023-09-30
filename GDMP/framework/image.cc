@@ -26,6 +26,13 @@ MediaPipeImage *MediaPipeImage::_new(mediapipe::ImageFrameSharedPtr image_frame)
 }
 
 #if !MEDIAPIPE_DISABLE_GPU
+#if MEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER
+MediaPipeImage *MediaPipeImage::_new(CVPixelBufferRef pixel_buffer) {
+	MediaPipeImage *i = MediaPipeImage::_new();
+	i->image = mediapipe::Image(pixel_buffer);
+	return i;
+}
+#endif
 MediaPipeImage *MediaPipeImage::_new(mediapipe::GpuBuffer gpu_buffer) {
 	MediaPipeImage *i = MediaPipeImage::_new();
 	i->image = mediapipe::Image(gpu_buffer);

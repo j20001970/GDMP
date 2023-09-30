@@ -26,6 +26,9 @@ class MediaPipeImage : public Reference {
 		static MediaPipeImage *_new(mediapipe::Image image);
 		static MediaPipeImage *_new(mediapipe::ImageFrameSharedPtr image_frame);
 #if !MEDIAPIPE_DISABLE_GPU
+#if MEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER
+		static MediaPipeImage *_new(CVPixelBufferRef pixel_buffer);
+#endif
 		static MediaPipeImage *_new(mediapipe::GpuBuffer gpu_buffer);
 #endif
 

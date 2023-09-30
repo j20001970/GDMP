@@ -94,7 +94,7 @@ int64_t MediaPipePacket::get_timestamp() {
 	return packet.Timestamp().Value();
 }
 
-void MediaPipePacket::set_timestamp(long timestamp) {
+void MediaPipePacket::set_timestamp(int64 timestamp) {
 	packet = packet.At(mediapipe::Timestamp(timestamp));
 }
 
