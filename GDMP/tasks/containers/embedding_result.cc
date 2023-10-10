@@ -55,6 +55,8 @@ MediaPipeEmbeddingResult *MediaPipeEmbeddingResult::_new(const EmbeddingResult &
 	return r;
 }
 
+void MediaPipeEmbeddingResult::_init() {}
+
 Array MediaPipeEmbeddingResult::get_embeddings() {
 	Array array;
 	auto embeddings = result.embeddings;

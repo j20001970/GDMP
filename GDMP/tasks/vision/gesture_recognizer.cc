@@ -15,6 +15,8 @@ MediaPipeGestureRecognizerResult *MediaPipeGestureRecognizerResult::_new(const G
 	return r;
 }
 
+void MediaPipeGestureRecognizerResult::_init() {}
+
 Array MediaPipeGestureRecognizerResult::get_gestures() {
 	Array array;
 	auto gestures = result.gestures;

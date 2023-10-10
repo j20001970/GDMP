@@ -14,6 +14,8 @@ void MediaPipeImageEmbedder::_register_task() {
 	register_class<MediaPipeImageEmbedder>();
 }
 
+void MediaPipeImageEmbedder::_init() {}
+
 bool MediaPipeImageEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_options, int running_mode, bool l2_normalize, bool quantize) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<ImageEmbedderOptions>();
