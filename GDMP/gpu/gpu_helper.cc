@@ -7,6 +7,7 @@
 #include "mediapipe/objc/util.h"
 #endif
 
+#if !MEDIAPIPE_DISABLE_GPU
 mediapipe::GpuBuffer MediaPipeGPUHelper::get_gpu_buffer(mediapipe::Image image) {
 	mediapipe::GpuBuffer gpu_buffer;
 #if MEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER
@@ -19,6 +20,7 @@ mediapipe::GpuBuffer MediaPipeGPUHelper::get_gpu_buffer(mediapipe::Image image) 
 #endif
 	return gpu_buffer;
 }
+#endif
 
 void MediaPipeGPUHelper::_register_methods() {
 	register_method("initialize", &MediaPipeGPUHelper::initialize);
