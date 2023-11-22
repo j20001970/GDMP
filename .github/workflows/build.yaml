@@ -50,7 +50,11 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y libopencv-dev libopencv-core-dev libopencv-highgui-dev libopencv-calib3d-dev libopencv-features2d-dev libopencv-imgproc-dev libopencv-video-dev libopencv-contrib-dev ffmpeg libegl1-mesa-dev
+          sudo apt-get install -y ffmpeg libegl1-mesa-dev
+          
+          # Installing deps from the default repos doesn't appear to work in GitHub actions
+          chmod +x mediapipe/setup_opencv.sh
+          ./mediapipe/setup_opencv.sh
 
       # - name: Install OpenCV Mac
       #   if: matrix.os == 'macos-latest'
@@ -72,7 +76,7 @@ jobs:
         shell: bash
         run: |
           source ./venv/Scripts/activate
-          BAZEL_LLVM=/c/tools/llvm/bin BAZEL_VC=/c/Program\ Files/Microsoft\ Visual\ Studio/2019/Community/VC python build.py desktop
+          BAZEL_LLVM=/c/tools/llvm/bin BAZEL_VC=/c/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio/2019/Community/VC python build.py desktop
 
       - name: Build GDMP Unix
         if: matrix.os != 'windows-latest'
