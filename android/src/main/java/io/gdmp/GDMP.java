@@ -25,7 +25,7 @@ public class GDMP extends GodotPlugin {
 
     public GDMP(Godot godot) {
         super(godot);
-        AndroidAssetUtil.initializeNativeAssetManager(godot.getContext());
+        AndroidAssetUtil.initializeNativeAssetManager(godot.getActivity().getApplicationContext());
         this.godot = godot;
         singleton = this;
     }
