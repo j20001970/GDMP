@@ -10,11 +10,12 @@ from argparse import ArgumentParser, Namespace
 from typing import Callable
 import venv
 
+MEDIAPIPE_WORKSPACE_PATH = "mediapipe/WORKSPACE"
+
 DEFAULT_OPENCV_VERSION = "3.4.10"
 
 current_platform = platform.system().lower()
 if current_platform == "windows":
-    MEDIAPIPE_WORKSPACE_PATH = "mediapipe/WORKSPACE"
     DEFAULT_OPENCV_INSTALL_PATH_REPLACE = "path = \"C:\\\\opencv\\\\build\","
     OPENCV_INSTALL_PATH_FORMAT = "path = \"{}\","
 
@@ -81,6 +82,15 @@ def modify_file(file_path: str, replace_str: str, format_str: str, replacement: 
         f.write(new_text)
 
 
+def workspace_android_rules() -> None:
+    with open(MEDIAPIPE_WORKSPACE_PATH, 'r') as f:
+        content = f.read()
+    with open(MEDIAPIPE_WORKSPACE_PATH, 'a') as f:
+        if not 'android_sdk_repository' in content:
+            f.write('android_sdk_repository(name = \"androidsdk\")\n')
+        if not 'android_ndk_repository' in content:
+            f.write('android_ndk_repository(name = \"androidndk\", api_level=21)\n')
+
 def create_venv(current_platform: str) -> None:
     venv_path: str = path.join(path.dirname(__file__), "venv")
     if not path.exists(venv_path):
@@ -139,6 +149,8 @@ if __name__ == "__main__":
     generate_bindings(api_json_path)
 
     patch_and_symlink(symlinker)
+
+    workspace_android_rules()
 
     if current_platform == "windows":
         if args.custom_opencv_dir:
