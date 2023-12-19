@@ -1,4 +1,4 @@
-package org.godotengine.gdmp;
+package io.gdmp;
 
 import android.Manifest.permission;
 import android.content.pm.PackageManager;

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.godotengine.gdmp">
+    package="io.gdmp">
     <!-- For using the camera -->
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -9,6 +9,6 @@
     <application>
         <meta-data
             android:name="org.godotengine.plugin.v1.GDMP"
-            android:value="org.godotengine.gdmp.GDMP" />
+            android:value="io.gdmp.GDMP" />
     </application>
 </manifest>
