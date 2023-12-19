@@ -1,4 +1,4 @@
-package org.godotengine.gdmp;
+package io.gdmp;
 
 import android.app.Activity;
 import android.graphics.SurfaceTexture;

@@ -36,7 +36,7 @@ class CameraHelperAndroid : public CameraHelperImpl {
 			JNIEnv *env = android_api->godot_android_get_env();
 			if (env->IsSameObject(camera_class, NULL)) {
 				camera_class = reinterpret_cast<jclass>(
-						env->NewGlobalRef(env->FindClass("org/godotengine/gdmp/GDMPCameraHelper")));
+						env->NewGlobalRef(env->FindClass("io/gdmp/GDMPCameraHelper")));
 			}
 			android_plugin = Engine::get_singleton()->get_singleton("GDMP");
 			ERR_FAIL_COND(android_plugin == nullptr);
@@ -115,7 +115,7 @@ class CameraHelperAndroid : public CameraHelperImpl {
 
 jclass CameraHelperAndroid::camera_class = nullptr;
 
-extern "C" JNIEXPORT void JNICALL Java_org_godotengine_gdmp_GDMPCameraHelper_nativeOnNewFrame(
+extern "C" JNIEXPORT void JNICALL Java_io_gdmp_GDMPCameraHelper_nativeOnNewFrame(
 		JNIEnv *pEnv, jobject jCaller, jlong cppCaller, jobject frame, jint name, jint width, jint height) {
 	auto caller = (CameraHelperAndroid *)(cppCaller);
 	caller->on_new_frame(pEnv, frame, name, width, height);

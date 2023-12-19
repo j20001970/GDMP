@@ -39,7 +39,7 @@ class CameraHelperIOS : public CameraHelperImpl {
         CameraHelperIOS(MediaPipeCameraHelper *camera_helper) : CameraHelperImpl(camera_helper) {
             dispatch_queue_attr_t qosAttribute = dispatch_queue_attr_make_with_qos_class(
                 DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, /*relative_priority=*/0);
-            delegateQueue = dispatch_queue_create("org.godotengine.gdmp.delegateQueue", qosAttribute);
+            delegateQueue = dispatch_queue_create(NULL, qosAttribute);
             delegate = [[OutputDelegate alloc] init:camera_helper];
         }
 
