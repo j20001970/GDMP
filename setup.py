@@ -99,9 +99,9 @@ def workspace_android_rules() -> None:
         content = f.read()
     with open(MEDIAPIPE_WORKSPACE, 'a') as f:
         if not 'android_sdk_repository' in content:
-            f.write('android_sdk_repository(name = \"androidsdk\")\n')
+            f.write('#android_sdk_repository(name = \"androidsdk\")\n')
         if not 'android_ndk_repository' in content:
-            f.write('android_ndk_repository(name = \"androidndk\", api_level=21)\n')
+            f.write('#android_ndk_repository(name = \"androidndk\", api_level=21)\n')
 
 def create_venv(current_platform: str) -> None:
     if not path.exists(GDMP_VENV_DIR):
