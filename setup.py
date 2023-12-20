@@ -2,15 +2,24 @@
 
 import sys
 import os
-from os import path, symlink, unlink
+from os import path, unlink
 from shutil import rmtree, which
 from subprocess import run
 import platform
 from argparse import ArgumentParser, Namespace
-from typing import Callable
 import venv
 
-MEDIAPIPE_WORKSPACE_PATH = "mediapipe/WORKSPACE"
+GODOT_CPP_DIR = path.join(path.dirname(__file__), "godot-cpp")
+GODOT_CPP_API_JSON = path.join(GODOT_CPP_DIR, "gdextension/extension_api.json")
+
+MEDIAPIPE_DIR = path.join(path.dirname(__file__), "mediapipe")
+MEDIAPIPE_GDMP_SYMLINK = path.join(MEDIAPIPE_DIR, "GDMP")
+MEDIAPIPE_WORKSPACE = path.join(MEDIAPIPE_DIR, "WORKSPACE")
+
+GDMP_MEDIAPIPE_SETUP = path.join(path.dirname(__file__), "mediapipe_setup.diff")
+GDMP_SRC_DIR = path.join(path.dirname(__file__), "GDMP")
+GDMP_VENV_DIR = path.join(path.dirname(__file__), "venv")
+GDMP_VENV_REQUIREMENTS = path.join(path.dirname(__file__), "requirements.txt")
 
 DEFAULT_OPENCV_VERSION = "3.4.10"
 
@@ -19,49 +28,52 @@ if current_platform == "windows":
     DEFAULT_OPENCV_INSTALL_PATH_REPLACE = "path = \"C:\\\\opencv\\\\build\","
     OPENCV_INSTALL_PATH_FORMAT = "path = \"{}\","
 
-    OPENCV_BUILD_PATH = "mediapipe/third_party/opencv_windows.BUILD"
+    OPENCV_BUILD_PATH = path.join(MEDIAPIPE_DIR, "third_party/opencv_windows.BUILD")
     DEFAULT_OPENCV_VERSION_REPLACE = "OPENCV_VERSION = \"3410\""
     OPENCV_VERSION_FORMAT = "OPENCV_VERSION = \"{}\""
+
+if current_platform == "windows":
+    def symlink(src_dir, dst_dir):
+        # Only works on Windows if the command is passed in this format
+        run('mklink /J "%s" "%s"' %
+            (dst_dir, src_dir), check=True, shell=True)
+else:  # Linux/MacOS should work roughly the same
+    def symlink(src_dir, dst_dir):
+        os.symlink(src_dir, dst_dir, True)
 
 
 def generate_bindings(api_json_path: str) -> None:
     # Could use a contextmanager but that feels like overkill
-    os.chdir(path.join(path.dirname(__file__), "godot-cpp"))
+    os.chdir(GODOT_CPP_DIR)
     sys.path.append(os.getcwd())
 
     import binding_generator as bg
     bg.generate_bindings(api_json_path, True)
 
     sys.path.pop()
-    os.chdir("..")
 
 
-def patch_and_symlink(symlinker: Callable) -> None:
-    mediapipe_dir = path.join(path.dirname(__file__), 'mediapipe')
-
+def patch_and_symlink() -> None:
     # Patching mediapipe workspace
-    mediapipe_setup = path.join(path.dirname(__file__), 'mediapipe_setup.diff')
     if which('git'):
         print("Using git to patch mediapipe workspace.")
         run(['git', 'apply', '--unsafe-paths',
-             '--directory='+mediapipe_dir, mediapipe_setup])
+             '--directory='+MEDIAPIPE_DIR, GDMP_MEDIAPIPE_SETUP])
     elif which('patch'):
         print("Using patch to patch mediapipe workspace.")
-        run(['patch', '-p1', '-d', mediapipe_dir, '-i', mediapipe_setup])
+        run(['patch', '-p1', '-d', MEDIAPIPE_DIR, '-i', GDMP_MEDIAPIPE_SETUP])
     else:
         print("Error: 'git' or 'patch' cannot be found for patching mediapipe workspace.")
         sys.exit(-1)
 
     # Symlink GDMP source code to mediapipe workspace
-    src_dir = path.join(path.dirname(__file__), 'GDMP')
-    dst_dir = path.join(mediapipe_dir, 'GDMP')
-    if path.isdir(dst_dir):
+    if path.isdir(MEDIAPIPE_GDMP_SYMLINK):
         try:
-            unlink(dst_dir)
+            unlink(MEDIAPIPE_GDMP_SYMLINK)
         except:
-            rmtree(dst_dir)
+            rmtree(MEDIAPIPE_GDMP_SYMLINK)
     try:
-        symlinker(src_dir, dst_dir)
+        symlink(GDMP_SRC_DIR, MEDIAPIPE_GDMP_SYMLINK)
     except:
         print("Error: Unable to symlink GDMP source to mediapipe workspace.")
         sys.exit(-1)
@@ -83,21 +95,20 @@ def modify_file(file_path: str, replace_str: str, format_str: str, replacement: 
 
 
 def workspace_android_rules() -> None:
-    with open(MEDIAPIPE_WORKSPACE_PATH, 'r') as f:
+    with open(MEDIAPIPE_WORKSPACE, 'r') as f:
         content = f.read()
-    with open(MEDIAPIPE_WORKSPACE_PATH, 'a') as f:
+    with open(MEDIAPIPE_WORKSPACE, 'a') as f:
         if not 'android_sdk_repository' in content:
             f.write('android_sdk_repository(name = \"androidsdk\")\n')
         if not 'android_ndk_repository' in content:
             f.write('android_ndk_repository(name = \"androidndk\", api_level=21)\n')
 
 def create_venv(current_platform: str) -> None:
-    venv_path: str = path.join(path.dirname(__file__), "venv")
-    if not path.exists(venv_path):
-        venv.create(venv_path, with_pip=True)
-        if not path.exists(venv_path):
+    if not path.exists(GDMP_VENV_DIR):
+        venv.create(GDMP_VENV_DIR, with_pip=True)
+        if not path.exists(GDMP_VENV_DIR):
             raise RuntimeError(
-                "Unable to create venv at path {}".format(venv_path))
+                "Unable to create venv at path {}".format(GDMP_VENV_DIR))
 
     pip_bin: str = "{}/bin/pip"
     activate_command: str = "source venv/bin/activate"
@@ -105,22 +116,19 @@ def create_venv(current_platform: str) -> None:
         pip_bin = "{}/Scripts/pip.exe"
         activate_command = "source venv/Scripts/activate"
 
-    run([pip_bin.format(venv_path), "install",
-        "-r", "requirements.txt"], check=True)
+    run([pip_bin.format(GDMP_VENV_DIR), "install",
+        "-r", GDMP_VENV_REQUIREMENTS], check=True)
 
     print("\n++++++\nPlease activate the venv before building GDMP by running `{}`\n++++++\n".format(activate_command))
 
 
 if __name__ == "__main__":
-    os.chdir(path.dirname(__file__))
-
     parser = ArgumentParser()
 
     # Extension generation
     parser.add_argument(
-        "--extension-api-json", required=False, help="Path to a pre-generated extension_api.json file")
-    parser.add_argument("--godot-binary", default="godot",
-                        help="Path to the Godot editor binary. Defaults to user's PATH if not set. Required if --api-json is not set")
+        "--extension-api-json", default=GODOT_CPP_API_JSON, help="Path to a pre-generated extension_api.json file. Defaults to extension_api.json provided by godot-cpp")
+    parser.add_argument("--godot-binary", required=False, help="Path to the Godot editor binary for generating bindings")
 
     # Platform specific
     if current_platform == "windows":
@@ -129,32 +137,25 @@ if __name__ == "__main__":
         parser.add_argument("--custom-opencv-version", default=DEFAULT_OPENCV_VERSION,
                             help="Version of OpenCV to use. Defaults to {}".format(DEFAULT_OPENCV_VERSION))
 
-        def symlinker(src_dir, dst_dir):
-            # Only works on Windows if the command is passed in this format
-            run('mklink /J "%s" "%s"' %
-                (dst_dir, src_dir), check=True, shell=True)
-    else:  # Linux/MacOS should work roughly the same
-        def symlinker(src_dir, dst_dir):
-            symlink(src_dir, dst_dir, True)
 
     args: Namespace = parser.parse_args()
 
-    api_json_path: str = args.extension_api_json
-    if not args.extension_api_json:
-        run([args.godot_binary, "--dump-extension-api", "--headless"], check=True)
+    api_json_path: str = path.abspath(args.extension_api_json)
+    if args.godot_binary:
+        godot_binary = path.abspath(args.godot_binary)
+        os.chdir(path.dirname(__file__))
+        run([godot_binary, "--dump-extension-api", "--headless"], check=True)
         api_json_path = path.join(os.getcwd(), "extension_api.json")
-    elif not path.isabs(api_json_path):
-        api_json_path = path.join(os.getcwd(), api_json_path)
 
     generate_bindings(api_json_path)
 
-    patch_and_symlink(symlinker)
+    patch_and_symlink()
 
     workspace_android_rules()
 
     if current_platform == "windows":
         if args.custom_opencv_dir:
-            modify_file(MEDIAPIPE_WORKSPACE_PATH, DEFAULT_OPENCV_INSTALL_PATH_REPLACE, OPENCV_INSTALL_PATH_FORMAT,
+            modify_file(MEDIAPIPE_WORKSPACE, DEFAULT_OPENCV_INSTALL_PATH_REPLACE, OPENCV_INSTALL_PATH_FORMAT,
                         os.path.abspath(os.path.expanduser(args.custom_opencv_dir)))
         if args.custom_opencv_version and args.custom_opencv_version != DEFAULT_OPENCV_VERSION:
             modify_file(OPENCV_BUILD_PATH, DEFAULT_OPENCV_VERSION_REPLACE,
