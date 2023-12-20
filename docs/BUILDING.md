@@ -19,6 +19,8 @@ Example:
 ## Building for Android
 1. Install Android SDK and NDK, then setting `ANDROID_HOME` and `ANDROID_NDK_HOME` environment variable that point to your install location.
 
+    You will also need to uncomment `android_sdk_repository` and `android_ndk_repository` that setup script added eariler at the end of `mediapipe/WORKSPACE`
+
     Refer to [MediaPipe docs](https://developers.google.com/mediapipe/framework/getting_started/android#prerequisite) for more details.
 2. Copy or symlink godot-lib to `android/libs` as dependency.
 
