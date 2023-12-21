@@ -27,8 +27,6 @@ def get_build_args(target):
             ],
             'win32': [
                 '--define', 'MEDIAPIPE_DISABLE_GPU=1',
-                '--copt', '-DTYPED_METHOD_BIND',
-                '--copt', '-DNOMINMAX'
             ],
         },
         'android': [

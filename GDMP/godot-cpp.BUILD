@@ -16,10 +16,23 @@ cc_library(
         "include/godot_cpp/*/*.hpp",
         "gen/include/godot_cpp/*/*.hpp",
     ]),
+    copts = select({
+        "@mediapipe//mediapipe:windows": [
+            "/utf-8",
+        ],
+        "//conditions:default": [],
+    }),
+    defines = select({
+        "@mediapipe//mediapipe:windows": [
+            "TYPED_METHOD_BIND",
+            "NOMINMAX",
+        ],
+        "//conditions:default": [],
+    }),
     includes = [
         "gdextension",
-        "include",
         "gen/include",
+        "include",
     ],
     visibility = ["//visibility:public"],
 )
