@@ -9,6 +9,8 @@ linux.debug.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.linux.debug.so"
 linux.release.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.linux.release.so"
 windows.debug.x86_64 = "res://addons/GDMP/libs/x86_64/GDMP.windows.debug.dll"
 windows.release.x86_64 = "res://addons/GDMP/libs/x86_64/GDMP.windows.release.dll"
+ios.debug = "res://addons/GDMP/libs/GDMP.ios.debug.framework"
+ios.release = "res://addons/GDMP/libs/GDMP.ios.release.framework"
 
 [dependencies]
 

@@ -3,6 +3,7 @@
 import glob
 import platform
 import sys
+import zipfile
 from argparse import ArgumentParser, Namespace
 from os import chdir, environ, makedirs, path, remove
 from shutil import copyfile, which
@@ -13,6 +14,7 @@ MEDIAPIPE_DIR = path.join(path.dirname(__file__), "mediapipe")
 TARGETS = {
     "android": "//GDMP/android:GDMP",
     "desktop": "//GDMP/desktop:GDMP",
+    "ios": "//GDMP/ios:GDMP",
 }
 
 TARGET_COMMANDS = {
@@ -30,6 +32,10 @@ TARGET_COMMANDS = {
             "--define=MEDIAPIPE_DISABLE_GPU=1",
         ],
     },
+    "ios": [
+        "--apple_generate_dsym=false",
+        "--config=ios",
+    ],
 }
 
 GODOT_PATH: str = None
@@ -62,9 +68,11 @@ def get_build_args(args: Namespace):
     target_args = TARGET_COMMANDS[target]
     if target == "desktop":
         target_args = target_args[sys.platform]
-    build_args.extend(target_args)
-    if target == "android":
+    elif target == "android":
         build_args.append(f"--cpu={arch}")
+    elif target == "ios" and arch != None:
+        build_args.append(f"--ios_multi_cpus={arch}")
+    build_args.extend(target_args)
     build_args.append(TARGETS[target])
     return build_args
 
@@ -149,11 +157,26 @@ def copy_desktop(args: Namespace):
         copy_to_godot(src, path.join(dst, path.basename(src)))
 
 
+def copy_ios(args: Namespace):
+    build_type: str = args.type
+    src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/ios/GDMP.zip")
+    dst = "addons/GDMP/libs"
+    if GODOT_PATH is None:
+        return
+    i = input(f"Extract {path.basename(src)} to {dst}? [Y/n] ")
+    if len(i) and not i.lower().startswith("y"):
+        return
+    dst = path.join(GODOT_PATH, dst)
+    with zipfile.ZipFile(src) as f:
+        f.extractall(dst)
+
+
 def copy_output(args: Namespace):
     target: str = args.target
     copy_actions = {
         "android": copy_android,
         "desktop": copy_desktop,
+        "ios": copy_ios,
     }
     copy_actions[target](args)
 

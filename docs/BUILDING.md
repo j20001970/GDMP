@@ -34,16 +34,16 @@ Example:
 3. Build GDMP aar with Android Studio or Gradle using the `android` project, then copy the debug or release variant of aar library located in `android/build/outputs/aar` to your Godot project's `addons/GDMP/libs`
 
 ## Building for iOS
-**Warning**: Building instructions for iOS is very outdated.
-If you encountered any problems following the instructions below, try building with Bazel directly by running `bazel(or bazelisk) build --config=ios-arm64 //GDMP/ios:GDMP` on `mediapipe` directory.
+1. Install [Xcode](https://developer.apple.com/xcode), then switch to installed Xcode by using `xcode-select`
+2. Run:
 
-1. Use [Tulsi](https://tulsi.bazel.build) project to generate Xcode project.
-2. Build `GDMP` static framework target, copy the library from the framework to your Godot project's `addons/GDMP/libs/ios` **and rename it with .a extension**, so that Godot will treat it like static library instead of dynamic when exporting to Xcode.
+    ```
+    build.py ios
+    ```
 
-    (Optional) also copy `opencv2.a` to the project and add it as GDNative library dependencies if OpenCV is used in calculators.
-3. After exporting Godot project to Xcode, add necessary frameworks in order to build the app, and go to `Other Linker Flags` in `Build Settings` to force load the static library, for example:
+    to build iOS library, then extract the content of `mediapipe/bazel-bin/GDMP/ios/GDMP.zip` to your Godot project's `addons/GDMP/libs`
 
-    `-force_load $(PROJECT_DIR)/path/to/your/GDMP.a`
+    Bazel should build GDMP for your Mac's CPU architecture by default, if you would like to build multiple architectures, append `--arch x86_64,arm64` to the build command to build both x86_64 and arm64 architectures for example.
 
 ## Building for Linux
 1. Install OpenCV and FFmpeg, then modify `mediapipe/third_party/opencv_linux.BUILD` to make OpenCV visible to Bazel.
