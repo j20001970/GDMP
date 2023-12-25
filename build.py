@@ -78,8 +78,6 @@ def copy_android(src, dst):
         output = path.join(android_project, 'build', 'outputs', 'aar')
         output = path.join(output, 'GDMP-release.aar')
         copy_to_godot(output, dst)
-        gdap = path.join(android_project, 'GDMP.gdap')
-        copy_to_godot(gdap, dst)
 
 
 def copy_desktop(src, dst):
@@ -100,7 +98,7 @@ def copy_output(target):
         'desktop': copy_desktop
     }
     godot_output = {
-        'android': path.join('android', 'plugins'),
+        'android': path.join('addons', 'GDMP', 'libs'),
         'desktop': path.join('addons', 'GDMP', 'libs'),
     }
     src = target_outputs[target]

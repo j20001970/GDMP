@@ -29,16 +29,14 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    compileOnly fileTree(dir: "libs", includes: ["godot-lib.*.aar"])
-    debugCompileOnly fileTree(dir: "libs/debug", includes: ["godot-lib.*.aar"])
-    releaseCompileOnly fileTree(dir: "libs/release", includes: ["godot-lib.*.aar"])
+    implementation "org.godotengine:godot:4.2.1.stable"
     // MediaPipe deps
     implementation 'com.google.flogger:flogger:0.3.1'
     implementation 'com.google.flogger:flogger-system-backend:0.3.1'

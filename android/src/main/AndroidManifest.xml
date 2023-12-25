@@ -8,7 +8,7 @@
 
     <application>
         <meta-data
-            android:name="org.godotengine.plugin.v1.GDMP"
+            android:name="org.godotengine.plugin.v2.GDMP"
             android:value="io.gdmp.GDMP" />
     </application>
 </manifest>
