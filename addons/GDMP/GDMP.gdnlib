@@ -7,12 +7,12 @@ reloadable=true
 
 [entry]
 
-Windows.64="res://addons/GDMP/libs/x86_64/GDMP.dll"
-X11.64="res://addons/GDMP/libs/x86_64/libGDMP.so"
+Windows.64="res://addons/GDMP/libs/x86_64/GDMP.windows.dll"
+X11.64="res://addons/GDMP/libs/x86_64/libGDMP.linux.so"
 iOS.arm64="res://addons/GDMP/libs/ios/GDMP.a"
 
 [dependencies]
 
-Windows.64=[  ]
+Windows.64=[ "res://addons/GDMP/libs/x86_64/opencv_world3410.dll", "res://addons/GDMP/libs/x86_64/opencv_world3410d.dll" ]
 X11.64=[  ]
 iOS.arm64=[  ]

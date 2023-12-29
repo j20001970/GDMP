@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import glob
+import platform
 import sys
 from argparse import ArgumentParser, Namespace
 from os import chdir, environ, makedirs, path, remove
@@ -125,15 +127,27 @@ def copy_android(args: Namespace):
 
 
 def copy_desktop(args: Namespace):
-    desktop_outputs = {
-        "linux": path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/desktop/libGDMP.so"),
-        "win32": path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/desktop/GDMP.dll"),
-    }
-    src = path.join(MEDIAPIPE_DIR, desktop_outputs[sys.platform])
-    dst = path.join("addons/GDMP/libs")
-    dst = path.join(dst, "x86_64")
-    filename = path.basename(src)
+    arch: str = args.arch
+    if arch is None:
+        arch = platform.machine().lower()
+    if arch == "amd64":
+        arch = "x86_64"
+    desktop_platform = platform.system().lower()
+    desktop_output = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/desktop")
+    if desktop_platform == "linux":
+        src = path.join(desktop_output, "libGDMP.so")
+    elif desktop_platform == "windows":
+        src = path.join(desktop_output, "GDMP.dll")
+    dst = path.join("addons/GDMP/libs", arch)
+    filename = path.basename(src).split(".")
+    filename = ".".join([filename[0], desktop_platform, filename[-1]])
     copy_to_godot(src, path.join(dst, filename))
+    if desktop_platform == "windows":
+        opencv_lib = glob.glob(path.join(desktop_output, "opencv_world*.dll"))
+        if len(opencv_lib) == 0:
+            return
+        src = opencv_lib[0]
+        copy_to_godot(src, path.join(dst, path.basename(src)))
 
 
 def copy_output(args: Namespace):
