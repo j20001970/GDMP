@@ -5,7 +5,16 @@ compatibility_minimum = 4.1
 
 [libraries]
 
-linux.debug.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.so"
-linux.release.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.so"
-windows.debug.x86_64 = "res://addons/GDMP/libs/x86_64/GDMP.dll"
-windows.release.x86_64 = "res://addons/GDMP/libs/x86_64/GDMP.dll"
+linux.debug.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.linux.debug.so"
+linux.release.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.linux.release.so"
+windows.debug.x86_64 = "res://addons/GDMP/libs/x86_64/GDMP.windows.debug.dll"
+windows.release.x86_64 = "res://addons/GDMP/libs/x86_64/GDMP.windows.release.dll"
+
+[dependencies]
+
+windows.debug.x86_64 = {
+    "res://addons/GDMP/libs/x86_64/opencv_world3410d.dll": "",
+}
+windows.release.x86_64 = {
+    "res://addons/GDMP/libs/x86_64/opencv_world3410.dll": "",
+}
