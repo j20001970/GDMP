@@ -7,7 +7,7 @@ func _supports_platform(platform: EditorExportPlatform) -> bool:
 
 func _get_android_libraries(platform:EditorExportPlatform, debug: bool) -> PackedStringArray:
 	if debug:
-		return PackedStringArray(["GDMP/libs/GDMP-release.aar"])
+		return PackedStringArray(["GDMP/libs/GDMP-debug.aar"])
 	else:
 		return PackedStringArray(["GDMP/libs/GDMP-release.aar"])
 

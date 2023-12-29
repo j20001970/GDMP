@@ -22,14 +22,14 @@ Example:
     You will also need to uncomment `android_sdk_repository` and `android_ndk_repository` that setup script added eariler at the end of `mediapipe/WORKSPACE`
 
     Refer to [MediaPipe docs](https://developers.google.com/mediapipe/framework/getting_started/android#prerequisite) for more details.
-2. Run:
+2. Build GDMP native libraries. For example, run:
 
     ```
-    build.py android
+    build.py android --arch arm64-v8a
     ```
 
-    to build android library, then copy `mediapipe/bazel-bin/GDMP/android/libGDMP.so` and `libopencv_java3.so` to `android/src/main/jniLibs/arm64-v8a`
-3. Build GDMP aar with Android Studio or Gradle using the `android` project, then copy the built `release` variant aar located in `android/build/outputs/aar` to your Godot project's `addons/GDMP/libs`
+    to build library for `arm64-v8a` architecture, you might want to build libGDMP.so for multiple architectures before building GDMP aar.
+3. Build GDMP aar with Android Studio or Gradle using the `android` project, then copy the debug or release variant of aar library located in `android/build/outputs/aar` to your Godot project's `addons/GDMP/libs`
 
 ## Building for iOS
 **Warning**: Building instructions for iOS is very outdated.
