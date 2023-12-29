@@ -2,7 +2,7 @@
 
 name="GDMP"
 binary_type="local"
-binary="GDMP-release.aar"
+binary="GDMP.aar"
 
 [dependencies]
 

@@ -17,7 +17,6 @@ TARGET_COMMANDS = {
     "android": [
         "--config=android",
         "--copt=-fPIC",
-        "--cpu=arm64-v8a",
     ],
     "desktop": {
         "linux": [
@@ -42,6 +41,7 @@ if "GODOT_PROJECT" in environ:
 def get_build_args(args: Namespace):
     target: str = args.target
     build_type: str = args.type
+    arch: str = args.arch
     bazel_exec = which("bazelisk") or which("bazel")
     if bazel_exec is None:
         print(
@@ -61,6 +61,8 @@ def get_build_args(args: Namespace):
     if target == "desktop":
         target_args = target_args[sys.platform]
     build_args.extend(target_args)
+    if target == "android":
+        build_args.append(f"--cpu={arch}")
     build_args.append(TARGETS[target])
     return build_args
 
@@ -79,32 +81,45 @@ def copy_to_godot(src, dst):
 
 
 def copy_android(args: Namespace):
+    build_type: str = args.type
+    arch: str = args.arch
     android_project = path.join(path.dirname(__file__), "android")
     if not path.exists(android_project):
         print("Error: android project does not exist.")
         sys.exit(-1)
     src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/android/libGDMP.so")
     jni_dst = path.join(android_project, "src/main/jniLibs")
-    jni_dst = path.join(jni_dst, "arm64-v8a")
-    jni_dst = path.join(jni_dst, path.basename(src))
-    i = input(f"Copy {path.basename(src)} to {path.relpath(jni_dst)}? [Y/n] ")
+    dst = path.join(jni_dst, build_type, arch, path.basename(src))
+    i = input(f"Copy {path.basename(src)} to {path.relpath(dst)}? [Y/n] ")
     if len(i) and not i.lower().startswith("y"):
         return
-    makedirs(path.dirname(jni_dst), exist_ok=True)
-    copyfile(src, jni_dst)
-    if not path.exists(path.join(path.dirname(jni_dst), "libopencv_java3.so")):
-        jni_dst = path.relpath(jni_dst, android_project)
-        print(f"Please also copy libopencv_java3.so to {jni_dst} before building aar.")
+    makedirs(path.dirname(dst), exist_ok=True)
+    copyfile(src, dst)
+    opencv_src = path.join(
+        MEDIAPIPE_DIR,
+        "bazel-mediapipe/external/android_opencv/sdk/native/libs",
+        arch,
+        "libopencv_java3.so",
+    )
+    opencv_dst = path.join(jni_dst, arch, "libopencv_java3.so")
+    if not path.exists(opencv_dst):
+        i = input(
+            f"Copy {path.basename(opencv_src)} to {path.relpath(opencv_dst)}? [Y/n] "
+        )
+        if len(i) and not i.lower().startswith("y"):
+            return
+        makedirs(path.dirname(opencv_dst), exist_ok=True)
+        copyfile(opencv_src, opencv_dst)
     i = input("Build aar with Gradle? [Y/n] ")
     if len(i) and not i.lower().startswith("y"):
         return
     gradlew_exec = path.join(android_project, "gradlew")
     chdir(android_project)
-    ret = run([gradlew_exec, "assembleRelease"]).returncode
+    ret = run([gradlew_exec, "clean", f"assemble{build_type.capitalize()}"]).returncode
     if ret == 0:
         dst = "android/plugins"
-        aar = path.join(android_project, "build/outputs/aar/GDMP-release.aar")
-        copy_to_godot(aar, path.join(dst, path.basename(aar)))
+        aar = path.join(android_project, f"build/outputs/aar/GDMP-{build_type}.aar")
+        copy_to_godot(aar, path.join(dst, "GDMP.aar"))
         gdap = path.join(android_project, "GDMP.gdap")
         copy_to_godot(gdap, path.join(dst, path.basename(gdap)))
 
@@ -136,6 +151,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--type", choices=["debug", "release"], default="debug", help="build type"
     )
+    parser.add_argument("--arch", help="library architecture")
     args = parser.parse_args()
     build_args = get_build_args(args)
     chdir(MEDIAPIPE_DIR)

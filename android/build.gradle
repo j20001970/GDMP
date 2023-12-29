@@ -32,6 +32,16 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
+    sourceSets {
+        debug {
+            jniLibs.srcDirs += "src/main/jniLibs/debug"
+        }
+
+        release {
+            jniLibs.srcDirs += "src/main/jniLibs/release"
+        }
+    }
 }
 
 dependencies {
