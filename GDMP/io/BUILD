@@ -32,6 +32,7 @@ cc_library(
     name = "camera_helper_cv",
     srcs = ["camera_helper_cv.cc"],
     hdrs = ["camera_helper.h"],
+    local_defines = ["MEDIAPIPE_MOBILE=1"],
     deps = [
         "//GDMP/framework:image",
         "//GDMP/gpu:gpu_resources",
