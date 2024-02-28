@@ -17,6 +17,8 @@ Example:
 6. (Optional) Set `GODOT_PROJECT` environment variable that points to your Godot project, the build script will try to automate copy process if it is detected.
 
 ## Building for Android
+**Windows users**: Cross-compiling Android library on Windows is currently not supported, please set up WSL or Linux VM before proceed to the instructions below.
+
 1. Install Android SDK and NDK, then setting `ANDROID_HOME` and `ANDROID_NDK_HOME` environment variable that point to your install location.
 
     You will also need to uncomment `android_sdk_repository` and `android_ndk_repository` that setup script added eariler at the end of `mediapipe/WORKSPACE`
