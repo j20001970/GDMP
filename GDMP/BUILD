@@ -31,20 +31,11 @@ cc_library(
 refresh_compile_commands(
     name = "refresh_compile_commands",
     targets = {
-        "//GDMP:GDMP": """
-        --copt -Ibazel-bin
-        --copt -Ibazel-bin/external/com_github_gflags_gflags/_virtual_includes/gflags
-        --copt -Ibazel-bin/external/com_github_glog_glog/_virtual_includes/default_glog_headers
-        --copt -Ibazel-bin/external/com_github_glog_glog_no_gflags/_virtual_includes/default_glog_headers
-        """,
+        "//GDMP:GDMP": "",
         "//GDMP/io:camera_helper_android": """
         --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
         --crosstool_top=//external:android/crosstool
         --cpu=arm64-v8a
-        --copt -Ibazel-bin
-        --copt -Ibazel-bin/external/com_github_gflags_gflags/_virtual_includes/gflags
-        --copt -Ibazel-bin/external/com_github_glog_glog/_virtual_includes/default_glog_headers
-        --copt -Ibazel-bin/external/com_github_glog_glog_no_gflags/_virtual_includes/default_glog_headers
         """,
     },
 )
