@@ -5,7 +5,7 @@ from os import chdir, path
 from shutil import which
 from subprocess import run
 
-MEDIAPIPE_DIR = path.join(path.dirname(__file__), "mediapipe")
+MEDIAPIPE_DIR = path.join(path.dirname(__file__), "../mediapipe")
 
 TARGET = "//GDMP:refresh_compile_commands"
 
