@@ -46,6 +46,7 @@ else:  # Linux/MacOS should work roughly the same
 
 def generate_bindings(api_json_path: str) -> None:
     # Could use a contextmanager but that feels like overkill
+    oldcwd = os.getcwd()
     os.chdir(GODOT_CPP_DIR)
     sys.path.append(os.getcwd())
 
@@ -54,6 +55,7 @@ def generate_bindings(api_json_path: str) -> None:
     bg.generate_bindings(api_json_path, True)
 
     sys.path.pop()
+    os.chdir(oldcwd)
 
 
 def patch_and_symlink() -> None:
