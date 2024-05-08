@@ -195,3 +195,4 @@ if __name__ == "__main__":
     ret = run(build_args).returncode
     if ret == 0:
         copy_output(args)
+    sys.exit(ret)
