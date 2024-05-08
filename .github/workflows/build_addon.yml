@@ -134,10 +134,10 @@ jobs:
           ndk-version: r21e
           link-to-sdk: true
 
-      - name: Setup Gradle 7.4.2
+      - name: Setup Gradle 8.2
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 7.4.2
+          gradle-version: 8.2
 
       - name: Setup
         run: |
