@@ -99,7 +99,7 @@ def copy_android(args: Namespace):
         sys.exit(-1)
     src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/android/libGDMP.so")
     jni_dst = path.join(android_project, "src/main/jniLibs")
-    dst = path.join(jni_dst, build_type, arch, path.basename(src))
+    dst = path.join(jni_dst, arch, path.basename(src))
     i = input(f"Copy {path.basename(src)} to {path.relpath(dst)}? [Y/n] ")
     if len(i) and not i.lower().startswith("y"):
         return
@@ -129,11 +129,10 @@ def copy_android(args: Namespace):
     if ret == 0:
         dst = "addons/GDMP/libs"
         aar = path.join(android_project, f"build/outputs/aar/GDMP-{build_type}.aar")
-        copy_to_godot(aar, path.join(dst, path.basename(aar)))
+        copy_to_godot(aar, path.join(dst, "GDMP.android.aar"))
 
 
 def copy_desktop(args: Namespace):
-    build_type: str = args.type
     arch: str = args.arch
     if arch is None:
         arch = platform.machine().lower()
@@ -147,7 +146,7 @@ def copy_desktop(args: Namespace):
         src = path.join(desktop_output, "GDMP.dll")
     dst = path.join("addons/GDMP/libs", arch)
     filename = path.basename(src).split(".")
-    filename = ".".join([filename[0], desktop_platform, build_type, filename[-1]])
+    filename = ".".join([filename[0], desktop_platform, filename[-1]])
     copy_to_godot(src, path.join(dst, filename))
     if desktop_platform == "windows":
         opencv_lib = glob.glob(path.join(desktop_output, "opencv_world*.dll"))
@@ -158,7 +157,6 @@ def copy_desktop(args: Namespace):
 
 
 def copy_ios(args: Namespace):
-    build_type: str = args.type
     src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/ios/GDMP.zip")
     dst = "addons/GDMP/libs"
     if GODOT_PATH is None:

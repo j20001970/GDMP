@@ -6,10 +6,7 @@ func _supports_platform(platform: EditorExportPlatform) -> bool:
 	return false
 
 func _get_android_libraries(platform:EditorExportPlatform, debug: bool) -> PackedStringArray:
-	if debug:
-		return PackedStringArray(["GDMP/libs/GDMP-debug.aar"])
-	else:
-		return PackedStringArray(["GDMP/libs/GDMP-release.aar"])
+	return PackedStringArray(["GDMP/libs/GDMP.android.aar"])
 
 func _get_android_dependencies(platform: EditorExportPlatform, debug: bool) -> PackedStringArray:
 	var camerax_version: String = "1.0.0-beta10"

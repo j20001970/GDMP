@@ -231,13 +231,13 @@ jobs:
           cp build-artifact-windows/*.dll addons/GDMP/libs/x86_64/
           cp build-artifact-linux/*.so addons/GDMP/libs/x86_64/
           cp build-artifact-android/*.aar addons/GDMP/libs
+          mv addons/GDMP/libs/GDMP-release.aar addons/GDMP/libs/GDMP.android.aar
           unzip -o build-artifact-ios/GDMP.zip -d addons/GDMP/libs
 
       - name: Patch GDMP.gdextension
         run: |
           sed -i 's/libGDMP\..*\.so/libGDMP.so/g' addons/GDMP/GDMP.gdextension
           sed -i 's/GDMP\..*\.dll/GDMP.dll/g' addons/GDMP/GDMP.gdextension
-          sed -i 's/GDMP\..*\.framework/GDMP.ios.release.framework/g' addons/GDMP/GDMP.gdextension
           sed -i 's/opencv_world3410d/opencv_world3410/g' addons/GDMP/GDMP.gdextension
 
       - name: Create Addon Artifact
