@@ -1,1 +1,11 @@
+pluginManagement {
+    plugins {
+        id "com.android.library" version '8.2.0'
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 rootProject.name = "GDMP"

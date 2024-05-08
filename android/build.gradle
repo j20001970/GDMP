@@ -1,11 +1,5 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.1'
-    }
+plugins {
+    id "com.android.library"
 }
 
 allprojects {
@@ -15,32 +9,19 @@ allprojects {
     }
 }
 
-apply plugin: 'com.android.library'
-
 android {
-    compileSdk 33
-    buildToolsVersion '33.0.2'
+    namespace "io.gdmp"
+    compileSdk 34
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdk 32
+        minSdk 21
         versionCode 3
         versionName '0.3'
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-
-    sourceSets {
-        debug {
-            jniLibs.srcDirs += "src/main/jniLibs/debug"
-        }
-
-        release {
-            jniLibs.srcDirs += "src/main/jniLibs/release"
-        }
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
