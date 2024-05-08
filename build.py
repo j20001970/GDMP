@@ -159,7 +159,6 @@ def copy_desktop(args: Namespace):
 
 
 def copy_ios(args: Namespace):
-    build_type: str = args.type
     src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/ios/GDMP.zip")
     dst = "addons/GDMP/libs"
     if GODOT_PATH is None:
