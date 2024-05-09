@@ -5,8 +5,10 @@ import platform
 import sys
 import zipfile
 from argparse import ArgumentParser, Namespace
-from os import chdir, environ, makedirs, path, remove
-from shutil import copyfile, which
+from collections.abc import Callable
+from functools import partial
+from os import environ, makedirs, path, remove
+from shutil import copyfile, rmtree, which
 from subprocess import run
 
 MEDIAPIPE_DIR = path.join(path.dirname(__file__), "mediapipe")
@@ -17,7 +19,7 @@ TARGETS = {
     "ios": "//GDMP/ios:GDMP",
 }
 
-TARGET_COMMANDS = {
+TARGET_ARGS = {
     "android": [
         "--config=android",
         "--copt=-fPIC",
@@ -46,35 +48,81 @@ if "GODOT_PROJECT" in environ:
         print(f"Godot project found on {godot_path}")
 
 
-def get_build_args(args: Namespace):
-    target: str = args.target
-    build_type: str = args.type
-    arch: str = args.arch
+def bazel_build(args: list[str]) -> Callable:
     bazel_exec = which("bazelisk") or which("bazel")
     if bazel_exec is None:
         print(
             "Error: Cannot find bazel, please check bazel is installed and is in PATH."
         )
         sys.exit(-1)
-    build_args = [bazel_exec, "build"]
+    cmd = [bazel_exec, "build"]
     if sys.platform == "win32":
         python_path = sys.executable.replace("\\", "\\\\")
-        build_args.extend(["--action_env", f"PYTHON_BIN_PATH={python_path}"])
+        cmd.extend(["--action_env", f"PYTHON_BIN_PATH={python_path}"])
+    cmd.extend(args)
+    return partial(run, cmd, cwd=MEDIAPIPE_DIR, check=True)
+
+
+def build_android(
+    project_dir: str, build_type: str, build_args: list[str], abi_list: list[str]
+) -> list[Callable]:
+    cmds = []
+    src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/android/libGDMP.so")
+    jni_dir = path.join(project_dir, "src/main/jniLibs")
+    if path.exists(jni_dir):
+        cmds.append(partial(rmtree, jni_dir))
+    for abi in abi_list:
+        src_opencv = path.join(
+            MEDIAPIPE_DIR,
+            "bazel-mediapipe/external/android_opencv/sdk/native/libs",
+            abi,
+            "libopencv_java3.so",
+        )
+        dst_dir = path.join(jni_dir, abi)
+        dst = path.join(dst_dir, path.basename(src))
+        dst_opencv = path.join(dst_dir, path.basename(src_opencv))
+        build_args = [arg.format(abi=abi) for arg in build_args]
+        cmds.append(bazel_build(build_args))
+        cmds.append(partial(makedirs, dst_dir, exist_ok=True))
+        cmds.append(partial(copyfile, src, dst))
+        cmds.append(partial(copyfile, src_opencv, dst_opencv))
+    gradlew_exec = path.join(project_dir, "gradlew")
+    gradle_build = [gradlew_exec, "clean", f"assemble{build_type.capitalize()}"]
+    cmds.append(partial(run, gradle_build, cwd=project_dir, check=True))
+    return cmds
+
+
+def get_build_cmds(args: Namespace) -> list[Callable]:
+    target: str = args.target
+    build_type: str = args.type
+    arch: str = args.arch
+    cmds = []
     if build_type == "release":
-        build_type = "opt"
+        mode = "opt"
     else:
-        build_type = "dbg"
-    build_args.extend(["-c", build_type])
-    target_args = TARGET_COMMANDS[target]
+        mode = "dbg"
+    build_args = ["-c", mode]
     if target == "desktop":
-        target_args = target_args[sys.platform]
-    elif target == "android":
-        build_args.append(f"--cpu={arch}")
+        build_args.extend(TARGET_ARGS[target][sys.platform])
+    else:
+        build_args.extend(TARGET_ARGS[target])
+    if target == "android":
+        android_project = path.join(path.dirname(__file__), "android")
+        if not path.exists(android_project):
+            print("Error: android project does not exist.")
+            sys.exit(-1)
+        if arch is None:
+            arch = platform.machine().lower()
+        abi_list = arch.split(",")
+        build_args.extend(["--cpu={abi}", TARGETS[target]])
+        cmds.extend(build_android(android_project, build_type, build_args, abi_list))
+        return cmds
     elif target == "ios" and arch != None:
         build_args.append(f"--ios_multi_cpus={arch}")
-    build_args.extend(target_args)
     build_args.append(TARGETS[target])
-    return build_args
+    cmd = bazel_build(build_args)
+    cmds.append(cmd)
+    return cmds
 
 
 def copy_to_godot(src, dst):
@@ -92,44 +140,10 @@ def copy_to_godot(src, dst):
 
 def copy_android(args: Namespace):
     build_type: str = args.type
-    arch: str = args.arch
     android_project = path.join(path.dirname(__file__), "android")
-    if not path.exists(android_project):
-        print("Error: android project does not exist.")
-        sys.exit(-1)
-    src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/android/libGDMP.so")
-    jni_dst = path.join(android_project, "src/main/jniLibs")
-    dst = path.join(jni_dst, arch, path.basename(src))
-    i = input(f"Copy {path.basename(src)} to {path.relpath(dst)}? [Y/n] ")
-    if len(i) and not i.lower().startswith("y"):
-        return
-    makedirs(path.dirname(dst), exist_ok=True)
-    copyfile(src, dst)
-    opencv_src = path.join(
-        MEDIAPIPE_DIR,
-        "bazel-mediapipe/external/android_opencv/sdk/native/libs",
-        arch,
-        "libopencv_java3.so",
-    )
-    opencv_dst = path.join(jni_dst, arch, "libopencv_java3.so")
-    if not path.exists(opencv_dst):
-        i = input(
-            f"Copy {path.basename(opencv_src)} to {path.relpath(opencv_dst)}? [Y/n] "
-        )
-        if len(i) and not i.lower().startswith("y"):
-            return
-        makedirs(path.dirname(opencv_dst), exist_ok=True)
-        copyfile(opencv_src, opencv_dst)
-    i = input("Build aar with Gradle? [Y/n] ")
-    if len(i) and not i.lower().startswith("y"):
-        return
-    gradlew_exec = path.join(android_project, "gradlew")
-    chdir(android_project)
-    ret = run([gradlew_exec, "clean", f"assemble{build_type.capitalize()}"]).returncode
-    if ret == 0:
-        dst = "addons/GDMP/libs"
-        aar = path.join(android_project, f"build/outputs/aar/GDMP-{build_type}.aar")
-        copy_to_godot(aar, path.join(dst, "GDMP.android.aar"))
+    src = path.join(android_project, f"build/outputs/aar/GDMP-{build_type}.aar")
+    dst = "addons/GDMP/libs"
+    copy_to_godot(src, path.join(dst, "GDMP.android.aar"))
 
 
 def copy_desktop(args: Namespace):
@@ -169,7 +183,7 @@ def copy_ios(args: Namespace):
         f.extractall(dst)
 
 
-def copy_output(args: Namespace):
+def copy_to_project(args: Namespace):
     target: str = args.target
     copy_actions = {
         "android": copy_android,
@@ -187,9 +201,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--arch", help="library architecture")
     args = parser.parse_args()
-    build_args = get_build_args(args)
-    chdir(MEDIAPIPE_DIR)
-    ret = run(build_args).returncode
-    if ret == 0:
-        copy_output(args)
-    sys.exit(ret)
+    cmds = get_build_cmds(args)
+    for cmd in cmds:
+        cmd()
+    copy_to_project(args)

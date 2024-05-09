@@ -153,18 +153,7 @@ jobs:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
           source ./venv/bin/activate
-          python ./build.py android --arch arm64-v8a --type release << EOL
-          y
-          y
-          n
-          EOL
-
-      - name: Gradle Build
-        env:
-          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
-        working-directory: ./android
-        run: |
-          gradle clean assembleRelease
+          python ./build.py android --arch arm64-v8a --type release
 
       - name: Upload build files (artifacts)
         uses: actions/upload-artifact@v4
