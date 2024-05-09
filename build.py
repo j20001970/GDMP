@@ -99,7 +99,7 @@ def copy_android(args: Namespace):
         sys.exit(-1)
     src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/android/libGDMP.so")
     jni_dst = path.join(android_project, "src/main/jniLibs")
-    dst = path.join(jni_dst, build_type, arch, path.basename(src))
+    dst = path.join(jni_dst, arch, path.basename(src))
     i = input(f"Copy {path.basename(src)} to {path.relpath(dst)}? [Y/n] ")
     if len(i) and not i.lower().startswith("y"):
         return
@@ -129,7 +129,7 @@ def copy_android(args: Namespace):
     if ret == 0:
         dst = "android/plugins"
         aar = path.join(android_project, f"build/outputs/aar/GDMP-{build_type}.aar")
-        copy_to_godot(aar, path.join(dst, "GDMP.aar"))
+        copy_to_godot(aar, path.join(dst, "GDMP.android.aar"))
         gdap = path.join(android_project, "GDMP.gdap")
         copy_to_godot(gdap, path.join(dst, path.basename(gdap)))
 
