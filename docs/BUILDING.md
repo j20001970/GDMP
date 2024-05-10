@@ -14,7 +14,6 @@ Example:
 
 4. Copy `addons` to your Godot project's root directory.
 5. (Optional) Add calculator dependencies in `GDMP/GDMP.bzl` if you have additional calculators to compile into GDMP.
-6. (Optional) Set `GODOT_PROJECT` environment variable that points to your Godot project, the build script will try to automate copy process if it is detected.
 
 ## Building for Android
 **Windows users**: Cross-compiling Android library on Windows is currently not supported, please set up WSL or Linux VM before proceed to the instructions below.
