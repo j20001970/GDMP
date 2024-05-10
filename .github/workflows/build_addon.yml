@@ -38,14 +38,14 @@ jobs:
         shell: bash
         run: |
           source ./venv/Scripts/activate
-          python ./build.py desktop --type release
+          python ./build.py desktop --type release --output build/
 
       - name: Upload build files (artifacts)
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact-windows
           path: |
-            mediapipe/bazel-bin/GDMP/desktop/*.dll
+            build/*.dll
 
 
   # Build the Linux Artifacts
@@ -87,14 +87,14 @@ jobs:
       - name: Build
         run: |
           source ./venv/bin/activate
-          python ./build.py desktop --type release
+          python ./build.py desktop --type release --output build/
 
       - name: Upload build files (artifacts)
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact-linux
           path: |
-            mediapipe/bazel-bin/GDMP/desktop/*.so
+            build/*.so
 
 
   # Build the Android Artifacts
@@ -153,14 +153,14 @@ jobs:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
           source ./venv/bin/activate
-          python ./build.py android --arch arm64-v8a --type release
+          python ./build.py android --arch arm64-v8a --type release --output build/
 
       - name: Upload build files (artifacts)
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact-android
           path: |
-            android/build/outputs/aar/*.aar
+            build/*.aar
 
 
   # Build the iOS Artifacts
@@ -188,14 +188,14 @@ jobs:
       - name: Build
         run: |
           source ./venv/bin/activate
-          python ./build.py ios --type release
+          python ./build.py ios --type release --output build/
 
       - name: Upload build files (artifacts)
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact-ios
           path: |
-            mediapipe/bazel-bin/GDMP/ios/GDMP.zip
+            build/*.framework
 
 
   # Assemble the Addon
@@ -214,24 +214,19 @@ jobs:
 
       - name: Populate Addon
         run: |
+          mkdir dist
+          cp -a addons dist/
           cp LICENSE addons/GDMP/
-          cp README.md addons/GDMP/
-          mkdir -p addons/GDMP/libs/x86_64/
-          cp build-artifact-windows/*.dll addons/GDMP/libs/x86_64/
-          cp build-artifact-linux/*.so addons/GDMP/libs/x86_64/
-          cp build-artifact-android/*.aar addons/GDMP/libs
-          mv addons/GDMP/libs/GDMP-release.aar addons/GDMP/libs/GDMP.android.aar
-          unzip -o build-artifact-ios/GDMP.zip -d addons/GDMP/libs
-
-      - name: Patch GDMP.gdextension
-        run: |
-          sed -i 's/libGDMP\..*\.so/libGDMP.so/g' addons/GDMP/GDMP.gdextension
-          sed -i 's/GDMP\..*\.dll/GDMP.dll/g' addons/GDMP/GDMP.gdextension
-          sed -i 's/opencv_world3410d/opencv_world3410/g' addons/GDMP/GDMP.gdextension
+          cp README.md dist/
+          mkdir -p dist/addons/GDMP/libs/x86_64/
+          cp build-artifact-windows/*.dll dist/addons/GDMP/libs/x86_64/
+          cp build-artifact-linux/*.so dist/addons/GDMP/libs/x86_64/
+          cp build-artifact-android/*.aar dist/addons/GDMP/libs/
+          cp -a build-artifact-ios/*.framework dist/addons/GDMP/libs/
 
       - name: Create Addon Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Addon
           path: |
-            addons
+            dist

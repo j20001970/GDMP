@@ -7,11 +7,12 @@ import zipfile
 from argparse import ArgumentParser, Namespace
 from collections.abc import Callable
 from functools import partial
-from os import environ, makedirs, path, remove
+from os import makedirs, path
 from shutil import copyfile, rmtree, which
 from subprocess import run
 
 MEDIAPIPE_DIR = path.join(path.dirname(__file__), "mediapipe")
+ANDROID_PROJECT = path.join(path.dirname(__file__), "android")
 
 TARGETS = {
     "android": "//GDMP/android:GDMP",
@@ -40,13 +41,6 @@ TARGET_ARGS = {
     ],
 }
 
-GODOT_PATH: str = None
-if "GODOT_PROJECT" in environ:
-    godot_path = environ["GODOT_PROJECT"]
-    if path.exists(path.join(godot_path, "project.godot")):
-        GODOT_PATH = environ["GODOT_PROJECT"]
-        print(f"Godot project found on {godot_path}")
-
 
 def bazel_build(args: list[str]) -> Callable:
     bazel_exec = which("bazelisk") or which("bazel")
@@ -64,11 +58,14 @@ def bazel_build(args: list[str]) -> Callable:
 
 
 def build_android(
-    project_dir: str, build_type: str, build_args: list[str], abi_list: list[str]
+    build_type: str, build_args: list[str], abi_list: list[str]
 ) -> list[Callable]:
     cmds = []
+    if not path.exists(ANDROID_PROJECT):
+        print("Error: android project does not exist.")
+        sys.exit(-1)
     src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/android/libGDMP.so")
-    jni_dir = path.join(project_dir, "src/main/jniLibs")
+    jni_dir = path.join(ANDROID_PROJECT, "src/main/jniLibs")
     if path.exists(jni_dir):
         cmds.append(partial(rmtree, jni_dir))
     for abi in abi_list:
@@ -86,9 +83,9 @@ def build_android(
         cmds.append(partial(makedirs, dst_dir, exist_ok=True))
         cmds.append(partial(copyfile, src, dst))
         cmds.append(partial(copyfile, src_opencv, dst_opencv))
-    gradlew_exec = path.join(project_dir, "gradlew")
+    gradlew_exec = path.join(ANDROID_PROJECT, "gradlew")
     gradle_build = [gradlew_exec, "clean", f"assemble{build_type.capitalize()}"]
-    cmds.append(partial(run, gradle_build, cwd=project_dir, check=True))
+    cmds.append(partial(run, gradle_build, cwd=ANDROID_PROJECT, check=True))
     return cmds
 
 
@@ -107,15 +104,11 @@ def get_build_cmds(args: Namespace) -> list[Callable]:
     else:
         build_args.extend(TARGET_ARGS[target])
     if target == "android":
-        android_project = path.join(path.dirname(__file__), "android")
-        if not path.exists(android_project):
-            print("Error: android project does not exist.")
-            sys.exit(-1)
         if arch is None:
             arch = platform.machine().lower()
         abi_list = arch.split(",")
         build_args.extend(["--cpu={abi}", TARGETS[target]])
-        cmds.extend(build_android(android_project, build_type, build_args, abi_list))
+        cmds.extend(build_android(build_type, build_args, abi_list))
         return cmds
     elif target == "ios" and arch != None:
         build_args.append(f"--ios_multi_cpus={arch}")
@@ -125,66 +118,47 @@ def get_build_cmds(args: Namespace) -> list[Callable]:
     return cmds
 
 
-def copy_to_godot(src, dst):
-    if GODOT_PATH is None:
-        return
-    i = input(f"Copy {path.basename(src)} to {dst}? [Y/n] ")
-    if len(i) and not i.lower().startswith("y"):
-        return
-    dst = path.join(GODOT_PATH, dst)
-    makedirs(path.dirname(dst), exist_ok=True)
-    if path.exists(dst):
-        remove(dst)
+def copy_android(args: Namespace):
+    build_type: str = args.type
+    output: str = args.output
+    src = path.join(ANDROID_PROJECT, f"build/outputs/aar/GDMP-{build_type}.aar")
+    dst = path.join(output, "GDMP.android.aar")
     copyfile(src, dst)
 
 
-def copy_android(args: Namespace):
-    build_type: str = args.type
-    android_project = path.join(path.dirname(__file__), "android")
-    src = path.join(android_project, f"build/outputs/aar/GDMP-{build_type}.aar")
-    dst = "addons/GDMP/libs"
-    copy_to_godot(src, path.join(dst, "GDMP.android.aar"))
-
-
 def copy_desktop(args: Namespace):
-    arch: str = args.arch
-    if arch is None:
-        arch = platform.machine().lower()
-    if arch == "amd64":
-        arch = "x86_64"
+    output: str = args.output
     desktop_platform = platform.system().lower()
     desktop_output = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/desktop")
     if desktop_platform == "linux":
         src = path.join(desktop_output, "libGDMP.so")
     elif desktop_platform == "windows":
         src = path.join(desktop_output, "GDMP.dll")
-    dst = path.join("addons/GDMP/libs", arch)
     filename = path.basename(src).split(".")
     filename = ".".join([filename[0], desktop_platform, filename[-1]])
-    copy_to_godot(src, path.join(dst, filename))
+    dst = path.join(output, filename)
+    copyfile(src, dst)
     if desktop_platform == "windows":
         opencv_lib = glob.glob(path.join(desktop_output, "opencv_world*.dll"))
         if len(opencv_lib) == 0:
             return
         src = opencv_lib[0]
-        copy_to_godot(src, path.join(dst, path.basename(src)))
+        copyfile(src, path.join(output, path.basename(src)))
 
 
 def copy_ios(args: Namespace):
+    output: str = args.output
     src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/ios/GDMP.zip")
-    dst = "addons/GDMP/libs"
-    if GODOT_PATH is None:
-        return
-    i = input(f"Extract {path.basename(src)} to {dst}? [Y/n] ")
-    if len(i) and not i.lower().startswith("y"):
-        return
-    dst = path.join(GODOT_PATH, dst)
     with zipfile.ZipFile(src) as f:
-        f.extractall(dst)
+        f.extractall(output)
 
 
-def copy_to_project(args: Namespace):
+def copy_output(args: Namespace):
     target: str = args.target
+    output: str = args.output
+    if output is None:
+        return
+    makedirs(output, exist_ok=True)
     copy_actions = {
         "android": copy_android,
         "desktop": copy_desktop,
@@ -200,8 +174,9 @@ if __name__ == "__main__":
         "--type", choices=["debug", "release"], default="debug", help="build type"
     )
     parser.add_argument("--arch", help="library architecture")
+    parser.add_argument("--output", help="build output directory")
     args = parser.parse_args()
     cmds = get_build_cmds(args)
     for cmd in cmds:
         cmd()
-    copy_to_project(args)
+    copy_output(args)
