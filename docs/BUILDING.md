@@ -23,17 +23,14 @@ Example:
     You will also need to uncomment `android_sdk_repository` and `android_ndk_repository` that setup script added eariler at the end of `mediapipe/WORKSPACE`
 
     Refer to [MediaPipe docs](https://developers.google.com/mediapipe/framework/getting_started/android#prerequisite) for more details.
-2. Copy or symlink godot-lib to `android/libs` as dependency.
-
-    godot-lib can be obtained from [godotengine.org](https://godotengine.org/download) or from your Godot project's `android/build/libs` if Android build template is installed.
-3. Build GDMP native libraries. For example, run:
+2. Build GDMP native libraries. For example, run:
 
     ```
     build.py android --arch arm64-v8a
     ```
 
     to build library for `arm64-v8a` architecture, you might want to build libGDMP.so for multiple architectures before building GDMP aar.
-4. Build GDMP aar with Android Studio or Gradle using the `android` project, then copy the debug or release variant of aar library located in `android/build/outputs/aar` and `android/GDMP.gdap` to your Godot project's `android/plugins`. You will need to rename the aar library to `GDMP.aar`
+3. Build GDMP aar with Android Studio or Gradle using the `android` project, then copy the debug or release variant of aar library located in `android/build/outputs/aar` and `android/GDMP.gdap` to your Godot project's `android/plugins`. You will need to rename the aar library to `GDMP.aar`
 
 ## Building for iOS
 1. Install [Xcode](https://developer.apple.com/xcode), then switch to installed Xcode by using `xcode-select`
