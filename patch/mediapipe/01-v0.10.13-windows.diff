@@ -1,27 +1,3 @@
-diff --git a/WORKSPACE b/WORKSPACE
---- a/WORKSPACE
-+++ b/WORKSPACE
-@@ -2,6 +2,20 @@ workspace(name = "mediapipe")
- 
- load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
- 
-+new_local_repository(
-+    name = "godot-cpp",
-+    build_file = "@//GDMP:godot-cpp.BUILD",
-+    path = "../godot-cpp",
-+)
-+
-+http_archive(
-+    name = "hedron_compile_commands",
-+    url = "https://github.com/hedronvision/bazel-compile-commands-extractor/archive/0e990032f3c5a866e72615cf67e5ce22186dcb97.tar.gz",
-+    strip_prefix = "bazel-compile-commands-extractor-0e990032f3c5a866e72615cf67e5ce22186dcb97",
-+)
-+load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_setup")
-+hedron_compile_commands_setup()
-+
- # Protobuf expects an //external:python_headers target
- bind(
-     name = "python_headers",
 diff --git a/third_party/flatbuffers/workspace.bzl b/third_party/flatbuffers/workspace.bzl
 --- a/third_party/flatbuffers/workspace.bzl
 +++ b/third_party/flatbuffers/workspace.bzl
