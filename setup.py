@@ -1,25 +1,28 @@
 #!/usr/bin/env python
 
-import sys
+import glob
 import os
+import platform
+import sys
+import venv
+from argparse import ArgumentParser, Namespace
 from os import path, unlink
 from shutil import rmtree, which
 from subprocess import run
-import platform
-from argparse import ArgumentParser, Namespace
-import venv
 
-GODOT_CPP_DIR = path.join(path.dirname(__file__), "godot-cpp")
+ROOT_DIR = path.dirname(__file__)
+
+GODOT_CPP_DIR = path.join(ROOT_DIR, "godot-cpp")
 GODOT_CPP_API_JSON = path.join(GODOT_CPP_DIR, "gdextension/extension_api.json")
 
-MEDIAPIPE_DIR = path.join(path.dirname(__file__), "mediapipe")
+MEDIAPIPE_DIR = path.join(ROOT_DIR, "mediapipe")
 MEDIAPIPE_GDMP_SYMLINK = path.join(MEDIAPIPE_DIR, "GDMP")
 MEDIAPIPE_WORKSPACE = path.join(MEDIAPIPE_DIR, "WORKSPACE")
 
-GDMP_MEDIAPIPE_SETUP = path.join(path.dirname(__file__), "mediapipe_setup.diff")
-GDMP_SRC_DIR = path.join(path.dirname(__file__), "GDMP")
-GDMP_VENV_DIR = path.join(path.dirname(__file__), "venv")
-GDMP_VENV_REQUIREMENTS = path.join(path.dirname(__file__), "requirements.txt")
+GDMP_SRC_DIR = path.join(ROOT_DIR, "GDMP")
+GDMP_PATCH_DIR = path.join(ROOT_DIR, "patch")
+GDMP_VENV_DIR = path.join(ROOT_DIR, "venv")
+GDMP_VENV_REQUIREMENTS = path.join(ROOT_DIR, "requirements.txt")
 
 DEFAULT_OPENCV_VERSION = "3.4.10"
 
@@ -58,39 +61,34 @@ def generate_bindings(api_json_path: str) -> None:
     os.chdir(oldcwd)
 
 
-def patch_and_symlink() -> None:
-    # Patching mediapipe workspace
+def apply_patch(patch_dir: str) -> None:
+    patch_exec = []
     if which("git"):
-        print("Using git to patch mediapipe workspace.")
-        run(
-            [
-                "git",
-                "apply",
-                "--unsafe-paths",
-                f"--directory={MEDIAPIPE_DIR}",
-                GDMP_MEDIAPIPE_SETUP,
-            ]
-        )
+        print("Using git for applying patches.")
+        patch_exec = [
+            "git",
+            "apply",
+            "--unsafe-paths",
+            "--directory={dir}",
+            "{file}",
+        ]
     elif which("patch"):
-        print("Using patch to patch mediapipe workspace.")
-        run(["patch", "-p1", "-d", MEDIAPIPE_DIR, "-i", GDMP_MEDIAPIPE_SETUP])
+        print("Using patch for applying patches.")
+        patch_exec = ["patch", "-p1", "-d", "{dir}", "-i", "{file}"]
     else:
-        print(
-            "Error: 'git' or 'patch' cannot be found for patching mediapipe workspace."
-        )
+        print("Error: 'git' or 'patch' cannot be found for applying patches.")
         sys.exit(-1)
-
-    # Symlink GDMP source code to mediapipe workspace
-    if path.isdir(MEDIAPIPE_GDMP_SYMLINK):
-        try:
-            unlink(MEDIAPIPE_GDMP_SYMLINK)
-        except:
-            rmtree(MEDIAPIPE_GDMP_SYMLINK)
-    try:
-        symlink(GDMP_SRC_DIR, MEDIAPIPE_GDMP_SYMLINK)
-    except:
-        print("Error: Unable to symlink GDMP source to mediapipe workspace.")
-        sys.exit(-1)
+    for p, _, _ in os.walk(patch_dir):
+        patches = glob.glob(path.join(p, "*.diff"))
+        if len(patches) == 0:
+            continue
+        patches.sort()
+        target_dir = path.join(ROOT_DIR, path.relpath(p, patch_dir))
+        print(f"Patching {path.relpath(target_dir, ROOT_DIR)}")
+        for patch in patches:
+            print(f"\tApplying {path.basename(patch)}")
+            cmd = [s.format(dir=target_dir, file=patch) for s in patch_exec]
+            run(cmd)
 
 
 def modify_file(
@@ -174,13 +172,25 @@ if __name__ == "__main__":
     api_json_path: str = path.abspath(args.extension_api_json)
     if args.godot_binary:
         godot_binary = path.abspath(args.godot_binary)
-        os.chdir(path.dirname(__file__))
+        os.chdir(ROOT_DIR)
         run([godot_binary, "--dump-extension-api", "--headless"], check=True)
         api_json_path = path.join(os.getcwd(), "extension_api.json")
 
     generate_bindings(api_json_path)
 
-    patch_and_symlink()
+    apply_patch(GDMP_PATCH_DIR)
+
+    # Symlink GDMP source code to mediapipe workspace
+    if path.isdir(MEDIAPIPE_GDMP_SYMLINK):
+        try:
+            unlink(MEDIAPIPE_GDMP_SYMLINK)
+        except:
+            rmtree(MEDIAPIPE_GDMP_SYMLINK)
+    try:
+        symlink(GDMP_SRC_DIR, MEDIAPIPE_GDMP_SYMLINK)
+    except:
+        print("Error: Unable to symlink GDMP source to mediapipe workspace.")
+        sys.exit(-1)
 
     workspace_android_rules()
 
