@@ -37,5 +37,6 @@ refresh_compile_commands(
         --crosstool_top=//external:android/crosstool
         --cpu=arm64-v8a
         """,
+        "//GDMP/io:camera_helper_ios": "--config=ios",
     },
 )
