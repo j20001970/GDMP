@@ -7,7 +7,7 @@ import zipfile
 from argparse import ArgumentParser, Namespace
 from collections.abc import Callable
 from functools import partial
-from os import makedirs, path
+from os import makedirs, path, remove
 from shutil import copyfile, rmtree, which
 from subprocess import run
 
@@ -57,32 +57,37 @@ def bazel_build(args: list[str]) -> Callable:
     return partial(run, cmd, cwd=MEDIAPIPE_DIR, check=True)
 
 
-def build_android(
-    build_type: str, build_args: list[str], abi_list: list[str]
-) -> list[Callable]:
+def build_android(args: Namespace, build_args: list[str]) -> list[Callable]:
+    build_type: str = args.type
+    arch: str = args.arch
+    skip_aar: bool = args.android_skip_aar
     cmds = []
     if not path.exists(ANDROID_PROJECT):
         print("Error: android project does not exist.")
         sys.exit(-1)
     src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/android/libGDMP.so")
-    jni_dir = path.join(ANDROID_PROJECT, "src/main/jniLibs")
-    if path.exists(jni_dir):
-        cmds.append(partial(rmtree, jni_dir))
-    for abi in abi_list:
-        src_opencv = path.join(
-            MEDIAPIPE_DIR,
-            "bazel-mediapipe/external/android_opencv/sdk/native/libs",
-            abi,
-            "libopencv_java3.so",
-        )
-        dst_dir = path.join(jni_dir, abi)
-        dst = path.join(dst_dir, path.basename(src))
-        dst_opencv = path.join(dst_dir, path.basename(src_opencv))
-        build_args = [arg.format(abi=abi) for arg in build_args]
-        cmds.append(bazel_build(build_args))
-        cmds.append(partial(makedirs, dst_dir, exist_ok=True))
-        cmds.append(partial(copyfile, src, dst))
-        cmds.append(partial(copyfile, src_opencv, dst_opencv))
+    if arch:
+        jni_dir = path.join(ANDROID_PROJECT, "src/main/jniLibs")
+        if path.exists(jni_dir):
+            cmds.append(partial(rmtree, jni_dir))
+        abi_list = arch.split(",")
+        for abi in abi_list:
+            src_opencv = path.join(
+                MEDIAPIPE_DIR,
+                "bazel-mediapipe/external/android_opencv/sdk/native/libs",
+                abi,
+                "libopencv_java3.so",
+            )
+            dst_dir = path.join(jni_dir, abi)
+            dst = path.join(dst_dir, path.basename(src))
+            dst_opencv = path.join(dst_dir, path.basename(src_opencv))
+            arg = [arg.format(abi=abi) for arg in build_args]
+            cmds.append(bazel_build(arg))
+            cmds.append(partial(makedirs, dst_dir, exist_ok=True))
+            cmds.append(partial(copyfile, src, dst))
+            cmds.append(partial(copyfile, src_opencv, dst_opencv))
+    if skip_aar:
+        return cmds
     gradlew_exec = path.join(ANDROID_PROJECT, "gradlew")
     gradle_build = [gradlew_exec, "clean", f"assemble{build_type.capitalize()}"]
     cmds.append(partial(run, gradle_build, cwd=ANDROID_PROJECT, check=True))
@@ -104,13 +109,10 @@ def get_build_cmds(args: Namespace) -> list[Callable]:
     else:
         build_args.extend(TARGET_ARGS[target])
     if target == "android":
-        if arch is None:
-            arch = platform.machine().lower()
-        abi_list = arch.split(",")
         build_args.extend(["--cpu={abi}", TARGETS[target]])
-        cmds.extend(build_android(build_type, build_args, abi_list))
+        cmds.extend(build_android(args, build_args))
         return cmds
-    elif target == "ios" and arch != None:
+    elif target == "ios" and arch:
         build_args.append(f"--ios_multi_cpus={arch}")
     build_args.append(TARGETS[target])
     cmd = bazel_build(build_args)
@@ -138,6 +140,8 @@ def copy_desktop(args: Namespace):
     filename = path.basename(src).split(".")
     filename = ".".join([filename[0], desktop_platform, filename[-1]])
     dst = path.join(output, filename)
+    if path.exists(dst):
+        remove(dst)
     copyfile(src, dst)
     if desktop_platform == "windows":
         opencv_lib = glob.glob(path.join(desktop_output, "opencv_world*.dll"))
@@ -174,8 +178,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "--type", choices=["debug", "release"], default="debug", help="build type"
     )
-    parser.add_argument("--arch", help="library architecture")
+    parser.add_argument("--arch", default="", help="library architecture")
     parser.add_argument("--output", help="build output directory")
+    parser.add_argument(
+        "--android-skip-aar", help="skip building aar for android", action="store_true"
+    )
     args = parser.parse_args()
     cmds = get_build_cmds(args)
     for cmd in cmds:
