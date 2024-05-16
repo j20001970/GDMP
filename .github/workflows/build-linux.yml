@@ -1,0 +1,50 @@
+name: 🐧 Build Linux
+on: [workflow_call, workflow_dispatch]
+
+jobs:
+  build:
+    name: Linux x86_64
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Setup Bazelisk
+        uses: bazelbuild/setup-bazelisk@v3
+
+      - name: Prerequisites
+        run: |
+          sudo apt-get install -y \
+            ffmpeg \
+            libegl1-mesa-dev \
+            libopencv-core-dev \
+            libopencv-highgui-dev \
+            libopencv-calib3d-dev \
+            libopencv-features2d-dev \
+            libopencv-imgproc-dev \
+            libopencv-video-dev \
+            libopencv-contrib-dev
+          sed -i 's/#"include\/opencv4/"include\/opencv4/g' mediapipe/third_party/opencv_linux.BUILD
+
+      - name: Setup
+        run: |
+          python ./setup.py
+
+      - name: Build
+        run: |
+          source ./venv/bin/activate
+          python ./build.py desktop --type release --output build/
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact-linux
+          path: |
+            build/*.so

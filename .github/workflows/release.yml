@@ -1,0 +1,43 @@
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: build-artifact-*
+
+      - name: Assemble
+        run: |
+          mkdir dist
+          cp -a addons dist/
+          cp LICENSE addons/GDMP/
+          cp README.md dist/
+          mkdir -p dist/addons/GDMP/libs/x86_64/
+          cp build-artifact-windows/*.dll dist/addons/GDMP/libs/x86_64/
+          cp build-artifact-linux/*.so dist/addons/GDMP/libs/x86_64/
+          cp build-artifact-android/*.aar dist/addons/GDMP/libs/
+          cp -a build-artifact-ios/*.framework dist/addons/GDMP/libs/
+          zip -r GDMP-${{ github.event.release.tag_name }}.zip dist
+
+      - name: Upload
+        env:
+          GITHUB_TOKEN: ${{ github.TOKEN }}
+        shell: bash
+        run: |
+          gh release upload ${{ github.event.release.tag_name }} GDMP-${{ github.event.release.tag_name }}.zip
