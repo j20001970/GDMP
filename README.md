@@ -1,12 +1,10 @@
 # GDMP
 GDMP is a [Godot Engine](https://godotengine.org) 3.3+ plugin for utilizing [MediaPipe](https://developers.google.com/mediapipe) framework and solutions.
 
-**NOTICE:** This branch is for Godot 4.x (GDExtension) and later.
-
-- For Godot 3.x (GDNative) version, please refer to `3.x` branch.
-
 ## Getting Started
-We are still working on precompiled libraries!
+1. Download pre-built libraries from releases.
+2. Extract `addons` to Godot project's root directory.
+3. Open Godot project, go to `Project Settings...` and enable `GDMP` plugin under `Plugins` tab.
 
 ## Demo
 Please check out [GDMP Demo](https://github.com/j20001970/GDMP-demo) to see how the plugin work.
