@@ -10,13 +10,13 @@ allprojects {
 }
 
 android {
-    namespace "io.gdmp"
+    namespace 'io.gdmp'
     compileSdk 34
 
     defaultConfig {
         minSdk 21
-        versionCode 3
-        versionName '0.3'
+        versionCode 4
+        versionName '0.4'
     }
 
     compileOptions {
