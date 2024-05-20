@@ -9,7 +9,9 @@ cc_library(
     ] + select({
         "//mediapipe:android": [":camera_helper_android"],
         "//mediapipe:ios": [":camera_helper_ios"],
-        "//conditions:default": [":camera_helper_cv"],
+        "//mediapipe:linux": [":camera_helper_cv"],
+        "//mediapipe:windows": [":camera_helper_cv"],
+        "//conditions:default": [":camera_helper_stub"],
     }),
 )
 
@@ -63,5 +65,15 @@ objc_library(
     deps = [
         "//GDMP/framework:image",
         "//GDMP/gpu:gpu_resources",
+    ],
+)
+
+cc_library(
+    name = "camera_helper_stub",
+    srcs = ["camera_helper_stub.cc"],
+    hdrs = ["camera_helper.h"],
+    deps = [
+        "//GDMP/gpu:gpu_resources",
+        "@godot-cpp//:godot",
     ],
 )
