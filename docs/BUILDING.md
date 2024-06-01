@@ -55,7 +55,7 @@ Run `build.py --help` to see all options.
 1. Install OpenCV and FFmpeg, then modify `mediapipe/third_party/opencv_linux.BUILD` to make OpenCV visible to Bazel.
 2. Run `build.py desktop` to build desktop library.
 
-NOTE:- Bazel version 6.1.1 is strictly required and can be installed by running the `./scripts/get_bazel_linux.sh`, it is installed inside the Python venv
+NOTE:- Bazel version 6.1.1 is strictly required and is installed automatically by running the `setup.py`, it is installed inside the Python venv.
 
 ## Building for Windows
 1. Install MSVC compiler and Windows SDK, then setting `BAZEL_VC` environment variable pointing to your VC installation.
