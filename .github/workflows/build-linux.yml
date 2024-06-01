@@ -4,7 +4,7 @@ on: [workflow_call, workflow_dispatch]
 jobs:
   build:
     name: Linux x86_64
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,8 +21,7 @@ jobs:
 
       - name: Prerequisites
         run: |
-          sudo apt-get install -y \
-            ffmpeg \
+          sudo apt install -y \
             libegl1-mesa-dev \
             libopencv-core-dev \
             libopencv-highgui-dev \
