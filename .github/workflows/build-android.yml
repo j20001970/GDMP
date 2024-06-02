@@ -28,9 +28,6 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Setup Bazelisk
-        uses: bazelbuild/setup-bazelisk@v3
-
       - name: Setup Android NDK
         id: setup-ndk
         uses: nttld/setup-ndk@v1
