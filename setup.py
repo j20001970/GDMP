@@ -9,6 +9,8 @@ from argparse import ArgumentParser, Namespace
 from os import path, unlink
 from shutil import rmtree, which
 from subprocess import run
+import urllib.request
+import stat
 
 ROOT_DIR = path.dirname(__file__)
 
@@ -27,6 +29,7 @@ GDMP_VENV_REQUIREMENTS = path.join(ROOT_DIR, "requirements.txt")
 DEFAULT_OPENCV_VERSION = "3.4.10"
 
 current_platform = platform.system().lower()
+current_arch = platform.machine().lower()
 if current_platform == "windows":
     DEFAULT_OPENCV_INSTALL_PATH_REPLACE = 'path = "C:\\\\opencv\\\\build",'
     OPENCV_INSTALL_PATH_FORMAT = 'path = "{}",'
@@ -114,12 +117,16 @@ def workspace_android_rules() -> None:
         if not "android_ndk_repository" in content:
             f.write('#android_ndk_repository(name = "androidndk", api_level=21)\n')
 
+def download_progress_hook(count, block_size, total_size):
+    percent = int(count * block_size * 100 / total_size)
+    print(f"\rDownloading: {percent}%", end='')
 
-def create_venv(current_platform: str) -> None:
+def create_venv(current_platform: str, current_arch: str) -> None:
     if not path.exists(GDMP_VENV_DIR):
         venv.create(GDMP_VENV_DIR, with_pip=True)
         if not path.exists(GDMP_VENV_DIR):
             raise RuntimeError(f"Unable to create venv at path {GDMP_VENV_DIR}")
+
 
     pip_bin: str = "{}/bin/pip"
     activate_command: str = "source venv/bin/activate"
@@ -131,6 +138,37 @@ def create_venv(current_platform: str) -> None:
         [pip_bin.format(GDMP_VENV_DIR), "install", "-r", GDMP_VENV_REQUIREMENTS],
         check=True,
     )
+
+    # Download latest Bazelisk and add to venv path
+
+    print(f"Downloading Bazelisk for {current_platform}({current_arch})")
+    bazelisk_url = "https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-" 
+
+    if current_platform == "windows":
+        bazelisk_url += f"{current_platform}-amd64.exe"
+        urllib.request.urlretrieve(bazelisk_url, "venv/Scripts/bazel.exe", reporthook=download_progress_hook)
+
+    else:
+        # Linux and MacOS hosts
+        bazel_path = "venv/bin/bazel"
+
+        if current_arch == "amd64" or current_arch == "x86_64":
+            bazelisk_url += f"{current_platform}-amd64"
+            urllib.request.urlretrieve(bazelisk_url, bazel_path, reporthook=download_progress_hook)
+
+            # Give downloaded file executable permissions
+            perms = os.stat(bazel_path).st_mode
+            os.chmod(bazel_path, perms | stat.S_IXUSR)
+
+        elif current_arch == "arm64":
+            bazelisk_url += f"{current_platform}-arm64"
+            urllib.request.urlretrieve(bazelisk_url, bazel_path, reporthook=download_progress_hook)
+
+            perms = os.stat(bazel_path).st_mode
+            os.chmod(bazel_path, perms | stat.S_IXUSR)
+
+        else:
+            print(f"Could not get Bazelisk for your platform: {current_platform} {current_arch}")
 
     print(
         f"\n++++++\nPlease activate the venv before building GDMP by running `{activate_command}`\n++++++\n"
@@ -219,4 +257,4 @@ if __name__ == "__main__":
                 args.custom_opencv_version.replace(".", ""),
             )
 
-    create_venv(current_platform)
+    create_venv(current_platform, current_arch)
