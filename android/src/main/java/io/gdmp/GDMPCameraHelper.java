@@ -52,10 +52,6 @@ public class GDMPCameraHelper implements TextureFrameConsumer {
     }
 
     public void startCamera(int index, int width, int height) {
-        CameraSelector cameraSelector =
-                index == 0
-                        ? CameraSelector.DEFAULT_FRONT_CAMERA
-                        : CameraSelector.DEFAULT_BACK_CAMERA;
         Size targetSize = new Size(width, height);
         Executor mainThreadExecutor = ContextCompat.getMainExecutor(activity);
         ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(activity);
@@ -69,6 +65,13 @@ public class GDMPCameraHelper implements TextureFrameConsumer {
                 Log.e(TAG, e.getMessage());
                 return;
             }
+            CameraSelector cameraSelector;
+            if (index == 0)
+                cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA;
+            else if (index == 1)
+                cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+            else
+                cameraSelector = cameraProvider.getAvailableCameraInfos().get(index).getCameraSelector();
             preview = new Preview.Builder().setTargetResolution(targetSize).build();
             preview.setSurfaceProvider(
                     renderExecutor,
