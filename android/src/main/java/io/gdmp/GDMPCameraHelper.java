@@ -2,8 +2,13 @@ package io.gdmp;
 
 import android.app.Activity;
 import android.graphics.SurfaceTexture;
-import android.opengl.EGL14;
-import android.opengl.GLES20;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
@@ -11,22 +16,16 @@ import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 
-import androidx.camera.core.CameraSelector;
-import androidx.camera.core.Preview;
-import androidx.camera.lifecycle.ProcessCameraProvider;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LifecycleOwner;
+import android.opengl.EGL14;
+import androidx.annotation.NonNull;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mediapipe.components.ExternalTextureConverter;
 import com.google.mediapipe.components.TextureFrameConsumer;
 import com.google.mediapipe.framework.TextureFrame;
 import com.google.mediapipe.glutil.EglManager;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.RejectedExecutionException;
-
-import javax.microedition.khronos.egl.EGLSurface;
+import java.util.Arrays;
+import java.util.List;
 
 public class GDMPCameraHelper implements TextureFrameConsumer {
     private static final String TAG = "GDMPCameraHelper";
@@ -35,88 +34,110 @@ public class GDMPCameraHelper implements TextureFrameConsumer {
     private final Activity activity;
     private final EglManager eglManager;
     private final ExternalTextureConverter converter;
-    private final SingleThreadHandlerExecutor renderExecutor =
-            new SingleThreadHandlerExecutor("RenderThread", Process.THREAD_PRIORITY_DEFAULT);
-    private ProcessCameraProvider cameraProvider;
-    private Preview preview;
+    private final HandlerThread cameraThread;
+    private final Handler cameraHandler;
+    private CameraDevice cameraDevice;
+    private CameraCaptureSession captureSession;
+    private SurfaceTexture previewTexture;
 
     public GDMPCameraHelper(long nativeCallerPtr) {
         this.nativeCallerPtr = nativeCallerPtr;
         activity = GDMP.getSingleton().getGodot().getActivity();
-        // Get graph GL context by getting current context.
         eglManager = new EglManager(EGL14.eglGetCurrentContext());
         converter = new ExternalTextureConverter(eglManager.getContext());
         converter.setConsumer(this);
         converter.setFlipY(true);
         converter.setRotation(activity.getWindowManager().getDefaultDisplay().getRotation());
+        cameraThread = new HandlerThread("CameraThread", Process.THREAD_PRIORITY_DEFAULT);
+        cameraThread.start();
+        cameraHandler = new Handler(cameraThread.getLooper());
     }
 
     public void startCamera(int index, int width, int height) {
-        CameraSelector cameraSelector =
-                index == 0
-                        ? CameraSelector.DEFAULT_FRONT_CAMERA
-                        : CameraSelector.DEFAULT_BACK_CAMERA;
-        Size targetSize = new Size(width, height);
-        Executor mainThreadExecutor = ContextCompat.getMainExecutor(activity);
-        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(activity);
-        cameraProviderFuture.addListener(() -> {
-            try {
-                cameraProvider = cameraProviderFuture.get();
-            } catch (Exception e) {
-                if (e instanceof InterruptedException) {
-                    Thread.currentThread().interrupt();
-                }
-                Log.e(TAG, e.getMessage());
-                return;
+        CameraManager cameraManager = (CameraManager) activity.getSystemService(Activity.CAMERA_SERVICE);
+        try {
+            String[] cameraIds = cameraManager.getCameraIdList();
+            Log.e(TAG, "Cameras found: " + Arrays.toString(cameraIds));
+            String cameraId;
+            if(index >= cameraIds.length) {
+                cameraId = cameraIds[0];
+            } else {
+                cameraId = cameraIds[index];
             }
-            preview = new Preview.Builder().setTargetResolution(targetSize).build();
-            preview.setSurfaceProvider(
-                    renderExecutor,
-                    request -> {
-                        Size frameSize = request.getResolution();
-                        int[] textures = new int[1];
-                        EGLSurface eglSurface = eglManager.createOffscreenSurface(1, 1);
-                        eglManager.makeCurrent(eglSurface, eglSurface);
-                        GLES20.glGenTextures(1, textures, 0);
-                        SurfaceTexture previewFrameTexture = new SurfaceTexture(textures[0]);
-                        previewFrameTexture.setDefaultBufferSize(frameSize.getWidth(), frameSize.getHeight());
-                        request.setTransformationInfoListener(
-                                renderExecutor,
-                                transformationInfo -> {
-                                    int frameRotation = transformationInfo.getRotationDegrees();
-                                    boolean cameraRotated = frameRotation % 180 == 90;
-                                    converter.setSurfaceTexture(
-                                            previewFrameTexture,
-                                            cameraRotated ? frameSize.getHeight() : frameSize.getWidth(),
-                                            cameraRotated ? frameSize.getWidth() : frameSize.getHeight()
-                                    );
-                                });
-                        Surface surface = new Surface(previewFrameTexture);
-                        request.provideSurface(
-                                surface,
-                                renderExecutor,
-                                result -> {
-                                    surface.release();
-                                });
+            CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
+            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            Size[] sizes = map.getOutputSizes(SurfaceTexture.class);
+            Size targetSize = new Size(width, height);
+            for (Size size : sizes) {
+                if (size.getWidth() == targetSize.getWidth() && size.getHeight() == targetSize.getHeight()) {
+                    targetSize = size;
+                    break;
+                }
+            }
+            Size finalTargetSize = targetSize;
+            cameraManager.openCamera(cameraId, new CameraDevice.StateCallback() {
+                @Override
+                public void onOpened(@NonNull CameraDevice camera) {
+                    cameraDevice = camera;
+                    createCaptureSession(finalTargetSize);
+                }
+
+                @Override
+                public void onDisconnected(@NonNull CameraDevice camera) {
+                    camera.close();
+                }
+
+                @Override
+                public void onError(@NonNull CameraDevice camera, int error) {
+                    Log.e(TAG, "Camera error: " + error);
+                }
+            }, cameraHandler);
+        } catch (CameraAccessException e) {
+            Log.e(TAG, "Camera access exception: " + e.getMessage());
+        }
+    }
+
+    private void createCaptureSession(Size targetSize) {
+        try {
+            SurfaceTexture surfaceTexture = new SurfaceTexture(0);
+            surfaceTexture.setDefaultBufferSize(targetSize.getWidth(), targetSize.getHeight());
+            previewTexture = surfaceTexture;
+            converter.setSurfaceTexture(surfaceTexture, targetSize.getWidth(), targetSize.getHeight());
+            Surface surface = new Surface(surfaceTexture);
+            cameraDevice.createCaptureSession(List.of(surface), new CameraCaptureSession.StateCallback() {
+                @Override
+                public void onConfigured(@NonNull CameraCaptureSession session) {
+                    captureSession = session;
+                    try {
+                        CaptureRequest.Builder builder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+                        builder.addTarget(surface);
+                        captureSession.setRepeatingRequest(builder.build(), null, cameraHandler);
+                    } catch (CameraAccessException e) {
+                        Log.e(TAG, "Camera access exception: " + e.getMessage());
                     }
-            );
-            cameraProvider.bindToLifecycle((LifecycleOwner) activity, cameraSelector, preview);
-        }, mainThreadExecutor);
+                }
+
+                @Override
+                public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+                    Log.e(TAG, "Capture session configuration failed");
+                }
+            }, cameraHandler);
+        } catch (CameraAccessException e) {
+            Log.e(TAG, "Camera access exception: " + e.getMessage());
+        }
     }
 
     public void closeCamera() {
-        if (cameraProvider != null && preview != null) {
-            Executor mainThreadExecutor = ContextCompat.getMainExecutor(activity);
-            mainThreadExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    cameraProvider.unbind(preview);
-                }
-            });
+        if (cameraDevice!= null) {
+            cameraDevice.close();
         }
-        if (converter != null) {
+        if (captureSession!= null) {
+            captureSession.close();
+        }
+        if (converter!= null) {
             converter.close();
         }
+        cameraThread.quitSafely();
     }
 
     @Override
@@ -125,26 +146,4 @@ public class GDMPCameraHelper implements TextureFrameConsumer {
     }
 
     private native void nativeOnNewFrame(long nativeCallerPtr, TextureFrame frame, int name, int width, int height);
-
-    private static final class SingleThreadHandlerExecutor implements Executor {
-        private final HandlerThread handlerThread;
-        private final Handler handler;
-
-        SingleThreadHandlerExecutor(String threadName, int priority) {
-            handlerThread = new HandlerThread(threadName, priority);
-            handlerThread.start();
-            handler = new Handler(handlerThread.getLooper());
-        }
-
-        @Override
-        public void execute(Runnable command) {
-            if (!handler.post(command)) {
-                throw new RejectedExecutionException(handlerThread.getName() + " is shutting down.");
-            }
-        }
-
-        boolean shutdown() {
-            return handlerThread.quitSafely();
-        }
-    }
 }
