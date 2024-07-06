@@ -58,12 +58,37 @@ public class GDMPCameraHelper implements TextureFrameConsumer {
         try {
             String[] cameraIds = cameraManager.getCameraIdList();
             Log.e(TAG, "Cameras found: " + Arrays.toString(cameraIds));
-            String cameraId;
-            if(index >= cameraIds.length) {
-                cameraId = cameraIds[0];
+            String cameraId = null;
+
+            if (index == 0) {
+                // Select front camera
+                for (String id : cameraIds) {
+                    CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(id);
+                    Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+                    if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                        cameraId = id;
+                        break;
+                    }
+                }
+            } else if (index == 1) {
+                // Select back camera
+                for (String id : cameraIds) {
+                    CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(id);
+                    Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+                    if (facing != null && facing == CameraCharacteristics.LENS_FACING_BACK) {
+                        cameraId = id;
+                        break;
+                    }
+                }
             } else {
-                cameraId = cameraIds[index];
+                // Select other available camera
+                if (index < cameraIds.length) {
+                    cameraId = cameraIds[index];
+                } else {
+                    cameraId = cameraIds[0]; // Default to the first camera if index is out of bounds
+                }
             }
+
             CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             Size[] sizes = map.getOutputSizes(SurfaceTexture.class);
