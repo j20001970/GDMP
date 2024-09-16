@@ -118,6 +118,8 @@ def workspace_android_rules() -> None:
             f.write('#android_sdk_repository(name = "androidsdk")\n')
         if not "android_ndk_repository" in content:
             f.write('#android_ndk_repository(name = "androidndk", api_level=21)\n')
+        if not "android/crosstool" in content:
+            f.write('#bind(name = "android/crosstool", actual = "@androidndk//:toolchain")\n')
 
 def download_progress_hook(count, block_size, total_size):
     percent = int(count * block_size * 100 / total_size)

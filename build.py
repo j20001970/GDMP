@@ -76,7 +76,7 @@ def build_android(args: Namespace, build_args: list[str]) -> list[Callable]:
                 MEDIAPIPE_DIR,
                 "bazel-mediapipe/external/android_opencv/sdk/native/libs",
                 abi,
-                "libopencv_java3.so",
+                "libopencv_java4.so",
             )
             dst_dir = path.join(jni_dir, abi)
             dst = path.join(dst_dir, path.basename(src))
@@ -109,7 +109,7 @@ def get_build_cmds(args: Namespace) -> list[Callable]:
     else:
         build_args.extend(TARGET_ARGS[target])
     if target == "android":
-        build_args.extend(["--cpu={abi}", TARGETS[target]])
+        build_args.extend([f"--cpu={arch}", TARGETS[target]])
         cmds.extend(build_android(args, build_args))
         return cmds
     elif target == "ios" and arch:
