@@ -27,7 +27,7 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation "org.godotengine:godot:4.2.1.stable"
+    implementation "org.godotengine:godot:4.3.stable"
     // MediaPipe deps
     implementation 'com.google.flogger:flogger:0.3.1'
     implementation 'com.google.flogger:flogger-system-backend:0.3.1'
