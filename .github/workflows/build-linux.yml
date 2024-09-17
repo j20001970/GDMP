@@ -18,16 +18,7 @@ jobs:
 
       - name: Prerequisites
         run: |
-          sudo apt install -y \
-            libegl1-mesa-dev \
-            libopencv-core-dev \
-            libopencv-highgui-dev \
-            libopencv-calib3d-dev \
-            libopencv-features2d-dev \
-            libopencv-imgproc-dev \
-            libopencv-video-dev \
-            libopencv-contrib-dev
-          sed -i 's/#"include\/opencv4/"include\/opencv4/g' mediapipe/third_party/opencv_linux.BUILD
+          sudo apt install -y libegl1-mesa-dev
 
       - name: Setup
         run: |
@@ -43,4 +34,4 @@ jobs:
         with:
           name: build-artifact-linux
           path: |
-            build/*.so
+            build/lib*.so*

@@ -30,6 +30,7 @@ TARGET_ARGS = {
             "--copt=-DMESA_EGL_NO_X11_HEADERS",
             "--copt=-DEGL_NO_X11",
             "--copt=-fPIC",
+            "--define=OPENCV=source",
         ],
         "win32": [
             "--define=MEDIAPIPE_DISABLE_GPU=1",
@@ -142,7 +143,19 @@ def copy_desktop(args: Namespace):
     if path.exists(dst):
         remove(dst)
     copyfile(src, dst)
-    if desktop_platform == "windows":
+    if desktop_platform == "linux":
+        opencv_lib = glob.glob(
+            path.join(
+                MEDIAPIPE_DIR,
+                "bazel-bin/third_party/opencv_cmake/lib",
+                "libopencv_*.so.*",
+            )
+        )
+        if len(opencv_lib) == 0:
+            return
+        for lib in opencv_lib:
+            copyfile(lib, path.join(output, path.basename(lib)))
+    elif desktop_platform == "windows":
         opencv_lib = glob.glob(path.join(desktop_output, "opencv_world*.dll"))
         if len(opencv_lib) == 0:
             return
