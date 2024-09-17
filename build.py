@@ -109,7 +109,7 @@ def get_build_cmds(args: Namespace) -> list[Callable]:
     else:
         build_args.extend(TARGET_ARGS[target])
     if target == "android":
-        build_args.extend([f"--cpu={arch}", TARGETS[target]])
+        build_args.extend(["--cpu={abi}", TARGETS[target]])
         cmds.extend(build_android(args, build_args))
         return cmds
     elif target == "ios" and arch:
