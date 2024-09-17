@@ -52,8 +52,14 @@ Run `build.py --help` to see all options.
 ## Building for Linux
 **Flatpak environment**: If you intend to distribute the library, you might want to use an environment isolated from host before you proceed. You can use `scripts/flatpak_env.sh` to enable Flatpak environment.
 
-1. Install OpenCV and FFmpeg, then modify `mediapipe/third_party/opencv_linux.BUILD` to make OpenCV visible to Bazel.
-2. Run `build.py desktop` to build desktop library.
+1. Run `build.py desktop` to build desktop library.
+
+**Linking prebuilt OpenCV**: GDMP builds OpenCV from source on Linux by default, if you want to use pre-compiled OpenCV libraries, you will need to:
+
+1. Modify `mediapipe/third_party/opencv_linux.BUILD` to make OpenCV installed on your host visible to Bazel.
+2. Comment out `--define=OPENCV=source` from `build.py` to make Bazel using binary OpenCV rules.
+
+When linking prebuilt OpenCV libraries, build script will not copy required libraries to output destination, make sure they can be found by dynamic linker.
 
 ## Building for Windows
 1. Install MSVC compiler and Windows SDK, then setting `BAZEL_VC` environment variable pointing to your VC installation.
