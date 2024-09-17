@@ -32,7 +32,7 @@ jobs:
         id: setup-ndk
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r21e
+          ndk-version: r26d
           link-to-sdk: true
 
       - name: Setup Gradle 8.2
@@ -48,6 +48,7 @@ jobs:
         run: |
           echo "android_sdk_repository(name = \"androidsdk\")" >> mediapipe/WORKSPACE
           echo "android_ndk_repository(name = \"androidndk\", api_level=21)" >> mediapipe/WORKSPACE
+          echo "bind(name = \"android/crosstool\", actual = \"@androidndk//:toolchain\")" >> mediapipe/WORKSPACE
 
       - name: Build
         env:
