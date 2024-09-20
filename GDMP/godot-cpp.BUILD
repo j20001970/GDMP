@@ -20,10 +20,13 @@ cc_library(
         "@mediapipe//mediapipe:windows": [
             "/utf-8",
         ],
-        "//conditions:default": [],
+        "//conditions:default": [
+            "-fno-exceptions",
+        ],
     }),
     defines = select({
         "@mediapipe//mediapipe:windows": [
+            "_HAS_EXCEPTIONS=0",
             "TYPED_METHOD_BIND",
             "NOMINMAX",
         ],
