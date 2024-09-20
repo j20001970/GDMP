@@ -62,15 +62,19 @@ def build_android(args: Namespace, build_args: list[str]) -> list[Callable]:
     build_type: str = args.type
     arch: str = args.arch
     skip_aar: bool = args.android_skip_aar
+    output: str = args.output
     cmds = []
     if not path.exists(ANDROID_PROJECT):
         print("Error: android project does not exist.")
         sys.exit(-1)
     src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/android/libGDMP.so")
     if arch:
-        jni_dir = path.join(ANDROID_PROJECT, "src/main/jniLibs")
-        if path.exists(jni_dir):
-            cmds.append(partial(rmtree, jni_dir))
+        if skip_aar:
+            dst_dir = output
+        else:
+            dst_dir = path.join(ANDROID_PROJECT, "src/main/jniLibs")
+        if path.exists(dst_dir):
+            cmds.append(partial(rmtree, dst_dir))
         abi_list = arch.split(",")
         for abi in abi_list:
             src_opencv = path.join(
@@ -79,7 +83,7 @@ def build_android(args: Namespace, build_args: list[str]) -> list[Callable]:
                 abi,
                 "libopencv_java4.so",
             )
-            dst_dir = path.join(jni_dir, abi)
+            dst_dir = path.join(dst_dir, abi)
             dst = path.join(dst_dir, path.basename(src))
             dst_opencv = path.join(dst_dir, path.basename(src_opencv))
             arg = [arg.format(abi=abi) for arg in build_args]
@@ -123,7 +127,10 @@ def get_build_cmds(args: Namespace) -> list[Callable]:
 
 def copy_android(args: Namespace):
     build_type: str = args.type
+    skip_aar: bool = args.android_skip_aar
     output: str = args.output
+    if skip_aar:
+        return
     src = path.join(ANDROID_PROJECT, f"build/outputs/aar/GDMP-{build_type}.aar")
     dst = path.join(output, "GDMP.android.aar")
     copyfile(src, dst)
