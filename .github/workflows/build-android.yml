@@ -3,25 +3,16 @@ on: [workflow_call, workflow_dispatch]
 
 jobs:
   build:
-    name: Android AAR
+    strategy:
+      matrix:
+        arch: ["arm64-v8a", "x86_64"]
+    name: Android ${{ matrix.arch }}
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
-
-      - name: Free Disk Space
-        uses: jlumbroso/free-disk-space@v1.3.1
-        with:
-          android: false
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "17"
-          cache: "gradle"
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -34,11 +25,6 @@ jobs:
         with:
           ndk-version: r26d
           link-to-sdk: true
-
-      - name: Setup Gradle 8.2
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: 8.2
 
       - name: Setup
         run: |
@@ -55,7 +41,55 @@ jobs:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
           source ./venv/bin/activate
-          python ./build.py android --arch arm64-v8a --type release --output build/
+          python ./build.py android --android-skip-aar --arch ${{ matrix.arch }} --type release --output build/
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact-android-${{ matrix.arch }}
+          path: |
+            build/*
+
+  build-aar:
+    name: Android AAR
+    runs-on: ubuntu-20.04
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: "gradle"
+
+      - name: Setup
+        run: |
+          python ./setup.py
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: build-artifact-android-*
+
+      - name: Copy JNI Libraries
+        run: |
+          mkdir -p android/src/main/jniLibs
+          cp -a build-artifact-android-*/* android/src/main/jniLibs
+
+      - name: Build
+        run: |
+          source ./venv/bin/activate
+          python ./build.py android --type release --output build/
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
