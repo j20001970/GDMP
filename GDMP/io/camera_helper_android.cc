@@ -19,16 +19,6 @@ class CameraHelperAndroid : public CameraHelperImpl {
 		jobject camera = nullptr;
 		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
 
-		bool get_env(JNIEnv **env) {
-			jint res = jvm->GetEnv((void **)env, JNI_VERSION_1_6);
-			if (res == JNI_EDETACHED) {
-				res = jvm->AttachCurrentThread(env, NULL);
-				ERR_FAIL_COND_V(res != JNI_OK, false);
-				return true;
-			}
-			return false;
-		}
-
 		jobject create_camera() {
 			jobject camera;
 			auto context = gpu_resources->gl_context();

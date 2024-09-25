@@ -5,4 +5,6 @@
 
 extern JavaVM *jvm;
 
+bool get_env(JNIEnv **env);
+
 #endif

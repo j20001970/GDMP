@@ -14,6 +14,7 @@ cc_library(
     srcs = ["jni.cc"],
     hdrs = ["jni.h"],
     visibility = ["//visibility:public"],
+    deps = ["@godot-cpp//:godot"],
     alwayslink = 1,
 )
 
