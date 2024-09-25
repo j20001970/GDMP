@@ -73,22 +73,24 @@ def build_android(args: Namespace, build_args: list[str]) -> list[Callable]:
             dst_dir = output
         else:
             dst_dir = path.join(ANDROID_PROJECT, "src/main/jniLibs")
-        if path.exists(dst_dir):
+        if not dst_dir is None and path.exists(dst_dir):
             cmds.append(partial(rmtree, dst_dir))
         abi_list = arch.split(",")
         for abi in abi_list:
+            arg = [arg.format(abi=abi) for arg in build_args]
+            cmds.append(bazel_build(arg))
+            if dst_dir is None:
+                continue
             src_opencv = path.join(
                 MEDIAPIPE_DIR,
                 "bazel-mediapipe/external/android_opencv/sdk/native/libs",
                 abi,
                 "libopencv_java4.so",
             )
-            dst_dir = path.join(dst_dir, abi)
-            dst = path.join(dst_dir, path.basename(src))
-            dst_opencv = path.join(dst_dir, path.basename(src_opencv))
-            arg = [arg.format(abi=abi) for arg in build_args]
-            cmds.append(bazel_build(arg))
-            cmds.append(partial(makedirs, dst_dir, exist_ok=True))
+            dst_jni = path.join(dst_dir, abi)
+            dst = path.join(dst_jni, path.basename(src))
+            dst_opencv = path.join(dst_jni, path.basename(src_opencv))
+            cmds.append(partial(makedirs, dst_jni, exist_ok=True))
             cmds.append(partial(copyfile, src, dst))
             cmds.append(partial(copyfile, src_opencv, dst_opencv))
     if skip_aar:
