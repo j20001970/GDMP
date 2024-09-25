@@ -1,0 +1,13 @@
+diff --git a/WORKSPACE b/WORKSPACE
+--- a/WORKSPACE
++++ b/WORKSPACE
+@@ -26,7 +59,8 @@ http_archive(
+     name = "com_google_absl",
+     urls = ["https://github.com/abseil/abseil-cpp/archive//9687a8ea750bfcddf790372093245a1d041b21a3.tar.gz"],
+     patches = [
+-        "@//third_party:com_google_absl_windows_patch.diff"
++        "@//third_party:com_google_absl_windows_patch.diff",
++        "@//GDMP/web:absl.diff",
+     ],
+     patch_args = [
+         "-p1",
