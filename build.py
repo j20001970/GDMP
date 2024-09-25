@@ -196,7 +196,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("target", choices=list(TARGETS), help="build target")
     parser.add_argument(
-        "--type", choices=["debug", "release"], default="debug", help="build type"
+        "--type", choices=["debug", "release"], default="release", help="build type"
     )
     parser.add_argument("--arch", default="", help="library architecture")
     parser.add_argument("--output", help="build output directory")
