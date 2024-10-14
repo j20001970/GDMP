@@ -8,6 +8,7 @@ compatibility_minimum = 4.1
 linux.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.linux.so"
 windows.x86_64 = "res://addons/GDMP/libs/x86_64/GDMP.windows.dll"
 ios = "res://addons/GDMP/libs/GDMP.ios.framework"
+web = "res://addons/GDMP/libs/GDMP.web.wasm"
 
 [dependencies]
 
