@@ -34,6 +34,7 @@ TARGET_ARGS = {
         ],
         "win32": [
             "--define=MEDIAPIPE_DISABLE_GPU=1",
+            "--define=xnn_enable_avxvnniint8=false",
         ],
     },
     "ios": [
