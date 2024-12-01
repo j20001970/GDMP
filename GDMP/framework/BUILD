@@ -31,6 +31,25 @@ cc_library(
 )
 
 cc_library(
+    name = "graph_builder",
+    srcs = [
+        "graph_builder.cc",
+        "graph_node.cc",
+    ],
+    hdrs = [
+        "graph_builder.h",
+        "graph_node.h",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":graph_config",
+        "//GDMP/proto",
+        "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/framework/api2:builder",
+    ],
+)
+
+cc_library(
     name = "graph_config",
     srcs = ["graph_config.cc"],
     hdrs = ["graph_config.h"],
