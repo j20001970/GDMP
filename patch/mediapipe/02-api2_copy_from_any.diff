@@ -1,0 +1,18 @@
+diff --git a/mediapipe/framework/api2/builder.h b/mediapipe/framework/api2/builder.h
+--- a/mediapipe/framework/api2/builder.h
++++ b/mediapipe/framework/api2/builder.h
+@@ -533,7 +533,13 @@ class NodeBase {
+     OptionsT* option_ptr = option.get();
+     node_options_[kTypeId<OptionsT>] = {
+         std::move(option),
+-        [option_ptr](protobuf::Any& any) { return any.PackFrom(*option_ptr); }};
++        [option_ptr](protobuf::Any& any) {
++          if (option_ptr->GetTypeName() == any.GetTypeName()) {
++            any.CopyFrom(*option_ptr);
++            return true;
++          }
++          return any.PackFrom(*option_ptr);
++        }};
+     return *option_ptr;
+   }
+ 

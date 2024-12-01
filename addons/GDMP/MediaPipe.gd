@@ -21,7 +21,9 @@ enum TaskRunningMode {
 
 # Framework
 const Graph: NativeScript = preload("framework/MediaPipeGraph.gdns")
+const GraphBuilder: NativeScript = preload("framework/MediaPipeGraphBuilder.gdns")
 const GraphConfig: NativeScript = preload("framework/MediaPipeGraphConfig.gdns")
+const GraphNode: NativeScript = preload("framework/MediaPipeGraphNode.gdns")
 const Image: NativeScript = preload("framework/MediaPipeImage.gdns")
 const Packet: NativeScript = preload("framework/MediaPipePacket.gdns")
 const Proto: NativeScript = preload("res://addons/GDMP/framework/MediaPipeProto.gdns")

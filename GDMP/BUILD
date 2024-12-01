@@ -8,6 +8,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//GDMP/framework:graph",
+        "//GDMP/framework:graph_builder",
         "//GDMP/framework:graph_config",
         "//GDMP/framework:image",
         "//GDMP/framework:packet",
