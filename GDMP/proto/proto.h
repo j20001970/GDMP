@@ -22,9 +22,8 @@ class MediaPipeProto : public Reference {
 
 	public:
 		static void _register_methods();
-		static const protobuf::Message *get_prototype(String type_name);
-		static MediaPipeProto *_new(protobuf::Message *message);
 		static MediaPipeProto *_new(const protobuf::Message &message);
+		static MediaPipeProto *_new(const protobuf::MessageLite &message);
 
 		~MediaPipeProto();
 
@@ -34,15 +33,15 @@ class MediaPipeProto : public Reference {
 		bool initialize(String type_name);
 		// Check if the proto is initialized with a valid type.
 		bool is_initialized();
-		// Get the name of the proto type.
-		String get_type();
+		// Get the proto type name, return empty string if uninitialized.
+		String get_type_name();
 
 		// Get the list of field names for this proto.
 		PoolStringArray get_fields();
 		// Check if a field is repeated.
 		bool is_repeated_field(String field_name);
 		// Get the size of repeated field.
-		int get_field_size(String field_name);
+		int get_repeated_field_size(String field_name);
 
 		// Get the value from the field of the proto.
 		Variant get(String field_name);

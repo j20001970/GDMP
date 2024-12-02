@@ -63,28 +63,20 @@ bool MediaPipePacket::set(Variant value) {
 
 Ref<MediaPipeProto> MediaPipePacket::get_proto(String type_name) {
 	Ref<MediaPipeProto> proto;
-	auto prototype = MediaPipeProto::get_prototype(type_name);
-	ERR_FAIL_COND_V(prototype == nullptr, proto);
 	ERR_FAIL_COND_V(!packet.ValidateAsProtoMessageLite().ok(), proto);
-	auto message = prototype->New();
-	message->ParseFromString(packet.GetProtoMessageLite().SerializeAsString());
-	proto = Ref(MediaPipeProto::_new(message));
+	proto = Ref(MediaPipeProto::_new(packet.GetProtoMessageLite()));
 	return proto;
 }
 
 Array MediaPipePacket::get_proto_vector(String type_name) {
 	Array array;
-	auto prototype = MediaPipeProto::get_prototype(type_name);
-	ERR_FAIL_COND_V(prototype == nullptr, array);
 	auto get_proto_vector = packet.GetVectorOfProtoMessageLitePtrs();
 	ERR_FAIL_COND_V(!get_proto_vector.ok(), array);
 	auto proto_vector = get_proto_vector.value();
 	array.resize(proto_vector.size());
 	for (int i = 0; i < proto_vector.size(); i++) {
 		auto message = proto_vector[i];
-		auto msg = prototype->New();
-		msg->ParseFromString(message->SerializeAsString());
-		Ref<MediaPipeProto> proto = MediaPipeProto::_new(msg);
+		Ref<MediaPipeProto> proto = MediaPipeProto::_new(*message);
 		array[i] = proto;
 	}
 	return array;
