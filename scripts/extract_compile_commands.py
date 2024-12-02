@@ -12,7 +12,7 @@ TARGET = "//GDMP:refresh_compile_commands"
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("--type", choices=["debug", "release"], default="debug")
+    parser.add_argument("--type", choices=["debug", "release"], default="release")
     args = parser.parse_args()
     if args.type == "release":
         build_type = "opt"
