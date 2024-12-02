@@ -23,26 +23,28 @@ class MediaPipeProto : public RefCounted {
 		static void _bind_methods();
 
 	public:
-		static const protobuf::Message *get_prototype(const String &type_name);
-
+		// Instantiate uninitialized proto message.
 		MediaPipeProto();
-		MediaPipeProto(protobuf::Message *message);
+		// Create from copying an existing protobuf::Message.
 		MediaPipeProto(const protobuf::Message &message);
+		// Create from copying an existing protobuf::MessageLite.
+		MediaPipeProto(const protobuf::MessageLite &message);
+		// Destructor, free message if initialized.
 		~MediaPipeProto();
 
-		// Initialize the proto with the given type name.
+		// Initialize the proto with the given type name, return true on success.
 		bool initialize(const String &type_name);
 		// Check if the proto is initialized with a valid type.
 		bool is_initialized();
-		// Get the name of the proto type.
-		String get_type();
+		// Get the proto type name, return empty string if uninitialized.
+		String get_type_name();
 
 		// Get the list of field names for this proto.
 		PackedStringArray get_fields();
 		// Check if a field is repeated.
 		bool is_repeated_field(const String &field_name);
 		// Get the size of repeated field.
-		int get_field_size(const String &field_name);
+		int get_repeated_field_size(const String &field_name);
 
 		// Get the value from the field of the proto.
 		Variant get(const String &field_name);

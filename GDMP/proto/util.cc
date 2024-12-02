@@ -4,6 +4,18 @@
 
 #include "GDMP/proto/proto.h"
 
+const protobuf::Message *get_prototype(const std::string &name) {
+	const protobuf::DescriptorPool *pool = protobuf::DescriptorPool::generated_pool();
+	const protobuf::Descriptor *descriptor = pool->FindMessageTypeByName(name);
+	return get_prototype(descriptor);
+}
+
+const protobuf::Message *get_prototype(const protobuf::Descriptor *descriptor) {
+	ERR_FAIL_COND_V(descriptor == nullptr, nullptr);
+	protobuf::MessageFactory *factory = protobuf::MessageFactory::generated_factory();
+	return factory->GetPrototype(descriptor);
+}
+
 Variant get_field(const protobuf::Message &message, const protobuf::FieldDescriptor *field) {
 	ERR_FAIL_COND_V(field->is_repeated(), Variant());
 	auto refl = message.GetReflection();
