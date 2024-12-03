@@ -125,22 +125,22 @@ Variant get_repeated_field_all(const protobuf::Message &message, const protobuf:
 	return Variant();
 }
 
-bool set_field(protobuf::Message *message, const protobuf::FieldDescriptor *field, Variant value) {
-	auto refl = message->GetReflection();
+bool set_field(protobuf::Message &message, const protobuf::FieldDescriptor *field, Variant value) {
+	auto refl = message.GetReflection();
 	switch (value.get_type()) {
 		case Variant::BOOL: {
 			ERR_FAIL_COND_V(field->type() != protobuf::FieldDescriptor::TYPE_BOOL, false);
-			refl->SetBool(message, field, value);
+			refl->SetBool(&message, field, value);
 			return true;
 		}
 		case Variant::FLOAT: {
 			switch (field->type()) {
 				case protobuf::FieldDescriptor::TYPE_DOUBLE: {
-					refl->SetDouble(message, field, value);
+					refl->SetDouble(&message, field, value);
 					return true;
 				}
 				case protobuf::FieldDescriptor::TYPE_FLOAT: {
-					refl->SetFloat(message, field, value);
+					refl->SetFloat(&message, field, value);
 					return true;
 				}
 			}
@@ -148,15 +148,15 @@ bool set_field(protobuf::Message *message, const protobuf::FieldDescriptor *fiel
 		case Variant::INT: {
 			switch (field->type()) {
 				case protobuf::FieldDescriptor::TYPE_ENUM: {
-					refl->SetEnumValue(message, field, value);
+					refl->SetEnumValue(&message, field, value);
 					return true;
 				}
 				case protobuf::FieldDescriptor::TYPE_INT32: {
-					refl->SetInt32(message, field, value);
+					refl->SetInt32(&message, field, value);
 					return true;
 				}
 				case protobuf::FieldDescriptor::TYPE_INT64: {
-					refl->SetInt64(message, field, value);
+					refl->SetInt64(&message, field, value);
 					return true;
 				}
 			}
@@ -164,14 +164,18 @@ bool set_field(protobuf::Message *message, const protobuf::FieldDescriptor *fiel
 		case Variant::STRING: {
 			ERR_FAIL_COND_V(field->type() != protobuf::FieldDescriptor::TYPE_STRING, false);
 			String string = value;
-			refl->SetString(message, field, string.utf8().get_data());
+			refl->SetString(&message, field, string.utf8().get_data());
 			return true;
 		}
 		case Variant::OBJECT: {
 			ERR_FAIL_COND_V(field->type() != protobuf::FieldDescriptor::TYPE_MESSAGE, false);
 			Ref<MediaPipeProto> proto = value;
 			ERR_FAIL_COND_V(proto.is_null(), false);
-			refl->SetAllocatedMessage(message, proto->get_proto(), field);
+			const protobuf::Descriptor *descriptor = proto->get_message()->GetDescriptor();
+			const protobuf::Message *prototype = get_prototype(descriptor);
+			protobuf::Message *sub_message = prototype->New();
+			sub_message->CopyFrom(*proto->get_message());
+			refl->SetAllocatedMessage(&message, sub_message, field);
 			return true;
 		}
 	}

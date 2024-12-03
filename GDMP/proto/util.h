@@ -18,6 +18,6 @@ Variant get_repeated_field(const protobuf::Message &message, const protobuf::Fie
 
 Variant get_repeated_field_all(const protobuf::Message &message, const protobuf::FieldDescriptor *field);
 
-bool set_field(protobuf::Message *message, const protobuf::FieldDescriptor *field, Variant value);
+bool set_field(protobuf::Message &message, const protobuf::FieldDescriptor *field, Variant value);
 
 #endif

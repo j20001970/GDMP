@@ -55,8 +55,11 @@ class MediaPipeProto : public RefCounted {
 		// Return true on success.
 		bool set(const String &field_name, Variant value);
 
-		// Get a copy of the proto, passing ownership to caller.
-		protobuf::Message *get_proto();
+		// Returns a new copy of the proto message.
+		Ref<MediaPipeProto> duplicate();
+
+		// Get underlying protobuf::Message.
+		protobuf::Message *get_message();
 };
 
 #endif

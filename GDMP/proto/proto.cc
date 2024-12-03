@@ -14,6 +14,7 @@ void MediaPipeProto::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get", "field_name"), &MediaPipeProto::get);
 	ClassDB::bind_method(D_METHOD("get_repeated", "field_name", "index"), &MediaPipeProto::get_repeated);
 	ClassDB::bind_method(D_METHOD("set", "field_name", "value"), &MediaPipeProto::set);
+	ClassDB::bind_method(D_METHOD("duplicate"), &MediaPipeProto::duplicate);
 }
 
 const protobuf::FieldDescriptor *MediaPipeProto::get_field_descriptor(const String &field_name) {
@@ -119,14 +120,14 @@ bool MediaPipeProto::set(const String &field_name, Variant value) {
 	if (field->is_repeated())
 		ERR_FAIL_V_MSG(false, "Setting repeated field is unimplemented.");
 	else
-		return set_field(message, field, value);
+		return set_field(*message, field, value);
 }
 
-protobuf::Message *MediaPipeProto::get_proto() {
+Ref<MediaPipeProto> MediaPipeProto::duplicate() {
 	ERR_FAIL_COND_V(!is_initialized(), nullptr);
-	const protobuf::Descriptor *descriptor = message->GetDescriptor();
-	const protobuf::Message *prototype = get_prototype(descriptor);
-	protobuf::Message *proto = prototype->New();
-	proto->CopyFrom(*message);
-	return proto;
+	return memnew(MediaPipeProto(*message));
+}
+
+protobuf::Message *MediaPipeProto::get_message() {
+	return message;
 }
