@@ -12,6 +12,7 @@ void MediaPipeProto::_register_methods() {
 	register_method("get", &MediaPipeProto::get);
 	register_method("get_repeated", &MediaPipeProto::get_repeated);
 	register_method("set", &MediaPipeProto::set);
+	register_method("duplicate", &MediaPipeProto::duplicate);
 }
 
 MediaPipeProto *MediaPipeProto::_new(const protobuf::Message &message) {
@@ -122,14 +123,14 @@ bool MediaPipeProto::set(String field_name, Variant value) {
 		ERR_PRINT("Setting repeated field is unimplemented.");
 		return false;
 	} else
-		return set_field(message, field, value);
+		return set_field(*message, field, value);
 }
 
-protobuf::Message *MediaPipeProto::get_proto() {
+Ref<MediaPipeProto> MediaPipeProto::duplicate() {
 	ERR_FAIL_COND_V(!is_initialized(), nullptr);
-	const protobuf::Descriptor *descriptor = message->GetDescriptor();
-	const protobuf::Message *prototype = get_prototype(descriptor);
-	protobuf::Message *proto = prototype->New();
-	proto->CopyFrom(*message);
-	return proto;
+	return MediaPipeProto::_new(*message);
+}
+
+protobuf::Message *MediaPipeProto::get_message() {
+	return message;
 }
