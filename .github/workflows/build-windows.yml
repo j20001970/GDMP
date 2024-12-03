@@ -19,7 +19,7 @@ jobs:
       - name: Prerequisites
         shell: bash
         run: |
-          choco install visualstudio2019buildtools visualstudio2019-workload-vctools
+          choco install visualstudio2022buildtools visualstudio2022-workload-vctools
           choco install opencv --version 3.4.10
 
       - name: Setup
