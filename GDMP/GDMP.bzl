@@ -14,6 +14,7 @@ TASKS = [
     "//GDMP/tasks/vision:face_landmarker",
     "//GDMP/tasks/vision:gesture_recognizer",
     "//GDMP/tasks/vision:hand_landmarker",
+    "//GDMP/tasks/vision:holistic_landmarker",
     "//GDMP/tasks/vision:image_classifier",
     "//GDMP/tasks/vision:image_embedder",
     "//GDMP/tasks/vision:image_segmenter",
