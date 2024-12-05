@@ -16,6 +16,7 @@ mediapipe_files(
         "gesture_recognizer.task",
         "hair_segmentation.tflite",
         "hand_landmarker.task",
+        "holistic_landmarker.task",
         "mobilenet_v1_0.25_224_quant.tflite",
         "mobilenet_v1_0.25_224_quant_with_dummy_score_calibration.tflite",
         "mobilenet_v2_1.0_224.tflite",
@@ -57,6 +58,13 @@ filegroup(
     name = "hand_landmarker_models",
     srcs = [
         "hand_landmarker.task",
+    ],
+)
+
+filegroup(
+    name = "holistic_landmarker_models",
+    srcs = [
+        "holistic_landmarker.task",
     ],
 )
 
@@ -171,6 +179,16 @@ cc_library(
         "//GDMP/tasks/containers:landmark",
         "@mediapipe//mediapipe/tasks/cc/vision/hand_landmarker",
         "@godot-cpp//:godot",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
+    name = "holistic_landmarker",
+    data = [":holistic_landmarker_models"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@mediapipe//mediapipe/tasks/cc/vision/holistic_landmarker:holistic_landmarker_graph",
     ],
     alwayslink = 1,
 )
