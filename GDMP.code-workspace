@@ -1,12 +1,13 @@
 {
 	"folders": [
 		{
-			"path": "mediapipe/GDMP"
+			"path": "."
 		}
 	],
 	"settings": {
 		"clangd.arguments": [
 			"-header-insertion=never"
-		]
+		],
+		"explorer.excludeGitIgnore": true
 	}
 }

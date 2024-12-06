@@ -5,11 +5,11 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":packet",
-        "//mediapipe/framework/formats:image",
+        "@mediapipe//mediapipe/framework/formats:image",
         "@godot-cpp//:godot",
     ] + select({
-        "//mediapipe/gpu:disable_gpu": [],
-        "//conditions:default": ["//mediapipe/gpu:gpu_buffer"],
+        "@mediapipe//mediapipe/gpu:disable_gpu": [],
+        "//conditions:default": ["@mediapipe//mediapipe/gpu:gpu_buffer"],
     }),
 )
 
@@ -22,11 +22,11 @@ cc_library(
         ":graph_config",
         ":packet",
         "//GDMP/gpu:gpu_resources",
-        "//mediapipe/framework:calculator_framework",
+        "@mediapipe//mediapipe/framework:calculator_framework",
         "@godot-cpp//:godot",
     ] + select({
-        "//mediapipe/gpu:disable_gpu": [],
-        "//conditions:default": ["//mediapipe/gpu:gpu_shared_data_internal"],
+        "@mediapipe//mediapipe/gpu:disable_gpu": [],
+        "//conditions:default": ["@mediapipe//mediapipe/gpu:gpu_shared_data_internal"],
     }),
 )
 
@@ -36,8 +36,8 @@ cc_library(
     hdrs = ["graph_config.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/framework:calculator_cc_proto",
-        "//mediapipe/framework/port:parse_text_proto",
+        "@mediapipe//mediapipe/framework:calculator_cc_proto",
+        "@mediapipe//mediapipe/framework/port:parse_text_proto",
         "@godot-cpp//:godot",
     ],
 )
@@ -49,7 +49,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//GDMP/proto",
-        "//mediapipe/framework:packet",
+        "@mediapipe//mediapipe/framework:packet",
         "@godot-cpp//:godot",
     ],
 )

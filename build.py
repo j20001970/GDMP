@@ -15,9 +15,9 @@ MEDIAPIPE_DIR = path.join(path.dirname(__file__), "mediapipe")
 ANDROID_PROJECT = path.join(path.dirname(__file__), "android")
 
 TARGETS = {
-    "android": "//GDMP/android:GDMP",
-    "desktop": "//GDMP/desktop:GDMP",
-    "ios": "//GDMP/ios:GDMP",
+    "android": "@GDMP//GDMP/android:GDMP",
+    "desktop": "@GDMP//GDMP/desktop:GDMP",
+    "ios": "@GDMP//GDMP/ios:GDMP",
 }
 
 TARGET_ARGS = {
@@ -67,7 +67,7 @@ def build_android(args: Namespace, build_args: list[str]) -> list[Callable]:
     if not path.exists(ANDROID_PROJECT):
         print("Error: android project does not exist.")
         sys.exit(-1)
-    src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/android/libGDMP.so")
+    src = path.join(MEDIAPIPE_DIR, "bazel-bin/external/GDMP/GDMP/android/libGDMP.so")
     if arch:
         if skip_aar:
             dst_dir = output
@@ -142,7 +142,7 @@ def copy_android(args: Namespace):
 def copy_desktop(args: Namespace):
     output: str = args.output
     desktop_platform = platform.system().lower()
-    desktop_output = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/desktop")
+    desktop_output = path.join(MEDIAPIPE_DIR, "bazel-bin/external/GDMP/GDMP/desktop")
     if desktop_platform == "linux":
         src = path.join(desktop_output, "libGDMP.so")
     elif desktop_platform == "windows":
@@ -175,7 +175,7 @@ def copy_desktop(args: Namespace):
 
 def copy_ios(args: Namespace):
     output: str = args.output
-    src = path.join(MEDIAPIPE_DIR, "bazel-bin/GDMP/ios/GDMP.zip")
+    src = path.join(MEDIAPIPE_DIR, "bazel-bin/external/GDMP/GDMP/ios/GDMP.zip")
     with zipfile.ZipFile(src) as f:
         f.extractall(output)
 

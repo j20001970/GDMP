@@ -9,14 +9,14 @@ cc_library(
         "//GDMP/framework:packet",
         "@godot-cpp//:godot",
     ] + select({
-        "//mediapipe/gpu:disable_gpu": [],
+        "@mediapipe//mediapipe/gpu:disable_gpu": [],
         "//conditions:default": [
-            "//mediapipe/gpu:gl_calculator_helper",
-            "//mediapipe/gpu:gpu_buffer",
-            "//mediapipe/gpu:gpu_shared_data_internal",
+            "@mediapipe//mediapipe/gpu:gl_calculator_helper",
+            "@mediapipe//mediapipe/gpu:gpu_buffer",
+            "@mediapipe//mediapipe/gpu:gpu_shared_data_internal",
         ],
     }) + select({
-        "//mediapipe:apple": ["//mediapipe/objc:mediapipe_framework_ios"],
+        "@mediapipe//mediapipe:apple": ["@mediapipe//mediapipe/objc:mediapipe_framework_ios"],
         "//conditions:default": [],
     }),
 )
@@ -27,7 +27,7 @@ cc_library(
     hdrs = ["gpu_resources.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/gpu:gpu_shared_data_internal",
+        "@mediapipe//mediapipe/gpu:gpu_shared_data_internal",
         "@godot-cpp//:godot",
     ],
 )

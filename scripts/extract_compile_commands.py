@@ -1,14 +1,34 @@
 #!/usr/bin/env python
 
+import os
+import platform
 import sys
 from argparse import ArgumentParser
 from os import chdir, path
 from shutil import which
 from subprocess import run
 
-MEDIAPIPE_DIR = path.join(path.dirname(__file__), "../mediapipe")
+ROOT_DIR = path.join(path.dirname(__file__), "..")
 
-TARGET = "//GDMP:refresh_compile_commands"
+MEDIAPIPE_DIR = path.join(ROOT_DIR, "mediapipe")
+
+COMPILEDB_SRC = path.join(MEDIAPIPE_DIR, "compile_commands.json")
+COMPILEDB_DST = path.join(ROOT_DIR, "compile_commands.json")
+
+TARGET = "@GDMP//GDMP:refresh_compile_commands"
+
+current_platform = platform.system().lower()
+if current_platform == "windows":
+
+    def symlink(src, dst):
+        # Only works on Windows if the command is passed in this format
+        run(f'mklink /J "{dst}" "{src}"', check=True, shell=True)
+
+else:  # Linux/MacOS should work roughly the same
+
+    def symlink(src, dst):
+        os.symlink(src, dst, True)
+
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -44,3 +64,6 @@ if __name__ == "__main__":
 
     chdir(MEDIAPIPE_DIR)
     run(bazel_args)
+
+    if not path.exists(COMPILEDB_DST):
+        symlink(COMPILEDB_SRC, COMPILEDB_DST)

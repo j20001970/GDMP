@@ -4,7 +4,7 @@ cc_library(
     hdrs = ["category.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/tasks/cc/components/containers:category",
+        "@mediapipe//mediapipe/tasks/cc/components/containers:category",
         "@godot-cpp//:godot",
     ],
 )
@@ -16,7 +16,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":category",
-        "//mediapipe/tasks/cc/components/containers:classification_result",
+        "@mediapipe//mediapipe/tasks/cc/components/containers:classification_result",
         "@godot-cpp//:godot",
     ],
 )
@@ -29,7 +29,7 @@ cc_library(
     deps = [
         ":category",
         ":keypoint",
-        "//mediapipe/tasks/cc/components/containers:detection_result",
+        "@mediapipe//mediapipe/tasks/cc/components/containers:detection_result",
         "@godot-cpp//:godot",
     ],
 )
@@ -40,7 +40,7 @@ cc_library(
     hdrs = ["embedding_result.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/tasks/cc/components/containers:embedding_result",
+        "@mediapipe//mediapipe/tasks/cc/components/containers:embedding_result",
         "@godot-cpp//:godot",
     ],
 )
@@ -51,7 +51,7 @@ cc_library(
     hdrs = ["keypoint.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/tasks/cc/components/containers:keypoint",
+        "@mediapipe//mediapipe/tasks/cc/components/containers:keypoint",
         "@godot-cpp//:godot",
     ],
 )
@@ -62,7 +62,7 @@ cc_library(
     hdrs = ["landmark.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/tasks/cc/components/containers:landmark",
+        "@mediapipe//mediapipe/tasks/cc/components/containers:landmark",
         "@godot-cpp//:godot",
     ],
 )
