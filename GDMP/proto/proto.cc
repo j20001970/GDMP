@@ -97,8 +97,15 @@ int MediaPipeProto::get_repeated_field_size(const String &field_name) {
 
 Variant MediaPipeProto::get(const String &field_name) {
 	ERR_FAIL_COND_V(!is_initialized(), Variant());
-	const protobuf::FieldDescriptor *field = get_field_descriptor(field_name);
-	ERR_FAIL_COND_V(field == nullptr, false);
+	PackedStringArray names = field_name.split("/");
+	const protobuf::FieldDescriptor *field = get_field_descriptor(names[0]);
+	ERR_FAIL_COND_V(field == nullptr, Variant());
+	if (names.size() > 1) {
+		Ref<MediaPipeProto> proto = get_field(*message, field);
+		ERR_FAIL_COND_V(proto == nullptr, proto);
+		names.remove_at(0);
+		return proto->get(String("/").join(names));
+	}
 	if (field->is_repeated())
 		return get_repeated_field_all(*message, field);
 	else
@@ -107,16 +114,31 @@ Variant MediaPipeProto::get(const String &field_name) {
 
 Variant MediaPipeProto::get_repeated(const String &field_name, int index) {
 	ERR_FAIL_COND_V(!is_initialized(), Variant());
-	const protobuf::FieldDescriptor *field = get_field_descriptor(field_name);
+	PackedStringArray names = field_name.split("/");
+	const protobuf::FieldDescriptor *field = get_field_descriptor(names[0]);
 	ERR_FAIL_COND_V(field == nullptr, Variant());
+	if (names.size() > 1) {
+		Ref<MediaPipeProto> proto = get_field(*message, field);
+		ERR_FAIL_COND_V(proto == nullptr, proto);
+		names.remove_at(0);
+		return proto->get_repeated(String("/").join(names), index);
+	}
 	ERR_FAIL_COND_V(!field->is_repeated(), Variant());
 	return get_repeated_field(*message, field, index);
 }
 
 bool MediaPipeProto::set(const String &field_name, Variant value) {
 	ERR_FAIL_COND_V(!is_initialized(), false);
-	const protobuf::FieldDescriptor *field = get_field_descriptor(field_name);
+	PackedStringArray names = field_name.split("/");
+	const protobuf::FieldDescriptor *field = get_field_descriptor(names[0]);
 	ERR_FAIL_COND_V(field == nullptr, false);
+	if (names.size() > 1) {
+		Ref<MediaPipeProto> proto = get_field(*message, field);
+		ERR_FAIL_COND_V(proto == nullptr, false);
+		names.remove_at(0);
+		ERR_FAIL_COND_V(!proto->set(String("/").join(names), value), false);
+		return set_field(*message, field, proto);
+	}
 	if (field->is_repeated())
 		ERR_FAIL_V_MSG(false, "Setting repeated field is unimplemented.");
 	else
