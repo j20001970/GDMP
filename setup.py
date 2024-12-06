@@ -113,7 +113,7 @@ def download_progress_hook(count, block_size, total_size):
     percent = int(count * block_size * 100 / total_size)
     print(f"\rDownloading: {percent}%", end='')
 
-def create_venv(current_platform: str, current_arch: str) -> None:
+def create_venv(current_platform: str, current_arch: str, no_download: bool) -> None:
     if not path.exists(GDMP_VENV_DIR):
         venv.create(GDMP_VENV_DIR, with_pip=True)
         if not path.exists(GDMP_VENV_DIR):
@@ -129,6 +129,9 @@ def create_venv(current_platform: str, current_arch: str) -> None:
         [pip_bin.format(GDMP_VENV_DIR), "install", "-r", GDMP_VENV_REQUIREMENTS],
         check=True,
     )
+
+    if no_download:
+        return
 
     # Download latest Bazelisk and add to venv path
 
@@ -160,6 +163,27 @@ def create_venv(current_platform: str, current_arch: str) -> None:
 
         else:
             print(f"Could not get Bazelisk for your platform: {current_platform} {current_arch}")
+    print()
+
+    # Download latest Buildifier and add to venv path
+
+    print(f"Donwloading Buildifier for {current_platform}({current_arch})")
+    buildifier_url = "https://github.com/bazelbuild/buildtools/releases/download/latest/buildifier-{platform}-{arch}"
+
+    if current_platform == "windows":
+        buildifier_path = "venv/Scripts/buildifier.exe"
+        buildifier_url = buildifier_url.format(platform=current_platform, arch="amd64")
+        buildifier_url += ".exe"
+    else:
+        buildifier_path = "venv/bin/buildifier"
+        arch = "amd64" if current_arch == "amd64" or current_arch == "x86_64" else current_arch
+        bazelisk_url = bazelisk_url.format(platform=current_platform, arch=arch)
+
+    urllib.request.urlretrieve(bazelisk_url, buildifier_path, reporthook=download_progress_hook)
+
+    if not current_platform == "windows":
+        perms = os.stat(buildifier_path).st_mode
+        os.chmod(buildifier_path, perms | stat.S_IXUSR)
 
     print(
         f"\n++++++\nPlease activate the venv before building GDMP by running `{activate_command}`\n++++++\n"
@@ -180,6 +204,8 @@ if __name__ == "__main__":
         required=False,
         help="Path to the Godot editor binary for generating bindings",
     )
+
+    parser.add_argument("--no-download", action='store_true', help="Do not download additional executables to venv.")
 
     # Platform specific
     if current_platform == "windows":
@@ -228,4 +254,4 @@ if __name__ == "__main__":
                 args.custom_opencv_version.replace(".", ""),
             )
 
-    create_venv(current_platform, current_arch)
+    create_venv(current_platform, current_arch, args.no_download)
