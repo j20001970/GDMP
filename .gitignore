@@ -1,5 +1,9 @@
-extension_api.json
+# Ignore Python venv directory
 venv/
+
+# Ignore clangd compilation database files
+.cache/
+compile_commands.json
 
 # Ignore Gradle project-specific cache directory
 .gradle

@@ -18,7 +18,6 @@ GODOT_CPP_DIR = path.join(ROOT_DIR, "godot-cpp")
 GODOT_CPP_API_JSON = path.join(GODOT_CPP_DIR, "gdextension/extension_api.json")
 
 MEDIAPIPE_DIR = path.join(ROOT_DIR, "mediapipe")
-MEDIAPIPE_GDMP_SYMLINK = path.join(MEDIAPIPE_DIR, "GDMP")
 MEDIAPIPE_WORKSPACE = path.join(MEDIAPIPE_DIR, "WORKSPACE")
 
 GDMP_SRC_DIR = path.join(ROOT_DIR, "GDMP")
@@ -37,17 +36,6 @@ if current_platform == "windows":
     OPENCV_BUILD_PATH = path.join(MEDIAPIPE_DIR, "third_party/opencv_windows.BUILD")
     DEFAULT_OPENCV_VERSION_REPLACE = 'OPENCV_VERSION = "3410"'
     OPENCV_VERSION_FORMAT = 'OPENCV_VERSION = "{}"'
-
-if current_platform == "windows":
-
-    def symlink(src_dir, dst_dir):
-        # Only works on Windows if the command is passed in this format
-        run(f'mklink /J "{dst_dir}" "{src_dir}"', check=True, shell=True)
-
-else:  # Linux/MacOS should work roughly the same
-
-    def symlink(src_dir, dst_dir):
-        os.symlink(src_dir, dst_dir, True)
 
 
 def generate_bindings(api_json_path: str) -> None:
@@ -130,7 +118,6 @@ def create_venv(current_platform: str, current_arch: str) -> None:
         venv.create(GDMP_VENV_DIR, with_pip=True)
         if not path.exists(GDMP_VENV_DIR):
             raise RuntimeError(f"Unable to create venv at path {GDMP_VENV_DIR}")
-
 
     pip_bin: str = "{}/bin/pip"
     activate_command: str = "source venv/bin/activate"
@@ -219,18 +206,6 @@ if __name__ == "__main__":
     generate_bindings(api_json_path)
 
     apply_patch(GDMP_PATCH_DIR)
-
-    # Symlink GDMP source code to mediapipe workspace
-    if path.isdir(MEDIAPIPE_GDMP_SYMLINK):
-        try:
-            unlink(MEDIAPIPE_GDMP_SYMLINK)
-        except:
-            rmtree(MEDIAPIPE_GDMP_SYMLINK)
-    try:
-        symlink(GDMP_SRC_DIR, MEDIAPIPE_GDMP_SYMLINK)
-    except:
-        print("Error: Unable to symlink GDMP source to mediapipe workspace.")
-        sys.exit(-1)
 
     workspace_android_rules()
 

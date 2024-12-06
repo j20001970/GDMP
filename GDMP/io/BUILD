@@ -7,10 +7,10 @@ cc_library(
         "//GDMP/gpu:gpu_resources",
         "@godot-cpp//:godot",
     ] + select({
-        "//mediapipe:android": [":camera_helper_android"],
-        "//mediapipe:ios": [":camera_helper_ios"],
-        "//mediapipe:linux": [":camera_helper_cv"],
-        "//mediapipe:windows": [":camera_helper_cv"],
+        "@mediapipe//mediapipe:android": [":camera_helper_android"],
+        "@mediapipe//mediapipe:ios": [":camera_helper_ios"],
+        "@mediapipe//mediapipe:linux": [":camera_helper_cv"],
+        "@mediapipe//mediapipe:windows": [":camera_helper_cv"],
         "//conditions:default": [":camera_helper_stub"],
     }),
 )
@@ -23,9 +23,9 @@ cc_library(
         "//GDMP/android:jni",
         "//GDMP/framework:image",
         "//GDMP/gpu:gpu_resources",
-        "//mediapipe/gpu:gl_texture_buffer",
-        "//mediapipe/gpu:gpu_buffer",
-        "//mediapipe/gpu:gpu_buffer_format",
+        "@mediapipe//mediapipe/gpu:gl_texture_buffer",
+        "@mediapipe//mediapipe/gpu:gpu_buffer",
+        "@mediapipe//mediapipe/gpu:gpu_buffer_format",
         "@godot-cpp//:godot",
     ],
 )
@@ -38,13 +38,13 @@ cc_library(
     deps = [
         "//GDMP/framework:image",
         "//GDMP/gpu:gpu_resources",
-        "//mediapipe/framework/formats:image_frame",
-        "//mediapipe/framework/formats:image_frame_opencv",
-        "//mediapipe/framework/port:opencv_core",
-        "//mediapipe/framework/port:opencv_imgproc",
-        "//mediapipe/framework/port:opencv_video",
+        "@mediapipe//mediapipe/framework/formats:image_frame",
+        "@mediapipe//mediapipe/framework/formats:image_frame_opencv",
+        "@mediapipe//mediapipe/framework/port:opencv_core",
+        "@mediapipe//mediapipe/framework/port:opencv_imgproc",
+        "@mediapipe//mediapipe/framework/port:opencv_video",
     ] + select({
-        "//mediapipe/gpu:disable_gpu": [],
+        "@mediapipe//mediapipe/gpu:disable_gpu": [],
         "//conditions:default": ["//GDMP/gpu:gpu_helper"],
     }),
 )

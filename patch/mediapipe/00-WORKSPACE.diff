@@ -1,13 +1,18 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -2,6 +2,20 @@ workspace(name = "mediapipe")
+@@ -2,6 +2,25 @@ workspace(name = "mediapipe")
  
  load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
  
++local_repository(
++    name = "GDMP",
++    path = "../",
++)
++
 +new_local_repository(
 +    name = "godot-cpp",
-+    build_file = "@//GDMP:godot-cpp.BUILD",
++    build_file = "@GDMP//GDMP:godot-cpp.BUILD",
 +    path = "../godot-cpp",
 +)
 +
@@ -22,7 +27,7 @@ diff --git a/WORKSPACE b/WORKSPACE
  # Protobuf expects an //external:python_headers target
  bind(
      name = "python_headers",
-@@ -394,8 +408,8 @@ http_archive(
+@@ -394,8 +413,8 @@ http_archive(
  http_archive(
      name = "opencv",
      build_file_content = all_content,

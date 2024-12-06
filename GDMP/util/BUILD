@@ -4,9 +4,9 @@ cc_library(
     hdrs = ["resource_util.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/framework/port:status",
-        "//mediapipe/util:resource_util",
-        "//mediapipe/util:resource_util_custom",
+        "@mediapipe//mediapipe/framework/port:status",
+        "@mediapipe//mediapipe/util:resource_util",
+        "@mediapipe//mediapipe/util:resource_util_custom",
         "@godot-cpp//:godot",
     ],
 )

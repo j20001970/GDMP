@@ -3,8 +3,8 @@ cc_library(
     srcs = ["asset_util.cc"],
     visibility = ["//visibility:public"],
     deps = [
-        "//mediapipe/java/com/google/mediapipe/framework/jni:jni_util",
-        "//mediapipe/util/android:asset_manager_util",
+        "@mediapipe//mediapipe/java/com/google/mediapipe/framework/jni:jni_util",
+        "@mediapipe//mediapipe/util/android:asset_manager_util",
     ],
     alwayslink = 1,
 )
