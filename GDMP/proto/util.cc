@@ -36,6 +36,12 @@ Variant get_field(const protobuf::Message &message, const protobuf::FieldDescrip
 			return refl->GetString(message, field).c_str();
 		case protobuf::FieldDescriptor::TYPE_MESSAGE:
 			return MediaPipeProto::_new(refl->GetMessage(message, field));
+		case protobuf::FieldDescriptor::TYPE_BYTES:
+			auto string = refl->GetString(message, field);
+			PoolByteArray bytes;
+			bytes.resize(string.size());
+			string.copy((char *)bytes.write().ptr(), string.size());
+			return bytes;
 	}
 	ERR_PRINT("Unsupported type.");
 	return Variant();
@@ -176,6 +182,13 @@ bool set_field(protobuf::Message &message, const protobuf::FieldDescriptor *fiel
 			protobuf::Message *sub_message = prototype->New();
 			sub_message->CopyFrom(*proto->get_message());
 			refl->SetAllocatedMessage(&message, sub_message, field);
+			return true;
+		}
+		case Variant::POOL_BYTE_ARRAY: {
+			ERR_FAIL_COND_V(field->type() != protobuf::FieldDescriptor::TYPE_BYTES, false);
+			PoolByteArray bytes = value;
+			std::string string = std::string((char *)bytes.read().ptr(), bytes.size());
+			refl->SetString(&message, field, string);
 			return true;
 		}
 	}
