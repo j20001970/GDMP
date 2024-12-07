@@ -1,0 +1,12 @@
+diff --git a/emscripten_toolchain/emscripten_config b/emscripten_toolchain/emscripten_config
+--- a/emscripten_toolchain/emscripten_config
++++ b/emscripten_toolchain/emscripten_config
+@@ -5,7 +5,7 @@
+ EMSCRIPTEN_ROOT = os.environ["EMSCRIPTEN"]
+ BINARYEN_ROOT = os.path.join(ROOT_DIR, os.environ["EM_BIN_PATH"])
+ LLVM_ROOT = os.path.join(BINARYEN_ROOT, "bin")
+-FROZEN_CACHE = True
++FROZEN_CACHE = False
+ 
+ system = platform.system()
+ 

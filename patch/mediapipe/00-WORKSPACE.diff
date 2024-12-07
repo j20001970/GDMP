@@ -1,7 +1,7 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -2,6 +2,25 @@ workspace(name = "mediapipe")
+@@ -2,6 +2,45 @@ workspace(name = "mediapipe")
  
  load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
  
@@ -17,6 +17,25 @@ diff --git a/WORKSPACE b/WORKSPACE
 +)
 +
 +http_archive(
++    name = "emsdk",
++    sha256 = "47515d522229a103b7d9f34eacc1d88ac355b22fd754d13417a2191fd9d77d5f",
++    patches = [
++        "@GDMP//GDMP/web:emsdk.diff"
++    ],
++    patch_args = [
++        "-p1",
++    ],
++    strip_prefix = "emsdk-3.1.59/bazel",
++    url = "https://github.com/emscripten-core/emsdk/archive/3.1.59.tar.gz",
++)
++
++load("@emsdk//:deps.bzl", emsdk_deps = "deps")
++emsdk_deps()
++
++load("@emsdk//:emscripten_deps.bzl", emsdk_emscripten_deps = "emscripten_deps")
++emsdk_emscripten_deps(emscripten_version = "3.1.59")
++
++http_archive(
 +    name = "hedron_compile_commands",
 +    url = "https://github.com/hedronvision/bazel-compile-commands-extractor/archive/0e990032f3c5a866e72615cf67e5ce22186dcb97.tar.gz",
 +    strip_prefix = "bazel-compile-commands-extractor-0e990032f3c5a866e72615cf67e5ce22186dcb97",
@@ -24,10 +43,11 @@ diff --git a/WORKSPACE b/WORKSPACE
 +load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_setup")
 +hedron_compile_commands_setup()
 +
++
  # Protobuf expects an //external:python_headers target
  bind(
      name = "python_headers",
-@@ -394,8 +413,8 @@ http_archive(
+@@ -524,8 +560,8 @@ http_archive(
  http_archive(
      name = "opencv",
      build_file_content = all_content,
