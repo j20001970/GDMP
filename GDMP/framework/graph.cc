@@ -72,7 +72,6 @@ bool MediaPipeGraph::has_output_stream(String stream_name) {
 
 void MediaPipeGraph::add_packet_callback(String stream_name, Object *object, String method) {
 	ERR_FAIL_COND(!is_initialized());
-	ERR_FAIL_COND(!has_output_stream(stream_name));
 	std::string side_packet_name;
 	mediapipe::tool::AddCallbackCalculator(stream_name.alloc_c_string(), graph_config.get(), &side_packet_name, true);
 	packet_callbacks.emplace(
