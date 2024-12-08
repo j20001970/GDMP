@@ -16,6 +16,13 @@ const protobuf::Message *get_prototype(const protobuf::Descriptor *descriptor) {
 	return factory->GetPrototype(descriptor);
 }
 
+const protobuf::FieldDescriptor *get_field_descriptor(const protobuf::Message &message, const String &field_name) {
+	const std::string name = field_name.utf8().get_data();
+	const protobuf::Descriptor *descriptor = message.GetDescriptor();
+	const protobuf::FieldDescriptor *field = descriptor->FindFieldByName(name);
+	return field;
+}
+
 Variant get_field(const protobuf::Message &message, const protobuf::FieldDescriptor *field) {
 	ERR_FAIL_COND_V(field->is_repeated(), Variant());
 	auto refl = message.GetReflection();

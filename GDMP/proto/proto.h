@@ -15,10 +15,10 @@ using namespace google;
 class MediaPipeProto : public Reference {
 		GODOT_CLASS(MediaPipeProto, Reference);
 
-	private:
+	protected:
 		protobuf::Message *message;
 
-		const protobuf::FieldDescriptor *get_field_descriptor(String field_name);
+		String _to_string() const;
 
 	public:
 		static void _register_methods();
@@ -33,9 +33,18 @@ class MediaPipeProto : public Reference {
 		bool initialize(String type_name);
 		// Check if the proto is initialized with a valid type.
 		bool is_initialized();
+
+		// Parse proto from binary format.
+		bool parse_from_buffer(PoolByteArray buffer);
+		// Parse proto from text format.
+		bool parse_from_string(String string);
+		// Serialize proto to binary format.
+		PoolByteArray serialize_to_buffer();
+		// Serialize proto to text format.
+		String serialize_to_string();
+
 		// Get the proto type name, return empty string if uninitialized.
 		String get_type_name();
-
 		// Get the list of field names for this proto.
 		PoolStringArray get_fields();
 		// Check if a field is repeated.

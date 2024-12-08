@@ -34,6 +34,8 @@ extern "C" void GDN_EXPORT mediapipe_gdnative_terminate(godot_gdnative_terminate
 
 extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	Godot::nativescript_init(handle);
+	// Protobuf Message
+	register_class<MediaPipeProto>();
 	// Framework
 	register_class<MediaPipeGraph>();
 	register_class<MediaPipeGraphBuilder>();
@@ -41,7 +43,6 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	register_class<MediaPipeGraphNode>();
 	register_class<MediaPipeImage>();
 	register_class<MediaPipePacket>();
-	register_class<MediaPipeProto>();
 	// GPU
 	register_class<MediaPipeGPUHelper>();
 	register_class<MediaPipeGPUResources>();
