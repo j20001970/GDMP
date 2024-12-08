@@ -6,6 +6,16 @@ RUNTIME="org.freedesktop.Sdk"
 ARGS=("-p" "--share=network")
 ARGS+=("--filesystem=xdg-cache/bazel")
 ARGS+=("--filesystem=xdg-cache/bazelisk")
-ARGS+=("--filesystem=$(pwd)")
+
+dir=$(realpath $(dirname $0))
+while [ $dir != "/" ]
+do
+    if [ -d "$dir/.git" ]; then
+        ARGS+=("--filesystem=$dir")
+        break
+    else
+        dir=$(dirname $dir)
+    fi
+done
 
 flatpak run "${ARGS[@]}" "$@" $RUNTIME

@@ -11,23 +11,24 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.9"
-
       - name: Prerequisites
         run: |
-          sudo apt install -y libegl1-mesa-dev
+          sudo apt install -y flatpak
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install --system -y flathub runtime/org.freedesktop.Sdk/x86_64/24.08
 
       - name: Setup
         run: |
+          ./scripts/flatpak_env.sh << EOF
           python ./setup.py
+          EOF
 
       - name: Build
         run: |
+          ./scripts/flatpak_env.sh << EOF
           source ./venv/bin/activate
           python ./build.py desktop --type release --output build/
+          EOF
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
