@@ -29,6 +29,8 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
 
+	// Protobuf Message
+	ClassDB::register_class<MediaPipeProto>();
 	// Framework
 	ClassDB::register_class<MediaPipeGraph>();
 	ClassDB::register_class<MediaPipeGraphBuilder>();
@@ -36,7 +38,6 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<MediaPipeGraphNode>();
 	ClassDB::register_class<MediaPipeImage>();
 	ClassDB::register_class<MediaPipePacket>();
-	ClassDB::register_class<MediaPipeProto>();
 	// GPU
 	ClassDB::register_class<MediaPipeGPUHelper>();
 	ClassDB::register_class<MediaPipeGPUResources>();

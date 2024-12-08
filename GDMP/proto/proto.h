@@ -14,13 +14,12 @@ using namespace google;
 class MediaPipeProto : public RefCounted {
 		GDCLASS(MediaPipeProto, RefCounted);
 
-	private:
-		protobuf::Message *message;
-
-		const protobuf::FieldDescriptor *get_field_descriptor(const String &field_name);
-
 	protected:
 		static void _bind_methods();
+
+		protobuf::Message *message;
+
+		String _to_string() const;
 
 	public:
 		// Instantiate uninitialized proto message.
@@ -36,9 +35,18 @@ class MediaPipeProto : public RefCounted {
 		bool initialize(const String &type_name);
 		// Check if the proto is initialized with a valid type.
 		bool is_initialized();
+
+		// Parse proto from binary format.
+		bool parse_from_buffer(PackedByteArray buffer);
+		// Parse proto from text format.
+		bool parse_from_string(const String &string);
+		// Serialize proto to binary format.
+		PackedByteArray serialize_to_buffer();
+		// Serialize proto to text format.
+		String serialize_to_string();
+
 		// Get the proto type name, return empty string if uninitialized.
 		String get_type_name();
-
 		// Get the list of field names for this proto.
 		PackedStringArray get_fields();
 		// Check if a field is repeated.

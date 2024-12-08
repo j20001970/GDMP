@@ -12,6 +12,8 @@ const protobuf::Message *get_prototype(const std::string &name);
 
 const protobuf::Message *get_prototype(const protobuf::Descriptor *descriptor);
 
+const protobuf::FieldDescriptor *get_field_descriptor(const protobuf::Message &message, const String &field_name);
+
 Variant get_field(const protobuf::Message &message, const protobuf::FieldDescriptor *field);
 
 Variant get_repeated_field(const protobuf::Message &message, const protobuf::FieldDescriptor *field, int index);
