@@ -55,9 +55,9 @@ cc_library(
     hdrs = ["graph_config.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "@mediapipe//mediapipe/framework:calculator_cc_proto",
-        "@mediapipe//mediapipe/framework/port:parse_text_proto",
+        "//GDMP/proto",
         "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/framework:calculator_cc_proto",
     ],
 )
 
