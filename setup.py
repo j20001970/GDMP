@@ -23,7 +23,6 @@ MEDIAPIPE_WORKSPACE = path.join(MEDIAPIPE_DIR, "WORKSPACE")
 GDMP_SRC_DIR = path.join(ROOT_DIR, "GDMP")
 GDMP_PATCH_DIR = path.join(ROOT_DIR, "patch")
 GDMP_VENV_DIR = path.join(ROOT_DIR, "venv")
-GDMP_VENV_REQUIREMENTS = path.join(ROOT_DIR, "requirements.txt")
 
 DEFAULT_OPENCV_VERSION = "3.4.10"
 
@@ -124,11 +123,6 @@ def create_venv(current_platform: str, current_arch: str, no_download: bool) -> 
     if current_platform == "windows":
         pip_bin = "{}/Scripts/pip.exe"
         activate_command = "source venv/Scripts/activate"
-
-    run(
-        [pip_bin.format(GDMP_VENV_DIR), "install", "-r", GDMP_VENV_REQUIREMENTS],
-        check=True,
-    )
 
     if no_download:
         return
