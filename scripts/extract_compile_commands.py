@@ -38,10 +38,6 @@ if __name__ == "__main__":
         build_type = "opt"
     else:
         build_type = "dbg"
-    python = sys.executable
-    if sys.platform == "win32":
-        python = python.replace("\\", "\\\\")
-    action_env = ["--action_env", f"PYTHON_BIN_PATH={python}"]
 
     # check bazel executable
     bazel_exec = which("bazelisk") or which("bazel")

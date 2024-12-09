@@ -52,9 +52,6 @@ def bazel_build(args: list[str]) -> Callable:
         )
         sys.exit(-1)
     cmd = [bazel_exec, "build"]
-    if sys.platform == "win32":
-        python_path = sys.executable.replace("\\", "\\\\")
-        cmd.extend(["--action_env", f"PYTHON_BIN_PATH={python_path}"])
     cmd.extend(args)
     return partial(run, cmd, cwd=MEDIAPIPE_DIR, check=True)
 
