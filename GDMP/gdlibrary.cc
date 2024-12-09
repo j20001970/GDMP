@@ -20,6 +20,7 @@
 #include "GDMP/tasks/containers/keypoint.h"
 #include "GDMP/tasks/containers/landmark.h"
 #include "GDMP/tasks/task.h"
+#include "GDMP/tasks/task_runner.h"
 #include "GDMP/util/resource_util.h"
 
 using namespace godot;
@@ -51,6 +52,7 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	// ResourceProvider
 	set_resource_provider();
 	// Tasks
+	register_class<MediaPipeTaskRunner>();
 	MediaPipeTask::register_tasks();
 	register_class<MediaPipeTaskBaseOptions>();
 	register_class<MediaPipeCategory>();

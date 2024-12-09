@@ -36,6 +36,7 @@ const GPUResources: NativeScript = preload("gpu/MediaPipeGPUResources.gdns")
 const CameraHelper: NativeScript = preload("io/MediaPipeCameraHelper.gdns")
 
 # Tasks
+const MediaPipeTaskRunner: NativeScript = preload("tasks/MediaPipeTaskRunner.gdns")
 const TaskBaseOptions: NativeScript = preload("tasks/MediaPipeTaskBaseOptions.gdns")
 
 # Vision Tasks
