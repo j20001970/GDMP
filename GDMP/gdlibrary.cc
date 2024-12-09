@@ -21,6 +21,7 @@
 #include "GDMP/tasks/containers/keypoint.h"
 #include "GDMP/tasks/containers/landmark.h"
 #include "GDMP/tasks/task.h"
+#include "GDMP/tasks/task_runner.h"
 #include "GDMP/util/resource_util.h"
 
 using namespace godot;
@@ -46,6 +47,7 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	// ResourceProvider
 	set_resource_provider();
 	// Tasks
+	ClassDB::register_class<MediaPipeTaskRunner>();
 	ClassDB::register_class<MediaPipeTask>(true);
 	MediaPipeTask::register_tasks();
 	ClassDB::register_class<MediaPipeTaskBaseOptions>();

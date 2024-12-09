@@ -17,6 +17,7 @@ cc_library(
         "//GDMP/io:camera_helper",
         "//GDMP/proto:proto",
         "//GDMP/tasks:task",
+        "//GDMP/tasks:task_runner",
         "//GDMP/tasks/containers:category",
         "//GDMP/tasks/containers:classification_result",
         "//GDMP/tasks/containers:detection_result",

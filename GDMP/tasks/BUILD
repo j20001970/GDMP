@@ -21,3 +21,17 @@ cc_library(
         "@godot-cpp//:godot",
     ],
 )
+
+cc_library(
+    name = "task_runner",
+    srcs = ["task_runner.cc"],
+    hdrs = ["task_runner.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":base_options",
+        "//GDMP/framework:graph_config",
+        "//GDMP/framework:packet",
+        "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/tasks/cc/core:task_runner",
+    ],
+)
