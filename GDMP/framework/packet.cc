@@ -7,8 +7,6 @@ void MediaPipePacket::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_empty"), &MediaPipePacket::is_empty);
 	ClassDB::bind_method(D_METHOD("get"), &MediaPipePacket::get);
 	ClassDB::bind_method(D_METHOD("set", "value"), &MediaPipePacket::set);
-	ClassDB::bind_method(D_METHOD("get_proto", "type_name"), &MediaPipePacket::get_proto);
-	ClassDB::bind_method(D_METHOD("get_proto_vector", "type_name"), &MediaPipePacket::get_proto_vector);
 	ClassDB::bind_method(D_METHOD("get_timestamp"), &MediaPipePacket::get_timestamp);
 	ClassDB::bind_method(D_METHOD("set_timestamp", "timestamp"), &MediaPipePacket::set_timestamp);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "timestamp"), "set_timestamp", "get_timestamp");
@@ -34,7 +32,22 @@ Variant MediaPipePacket::get() {
 		return packet.Get<float>();
 	if (packet.ValidateAsType<std::string>().ok())
 		return packet.Get<std::string>().c_str();
-	ERR_FAIL_V_MSG(Variant(), "Unsupported type.");
+	if (packet.ValidateAsProtoMessageLite().ok())
+		return Ref(memnew(MediaPipeProto(packet.GetProtoMessageLite())));
+	auto get_proto_vector = packet.GetVectorOfProtoMessageLitePtrs();
+	if (get_proto_vector.ok()) {
+		TypedArray<MediaPipeProto> array;
+		auto proto_vector = get_proto_vector.value();
+		array.resize(proto_vector.size());
+		for (int i = 0; i < proto_vector.size(); i++) {
+			auto message = proto_vector[i];
+			Ref<MediaPipeProto> proto = memnew(MediaPipeProto(*message));
+			array[i] = proto;
+		}
+		return array;
+	}
+	ERR_PRINT("Unsupported type");
+	return Variant();
 }
 
 bool MediaPipePacket::set(Variant value) {
@@ -57,28 +70,8 @@ bool MediaPipePacket::set(Variant value) {
 			packet = mediapipe::MakePacket<std::string>(string.utf8().get_data()).At(timestamp);
 			return true;
 	}
-	ERR_FAIL_V_MSG(false, "Unsupported type.");
-}
-
-Ref<MediaPipeProto> MediaPipePacket::get_proto(const String &type_name) {
-	Ref<MediaPipeProto> proto;
-	ERR_FAIL_COND_V(!packet.ValidateAsProtoMessageLite().ok(), proto);
-	proto = Ref(memnew(MediaPipeProto(packet.GetProtoMessageLite())));
-	return proto;
-}
-
-TypedArray<MediaPipeProto> MediaPipePacket::get_proto_vector(const String &type_name) {
-	TypedArray<MediaPipeProto> array;
-	auto get_proto_vector = packet.GetVectorOfProtoMessageLitePtrs();
-	ERR_FAIL_COND_V(!get_proto_vector.ok(), array);
-	auto proto_vector = get_proto_vector.value();
-	array.resize(proto_vector.size());
-	for (int i = 0; i < proto_vector.size(); i++) {
-		auto message = proto_vector[i];
-		Ref<MediaPipeProto> proto = memnew(MediaPipeProto(*message));
-		array[i] = proto;
-	}
-	return array;
+	ERR_PRINT("Unsupported type");
+	return false;
 }
 
 int64_t MediaPipePacket::get_timestamp() {

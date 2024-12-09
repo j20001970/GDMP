@@ -35,11 +35,6 @@ class MediaPipePacket : public RefCounted {
 		// If given value is null, clear the packet.
 		bool set(Variant value);
 
-		// Get proto from packet.
-		Ref<MediaPipeProto> get_proto(const String &type_name);
-		// Get array of proto from packet.
-		TypedArray<MediaPipeProto> get_proto_vector(const String &type_name);
-
 		// Get packet timestamp in microseconds.
 		int64_t get_timestamp();
 		// Set packet timestamp in microseconds.
