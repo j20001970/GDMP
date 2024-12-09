@@ -35,11 +35,6 @@ class MediaPipePacket : public Reference {
 		// If given value is null, clear the packet.
 		bool set(Variant value);
 
-		// Get proto from packet.
-		Ref<MediaPipeProto> get_proto(String type_name);
-		// Get array of proto from packet.
-		Array get_proto_vector(String type_name);
-
 		// Get packet timestamp in microseconds.
 		int64_t get_timestamp();
 		// Set packet timestamp in microseconds.

@@ -4,8 +4,6 @@ void MediaPipePacket::_register_methods() {
 	register_method("is_empty", &MediaPipePacket::is_empty);
 	register_method("get", &MediaPipePacket::get);
 	register_method("set", &MediaPipePacket::set);
-	register_method("get_proto", &MediaPipePacket::get_proto);
-	register_method("get_proto_vector", &MediaPipePacket::get_proto_vector);
 	register_method("get_timestamp", &MediaPipePacket::get_timestamp);
 	register_method("set_timestamp", &MediaPipePacket::set_timestamp);
 	register_property<MediaPipePacket, int64_t>("timestamp", &MediaPipePacket::set_timestamp, &MediaPipePacket::get_timestamp, mediapipe::Timestamp::Unset().Value());
@@ -33,7 +31,21 @@ Variant MediaPipePacket::get() {
 		return packet.Get<float>();
 	if (packet.ValidateAsType<std::string>().ok())
 		return packet.Get<std::string>().c_str();
-	ERR_PRINT("Unsupported type.");
+	if (packet.ValidateAsProtoMessageLite().ok())
+		return Ref(MediaPipeProto::_new(packet.GetProtoMessageLite()));
+	auto get_proto_vector = packet.GetVectorOfProtoMessageLitePtrs();
+	if (get_proto_vector.ok()) {
+		Array array;
+		auto proto_vector = get_proto_vector.value();
+		array.resize(proto_vector.size());
+		for (int i = 0; i < proto_vector.size(); i++) {
+			auto message = proto_vector[i];
+			Ref<MediaPipeProto> proto = Ref(MediaPipeProto::_new(*message));
+			array[i] = proto;
+		}
+		return array;
+	}
+	ERR_PRINT("Unsupported type");
 	return Variant();
 }
 
@@ -57,29 +69,8 @@ bool MediaPipePacket::set(Variant value) {
 			packet = mediapipe::MakePacket<std::string>(string.utf8().get_data()).At(timestamp);
 			return true;
 	}
-	ERR_PRINT("Unsupported type.");
+	ERR_PRINT("Unsupported type");
 	return false;
-}
-
-Ref<MediaPipeProto> MediaPipePacket::get_proto(String type_name) {
-	Ref<MediaPipeProto> proto;
-	ERR_FAIL_COND_V(!packet.ValidateAsProtoMessageLite().ok(), proto);
-	proto = Ref(MediaPipeProto::_new(packet.GetProtoMessageLite()));
-	return proto;
-}
-
-Array MediaPipePacket::get_proto_vector(String type_name) {
-	Array array;
-	auto get_proto_vector = packet.GetVectorOfProtoMessageLitePtrs();
-	ERR_FAIL_COND_V(!get_proto_vector.ok(), array);
-	auto proto_vector = get_proto_vector.value();
-	array.resize(proto_vector.size());
-	for (int i = 0; i < proto_vector.size(); i++) {
-		auto message = proto_vector[i];
-		Ref<MediaPipeProto> proto = MediaPipeProto::_new(*message);
-		array[i] = proto;
-	}
-	return array;
 }
 
 int64_t MediaPipePacket::get_timestamp() {
