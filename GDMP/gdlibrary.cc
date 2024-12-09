@@ -43,9 +43,6 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<MediaPipeGPUResources>();
 	// I/O
 	ClassDB::register_class<MediaPipeCameraHelper>();
-	// ResourceFormatLoader
-	ClassDB::register_class<ResourceFormatLoaderMediaPipeGraphConfig>();
-	ResourceFormatLoaderMediaPipeGraphConfig::register_loader();
 	// ResourceProvider
 	set_resource_provider();
 	// Tasks
@@ -69,8 +66,6 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 void uninitialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
-
-	ResourceFormatLoaderMediaPipeGraphConfig::unregister_loader();
 }
 
 extern "C" GDExtensionBool GDE_EXPORT mediapipe_library_init(
