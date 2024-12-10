@@ -18,9 +18,6 @@ class MediaPipeTaskRunner : public Reference {
 		GODOT_CLASS(MediaPipeTaskRunner, Reference)
 
 	private:
-		static PacketMap dict_to_packet_map(Dictionary dict);
-		static Dictionary packet_map_to_dict(PacketMap &packet_map);
-
 		std::unique_ptr<TaskRunner> task_runner;
 
 	public:

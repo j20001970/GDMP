@@ -6,30 +6,7 @@
 #include "mediapipe/tasks/cc/core/mediapipe_builtin_op_resolver.h"
 
 #include "GDMP/framework/packet.h"
-
-PacketMap MediaPipeTaskRunner::dict_to_packet_map(Dictionary dict) {
-	PacketMap packet_map;
-	Array keys = dict.keys();
-	for (int i = 0; i < keys.size(); i++) {
-		if (keys[i].get_type() != Variant::STRING)
-			continue;
-		const String &key = keys[i];
-		Ref<MediaPipePacket> packet = dict[key];
-		if (packet.is_null()) {
-			WARN_PRINT(String("key {0}: not a MediaPipePacket").format(Array::make(key)));
-			continue;
-		}
-		packet_map[key.utf8().get_data()] = packet->get_packet();
-	}
-	return packet_map;
-}
-
-Dictionary MediaPipeTaskRunner::packet_map_to_dict(PacketMap &packet_map) {
-	Dictionary dict;
-	for (auto &pair : packet_map)
-		dict[pair.first.data()] = Ref(MediaPipePacket::_new(pair.second));
-	return dict;
-}
+#include "GDMP/util/packet_map.h"
 
 void MediaPipeTaskRunner::_register_methods() {
 	register_method("initialize", &MediaPipeTaskRunner::initialize);
