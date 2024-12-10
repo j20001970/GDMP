@@ -28,10 +28,11 @@ cc_library(
     hdrs = ["task_runner.h"],
     visibility = ["//visibility:public"],
     deps = [
-        ":base_options",
         "//GDMP/framework:graph_config",
         "//GDMP/framework:packet",
+        "//GDMP/util:packet_map",
         "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/tasks/cc/core:base_options",
         "@mediapipe//mediapipe/tasks/cc/core:task_runner",
     ],
 )
