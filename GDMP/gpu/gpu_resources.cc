@@ -1,5 +1,7 @@
 #include "gpu_resources.h"
 
+#include "Ref.hpp"
+
 void MediaPipeGPUResources::_register_methods() {}
 
 void MediaPipeGPUResources::_init() {
@@ -12,6 +14,13 @@ void MediaPipeGPUResources::_init() {
 #endif
 }
 
+#if !MEDIAPIPE_DISABLE_GPU
+MediaPipeGPUResources *MediaPipeGPUResources::_new(std::shared_ptr<mediapipe::GpuResources> gpu_resources) {
+	MediaPipeGPUResources *resources = MediaPipeGPUResources::_new();
+	resources->gpu_resources = gpu_resources;
+	return resources;
+}
+#endif
 #if !MEDIAPIPE_DISABLE_GPU
 std::shared_ptr<mediapipe::GpuResources> MediaPipeGPUResources::get_gpu_resources() {
 	return gpu_resources;

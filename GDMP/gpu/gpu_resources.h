@@ -22,6 +22,9 @@ class MediaPipeGPUResources : public Reference {
 
 	public:
 		static void _register_methods();
+		#if !MEDIAPIPE_DISABLE_GPU
+		static MediaPipeGPUResources *_new(std::shared_ptr<mediapipe::GpuResources> gpu_resources);
+		#endif
 
 		void _init();
 
