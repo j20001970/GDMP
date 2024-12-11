@@ -22,8 +22,9 @@ cc_library(
         ":graph_config",
         ":packet",
         "//GDMP/gpu:gpu_resources",
-        "@mediapipe//mediapipe/framework:calculator_framework",
+        "//GDMP/util:packet_map",
         "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/framework:calculator_framework",
     ] + select({
         "@mediapipe//mediapipe/gpu:disable_gpu": [],
         "//conditions:default": ["@mediapipe//mediapipe/gpu:gpu_shared_data_internal"],
