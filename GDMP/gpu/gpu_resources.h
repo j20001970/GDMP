@@ -24,6 +24,9 @@ class MediaPipeGPUResources : public RefCounted {
 
 	public:
 		MediaPipeGPUResources();
+		#if !MEDIAPIPE_DISABLE_GPU
+		MediaPipeGPUResources(std::shared_ptr<mediapipe::GpuResources> gpu_resources);
+		#endif
 		~MediaPipeGPUResources();
 
 #if !MEDIAPIPE_DISABLE_GPU

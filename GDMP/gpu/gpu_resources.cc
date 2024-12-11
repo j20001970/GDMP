@@ -12,6 +12,12 @@ MediaPipeGPUResources::MediaPipeGPUResources() {
 #endif
 }
 
+#if !MEDIAPIPE_DISABLE_GPU
+MediaPipeGPUResources::MediaPipeGPUResources(std::shared_ptr<mediapipe::GpuResources> gpu_resources) {
+	this->gpu_resources = gpu_resources;
+}
+#endif
+
 MediaPipeGPUResources::~MediaPipeGPUResources() = default;
 
 #if !MEDIAPIPE_DISABLE_GPU
