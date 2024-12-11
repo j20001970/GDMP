@@ -1,18 +1,15 @@
 #ifndef GDMP_GRAPH
 #define GDMP_GRAPH
 
-#include <map>
 #include <memory>
 
 #include "godot_cpp/classes/ref.hpp"
 #include "godot_cpp/classes/ref_counted.hpp"
 #include "godot_cpp/variant/callable.hpp"
+#include "godot_cpp/variant/dictionary.hpp"
 #include "godot_cpp/variant/string.hpp"
 
 #include "mediapipe/framework/calculator_graph.h"
-#if !MEDIAPIPE_DISABLE_GPU
-#include "mediapipe/gpu/gpu_shared_data_internal.h"
-#endif
 
 #include "GDMP/framework/graph_config.h"
 #include "GDMP/framework/packet.h"
@@ -24,48 +21,56 @@ class MediaPipeGraph : public RefCounted {
 		GDCLASS(MediaPipeGraph, RefCounted)
 
 	private:
-		std::map<std::string, mediapipe::Packet> packet_callbacks;
-		std::map<std::string, mediapipe::Packet> side_packets;
-		std::unique_ptr<mediapipe::CalculatorGraph> running_graph;
-		std::unique_ptr<mediapipe::CalculatorGraphConfig> graph_config;
-#if !MEDIAPIPE_DISABLE_GPU
-		std::shared_ptr<mediapipe::GpuResources> gpu_resources;
-#endif
+		std::unique_ptr<mediapipe::CalculatorGraph> graph;
 
 	protected:
 		static void _bind_methods();
 
 	public:
-		~MediaPipeGraph();
+		MediaPipeGraph();
 
-		// Initialize the graph from graph config.
-		void initialize(Ref<MediaPipeGraphConfig> config);
-		// Check if the graph config has initialized.
-		bool is_initialized();
+		// Initialize the graph from config.
+		bool initialize(Ref<MediaPipeGraphConfig> config, Dictionary side_packets);
+		// Get graph config.
+		Ref<MediaPipeGraphConfig> get_config();
 
-		// Check if the initialized graph config has specified input stream.
-		// Always return false if graph config is not initialized.
+		// Add a packet callback for the graph output stream.
+		bool add_output_stream_callback(const String &stream_name, Callable callback);
+		// Get output side packet by name.
+		Ref<MediaPipePacket> get_output_side_packet(const String &packet_name);
+
+		// Run the graph, blocking the thread until all calculators are done.
+		bool run(Dictionary extra_side_packets);
+		// Start running the graph.
+		bool start_run(Dictionary extra_side_packets);
+
+		// Wait for current run to finish, all input streams have been closed, and all calculators are stopped.
+		bool wait_until_done();
+		// Wait until the running graph is in idle mode.
+		bool wait_until_idle();
+
+		// Check if the graph has encountered an error.
+		bool has_error();
+
+		// Add a packet to the graph input stream.
+		bool add_packet_to_input_stream(const String &stream_name, Ref<MediaPipePacket> packet);
+		// Check if the graph input stream exists.
 		bool has_input_stream(const String &stream_name);
-		// Check if the initialized graph config has specified output stream.
-		// Always return false if graph config is not initialized.
-		bool has_output_stream(const String &stream_name);
 
-		// Add a packet callback for given stream_name.
-		void add_packet_callback(const String &stream_name, Callable callback);
-		// Set side packet.
-		void set_side_packet(const String &stream_name, Ref<MediaPipePacket> packet);
+		// Close a graph input stream.
+		bool close_input_stream(const String &stream_name);
+		// Close all graph input streams.
+		bool close_all_input_streams();
+		// Close all graph input streams and source calculator nodes.
+		bool close_all_packet_sources();
+
+		// Abort the graph scheduler.
+		void cancel();
+
+		// Return GPU resources.
+		Ref<MediaPipeGPUResources> get_gpu_resources();
 		// Set GPU resources.
 		void set_gpu_resources(Ref<MediaPipeGPUResources> gpu_resources);
-
-		// Start the calculator graph for sending packets to input stream.
-		void start();
-		// Stop the graph.
-		void stop();
-		// Check if the graph is running.
-		bool is_running();
-
-		// Add a packet to graph input stream.
-		void add_packet(const String &stream_name, Ref<MediaPipePacket> packet);
 };
 
 #endif
