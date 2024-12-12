@@ -18,6 +18,7 @@ TARGETS = {
     "android": "@GDMP//GDMP/android:GDMP",
     "desktop": "@GDMP//GDMP/desktop:GDMP",
     "ios": "@GDMP//GDMP/ios:GDMP",
+    "web": "@GDMP//GDMP/web:GDMP",
 }
 
 TARGET_ARGS = {
@@ -43,6 +44,17 @@ TARGET_ARGS = {
     "ios": [
         "--apple_generate_dsym=false",
         "--config=ios",
+    ],
+    "web": [
+        "--incompatible_enable_cc_toolchain_resolution",
+        "--crosstool_top=@emsdk//emscripten_toolchain:everything",
+        "--host_crosstool_top=@bazel_tools//tools/cpp:toolchain",
+        "--copt=-sSIDE_MODULE=1",
+        "--copt=-sSUPPORT_LONGJMP='wasm'",
+        "--copt=-pthread",
+        "--define=MEDIAPIPE_DISABLE_GPU=1",
+        "--define=MEDIAPIPE_DISABLE_OPENCV=1",
+        "--define=MEDIAPIPE_ENABLE_HALIDE=1",
     ],
 }
 
@@ -202,6 +214,13 @@ def copy_ios(args: Namespace):
         f.extractall(output)
 
 
+def copy_web(args: Namespace):
+    output: str = args.output
+    src = path.join(MEDIAPIPE_DIR, "bazel-bin/external/GDMP/GDMP/web/GDMP.wasm")
+    dst = path.join(output, "GDMP.web.wasm")
+    copyfile(src, dst)
+
+
 def copy_output(args: Namespace):
     target: str = args.target
     output: str = args.output
@@ -212,6 +231,7 @@ def copy_output(args: Namespace):
         "android": copy_android,
         "desktop": copy_desktop,
         "ios": copy_ios,
+        "web": copy_web,
     }
     copy_actions[target](args)
 
