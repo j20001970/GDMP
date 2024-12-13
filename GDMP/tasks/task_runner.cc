@@ -32,7 +32,7 @@ bool MediaPipeTaskRunner::initialize(Ref<MediaPipeGraphConfig> config, Callable 
 		task_runner = std::move(create_task.value());
 	else
 		ERR_PRINT(create_task.status().message().data());
-	return true;
+	return create_task.ok();
 }
 
 Dictionary MediaPipeTaskRunner::process(Dictionary inputs) {
