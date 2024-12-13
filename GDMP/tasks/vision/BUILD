@@ -229,17 +229,26 @@ cc_library(
 
 cc_library(
     name = "image_segmenter",
-    srcs = ["image_segmenter.cc"],
-    hdrs = ["image_segmenter.h"],
+    srcs = select({
+        "@mediapipe//mediapipe:emscripten": [],
+        "//conditions:default": ["image_segmenter.cc"],
+    }),
+    hdrs = select({
+        "@mediapipe//mediapipe:emscripten": [],
+        "//conditions:default": ["image_segmenter.h"],
+    }),
     data = [":image_segmenter_models"],
     visibility = ["//visibility:public"],
-    deps = [
-        ":vision_task",
-        "//GDMP/framework:image",
-        "//GDMP/tasks:task",
-        "@mediapipe//mediapipe/tasks/cc/vision/image_segmenter",
-        "@godot-cpp//:godot",
-    ],
+    deps = select({
+        "@mediapipe//mediapipe:emscripten": [],
+        "//conditions:default": [
+            ":vision_task",
+            "//GDMP/framework:image",
+            "//GDMP/tasks:task",
+            "@mediapipe//mediapipe/tasks/cc/vision/image_segmenter",
+            "@godot-cpp//:godot",
+        ],
+    }),
     alwayslink = 1,
 )
 
