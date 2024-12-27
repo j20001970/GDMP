@@ -1,17 +1,17 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -117,10 +153,10 @@ http_archive(
+@@ -118,10 +159,10 @@ http_archive(
  # 2020-08-21
  http_archive(
      name = "com_github_glog_glog",
--    strip_prefix = "glog-0.6.0",
 -    sha256 = "8a83bf982f37bb70825df71a9709fa90ea9f4447fb3c099e1d720a439d88bad6",
-+    strip_prefix = "glog-31429d85b8ffad6027dcf821242687f3c6c85df9",
+-    strip_prefix = "glog-0.6.0",
 +    sha256 = "2c6e4643814bcf059b6c9f941f7403153c524a80a2e436a49ac4f4faa4b44bb0",
++    strip_prefix = "glog-31429d85b8ffad6027dcf821242687f3c6c85df9",
      urls = [
 -        "https://github.com/google/glog/archive/v0.6.0.tar.gz",
 +        "https://github.com/google/glog/archive/31429d85b8ffad6027dcf821242687f3c6c85df9.tar.gz",
      ],
  )
- http_archive(
+ 
