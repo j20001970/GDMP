@@ -4,6 +4,7 @@
 
 CameraHelperImpl::CameraHelperImpl(MediaPipeCameraHelper *camera_helper) {
 	this->camera_helper = camera_helper;
+	WARN_PRINT_ONCE("MediaPipeCameraHelper has been deprecated and will be removed in the future. Please consider CameraServer-based methods for accessing camera frames.");
 }
 
 CameraHelperImpl::~CameraHelperImpl() {}
