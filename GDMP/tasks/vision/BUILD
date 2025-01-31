@@ -32,6 +32,21 @@ cc_library(
 )
 
 cc_library(
+    name = "face_stylizer",
+    srcs = ["face_stylizer.cc"],
+    hdrs = ["face_stylizer.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":vision_task",
+        "//GDMP/framework:image",
+        "//GDMP/tasks:task",
+        "@mediapipe//mediapipe/tasks/cc/vision/face_stylizer",
+        "@godot-cpp//:godot",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
     name = "gesture_recognizer",
     srcs = ["gesture_recognizer.cc"],
     hdrs = ["gesture_recognizer.h"],
