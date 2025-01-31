@@ -136,6 +136,22 @@ cc_library(
 )
 
 cc_library(
+    name = "interactive_segmenter",
+    srcs = ["interactive_segmenter.cc"],
+    hdrs = ["interactive_segmenter.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":image_segmenter",
+        ":vision_task",
+        "//GDMP/framework:image",
+        "//GDMP/tasks:task",
+        "@mediapipe//mediapipe/tasks/cc/vision/interactive_segmenter",
+        "@godot-cpp//:godot",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
     name = "object_detector",
     srcs = ["object_detector.cc"],
     hdrs = ["object_detector.h"],
