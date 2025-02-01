@@ -6,3 +6,4 @@
 resource_name = "MediaPipeGraph"
 class_name = "MediaPipeGraph"
 library = ExtResource( 1 )
+script_class_name = "MediaPipeGraph"

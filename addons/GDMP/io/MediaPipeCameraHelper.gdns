@@ -6,3 +6,4 @@
 resource_name = "MediaPipeCameraHelper"
 class_name = "MediaPipeCameraHelper"
 library = ExtResource( 1 )
+script_class_name = "MediaPipeCameraHelper"

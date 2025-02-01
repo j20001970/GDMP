@@ -6,3 +6,4 @@
 resource_name = "MediaPipeHandLandmarker"
 class_name = "MediaPipeHandLandmarker"
 library = ExtResource( 1 )
+script_class_name = "MediaPipeHandLandmarker"

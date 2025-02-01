@@ -6,3 +6,4 @@
 resource_name = "MediaPipeTaskBaseOptions"
 class_name = "MediaPipeTaskBaseOptions"
 library = ExtResource( 1 )
+script_class_name = "MediaPipeTaskBaseOptions"

@@ -6,3 +6,4 @@
 resource_name = "MediaPipeImageClassifier"
 class_name = "MediaPipeImageClassifier"
 library = ExtResource( 1 )
+script_class_name = "MediaPipeImageClassifier"

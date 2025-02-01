@@ -6,3 +6,4 @@
 resource_name = "MediaPipeImage"
 class_name = "MediaPipeImage"
 library = ExtResource( 1 )
+script_class_name = "MediaPipeImage"

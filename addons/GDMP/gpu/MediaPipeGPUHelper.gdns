@@ -6,3 +6,4 @@
 resource_name = "MediaPipeGPUHelper"
 class_name = "MediaPipeGPUHelper"
 library = ExtResource( 1 )
+script_class_name = "MediaPipeGPUHelper"

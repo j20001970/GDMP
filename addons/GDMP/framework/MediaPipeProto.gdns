@@ -6,3 +6,4 @@
 resource_name = "MediaPipeProto"
 class_name = "MediaPipeProto"
 library = ExtResource( 1 )
+script_class_name = "MediaPipeProto"

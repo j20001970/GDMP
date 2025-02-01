@@ -6,3 +6,4 @@
 resource_name = "MediaPipeImageSegmenter"
 class_name = "MediaPipeImageSegmenter"
 library = ExtResource( 1 )
+script_class_name = "MediaPipeImageSegmenter"

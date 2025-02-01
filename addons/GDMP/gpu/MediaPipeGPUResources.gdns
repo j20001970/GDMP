@@ -6,3 +6,4 @@
 resource_name = "MediaPipeGPUResources"
 class_name = "MediaPipeGPUResources"
 library = ExtResource( 1 )
+script_class_name = "MediaPipeGPUResources"

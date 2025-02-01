@@ -6,3 +6,4 @@
 resource_name = "MediaPipeFaceDetector"
 class_name = "MediaPipeFaceDetector"
 library = ExtResource( 1 )
+script_class_name = "MediaPipeFaceDetector"
