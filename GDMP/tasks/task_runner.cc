@@ -21,7 +21,7 @@ void MediaPipeTaskRunner::_init() {}
 
 bool MediaPipeTaskRunner::initialize(Ref<MediaPipeGraphConfig> config, Object *object, String method) {
 	PacketsCallback packets_callback = nullptr;
-	if (godot_is_instance_valid(object))
+	if (godot::core_1_1_api->godot_is_instance_valid(object))
 		packets_callback = [this, object, method](auto result) -> void {
 			Dictionary outputs;
 			if (result.ok())
