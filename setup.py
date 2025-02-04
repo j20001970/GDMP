@@ -148,7 +148,7 @@ def create_venv(current_platform: str, current_arch: str, no_download: bool) -> 
             perms = os.stat(bazel_path).st_mode
             os.chmod(bazel_path, perms | stat.S_IXUSR)
 
-        elif current_arch == "arm64":
+        elif current_arch == "arm64" or current_arch == "aarch64":
             bazelisk_url += f"{current_platform}-arm64"
             urllib.request.urlretrieve(bazelisk_url, bazel_path, reporthook=download_progress_hook)
 
