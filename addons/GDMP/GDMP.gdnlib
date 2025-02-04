@@ -7,8 +7,9 @@ reloadable=true
 
 [entry]
 
-Windows.64="res://addons/GDMP/libs/x86_64/GDMP.windows.dll"
-X11.64="res://addons/GDMP/libs/x86_64/libGDMP.linux.so"
+Windows.64="res://addons/GDMP/libs/GDMP.windows.dll"
+X11.64="res://addons/GDMP/libs/libGDMP.linux.so"
+OSX.64="res://addons/GDMP/libs/libGDMP.macos.dylib"
 iOS.arm64="res://addons/GDMP/libs/GDMP.ios.framework"
 
 [dependencies]
