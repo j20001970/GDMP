@@ -61,6 +61,10 @@ Run `build.py --help` to see all options.
 
 When linking prebuilt OpenCV libraries, build script will not copy required libraries to output destination, make sure they can be found by dynamic linker.
 
+## Building for macOS
+1. Install [Xcode](https://developer.apple.com/xcode), then switch to installed Xcode by using `xcode-select`
+2. Run `build.py desktop` to build desktop library.
+
 ## Building for Windows
 1. Install MSVC compiler and Windows SDK, then setting `BAZEL_VC` environment variable pointing to your VC installation.
 

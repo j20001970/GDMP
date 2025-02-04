@@ -12,6 +12,11 @@ jobs:
     name: 🐧 Build Linux
     uses: ./.github/workflows/build-linux.yml
 
+  # Build the macOS Artifacts
+  build-macos:
+    name: 🍎 Build macOS
+    uses: ./.github/workflows/build-macos.yml
+
   # Build the Android Artifacts
   build-android:
     name: 🤖 Build Android
