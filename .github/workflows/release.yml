@@ -29,9 +29,12 @@ jobs:
           cp -a addons dist/
           cp LICENSE addons/GDMP/
           cp README.md dist/
+          mkdir -p dist/addons/GDMP/libs/arm64/
           mkdir -p dist/addons/GDMP/libs/x86_64/
           cp build-artifact-windows/*.dll dist/addons/GDMP/libs/x86_64/
           cp build-artifact-linux/lib*.so* dist/addons/GDMP/libs/x86_64/
+          cp build-artifact-macos-arm64/*.dylib dist/addons/GDMP/libs/arm64/
+          cp build-artifact-macos-x86_64/*.dylib dist/addons/GDMP/libs/x86_64/
           cp build-artifact-android/*.aar dist/addons/GDMP/libs/
           cp -a build-artifact-ios/*.framework dist/addons/GDMP/libs/
           zip -r GDMP-${{ github.event.release.tag_name }}.zip dist

@@ -32,6 +32,10 @@ TARGET_ARGS = {
             "--copt=-fPIC",
             "--define=OPENCV=source",
         ],
+        "darwin": [
+            "--define=OPENCV=source",
+            "--define=MEDIAPIPE_DISABLE_GPU=1",
+        ],
         "win32": [
             "--define=MEDIAPIPE_DISABLE_GPU=1",
         ],
@@ -110,6 +114,12 @@ def get_build_cmds(args: Namespace) -> list[Callable]:
     build_args = ["-c", mode]
     if target == "desktop":
         build_args.extend(TARGET_ARGS[target][sys.platform])
+        if sys.platform == "darwin":
+            if arch == "arm64":
+                build_args.append("--cpu=darwin_arm64")
+            elif arch == "x86_64":
+                build_args.append("--cpu=darwin_x86_64")
+                build_args.append("--define=xnn_enable_avxvnniint8=false")
     else:
         build_args.extend(TARGET_ARGS[target])
     if target == "android":
@@ -138,9 +148,13 @@ def copy_android(args: Namespace):
 def copy_desktop(args: Namespace):
     output: str = args.output
     desktop_platform = platform.system().lower()
+    if desktop_platform == "darwin":
+        desktop_platform = "macos"
     desktop_output = path.join(MEDIAPIPE_DIR, "bazel-bin/external/GDMP/GDMP/desktop")
     if desktop_platform == "linux":
         src = path.join(desktop_output, "libGDMP.so")
+    elif desktop_platform == "macos":
+        src = path.join(desktop_output, "libGDMP.dylib")
     elif desktop_platform == "windows":
         src = path.join(desktop_output, "GDMP.dll")
     filename = path.basename(src).split(".")
@@ -155,6 +169,18 @@ def copy_desktop(args: Namespace):
                 MEDIAPIPE_DIR,
                 "bazel-bin/third_party/opencv_cmake/lib",
                 "libopencv_*.so.*",
+            )
+        )
+        if len(opencv_lib) == 0:
+            return
+        for lib in opencv_lib:
+            copyfile(lib, path.join(output, path.basename(lib)))
+    elif desktop_platform == "macos":
+        opencv_lib = glob.glob(
+            path.join(
+                MEDIAPIPE_DIR,
+                "bazel-bin/third_party/opencv_cmake/lib",
+                "libopencv_*.dylib",
             )
         )
         if len(opencv_lib) == 0:
