@@ -5,6 +5,7 @@ compatibility_minimum = 4.1
 
 [libraries]
 
+linux.arm64 = "res://addons/GDMP/libs/arm64/libGDMP.linux.so"
 linux.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.linux.so"
 macos.arm64 = "res://addons/GDMP/libs/arm64/libGDMP.macos.dylib"
 macos.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.macos.dylib"
