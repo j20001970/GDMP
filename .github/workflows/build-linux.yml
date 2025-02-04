@@ -15,12 +15,16 @@ jobs:
   build:
     strategy:
       matrix:
-        arch: ["x86_64"]
+        arch: ["arm64", "x86_64"]
         include:
+          - arch: "arm64"
+            os: "ubuntu-24.04-arm"
+            runtime-arch: "aarch64"
           - arch: "x86_64"
+            os: "ubuntu-24.04"
             runtime-arch: "x86_64"
     name: Linux ${{ matrix.arch }}
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.os }}
     env:
       SDK_VERSION: "24.08"
     steps:
@@ -52,7 +56,7 @@ jobs:
         run: |
           ./scripts/flatpak_env.sh << EOF
           source ./venv/bin/activate
-          python ./build.py desktop --type release --output build/${{ matrix.arch }}
+          python ./build.py desktop --arch ${{ matrix.arch }} --type release --output build/${{ matrix.arch }}
           EOF
 
       - name: Upload Artifacts

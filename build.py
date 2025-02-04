@@ -139,6 +139,9 @@ def get_build_cmds(args: Namespace) -> list[Callable]:
             elif arch == "x86_64":
                 build_args.append("--cpu=darwin_x86_64")
                 build_args.append("--define=xnn_enable_avxvnniint8=false")
+        elif sys.platform == "linux":
+            if arch == "arm64":
+                build_args.append("--copt=-fpermissive")
     else:
         build_args.extend(TARGET_ARGS[target])
     if target == "android":
