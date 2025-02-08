@@ -12,7 +12,7 @@ from shutil import copyfile, rmtree, which
 from subprocess import run
 
 MEDIAPIPE_DIR = path.join(path.dirname(__file__), "mediapipe")
-ANDROID_PROJECT = path.join(path.dirname(__file__), "android")
+ANDROID_PROJECT = path.join(path.dirname(__file__), "GDMP", "android", "aar")
 
 TARGETS = {
     "android": "@GDMP//GDMP/android:GDMP",
