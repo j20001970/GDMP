@@ -1,5 +1,6 @@
 package io.gdmp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -53,6 +54,7 @@ public class GDMPCameraHelper implements TextureFrameConsumer {
         cameraHandler = new Handler(cameraThread.getLooper());
     }
 
+    @SuppressLint("MissingPermission")
     public void startCamera(int index, int width, int height) {
         CameraManager cameraManager = (CameraManager) activity.getSystemService(Activity.CAMERA_SERVICE);
         try {
