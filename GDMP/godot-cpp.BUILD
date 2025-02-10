@@ -17,7 +17,7 @@ cc_library(
         "gen/include/godot_cpp/*/*.hpp",
     ]),
     copts = select({
-        "@mediapipe//mediapipe:windows": [
+        "@platforms//os:windows": [
             "/utf-8",
         ],
         "//conditions:default": [
@@ -25,7 +25,7 @@ cc_library(
         ],
     }),
     defines = select({
-        "@mediapipe//mediapipe:windows": [
+        "@platforms//os:windows": [
             "_HAS_EXCEPTIONS=0",
             "TYPED_METHOD_BIND",
             "NOMINMAX",

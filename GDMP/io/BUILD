@@ -7,10 +7,10 @@ cc_library(
         "//GDMP/gpu:gpu_resources",
         "@godot-cpp//:godot",
     ] + select({
-        "@mediapipe//mediapipe:android": [":camera_helper_android"],
-        "@mediapipe//mediapipe:ios": [":camera_helper_ios"],
-        "@mediapipe//mediapipe:linux": [":camera_helper_cv"],
-        "@mediapipe//mediapipe:windows": [":camera_helper_cv"],
+        "@platforms//os:android": [":camera_helper_android"],
+        "@platforms//os:ios": [":camera_helper_ios"],
+        "@platforms//os:linux": [":camera_helper_cv"],
+        "@platforms//os:windows": [":camera_helper_cv"],
         "//conditions:default": [":camera_helper_stub"],
     }),
 )

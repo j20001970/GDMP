@@ -1,8 +1,8 @@
 cc_binary(
     name = "GDMP",
     linkopts = select({
-        "@mediapipe//mediapipe:macos": [],
-        "@mediapipe//mediapipe:windows": [],
+        "@platforms//os:macos": [],
+        "@platforms//os:windows": [],
         "//conditions:default": [
             "-Wl,-R,'$$ORIGIN'",
             "-s",
