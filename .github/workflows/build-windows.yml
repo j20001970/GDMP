@@ -15,7 +15,7 @@ jobs:
   build:
     strategy:
       matrix:
-        arch: ["x86_64"]
+        arch: ["arm64", "x86_64"]
     name: Windows ${{ matrix.arch }}
     runs-on: windows-2022
     steps:
@@ -45,7 +45,7 @@ jobs:
         working-directory: ${{ env.work-dir }}
         run: |
           source ./venv/Scripts/activate
-          python ./build.py desktop --type release --output build/${{ matrix.arch }}
+          python ./build.py desktop --arch ${{ matrix.arch }} --type release --output build/${{ matrix.arch }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
