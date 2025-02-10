@@ -3,7 +3,10 @@ on: [workflow_call, workflow_dispatch]
 
 jobs:
   build:
-    name: Windows x86_64
+    strategy:
+      matrix:
+        arch: ["arm64", "x86_64"]
+    name: Windows ${{ matrix.arch }}
     runs-on: windows-2022
     steps:
       - name: Checkout
@@ -19,7 +22,9 @@ jobs:
       - name: Prerequisites
         shell: bash
         run: |
-          choco install visualstudio2022buildtools visualstudio2022-workload-vctools
+          choco install visualstudio2022buildtools
+          choco install visualstudio2022-workload-vctools --params "--add Microsoft.VisualStudio.Component.VC.Tools.ARM64"
+          choco install windows-sdk-10.0
           choco install opencv --version 3.4.10
 
       - name: Setup
@@ -33,11 +38,11 @@ jobs:
         shell: bash
         run: |
           source ./venv/Scripts/activate
-          python ./build.py desktop --type release --output build/
+          python ./build.py desktop --arch ${{ matrix.arch }} --type release --output build/
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifact-windows
+          name: build-artifact-windows-${{ matrix.arch }}
           path: |
             build/*.dll
