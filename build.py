@@ -142,6 +142,12 @@ def get_build_cmds(args: Namespace) -> list[Callable]:
         elif sys.platform == "linux":
             if arch == "arm64":
                 build_args.append("--copt=-fpermissive")
+        elif sys.platform == "win32":
+            if arch == "arm64":
+                build_args.append("--cpu=arm64_windows")
+                build_args.append("--verbose_failures")
+            elif arch == "x86_64":
+                build_args.append("--cpu=x64_windows")
     else:
         build_args.extend(TARGET_ARGS[target])
     if target == "android":
