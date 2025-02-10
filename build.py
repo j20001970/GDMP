@@ -50,6 +50,7 @@ def build_desktop(args: Namespace) -> list[str]:
         "win32": [
             "--conlyopt=/std:c11",
             "--conlyopt=/experimental:c11atomics",
+            "--copt=/Zc:preprocessor",
             "--define=OPENCV=source",
             "--define=MEDIAPIPE_DISABLE_GPU=1",
         ],
@@ -66,6 +67,13 @@ def build_desktop(args: Namespace) -> list[str]:
     elif sys.platform == "linux":
         if arch == "arm64":
             build_args.append("--copt=-fpermissive")
+    elif sys.platform == "win32":
+        if arch == "arm64":
+            build_args.append("--cpu=arm64_windows")
+            build_args.append("--copt=/DPFFFT_SIMD_DISABLE")
+            build_args.append("--verbose_failures")
+        elif arch == "x86_64":
+            build_args.append("--cpu=x64_windows")
     return build_args
 
 

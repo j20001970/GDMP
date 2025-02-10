@@ -1,0 +1,25 @@
+diff --git a/mediapipe/framework/deps/platform_strings.cc b/mediapipe/framework/deps/platform_strings.cc
+--- a/mediapipe/framework/deps/platform_strings.cc
++++ b/mediapipe/framework/deps/platform_strings.cc
+@@ -16,10 +16,11 @@
+ 
+ #include <string>
+ 
+-namespace mediapipe {
+ #ifdef _WIN32
+ #include <Windows.h>
+ 
++namespace mediapipe {
++
+ std::string FormatLastError() {
+   DWORD message_id = GetLastError();
+   if (message_id == 0) {
+@@ -45,6 +46,8 @@ std::string FormatLastError() {
+   return NativeToUtf8(message);
+ }
+ #else
++namespace mediapipe {
++
+ #include <errno.h>
+ #include <string.h>
+ 
