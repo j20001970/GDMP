@@ -1,8 +1,8 @@
 extends Node
 
 var _gcs_url := "https://storage.googleapis.com"
-var _assets_url := _gcs_url.path_join("mediapipe-assets")
-var _models_url := _gcs_url.path_join("mediapipe-models")
+var _assets_url := _gcs_url.plus_file("mediapipe-assets")
+var _models_url := _gcs_url.plus_file("mediapipe-models")
 
 func _on_request_completed(result: int, response_code: int, headers: PoolStringArray, body: PoolByteArray, request: HTTPRequest) -> void:
 	request.queue_free()
