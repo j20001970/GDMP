@@ -16,5 +16,4 @@ web = "res://addons/GDMP/libs/GDMP.web.wasm"
 
 windows.x86_64 = {
     "res://addons/GDMP/libs/x86_64/opencv_world3410.dll": "",
-    "res://addons/GDMP/libs/x86_64/opencv_world3410d.dll": "",
 }
