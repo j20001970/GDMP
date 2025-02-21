@@ -14,6 +14,6 @@ iOS.arm64="res://addons/GDMP/libs/GDMP.ios.framework"
 
 [dependencies]
 
-Windows.64=[ "res://addons/GDMP/libs/x86_64/opencv_world3410.dll", "res://addons/GDMP/libs/x86_64/opencv_world3410d.dll" ]
+Windows.64=[ "res://addons/GDMP/libs/x86_64/opencv_world3410.dll" ]
 X11.64=[  ]
 iOS.arm64=[  ]
