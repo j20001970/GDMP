@@ -38,6 +38,7 @@ TARGET_ARGS = {
             "--define=MEDIAPIPE_DISABLE_GPU=1",
         ],
         "win32": [
+            "--define=OPENCV=source",
             "--define=MEDIAPIPE_DISABLE_GPU=1",
         ],
     },
@@ -200,11 +201,17 @@ def copy_desktop(args: Namespace):
         for lib in opencv_lib:
             copyfile(lib, path.join(output, path.basename(lib)))
     elif desktop_platform == "windows":
-        opencv_lib = glob.glob(path.join(desktop_output, "opencv_world*.dll"))
+        opencv_lib = glob.glob(
+            path.join(
+                MEDIAPIPE_DIR,
+                "bazel-bin/third_party/opencv_cmake/bin",
+                "opencv_*.dll",
+            )
+        )
         if len(opencv_lib) == 0:
             return
-        src = opencv_lib[0]
-        copyfile(src, path.join(output, path.basename(src)))
+        for lib in opencv_lib:
+            copyfile(lib, path.join(output, path.basename(lib)))
 
 
 def copy_ios(args: Namespace):

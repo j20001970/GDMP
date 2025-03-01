@@ -72,9 +72,12 @@ When linking prebuilt OpenCV libraries, build script will not copy required libr
 2. Bash is required for building MediaPipe, make sure `bash` is in `PATH` or setting `BAZEL_SH` environment variable pointing to it.
 
     Bash can be installed from [Git for Windows](https://gitforwindows.org) or [MSYS2](https://www.msys2.org)
-3. Install OpenCV and configure `mediapipe` workspace:
-    - Modify `mediapipe/WORKSPACE` for `path` under `windows_opencv` if OpenCV is not installed on `C:\opencv`
-    - Modify `OPENCV_VERSION` in `mediapipe/third_party/opencv_windows.BUILD` if OpenCV version is not `3.4.10`
 
     Refer to [MediaPipe documentation](https://developers.google.com/mediapipe/framework/getting_started/install#installing_on_windows) for more details.
-4. Run `build.py desktop` to build desktop library.
+3. Run `build.py desktop` to build desktop library.
+
+**Linking prebuilt OpenCV**: GDMP builds OpenCV from source on Windows by default, if you want to use pre-compiled OpenCV libraries, you will need to:
+
+1. Modify `mediapipe/WORKSPACE` for `path` under `windows_opencv` if OpenCV is not installed on `C:\opencv`
+2. Modify `OPENCV_VERSION` in `mediapipe/third_party/opencv_windows.BUILD` if OpenCV version is not `3.4.10`
+3. Comment out `--define=OPENCV=source` from `build.py` to make Bazel using binary OpenCV rules.
