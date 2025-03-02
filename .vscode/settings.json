@@ -1,0 +1,6 @@
+{
+    "clangd.arguments": [
+        "-header-insertion=never"
+    ],
+    "explorer.excludeGitIgnore": true
+}
