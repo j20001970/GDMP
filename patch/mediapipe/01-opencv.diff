@@ -15,17 +15,20 @@ diff --git a/WORKSPACE b/WORKSPACE
 diff --git a/third_party/BUILD b/third_party/BUILD
 --- a/third_party/BUILD
 +++ b/third_party/BUILD
-@@ -188,9 +188,6 @@ bzl_library(
+@@ -188,12 +188,6 @@ bzl_library(
  # linker, so if library A depends on library B, library B must come _after_.
  # Hence core is at the bottom.
  OPENCV_MODULES = [
 -    "calib3d",
 -    "features2d",
 -    "highgui",
-     "video",
-     "videoio",
-     "imgcodecs",
-@@ -204,7 +201,8 @@ OPENCV_MODULES = [
+-    "video",
+-    "videoio",
+-    "imgcodecs",
+     "imgproc",
+     "core",
+ ]
+@@ -204,7 +198,8 @@ OPENCV_MODULES = [
  # to switch to static libraries.
  OPENCV_SHARED_LIBS = True
  
@@ -35,7 +38,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
  
  cmake(
      name = "opencv_cmake",
-@@ -212,6 +210,7 @@ cmake(
+@@ -212,6 +207,7 @@ cmake(
      # here are serving to provide some CMake script configuration options
      cache_entries = {
          "CMAKE_BUILD_TYPE": "Release",
@@ -43,7 +46,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
          # The module list is always sorted alphabetically so that we do not
          # cause a rebuild when changing the link order.
          "BUILD_LIST": ",".join(sorted(OPENCV_MODULES)),
-@@ -231,6 +230,8 @@ cmake(
+@@ -231,6 +227,8 @@ cmake(
          "WITH_EIGEN": "ON",
          "WITH_PTHREADS": "ON",
          "WITH_PTHREADS_PF": "ON",
@@ -52,7 +55,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
          # When building tests, by default Bazel builds them in dynamic mode.
          # See https://docs.bazel.build/versions/master/be/c-cpp.html#cc_binary.linkstatic
          # For example, when building //mediapipe/calculators/video:opencv_video_encoder_calculator_test,
-@@ -282,18 +283,29 @@ cmake(
+@@ -282,18 +280,29 @@ cmake(
          "-lpthread",
          "-lrt",
      ],
