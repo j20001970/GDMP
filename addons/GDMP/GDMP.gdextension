@@ -14,6 +14,19 @@ web = "res://addons/GDMP/libs/GDMP.web.wasm"
 
 [dependencies]
 
+linux.x86_64 = {
+    "res://addons/GDMP/libs/x86_64/libopencv_core.so.411": "",
+    "res://addons/GDMP/libs/x86_64/libopencv_imgproc.so.411": "",
+}
+macos.arm64 = {
+    "res://addons/GDMP/libs/arm64/libopencv_core.411.dylib": "",
+    "res://addons/GDMP/libs/arm64/libopencv_imgproc.411.dylib": "",
+}
+macos.x86_64 = {
+    "res://addons/GDMP/libs/x86_64/libopencv_core.411.dylib": "",
+    "res://addons/GDMP/libs/x86_64/libopencv_imgproc.411.dylib": "",
+}
 windows.x86_64 = {
-    "res://addons/GDMP/libs/x86_64/opencv_world3410.dll": "",
+    "res://addons/GDMP/libs/x86_64/opencv_core4110.dll": "",
+    "res://addons/GDMP/libs/x86_64/opencv_imgproc4110.dll": "",
 }
