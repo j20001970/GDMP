@@ -50,12 +50,16 @@ TARGET_ARGS = {
         "--incompatible_enable_cc_toolchain_resolution",
         "--crosstool_top=@emsdk//emscripten_toolchain:everything",
         "--host_crosstool_top=@bazel_tools//tools/cpp:toolchain",
+        "--copt=-D_LARGEFILE64_SOURCE",
         "--copt=-sSIDE_MODULE=1",
         "--copt=-sSUPPORT_LONGJMP='wasm'",
         "--copt=-pthread",
+        "--linkopt=-sSIDE_MODULE=1",
+        "--linkopt=-sSUPPORT_LONGJMP='wasm'",
+        "--linkopt=-sWASM_BIGINT",
+        "--linkopt=-pthread",
+        "--define=OPENCV=source",
         "--define=MEDIAPIPE_DISABLE_GPU=1",
-        "--define=MEDIAPIPE_DISABLE_OPENCV=1",
-        "--define=MEDIAPIPE_ENABLE_HALIDE=1",
     ],
 }
 

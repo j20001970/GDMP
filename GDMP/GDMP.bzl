@@ -12,6 +12,7 @@ DATA = [
 TASKS = [
     "//GDMP/tasks/vision:face_detector",
     "//GDMP/tasks/vision:face_landmarker",
+    "//GDMP/tasks/vision:face_stylizer",
     "//GDMP/tasks/vision:gesture_recognizer",
     "//GDMP/tasks/vision:hand_landmarker",
     "//GDMP/tasks/vision:holistic_landmarker",
@@ -22,7 +23,6 @@ TASKS = [
 ] + select({
     "@platforms//os:emscripten": [],
     "//conditions:default": [
-        "//GDMP/tasks/vision:face_stylizer",
         "//GDMP/tasks/vision:image_segmenter",
         "//GDMP/tasks/vision:interactive_segmenter",
     ],

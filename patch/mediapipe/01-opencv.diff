@@ -28,9 +28,12 @@ diff --git a/third_party/BUILD b/third_party/BUILD
      "imgproc",
      "core",
  ]
-@@ -204,7 +198,8 @@ OPENCV_MODULES = [
+@@ -202,9 +196,10 @@ OPENCV_MODULES = [
+ # still only builds the shared libraries, so we have to choose one or the
+ # other. We build shared libraries by default, but this variable can be used
  # to switch to static libraries.
- OPENCV_SHARED_LIBS = True
+-OPENCV_SHARED_LIBS = True
++OPENCV_SHARED_LIBS = False
  
 -OPENCV_SO_VERSION = "3.4"
 +OPENCV_SO_VERSION = "411"
@@ -38,34 +41,95 @@ diff --git a/third_party/BUILD b/third_party/BUILD
  
  cmake(
      name = "opencv_cmake",
-@@ -212,6 +207,7 @@ cmake(
-     # here are serving to provide some CMake script configuration options
-     cache_entries = {
-         "CMAKE_BUILD_TYPE": "Release",
-+        "CMAKE_INSTALL_LIBDIR": "lib",
-         # The module list is always sorted alphabetically so that we do not
-         # cause a rebuild when changing the link order.
-         "BUILD_LIST": ",".join(sorted(OPENCV_MODULES)),
-@@ -231,6 +227,8 @@ cmake(
-         "WITH_EIGEN": "ON",
-         "WITH_PTHREADS": "ON",
-         "WITH_PTHREADS_PF": "ON",
-+        "OPENCV_BIN_INSTALL_PATH": "bin",
-+        "OPENCV_LIB_INSTALL_PATH": "lib",
-         # When building tests, by default Bazel builds them in dynamic mode.
-         # See https://docs.bazel.build/versions/master/be/c-cpp.html#cc_binary.linkstatic
-         # For example, when building //mediapipe/calculators/video:opencv_video_encoder_calculator_test,
-@@ -282,18 +280,29 @@ cmake(
-         "-lpthread",
-         "-lrt",
-     ],
+@@ -219,11 +214,12 @@ cmake(
+         "BUILD_PERF_TESTS": "OFF",
+         "BUILD_EXAMPLES": "OFF",
+         "BUILD_SHARED_LIBS": "ON" if OPENCV_SHARED_LIBS else "OFF",
++        "WITH_IPP": "OFF",
+         "WITH_ITT": "OFF",
+         "WITH_JASPER": "OFF",
+-        "WITH_JPEG": "ON",
+-        "WITH_PNG": "ON",
+-        "WITH_TIFF": "ON",
++        "WITH_JPEG": "OFF",
++        "WITH_PNG": "OFF",
++        "WITH_TIFF": "OFF",
+         "WITH_OPENCL": "OFF",
+         "WITH_WEBP": "OFF",
+         # Optimization flags
+@@ -252,48 +248,62 @@ cmake(
+         # ccache would be able to work across sandboxed Bazel builds, either.
+         # In any case, Bazel does its own caching of the rule's outputs.
+         "ENABLE_CCACHE": "OFF",
+-    },
++    } | select({
++        "@platforms//os:windows": {
++            "BUILD_SHARED_LIBS": "ON",
++            "OPENCV_SKIP_VISIBILITY_HIDDEN": "ON",
++            "OPENCV_BIN_INSTALL_PATH": "bin",
++            "OPENCV_LIB_INSTALL_PATH": "lib",
++        },
++        "@platforms//os:emscripten": {
++            "CPU_BASELINE": "''",
++            "CPU_DISPATCH": "''",
++            "BUILD_opencv_apps": "OFF",
++            "WITH_VA": "OFF",
++        },
++        "//conditions:default": {
++            "CMAKE_INSTALL_LIBDIR": "lib",
++        },
++    }),
+     lib_source = "@opencv//:all",
+-    linkopts = [] if OPENCV_SHARED_LIBS else [
+-        # When using static libraries, the binary that eventually depends on the
+-        # libraries also needs to link in their dependencies, which therefore
+-        # have to be listed here.
+-        # This list depends on which dependencies CMake finds when it configures
+-        # the build, and so depends on what is installed on the local system.
+-        # After building, the linkopts for the current setup can be extracted
+-        # from lib/pkgconfig/opencv.pc in bazel-out
+-        "-ljpeg",
+-        "-lpng",
+-        "-lz",
+-        "-ltiff",
+-        "-lImath",
+-        "-lIlmImf",
+-        "-lIex",
+-        "-lHalf",
+-        "-lIlmThread",
+-        "-ldc1394",
+-        "-lavcodec",
+-        "-lavformat",
+-        "-lavutil",
+-        "-lswscale",
+-        "-lavresample",
+-        "-ldl",
+-        "-lm",
+-        "-lpthread",
+-        "-lrt",
+-    ],
++    copts = select({
++        "@platforms//os:emscripten": [
++            "-sDISABLE_EXCEPTION_CATCHING=1",
++            "-fexceptions",
++            "-msimd128",
++        ],
++        "//conditions:default": None,
++    }),
++    linkopts = select({
++        "@platforms//os:emscripten": [
++            "--oformat=wasm",
++        ],
++        "//conditions:default": None,
++    }),
 +    out_include_dir = select({
-+        "@bazel_tools//src/conditions:windows": "include",
++        "@platforms//os:windows": "include",
 +        "//conditions:default": "include/opencv4",
 +    }),
      out_shared_libs = select({
          "@bazel_tools//src/conditions:darwin": ["libopencv_%s.%s.dylib" % (module, OPENCV_SO_VERSION) for module in OPENCV_MODULES],
-+        "@bazel_tools//src/conditions:windows": ["opencv_%s%s.dll" % (module, OPENCV_DLL_VERSION) for module in OPENCV_MODULES],
++        "@platforms//os:emscripten": None,
++        "@platforms//os:windows": ["opencv_%s%s.dll" % (module, OPENCV_DLL_VERSION) for module in OPENCV_MODULES],
          # Only the shared objects listed here will be linked in the directory
          # that Bazel adds to the RUNPATH of dependent executables. You cannot
          # list both the versioned and unversioned name of the .so, and the
@@ -77,7 +141,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
 -        for module in OPENCV_MODULES
 -    ] if not OPENCV_SHARED_LIBS else None,
 +    out_static_libs = select({
-+        "@bazel_tools//src/conditions:windows": [
++        "@platforms//os:windows": [
 +            "opencv_%s%s.lib" % (module, OPENCV_DLL_VERSION)
 +            for module in OPENCV_MODULES
 +        ],

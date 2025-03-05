@@ -1,0 +1,18 @@
+diff --git a/bazel/emscripten_toolchain/link_wrapper.py b/bazel/emscripten_toolchain/link_wrapper.py
+--- a/bazel/emscripten_toolchain/link_wrapper.py
++++ b/bazel/emscripten_toolchain/link_wrapper.py
+@@ -22,9 +22,11 @@ import subprocess
+ import sys
+ 
+ # Only argument should be @path/to/parameter/file
+-assert sys.argv[1][0] == '@', sys.argv
+-param_filename = sys.argv[1][1:]
+-param_file_args = [l.strip() for l in open(param_filename, 'r').readlines()]
++if sys.argv[1][0] == '@':
++  param_filename = sys.argv[1][1:]
++  param_file_args = [l.strip() for l in open(param_filename, 'r').readlines()]
++else:
++  param_file_args = sys.argv[1:]
+ 
+ # Re-write response file if needed.
+ if any(' ' in a for a in param_file_args):
