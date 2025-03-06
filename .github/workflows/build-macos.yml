@@ -1,5 +1,15 @@
 name: 🍎 Build macOS
-on: [workflow_call, workflow_dispatch]
+on:
+  pull_request:
+  workflow_call:
+    inputs:
+      working-directory:
+        type: string
+        required: false
+  workflow_dispatch:
+
+env:
+  work-dir: ${{ github.workspace }}
 
 jobs:
   build:
@@ -9,6 +19,10 @@ jobs:
     name: macOS ${{ matrix.arch }}
     runs-on: macos-14
     steps:
+      - name: Set Working Directory
+        if: ${{ inputs.working-directory != '' }}
+        run: echo "work-dir=${{ inputs.working-directory }}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -20,10 +34,12 @@ jobs:
           python-version: "3.12"
 
       - name: Setup
+        working-directory: ${{ env.work-dir }}
         run: |
           python ./setup.py
 
       - name: Build
+        working-directory: ${{ env.work-dir }}
         run: |
           source ./venv/bin/activate
           python ./build.py desktop --arch ${{ matrix.arch }} --type release --output build/${{ matrix.arch }}
@@ -33,4 +49,4 @@ jobs:
         with:
           name: build-artifact-macos-${{ matrix.arch }}
           path: |
-            build/*
+            ${{ env.work-dir }}/build/*

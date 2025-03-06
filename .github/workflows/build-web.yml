@@ -1,11 +1,23 @@
 name: 🌐 Build Web
-on: [workflow_call, workflow_dispatch]
-
+on:
+  pull_request:
+  workflow_call:
+    inputs:
+      working-directory:
+        type: string
+        required: false
+  workflow_dispatch:
+env:
+  WORKING_DIR: ${{ github.workspace }}
 jobs:
   build:
     name: Web WebAssembly
     runs-on: ubuntu-24.04
     steps:
+      - name: Set Working Directory
+        if: ${{ inputs.working-directory != '' }}
+        run: echo "WORKING_DIR=${{ inputs.working-directory }}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -17,10 +29,12 @@ jobs:
           python-version: "3.12"
 
       - name: Setup
+        working-directory: ${{ env.WORKING_DIR }}
         run: |
           python ./setup.py
 
       - name: Build
+        working-directory: ${{ env.WORKING_DIR }}
         run: |
           source ./venv/bin/activate
           python ./build.py web --type release --output build/
@@ -30,4 +44,4 @@ jobs:
         with:
           name: build-artifact-web
           path: |
-            build/*
+            ${{ env.WORKING_DIR }}/build/*

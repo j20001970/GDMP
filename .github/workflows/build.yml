@@ -1,36 +1,58 @@
 name: Build
-on: [pull_request, workflow_call, workflow_dispatch]
+on:
+  pull_request:
+  workflow_call:
+    inputs:
+      working-directory:
+        type: string
+        required: false
+  workflow_dispatch:
+
+env:
+  work-dir: ${{ github.workspace }}
 
 jobs:
   # Build the Windows Artifacts
   build-windows:
     name: 🏁 Build Windows
     uses: ./.github/workflows/build-windows.yml
+    with:
+      working-directory: ${{ inputs.working-directory }}
 
   # Build the Linux Artifacts
   build-linux:
     name: 🐧 Build Linux
     uses: ./.github/workflows/build-linux.yml
+    with:
+      working-directory: ${{ inputs.working-directory }}
 
   # Build the macOS Artifacts
   build-macos:
     name: 🍎 Build macOS
     uses: ./.github/workflows/build-macos.yml
+    with:
+      working-directory: ${{ inputs.working-directory }}
 
   # Build the Android Artifacts
   build-android:
     name: 🤖 Build Android
     uses: ./.github/workflows/build-android.yml
+    with:
+      working-directory: ${{ inputs.working-directory }}
 
   # Build the iOS Artifacts
   build-ios:
     name: 🍏 Build iOS
     uses: ./.github/workflows/build-ios.yml
+    with:
+      working-directory: ${{ inputs.working-directory }}
 
   # Build the Web Artifacts
   build-web:
     name: 🌐 Build Web
     uses: ./.github/workflows/build-web.yml
+    with:
+      working-directory: ${{ inputs.working-directory }}
 
   build:
     name: Build
@@ -45,15 +67,23 @@ jobs:
         build-web,
       ]
     steps:
+      - name: Set Working Directory
+        if: ${{ inputs.working-directory != '' }}
+        run: echo "work-dir=${{ inputs.working-directory }}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
+          path: ${{ env.work-dir }}
           pattern: build-artifact-!(android-*)
 
       - name: Assemble
+        working-directory: ${{ env.work-dir }}
         run: |
           mkdir dist
           cp -r addons/ dist/
@@ -69,4 +99,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
-          path: dist/
+          path: ${{ env.work-dir }}/dist/

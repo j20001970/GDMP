@@ -1,5 +1,15 @@
 name: 🐧 Build Linux
-on: [workflow_call, workflow_dispatch]
+on:
+  pull_request:
+  workflow_call:
+    inputs:
+      working-directory:
+        type: string
+        required: false
+  workflow_dispatch:
+
+env:
+  work-dir: ${{ github.workspace }}
 
 jobs:
   build:
@@ -14,6 +24,10 @@ jobs:
     env:
       SDK_VERSION: "24.08"
     steps:
+      - name: Set Working Directory
+        if: ${{ inputs.working-directory != '' }}
+        run: echo "work-dir=${{ inputs.working-directory }}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -27,12 +41,14 @@ jobs:
           sudo flatpak install --system -y flathub runtime/org.freedesktop.Sdk/${{ matrix.runtime-arch }}/${{ env.SDK_VERSION }}
 
       - name: Setup
+        working-directory: ${{ env.work-dir }}
         run: |
           ./scripts/flatpak_env.sh << EOF
           python ./setup.py
           EOF
 
       - name: Build
+        working-directory: ${{ env.work-dir }}
         run: |
           ./scripts/flatpak_env.sh << EOF
           source ./venv/bin/activate
@@ -44,4 +60,4 @@ jobs:
         with:
           name: build-artifact-linux-${{ matrix.arch }}
           path: |
-            build/*
+            ${{ env.work-dir }}/build/*

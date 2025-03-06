@@ -1,5 +1,15 @@
 name: 🤖 Build Android
-on: [workflow_call, workflow_dispatch]
+on:
+  pull_request:
+  workflow_call:
+    inputs:
+      working-directory:
+        type: string
+        required: false
+  workflow_dispatch:
+
+env:
+  work-dir: ${{ github.workspace }}
 
 jobs:
   build:
@@ -11,6 +21,10 @@ jobs:
     env:
       NDK_VERSION: "23.2.8568313"
     steps:
+      - name: Set Working Directory
+        if: ${{ inputs.working-directory != '' }}
+        run: echo "work-dir=${{ inputs.working-directory }}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -26,16 +40,19 @@ jobs:
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;${{ env.NDK_VERSION }}"
 
       - name: Setup
+        working-directory: ${{ env.work-dir }}
         run: |
           python ./setup.py
 
       - name: Android SDK/NDK Patch
+        working-directory: ${{ env.work-dir }}
         run: |
           echo "android_sdk_repository(name = \"androidsdk\")" >> mediapipe/WORKSPACE
           echo "android_ndk_repository(name = \"androidndk\", api_level=21)" >> mediapipe/WORKSPACE
           echo "bind(name = \"android/crosstool\", actual = \"@androidndk//:toolchain\")" >> mediapipe/WORKSPACE
 
       - name: Build
+        working-directory: ${{ env.work-dir }}
         run: |
           source ./venv/bin/activate
           export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/${{ env.NDK_VERSION }}
@@ -46,13 +63,17 @@ jobs:
         with:
           name: build-artifact-android-${{ matrix.arch }}
           path: |
-            build/*
+            ${{ env.work-dir }}/build/*
 
   build-aar:
     name: Android AAR
     runs-on: ubuntu-24.04
     needs: build
     steps:
+      - name: Set Working Directory
+        if: ${{ inputs.working-directory != '' }}
+        run: echo "work-dir=${{ inputs.working-directory }}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -70,20 +91,24 @@ jobs:
           java-version: "17"
 
       - name: Setup
+        working-directory: ${{ env.work-dir }}
         run: |
           python ./setup.py
 
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
+          path: ${{ env.work-dir }}
           pattern: build-artifact-android-*
 
       - name: Copy JNI Libraries
+        working-directory: ${{ env.work-dir }}
         run: |
           mkdir -p GDMP/android/aar/src/main/jniLibs
           cp -a build-artifact-android-*/* GDMP/android/aar/src/main/jniLibs
 
       - name: Build
+        working-directory: ${{ env.work-dir }}
         run: |
           source ./venv/bin/activate
           python ./build.py android --type release --output build/
@@ -93,4 +118,4 @@ jobs:
         with:
           name: build-artifact-android
           path: |
-            build/*.aar
+            ${{ env.work-dir }}/build/*.aar
