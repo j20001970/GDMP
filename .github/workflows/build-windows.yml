@@ -3,7 +3,10 @@ on: [workflow_call, workflow_dispatch]
 
 jobs:
   build:
-    name: Windows x86_64
+    strategy:
+      matrix:
+        arch: ["x86_64"]
+    name: Windows ${{ matrix.arch }}
     runs-on: windows-2022
     steps:
       - name: Checkout
@@ -14,12 +17,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
-
-      - name: Prerequisites
-        shell: bash
-        run: |
-          choco install visualstudio2022buildtools visualstudio2022-workload-vctools
+          python-version: "3.12"
 
       - name: Setup
         shell: bash
@@ -27,16 +25,14 @@ jobs:
           python ./setup.py
 
       - name: Build
-        env:
-          BAZEL_VC: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC"
         shell: bash
         run: |
           source ./venv/Scripts/activate
-          python ./build.py desktop --type release --output build/
+          python ./build.py desktop --type release --output build/${{ matrix.arch }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifact-windows
+          name: build-artifact-windows-${{ matrix.arch }}
           path: |
-            build/*.dll
+            build/*

@@ -25,6 +25,8 @@ TARGET_ARGS = {
     "android": [
         "--config=android",
         "--copt=-fPIC",
+        "--define=xnn_enable_avx512fp16=false",
+        "--define=xnn_enable_avxvnniint8=false",
     ],
     "desktop": {
         "linux": [
