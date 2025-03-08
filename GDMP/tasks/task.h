@@ -35,7 +35,7 @@ class MediaPipeTask : public RefCounted {
 
 		enum VisionRunningMode {
 			RUNNING_MODE_IMAGE = vision::core::RunningMode::IMAGE,
-			RUNNINE_MODE_VIDEO = vision::core::RunningMode::VIDEO,
+			RUNNING_MODE_VIDEO = vision::core::RunningMode::VIDEO,
 			RUNNING_MODE_LIVE_STREAM = vision::core::RunningMode::LIVE_STREAM
 		};
 
