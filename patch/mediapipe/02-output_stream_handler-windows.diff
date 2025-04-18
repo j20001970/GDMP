@@ -1,0 +1,16 @@
+diff --git a/mediapipe/framework/BUILD b/mediapipe/framework/BUILD
+--- a/mediapipe/framework/BUILD
++++ b/mediapipe/framework/BUILD
+@@ -940,6 +940,12 @@ cc_library(
+     name = "output_stream_handler",
+     srcs = ["output_stream_handler.cc"],
+     hdrs = ["output_stream_handler.h"],
++    copts = select({
++        "//conditions:default": [],
++        "//mediapipe:windows": [
++            "/std:c++20",
++        ],
++    }),
+     visibility = [
+         ":mediapipe_internal",
+     ],
