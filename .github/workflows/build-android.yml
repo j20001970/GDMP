@@ -18,8 +18,6 @@ jobs:
         arch: ["arm64-v8a", "x86_64"]
     name: Android ${{ matrix.arch }}
     runs-on: ubuntu-24.04
-    env:
-      NDK_VERSION: "23.2.8568313"
     steps:
       - name: Set Working Directory
         if: ${{ inputs.working-directory != '' }}
@@ -34,10 +32,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Setup NDK
-        run: |
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;${{ env.NDK_VERSION }}"
 
       - name: Setup
         working-directory: ${{ env.work-dir }}
@@ -55,7 +49,6 @@ jobs:
         working-directory: ${{ env.work-dir }}
         run: |
           source ./venv/bin/activate
-          export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/${{ env.NDK_VERSION }}
           python ./build.py android --android-skip-aar --arch ${{ matrix.arch }} --type release --output build/
 
       - name: Upload Artifacts
