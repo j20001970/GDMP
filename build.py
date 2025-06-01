@@ -37,6 +37,8 @@ TARGET_ARGS = {
             "--define=MEDIAPIPE_DISABLE_GPU=1",
         ],
         "win32": [
+            "--conlyopt=/std:c11",
+            "--conlyopt=/experimental:c11atomics",
             "--define=OPENCV=source",
             "--define=MEDIAPIPE_DISABLE_GPU=1",
         ],
