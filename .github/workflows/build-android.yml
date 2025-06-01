@@ -49,6 +49,7 @@ jobs:
         working-directory: ${{ env.work-dir }}
         run: |
           source ./venv/bin/activate
+          export ANDROID_NDK_HOME=$ANDROID_NDK_LATEST_HOME
           python ./build.py android --android-skip-aar --arch ${{ matrix.arch }} --type release --output build/
 
       - name: Upload Artifacts
