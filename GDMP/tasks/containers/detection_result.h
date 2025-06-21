@@ -26,11 +26,11 @@ class MediaPipeDetection : public RefCounted {
 		MediaPipeDetection();
 		MediaPipeDetection(const Detection &detection);
 
-		TypedArray<MediaPipeCategory> get_categories();
-		Rect2i get_bounding_box();
-		TypedArray<MediaPipeNormalizedKeypoint> get_keypoints();
+		TypedArray<MediaPipeCategory> get_categories() const;
+		Rect2i get_bounding_box() const;
+		TypedArray<MediaPipeNormalizedKeypoint> get_keypoints() const;
 
-		bool has_keypoints();
+		bool has_keypoints() const;
 };
 
 class MediaPipeDetectionResult : public RefCounted {
@@ -46,7 +46,7 @@ class MediaPipeDetectionResult : public RefCounted {
 		MediaPipeDetectionResult();
 		MediaPipeDetectionResult(const DetectionResult &result);
 
-		TypedArray<MediaPipeDetection> get_detections();
+		TypedArray<MediaPipeDetection> get_detections() const;
 };
 
 #endif

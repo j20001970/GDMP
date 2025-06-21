@@ -1,5 +1,6 @@
 #include "classification_result.h"
 
+#include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/variant/variant.hpp"
 
@@ -13,32 +14,37 @@ void MediaPipeClassifications::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "head_name"), "", "get_head_name");
 }
 
-MediaPipeClassifications::MediaPipeClassifications() = default;
+MediaPipeClassifications::MediaPipeClassifications() {
+	classifications.head_index = 0;
+}
 
 MediaPipeClassifications::MediaPipeClassifications(const Classifications &classifications) {
 	this->classifications = classifications;
 }
 
-TypedArray<MediaPipeCategory> MediaPipeClassifications::get_categories() {
+TypedArray<MediaPipeCategory> MediaPipeClassifications::get_categories() const {
 	TypedArray<MediaPipeCategory> array;
-	auto categories = classifications.categories;
-	array.resize(categories.size());
-	for (int i = 0; i < categories.size(); i++)
-		array[i] = memnew(MediaPipeCategory(categories[i]));
+	array.resize(classifications.categories.size());
+	for (int i = 0; i < array.size(); i++) {
+		const Category &category = classifications.categories[i];
+		array[i] = memnew(MediaPipeCategory(category));
+	}
 	return array;
 }
 
-int MediaPipeClassifications::get_head_index() {
+int MediaPipeClassifications::get_head_index() const {
 	return classifications.head_index;
 }
 
-String MediaPipeClassifications::get_head_name() {
-	if (!has_head_name())
-		return String();
+String MediaPipeClassifications::get_head_name() const {
+	if (Engine::get_singleton() && Engine::get_singleton()->is_editor_hint()) {
+		return classifications.head_name.value_or("").c_str();
+	}
+	ERR_FAIL_COND_V(!has_head_name(), String());
 	return classifications.head_name->c_str();
 }
 
-bool MediaPipeClassifications::has_head_name() {
+bool MediaPipeClassifications::has_head_name() const {
 	return classifications.head_name.has_value();
 }
 
@@ -56,21 +62,24 @@ MediaPipeClassificationResult::MediaPipeClassificationResult(const Classificatio
 	this->result = result;
 }
 
-TypedArray<MediaPipeClassifications> MediaPipeClassificationResult::get_classifications() {
+TypedArray<MediaPipeClassifications> MediaPipeClassificationResult::get_classifications() const {
 	TypedArray<MediaPipeClassifications> array;
-	auto classifications = result.classifications;
-	array.resize(classifications.size());
-	for (int i = 0; i < classifications.size(); i++)
-		array[i] = memnew(MediaPipeClassifications(classifications[i]));
+	array.resize(result.classifications.size());
+	for (int i = 0; i < array.size(); i++) {
+		const Classifications &classifications = result.classifications[i];
+		array[i] = memnew(MediaPipeClassifications(classifications));
+	}
 	return array;
 }
 
-uint64_t MediaPipeClassificationResult::get_timestamp_ms() {
-	if (!has_timestamp_ms())
-		return 0;
+uint64_t MediaPipeClassificationResult::get_timestamp_ms() const {
+	if (Engine::get_singleton() && Engine::get_singleton()->is_editor_hint()) {
+		return result.timestamp_ms.value_or(0);
+	}
+	ERR_FAIL_COND_V(!has_timestamp_ms(), 0);
 	return result.timestamp_ms.value();
 }
 
-bool MediaPipeClassificationResult::has_timestamp_ms() {
+bool MediaPipeClassificationResult::has_timestamp_ms() const {
 	return result.timestamp_ms.has_value();
 }

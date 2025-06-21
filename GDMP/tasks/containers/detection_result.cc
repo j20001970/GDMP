@@ -1,5 +1,6 @@
 #include "detection_result.h"
 
+#include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/variant/variant.hpp"
 
@@ -19,35 +20,42 @@ MediaPipeDetection::MediaPipeDetection(const Detection &detection) {
 	this->detection = detection;
 }
 
-TypedArray<MediaPipeCategory> MediaPipeDetection::get_categories() {
+TypedArray<MediaPipeCategory> MediaPipeDetection::get_categories() const {
 	TypedArray<MediaPipeCategory> array;
-	auto &categories = detection.categories;
-	array.resize(categories.size());
-	for (int i = 0; i < categories.size(); i++)
-		array[i] = memnew(MediaPipeCategory(categories[i]));
+	array.resize(detection.categories.size());
+	for (int i = 0; i < array.size(); i++) {
+		const Category &category = detection.categories[i];
+		array[i] = memnew(MediaPipeCategory(category));
+	}
 	return array;
 }
 
-Rect2i MediaPipeDetection::get_bounding_box() {
-	auto &rect = detection.bounding_box;
+Rect2i MediaPipeDetection::get_bounding_box() const {
+	const Rect &rect = detection.bounding_box;
 	return Rect2i(
 			rect.left, rect.top,
 			rect.right - rect.left,
 			rect.bottom - rect.top);
 }
 
-TypedArray<MediaPipeNormalizedKeypoint> MediaPipeDetection::get_keypoints() {
+TypedArray<MediaPipeNormalizedKeypoint> MediaPipeDetection::get_keypoints() const {
 	TypedArray<MediaPipeNormalizedKeypoint> array;
-	if (!has_keypoints())
-		return array;
-	auto &keypoints = detection.keypoints.value();
+	if (Engine::get_singleton() && Engine::get_singleton()->is_editor_hint()) {
+		if (!has_keypoints()) {
+			return array;
+		}
+	}
+	ERR_FAIL_COND_V(!has_keypoints(), array);
+	const std::vector<NormalizedKeypoint> &keypoints = detection.keypoints.value();
 	array.resize(keypoints.size());
-	for (int i = 0; i < keypoints.size(); i++)
-		array[i] = memnew(MediaPipeNormalizedKeypoint(keypoints[i]));
+	for (int i = 0; i < array.size(); i++) {
+		const NormalizedKeypoint &keypoint = keypoints[i];
+		array[i] = memnew(MediaPipeNormalizedKeypoint(keypoint));
+	}
 	return array;
 }
 
-bool MediaPipeDetection::has_keypoints() {
+bool MediaPipeDetection::has_keypoints() const {
 	return detection.keypoints.has_value();
 }
 
@@ -62,11 +70,12 @@ MediaPipeDetectionResult::MediaPipeDetectionResult(const DetectionResult &result
 	this->result = result;
 }
 
-TypedArray<MediaPipeDetection> MediaPipeDetectionResult::get_detections() {
+TypedArray<MediaPipeDetection> MediaPipeDetectionResult::get_detections() const {
 	TypedArray<MediaPipeDetection> array;
-	auto &detections = result.detections;
-	array.resize(detections.size());
-	for (int i = 0; i < detections.size(); i++)
-		array[i] = memnew(MediaPipeDetection(detections[i]));
+	array.resize(result.detections.size());
+	for (int i = 0; i < array.size(); i++) {
+		const Detection &detection = result.detections[i];
+		array[i] = memnew(MediaPipeDetection(detection));
+	}
 	return array;
 }

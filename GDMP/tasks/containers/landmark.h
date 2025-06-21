@@ -23,16 +23,16 @@ class MediaPipeLandmark : public RefCounted {
 		MediaPipeLandmark();
 		MediaPipeLandmark(const Landmark &landmark);
 
-		float get_x();
-		float get_y();
-		float get_z();
-		float get_visibility();
-		float get_presence();
-		String get_name();
+		float get_x() const;
+		float get_y() const;
+		float get_z() const;
+		float get_visibility() const;
+		float get_presence() const;
+		String get_name() const;
 
-		bool has_visibility();
-		bool has_presence();
-		bool has_name();
+		bool has_visibility() const;
+		bool has_presence() const;
+		bool has_name() const;
 };
 
 class MediaPipeNormalizedLandmark : public RefCounted {
@@ -48,16 +48,16 @@ class MediaPipeNormalizedLandmark : public RefCounted {
 		MediaPipeNormalizedLandmark();
 		MediaPipeNormalizedLandmark(const NormalizedLandmark &landmark);
 
-		float get_x();
-		float get_y();
-		float get_z();
-		float get_visibility();
-		float get_presence();
-		String get_name();
+		float get_x() const;
+		float get_y() const;
+		float get_z() const;
+		float get_visibility() const;
+		float get_presence() const;
+		String get_name() const;
 
-		bool has_visibility();
-		bool has_presence();
-		bool has_name();
+		bool has_visibility() const;
+		bool has_presence() const;
+		bool has_name() const;
 };
 
 class MediaPipeLandmarks : public RefCounted {
@@ -73,7 +73,7 @@ class MediaPipeLandmarks : public RefCounted {
 		MediaPipeLandmarks();
 		MediaPipeLandmarks(const Landmarks &landmarks);
 
-		TypedArray<MediaPipeLandmark> get_landmarks();
+		TypedArray<MediaPipeLandmark> get_landmarks() const;
 };
 
 class MediaPipeNormalizedLandmarks : public RefCounted {
@@ -89,7 +89,7 @@ class MediaPipeNormalizedLandmarks : public RefCounted {
 		MediaPipeNormalizedLandmarks();
 		MediaPipeNormalizedLandmarks(const NormalizedLandmarks &landmarks);
 
-		TypedArray<MediaPipeNormalizedLandmark> get_landmarks();
+		TypedArray<MediaPipeNormalizedLandmark> get_landmarks() const;
 };
 
 #endif

@@ -25,11 +25,11 @@ class MediaPipeClassifications : public RefCounted {
 		MediaPipeClassifications();
 		MediaPipeClassifications(const Classifications &classifications);
 
-		TypedArray<MediaPipeCategory> get_categories();
-		int get_head_index();
-		String get_head_name();
+		TypedArray<MediaPipeCategory> get_categories() const;
+		int get_head_index() const;
+		String get_head_name() const;
 
-		bool has_head_name();
+		bool has_head_name() const;
 };
 
 class MediaPipeClassificationResult : public RefCounted {
@@ -45,10 +45,10 @@ class MediaPipeClassificationResult : public RefCounted {
 		MediaPipeClassificationResult();
 		MediaPipeClassificationResult(const ClassificationResult &result);
 
-		TypedArray<MediaPipeClassifications> get_classifications();
-		uint64_t get_timestamp_ms();
+		TypedArray<MediaPipeClassifications> get_classifications() const;
+		uint64_t get_timestamp_ms() const;
 
-		bool has_timestamp_ms();
+		bool has_timestamp_ms() const;
 };
 
 #endif

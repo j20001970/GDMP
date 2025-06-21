@@ -22,13 +22,13 @@ class MediaPipeCategory : public RefCounted {
 		MediaPipeCategory();
 		MediaPipeCategory(const Category &category);
 
-		int get_index();
-		float get_score();
-		String get_category_name();
-		String get_display_name();
+		int get_index() const;
+		float get_score() const;
+		String get_category_name() const;
+		String get_display_name() const;
 
-		bool has_category_name();
-		bool has_display_name();
+		bool has_category_name() const;
+		bool has_display_name() const;
 };
 
 #endif
