@@ -81,6 +81,8 @@ def build_android(args: Namespace, build_args: list[str]) -> list[Callable]:
             cmds.append(partial(rmtree, dst_dir))
         abi_list = arch.split(",")
         for abi in abi_list:
+            if abi.startswith("arm64"):
+                abi = "arm64-v8a"
             arg = [arg.format(abi=abi) for arg in build_args]
             cmds.append(bazel_build(arg))
             if dst_dir is None:
@@ -114,6 +116,12 @@ def get_build_cmds(args: Namespace) -> list[Callable]:
         mode = "opt"
     else:
         mode = "dbg"
+    if not arch:
+        machine = platform.machine().lower()
+        if machine in ["amd64", "x86_64"]:
+            arch = "x86_64"
+        elif machine in ["aarch64", "arm64"]:
+            arch = "arm64"
     build_args = ["-c", mode]
     if target == "desktop":
         build_args.extend(TARGET_ARGS[target][sys.platform])
