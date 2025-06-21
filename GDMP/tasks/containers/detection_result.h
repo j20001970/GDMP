@@ -8,9 +8,6 @@
 
 #include "mediapipe/tasks/cc/components/containers/detection_result.h"
 
-#include "GDMP/tasks/containers/category.h"
-#include "GDMP/tasks/containers/keypoint.h"
-
 using namespace godot;
 using namespace mediapipe::tasks::components::containers;
 
@@ -26,11 +23,11 @@ class MediaPipeDetection : public Reference {
 
 		void _init();
 
-		Array get_categories();
-		Rect2 get_bounding_box();
-		Array get_keypoints();
+		Array get_categories() const;
+		Rect2 get_bounding_box() const;
+		Array get_keypoints() const;
 
-		bool has_keypoints();
+		bool has_keypoints() const;
 };
 
 class MediaPipeDetectionResult : public Reference {
@@ -45,7 +42,7 @@ class MediaPipeDetectionResult : public Reference {
 
 		void _init();
 
-		Array get_detections();
+		Array get_detections() const;
 };
 
 #endif

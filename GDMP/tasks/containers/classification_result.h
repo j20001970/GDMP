@@ -8,8 +8,6 @@
 
 #include "mediapipe/tasks/cc/components/containers/classification_result.h"
 
-#include "GDMP/tasks/containers/category.h"
-
 using namespace godot;
 using namespace mediapipe::tasks::components::containers;
 
@@ -25,11 +23,11 @@ class MediaPipeClassifications : public Reference {
 
 		void _init();
 
-		Array get_categories();
-		int get_head_index();
-		String get_head_name();
+		Array get_categories() const;
+		int get_head_index() const;
+		String get_head_name() const;
 
-		bool has_head_name();
+		bool has_head_name() const;
 };
 
 class MediaPipeClassificationResult : public Reference {
@@ -44,10 +42,10 @@ class MediaPipeClassificationResult : public Reference {
 
 		void _init();
 
-		Array get_classifications();
-		uint64_t get_timestamp_ms();
+		Array get_classifications() const;
+		uint64_t get_timestamp_ms() const;
 
-		bool has_timestamp_ms();
+		bool has_timestamp_ms() const;
 };
 
 #endif

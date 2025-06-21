@@ -23,12 +23,14 @@ class MediaPipeNormalizedKeypoint : public Reference {
 
 		void _init();
 
-		Vector2 get_point();
-		String get_label();
-		float get_score();
+		float get_x() const;
+		float get_y() const;
+		Vector2 get_point() const;
+		String get_label() const;
+		float get_score() const;
 
-		bool has_label();
-		bool has_score();
+		bool has_label() const;
+		bool has_score() const;
 };
 
 #endif

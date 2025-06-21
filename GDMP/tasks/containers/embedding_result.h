@@ -24,12 +24,12 @@ class MediaPipeEmbedding : public Reference {
 
 		void _init();
 
-		PoolRealArray get_float_embedding();
-		String get_quantized_embedding();
-		int get_head_index();
-		String get_head_name();
+		PoolRealArray get_float_embedding() const;
+		String get_quantized_embedding() const;
+		int get_head_index() const;
+		String get_head_name() const;
 
-		bool has_head_name();
+		bool has_head_name() const;
 };
 
 class MediaPipeEmbeddingResult : public Reference {
@@ -44,10 +44,10 @@ class MediaPipeEmbeddingResult : public Reference {
 
 		void _init();
 
-		Array get_embeddings();
-		uint64_t get_timestamp_ms();
+		Array get_embeddings() const;
+		uint64_t get_timestamp_ms() const;
 
-		bool has_timestamp_ms();
+		bool has_timestamp_ms() const;
 };
 
 #endif
