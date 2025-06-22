@@ -116,12 +116,6 @@ def get_build_cmds(args: Namespace) -> list[Callable]:
         mode = "opt"
     else:
         mode = "dbg"
-    if not arch:
-        machine = platform.machine().lower()
-        if machine in ["amd64", "x86_64"]:
-            arch = "x86_64"
-        elif machine in ["aarch64", "arm64"]:
-            arch = "arm64"
     build_args = ["-c", mode]
     if target == "desktop":
         build_args.extend(TARGET_ARGS[target][sys.platform])
@@ -249,6 +243,12 @@ if __name__ == "__main__":
         "--android-skip-aar", help="skip building aar for android", action="store_true"
     )
     args = parser.parse_args()
+    if not args.arch:
+        machine = platform.machine().lower()
+        if machine in ["amd64", "x86_64"]:
+            args.arch = "x86_64"
+        elif machine in ["aarch64", "arm64"]:
+            args.arch = "arm64"
     cmds = get_build_cmds(args)
     for cmd in cmds:
         cmd()
