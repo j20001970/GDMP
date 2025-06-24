@@ -33,15 +33,14 @@ Run `build.py --help` to see all options.
     You will also need to uncomment the last 3 lines of `mediapipe/WORKSPACE` (including `android_sdk_repository` and `android_ndk_repository`) that added eariler during setup.
 
     Refer to [MediaPipe docs](https://developers.google.com/mediapipe/framework/getting_started/android#prerequisite) for more details.
-2. Build Android libraries. For example, run:
+2. Run `build.py android` to build Android native libraries.
 
+    Use `--arch` to specify the architecture. For example, run:
     ```
     build.py android --arch arm64-v8a
     ```
-
-    to build library for `arm64-v8a` architecture, you can pass comma-separated list to build multiple architectures.
-    If `--arch` is omitted, building native libraries will be skipped, and procceed to build Android AAR directly.
-    You can use `--android-skip-aar` to skip building Android AAR.
+    to build library for `arm64-v8a` architecture.
+3. Run `build.py android --android-aar` to build Android plugin.
 
 ## Building for iOS
 1. Install [Xcode](https://developer.apple.com/xcode), then switch to installed Xcode by using `xcode-select`

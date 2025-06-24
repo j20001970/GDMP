@@ -50,7 +50,7 @@ TARGET_ARGS = {
 }
 
 
-def bazel_build(args: list[str]) -> Callable:
+def bazel_build(args: list[str]):
     bazel_exec = which("bazelisk") or which("bazel")
     if bazel_exec is None:
         print(
@@ -59,99 +59,104 @@ def bazel_build(args: list[str]) -> Callable:
         sys.exit(-1)
     cmd = [bazel_exec, "build"]
     cmd.extend(args)
-    return partial(run, cmd, cwd=MEDIAPIPE_DIR, check=True)
+    run(cmd, cwd=MEDIAPIPE_DIR, check=True)
 
 
-def build_android(args: Namespace, build_args: list[str]) -> list[Callable]:
-    build_type: str = args.type
+def build_android(args: Namespace) -> list[str]:
+    target: str = args.target
     arch: str = args.arch
-    skip_aar: bool = args.android_skip_aar
-    output: str = args.output
-    cmds = []
-    if not path.exists(ANDROID_PROJECT):
-        print("Error: android project does not exist.")
-        sys.exit(-1)
-    src = path.join(MEDIAPIPE_DIR, "bazel-bin/external/GDMP/GDMP/android/libGDMP.so")
+    build_type: str = args.type
+    build_aar: bool = args.android_aar
+    if build_aar:
+        if not path.exists(ANDROID_PROJECT):
+            print("Error: android project does not exist.")
+            sys.exit(-1)
+        gradlew_exec = path.join(ANDROID_PROJECT, "gradlew")
+        return [gradlew_exec, "clean", f"assemble{build_type.capitalize()}"]
+    if arch.startswith("arm64"):
+        arch = "arm64-v8a"
+    build_args = TARGET_ARGS[target]
+    build_args.append(f"--cpu={arch}")
+    return build_args
+
+
+def build_desktop(args: Namespace) -> list[str]:
+    target: str = args.target
+    arch: str = args.arch
+    build_args = TARGET_ARGS[target][sys.platform]
+    if sys.platform == "darwin":
+        if arch == "arm64":
+            build_args.append("--cpu=darwin_arm64")
+        elif arch == "x86_64":
+            build_args.append("--cpu=darwin_x86_64")
+            build_args.append("--define=xnn_enable_avxvnniint8=false")
+    elif sys.platform == "linux":
+        if arch == "arm64":
+            build_args.append("--copt=-fpermissive")
+    return build_args
+
+
+def build_ios(args: Namespace) -> list[str]:
+    target: str = args.target
+    arch: str = args.arch
+    build_args = TARGET_ARGS[target]
     if arch:
-        if skip_aar:
-            dst_dir = output
-        else:
-            dst_dir = path.join(ANDROID_PROJECT, "src/main/jniLibs")
-        if not dst_dir is None and path.exists(dst_dir):
-            cmds.append(partial(rmtree, dst_dir))
-        abi_list = arch.split(",")
-        for abi in abi_list:
-            if abi.startswith("arm64"):
-                abi = "arm64-v8a"
-            arg = [arg.format(abi=abi) for arg in build_args]
-            cmds.append(bazel_build(arg))
-            if dst_dir is None:
-                continue
-            src_opencv = path.join(
-                MEDIAPIPE_DIR,
-                "bazel-mediapipe/external/android_opencv/sdk/native/libs",
-                abi,
-                "libopencv_java4.so",
-            )
-            dst_jni = path.join(dst_dir, abi)
-            dst = path.join(dst_jni, path.basename(src))
-            dst_opencv = path.join(dst_jni, path.basename(src_opencv))
-            cmds.append(partial(makedirs, dst_jni, exist_ok=True))
-            cmds.append(partial(copyfile, src, dst))
-            cmds.append(partial(copyfile, src_opencv, dst_opencv))
-    if skip_aar:
-        return cmds
-    gradlew_exec = path.join(ANDROID_PROJECT, "gradlew")
-    gradle_build = [gradlew_exec, "clean", f"assemble{build_type.capitalize()}"]
-    cmds.append(partial(run, gradle_build, cwd=ANDROID_PROJECT, check=True))
-    return cmds
+        build_args.append(f"--ios_multi_cpus={arch}")
+    return build_args
 
 
-def get_build_cmds(args: Namespace) -> list[Callable]:
+def build(args: Namespace):
     target: str = args.target
     build_type: str = args.type
-    arch: str = args.arch
-    cmds = []
     if build_type == "release":
         mode = "opt"
     else:
         mode = "dbg"
     build_args = ["-c", mode]
-    if target == "desktop":
-        build_args.extend(TARGET_ARGS[target][sys.platform])
-        if sys.platform == "darwin":
-            if arch == "arm64":
-                build_args.append("--cpu=darwin_arm64")
-            elif arch == "x86_64":
-                build_args.append("--cpu=darwin_x86_64")
-                build_args.append("--define=xnn_enable_avxvnniint8=false")
-        elif sys.platform == "linux":
-            if arch == "arm64":
-                build_args.append("--copt=-fpermissive")
+    if target == "android":
+        build_aar: bool = args.android_aar
+        cmds = build_android(args)
+        if build_aar:
+            run(cmds, cwd=ANDROID_PROJECT, check=True)
+            return
+        else:
+            build_args.extend(cmds)
+    elif target == "desktop":
+        build_args.extend(build_desktop(args))
+    elif target == "ios":
+        build_args.extend(build_ios(args))
     else:
         build_args.extend(TARGET_ARGS[target])
-    if target == "android":
-        build_args.extend(["--cpu={abi}", TARGETS[target]])
-        cmds.extend(build_android(args, build_args))
-        return cmds
-    elif target == "ios" and arch:
-        build_args.append(f"--ios_multi_cpus={arch}")
     build_args.append(TARGETS[target])
-    cmd = bazel_build(build_args)
-    cmds.append(cmd)
-    return cmds
+    bazel_build(build_args)
 
 
 def copy_android(args: Namespace):
     build_type: str = args.type
-    skip_aar: bool = args.android_skip_aar
+    build_aar: bool = args.android_aar
     output: str = args.output
-    if skip_aar:
+    arch: str = args.arch
+    if build_aar:
+        src = path.join(ANDROID_PROJECT, f"build/outputs/aar/GDMP-{build_type}.aar")
+        gdap = path.join(ANDROID_PROJECT, "GDMP.gdap")
+        dst = path.join(output, "GDMP.android.aar")
+        copyfile(src, dst)
+        copyfile(gdap, path.join(output, path.basename(gdap)))
         return
-    src = path.join(ANDROID_PROJECT, f"build/outputs/aar/GDMP-{build_type}.aar")
-    gdap = path.join(ANDROID_PROJECT, "GDMP.gdap")
-    copyfile(src, path.join(output, "GDMP.android.aar"))
-    copyfile(gdap, path.join(output, path.basename(gdap)))
+    src = path.join(MEDIAPIPE_DIR, "bazel-bin/external/GDMP/GDMP/android/libGDMP.so")
+    filename = path.basename(src).split(".")
+    filename = ".".join([filename[0], "android", filename[-1]])
+    dst = path.join(output, filename)
+    copyfile(src, dst)
+    if arch.startswith("arm64"):
+        arch = "arm64-v8a"
+    src_opencv = path.join(
+        MEDIAPIPE_DIR,
+        "bazel-mediapipe/external/android_opencv/sdk/native/libs",
+        arch,
+        "libopencv_java4.so",
+    )
+    copyfile(src_opencv, path.join(output, path.basename(src_opencv)))
 
 
 def copy_desktop(args: Namespace):
@@ -172,6 +177,7 @@ def copy_desktop(args: Namespace):
     if path.exists(dst):
         remove(dst)
     copyfile(src, dst)
+    opencv_lib = []
     if desktop_platform == "linux":
         opencv_lib = glob.glob(
             path.join(
@@ -180,10 +186,6 @@ def copy_desktop(args: Namespace):
                 "libopencv_*.so.*",
             )
         )
-        if len(opencv_lib) == 0:
-            return
-        for lib in opencv_lib:
-            copyfile(lib, path.join(output, path.basename(lib)))
     elif desktop_platform == "macos":
         opencv_lib = glob.glob(
             path.join(
@@ -192,10 +194,6 @@ def copy_desktop(args: Namespace):
                 "libopencv_*.dylib",
             )
         )
-        if len(opencv_lib) == 0:
-            return
-        for lib in opencv_lib:
-            copyfile(lib, path.join(output, path.basename(lib)))
     elif desktop_platform == "windows":
         opencv_lib = glob.glob(
             path.join(
@@ -204,10 +202,8 @@ def copy_desktop(args: Namespace):
                 "opencv_*.dll",
             )
         )
-        if len(opencv_lib) == 0:
-            return
-        for lib in opencv_lib:
-            copyfile(lib, path.join(output, path.basename(lib)))
+    for lib in opencv_lib:
+        copyfile(lib, path.join(output, path.basename(lib)))
 
 
 def copy_ios(args: Namespace):
@@ -240,7 +236,7 @@ if __name__ == "__main__":
     parser.add_argument("--arch", default="", help="library architecture")
     parser.add_argument("--output", help="build output directory")
     parser.add_argument(
-        "--android-skip-aar", help="skip building aar for android", action="store_true"
+        "--android-aar", help="build android aar plugin", action="store_true"
     )
     args = parser.parse_args()
     if not args.arch:
@@ -249,7 +245,5 @@ if __name__ == "__main__":
             args.arch = "x86_64"
         elif machine in ["aarch64", "arm64"]:
             args.arch = "arm64"
-    cmds = get_build_cmds(args)
-    for cmd in cmds:
-        cmd()
+    build(args)
     copy_output(args)

@@ -18,7 +18,7 @@ public class GDMP extends GodotPlugin {
     private static GDMP singleton;
 
     static {
-        System.loadLibrary("GDMP");
+        System.loadLibrary("GDMP.android");
     }
 
     private final Godot godot;
