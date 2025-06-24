@@ -15,7 +15,7 @@ jobs:
   build:
     strategy:
       matrix:
-        arch: ["arm64-v8a", "x86_64"]
+        arch: ["arm64", "x86_64"]
     name: Android ${{ matrix.arch }}
     runs-on: ubuntu-24.04
     steps:
@@ -50,7 +50,7 @@ jobs:
         run: |
           source ./venv/bin/activate
           export ANDROID_NDK_HOME=$ANDROID_NDK_LATEST_HOME
-          python ./build.py android --android-skip-aar --arch ${{ matrix.arch }} --type release --output build/
+          python ./build.py android --arch ${{ matrix.arch }} --type release --output build/${{ matrix.arch }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -59,10 +59,9 @@ jobs:
           path: |
             ${{ env.work-dir }}/build/*
 
-  build-aar:
-    name: Android AAR
+  plugin:
+    name: Android Plugin
     runs-on: ubuntu-24.04
-    needs: build
     steps:
       - name: Set Working Directory
         if: ${{ inputs.working-directory != '' }}
@@ -89,23 +88,11 @@ jobs:
         run: |
           python ./setup.py
 
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ${{ env.work-dir }}
-          pattern: build-artifact-android-*
-
-      - name: Copy JNI Libraries
-        working-directory: ${{ env.work-dir }}
-        run: |
-          mkdir -p GDMP/android/aar/src/main/jniLibs
-          cp -a build-artifact-android-*/* GDMP/android/aar/src/main/jniLibs
-
       - name: Build
         working-directory: ${{ env.work-dir }}
         run: |
           source ./venv/bin/activate
-          python ./build.py android --type release --output build/
+          python ./build.py android --android-aar --type release --output build/
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4

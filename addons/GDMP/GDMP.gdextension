@@ -2,7 +2,6 @@
 
 entry_symbol = "mediapipe_library_init"
 compatibility_minimum = 4.2
-android_aar_plugin = true
 
 [libraries]
 
@@ -11,6 +10,8 @@ linux.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.linux.so"
 macos.arm64 = "res://addons/GDMP/libs/arm64/libGDMP.macos.dylib"
 macos.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.macos.dylib"
 windows.x86_64 = "res://addons/GDMP/libs/x86_64/GDMP.windows.dll"
+android.arm64 = "res://addons/GDMP/libs/arm64/libGDMP.android.so"
+android.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.android.so"
 ios = "res://addons/GDMP/libs/GDMP.ios.framework"
 web = "res://addons/GDMP/libs/GDMP.web.wasm"
 
@@ -19,4 +20,10 @@ web = "res://addons/GDMP/libs/GDMP.web.wasm"
 windows.x86_64 = {
     "res://addons/GDMP/libs/x86_64/opencv_core4110.dll": "",
     "res://addons/GDMP/libs/x86_64/opencv_imgproc4110.dll": "",
+}
+android.arm64 = {
+    "res://addons/GDMP/libs/arm64/libopencv_java4.so": "",
+}
+android.x86_64 = {
+    "res://addons/GDMP/libs/x86_64/libopencv_java4.so": "",
 }

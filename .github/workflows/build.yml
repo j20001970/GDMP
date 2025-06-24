@@ -80,7 +80,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ${{ env.work-dir }}
-          pattern: build-artifact-!(android-*)
+          pattern: build-artifact-*
 
       - name: Assemble
         working-directory: ${{ env.work-dir }}
