@@ -42,6 +42,11 @@ Run `build.py --help` to see all options.
     to build library for `arm64-v8a` architecture.
 3. Run `build.py android --android-aar` to build Android plugin.
 
+**Linking prebuilt OpenCV**: GDMP builds OpenCV from source on Android by default, if you want to use pre-built OpenCV libraries, you will need to:
+
+1. Comment out `--define=OPENCV=source` from `build.py` to make Bazel using prebuilt OpenCV rules.
+2. Make sure to add `libopencv_java4.so` to the dependencies list of Android targets in `addons/GDMP/GDMP.gdnlib` for your project.
+
 ## Building for iOS
 1. Install [Xcode](https://developer.apple.com/xcode), then switch to installed Xcode by using `xcode-select`
 2. Run `build.py ios` to build iOS library

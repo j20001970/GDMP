@@ -22,8 +22,10 @@ TARGETS = {
 
 TARGET_ARGS = {
     "android": [
+        "--extra_toolchains=@androidndk//:all",
         "--config=android",
         "--copt=-fPIC",
+        "--define=OPENCV=source",
     ],
     "desktop": {
         "linux": [
@@ -150,13 +152,17 @@ def copy_android(args: Namespace):
     copyfile(src, dst)
     if arch.startswith("arm64"):
         arch = "arm64-v8a"
-    src_opencv = path.join(
-        MEDIAPIPE_DIR,
-        "bazel-mediapipe/external/android_opencv/sdk/native/libs",
-        arch,
-        "libopencv_java4.so",
-    )
-    copyfile(src_opencv, path.join(output, path.basename(src_opencv)))
+    opencv_lib = []
+    opencv_lib.extend(glob.glob(
+        path.join(
+            MEDIAPIPE_DIR,
+            "bazel-mediapipe/external/android_opencv/sdk/native/libs",
+            arch,
+            "libopencv_java4.so",
+        )
+    ))
+    for lib in opencv_lib:
+        copyfile(lib, path.join(output, path.basename(lib)))
 
 
 def copy_desktop(args: Namespace):
