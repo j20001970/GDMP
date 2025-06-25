@@ -57,12 +57,16 @@ diff --git a/third_party/BUILD b/third_party/BUILD
          "WITH_OPENCL": "OFF",
          "WITH_WEBP": "OFF",
          # Optimization flags
-@@ -252,48 +248,62 @@ cmake(
+@@ -252,48 +248,66 @@ cmake(
          # ccache would be able to work across sandboxed Bazel builds, either.
          # In any case, Bazel does its own caching of the rule's outputs.
          "ENABLE_CCACHE": "OFF",
 -    },
 +    } | select({
++        "@platforms//os:android": {
++            "BUILD_ANDROID_PROJECTS": "OFF",
++            "OPENCV_LIB_ARCHIVE_INSTALL_PATH": "lib",
++        },
 +        "@platforms//os:windows": {
 +            "BUILD_SHARED_LIBS": "ON",
 +            "OPENCV_SKIP_VISIBILITY_HIDDEN": "ON",
@@ -123,12 +127,12 @@ diff --git a/third_party/BUILD b/third_party/BUILD
 +        "//conditions:default": None,
 +    }),
 +    out_include_dir = select({
++        "@platforms//os:android": "sdk/native/jni/include",
 +        "@platforms//os:windows": "include",
 +        "//conditions:default": "include/opencv4",
 +    }),
      out_shared_libs = select({
          "@bazel_tools//src/conditions:darwin": ["libopencv_%s.%s.dylib" % (module, OPENCV_SO_VERSION) for module in OPENCV_MODULES],
-+        "@platforms//os:emscripten": None,
 +        "@platforms//os:windows": ["opencv_%s%s.dll" % (module, OPENCV_DLL_VERSION) for module in OPENCV_MODULES],
          # Only the shared objects listed here will be linked in the directory
          # that Bazel adds to the RUNPATH of dependent executables. You cannot
