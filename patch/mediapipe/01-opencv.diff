@@ -51,7 +51,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
          "WITH_OPENCL": "OFF",
          "WITH_WEBP": "OFF",
          # Optimization flags
-@@ -252,48 +248,66 @@ cmake(
+@@ -252,48 +248,68 @@ cmake(
          # ccache would be able to work across sandboxed Bazel builds, either.
          # In any case, Bazel does its own caching of the rule's outputs.
          "ENABLE_CCACHE": "OFF",
@@ -60,6 +60,8 @@ diff --git a/third_party/BUILD b/third_party/BUILD
 +        "@platforms//os:android": {
 +            "BUILD_ANDROID_PROJECTS": "OFF",
 +            "OPENCV_LIB_ARCHIVE_INSTALL_PATH": "lib",
++            "WITH_CAROTENE": 'OFF',
++            "WITH_KLEIDICV": "OFF",
 +        },
 +        "@platforms//os:windows": {
 +            "BUILD_SHARED_LIBS": "ON",
