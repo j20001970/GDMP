@@ -101,8 +101,6 @@ def workspace_android_rules() -> None:
     with open(MEDIAPIPE_WORKSPACE, "r") as f:
         content = f.read()
     with open(MEDIAPIPE_WORKSPACE, "a") as f:
-        if not "androidsdk" in content:
-            f.write('#android_sdk_repository(name = "androidsdk")\n')
         if not "androidndk" in content:
             f.write('#android_ndk_repository(name = "androidndk", api_level=21)\n')
         if not "android/crosstool" in content:
