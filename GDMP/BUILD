@@ -26,7 +26,10 @@ cc_library(
         "//GDMP/tasks/containers:landmark",
         "//GDMP/util:resource_util",
         "@godot-cpp//:godot",
-    ] + CALCULATORS + TASKS,
+    ] + select({
+        "@platforms//os:android": ["//GDMP/android:asset_util"],
+        "//conditions:default": [],
+    }) + CALCULATORS + TASKS,
     alwayslink = 1,
 )
 

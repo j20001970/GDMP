@@ -6,8 +6,6 @@ import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
 import androidx.collection.ArraySet;
 
-import com.google.mediapipe.framework.AndroidAssetUtil;
-
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.GodotPlugin;
 import org.godotengine.godot.plugin.SignalInfo;
@@ -17,15 +15,10 @@ import java.util.Set;
 public class GDMP extends GodotPlugin {
     private static GDMP singleton;
 
-    static {
-        System.loadLibrary("GDMP.android");
-    }
-
     private final Godot godot;
 
     public GDMP(Godot godot) {
         super(godot);
-        AndroidAssetUtil.initializeNativeAssetManager(godot.getContext());
         this.godot = godot;
         singleton = this;
     }

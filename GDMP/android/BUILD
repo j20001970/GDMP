@@ -1,9 +1,9 @@
 cc_library(
     name = "asset_util",
     srcs = ["asset_util.cc"],
+    hdrs = ["asset_util.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "@mediapipe//mediapipe/java/com/google/mediapipe/framework/jni:jni_util",
         "@mediapipe//mediapipe/util/android:asset_manager_util",
     ],
     alwayslink = 1,
@@ -17,7 +17,6 @@ cc_binary(
     linkshared = 1,
     visibility = ["//visibility:public"],
     deps = [
-        ":asset_util",
         "//GDMP",
     ],
 )

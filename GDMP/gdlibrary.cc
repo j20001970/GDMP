@@ -23,6 +23,10 @@
 #include "GDMP/tasks/task_runner.h"
 #include "GDMP/util/resource_util.h"
 
+#ifdef __ANDROID__
+#include "GDMP/android/asset_util.h"
+#endif
+
 using namespace godot;
 
 extern "C" void GDN_EXPORT mediapipe_gdnative_init(godot_gdnative_init_options *o) {
@@ -35,6 +39,10 @@ extern "C" void GDN_EXPORT mediapipe_gdnative_terminate(godot_gdnative_terminate
 
 extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	Godot::nativescript_init(handle);
+#ifdef __ANDROID__
+	JNIEnv *env = android_api->godot_android_get_env();
+	initialize_asset_manager(env);
+#endif
 	// Protobuf Message
 	register_class<MediaPipeProto>();
 	// Framework
