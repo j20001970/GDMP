@@ -41,7 +41,6 @@ jobs:
       - name: Android SDK/NDK Patch
         working-directory: ${{ env.work-dir }}
         run: |
-          echo "android_sdk_repository(name = \"androidsdk\")" >> mediapipe/WORKSPACE
           echo "android_ndk_repository(name = \"androidndk\", api_level=21)" >> mediapipe/WORKSPACE
           echo "bind(name = \"android/crosstool\", actual = \"@androidndk//:toolchain\")" >> mediapipe/WORKSPACE
 
