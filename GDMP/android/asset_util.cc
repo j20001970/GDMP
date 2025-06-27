@@ -1,15 +1,13 @@
-#include "mediapipe/java/com/google/mediapipe/framework/jni/jni_util.h"
+#include "asset_util.h"
+
 #include "mediapipe/util/android/asset_manager_util.h"
 
-#define ANDROID_ASSET_UTIL_METHOD(METHOD_NAME) \
-	Java_com_google_mediapipe_framework_AndroidAssetUtil_##METHOD_NAME
-
-extern "C" JNIEXPORT jboolean JNICALL ANDROID_ASSET_UTIL_METHOD(nativeInitializeAssetManager)(
-		JNIEnv *env, jclass clz,
-		jobject android_context,
-		jstring cache_dir_path) {
+bool initialize_asset_manager(JNIEnv *env) {
+	jclass cls = env->FindClass("android/app/ActivityThread");
+	jmethodID _current_activity_thread = env->GetStaticMethodID(cls, "currentActivityThread", "()Landroid/app/ActivityThread;");
+	jobject activity_thread = env->CallStaticObjectMethod(cls, _current_activity_thread);
+	jmethodID _get_application = env->GetMethodID(cls, "getApplication", "()Landroid/app/Application;");
+	jobject context = env->CallObjectMethod(activity_thread, _get_application);
 	mediapipe::AssetManager *asset_manager = Singleton<mediapipe::AssetManager>::get();
-	return asset_manager->InitializeFromActivity(
-			env, android_context,
-			mediapipe::android::JStringToStdString(env, cache_dir_path));
+	return asset_manager->InitializeFromContext(env, context, "");
 }
