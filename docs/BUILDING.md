@@ -40,7 +40,6 @@ Run `build.py --help` to see all options.
     build.py android --arch arm64-v8a
     ```
     to build library for `arm64-v8a` architecture.
-3. Run `build.py android --android-aar` to build Android plugin.
 
 **Linking prebuilt OpenCV**: GDMP builds OpenCV from source on Android by default, if you want to use pre-built OpenCV libraries, you will need to:
 
