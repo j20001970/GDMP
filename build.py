@@ -5,66 +5,17 @@ import platform
 import sys
 import zipfile
 from argparse import ArgumentParser, Namespace
-from collections.abc import Callable
-from functools import partial
 from os import makedirs, path, remove
-from shutil import copyfile, rmtree, which
+from shutil import copyfile, which
 from subprocess import run
 
 MEDIAPIPE_DIR = path.join(path.dirname(__file__), "mediapipe")
-ANDROID_PROJECT = path.join(path.dirname(__file__), "GDMP", "android", "aar")
 
 TARGETS = {
     "android": "@GDMP//GDMP/android:GDMP",
     "desktop": "@GDMP//GDMP/desktop:GDMP",
     "ios": "@GDMP//GDMP/ios:GDMP",
     "web": "@GDMP//GDMP/web:GDMP",
-}
-
-TARGET_ARGS = {
-    "android": [
-        "--extra_toolchains=@androidndk//:all",
-        "--config=android",
-        "--copt=-fPIC",
-        "--define=OPENCV=source",
-    ],
-    "desktop": {
-        "linux": [
-            "--copt=-DMESA_EGL_NO_X11_HEADERS",
-            "--copt=-DEGL_NO_X11",
-            "--copt=-fPIC",
-            "--define=OPENCV=source",
-        ],
-        "darwin": [
-            "--define=OPENCV=source",
-            "--define=MEDIAPIPE_DISABLE_GPU=1",
-        ],
-        "win32": [
-            "--conlyopt=/std:c11",
-            "--conlyopt=/experimental:c11atomics",
-            "--define=OPENCV=source",
-            "--define=MEDIAPIPE_DISABLE_GPU=1",
-        ],
-    },
-    "ios": [
-        "--apple_generate_dsym=false",
-        "--config=ios",
-    ],
-    "web": [
-        "--incompatible_enable_cc_toolchain_resolution",
-        "--crosstool_top=@emsdk//emscripten_toolchain:everything",
-        "--host_crosstool_top=@bazel_tools//tools/cpp:toolchain",
-        "--copt=-D_LARGEFILE64_SOURCE",
-        "--copt=-sSIDE_MODULE=1",
-        "--copt=-sSUPPORT_LONGJMP='wasm'",
-        "--copt=-pthread",
-        "--linkopt=-sSIDE_MODULE=1",
-        "--linkopt=-sSUPPORT_LONGJMP='wasm'",
-        "--linkopt=-sWASM_BIGINT",
-        "--linkopt=-pthread",
-        "--define=OPENCV=source",
-        "--define=MEDIAPIPE_DISABLE_GPU=1",
-    ],
 }
 
 
@@ -81,27 +32,40 @@ def bazel_build(args: list[str]):
 
 
 def build_android(args: Namespace) -> list[str]:
-    target: str = args.target
     arch: str = args.arch
-    build_type: str = args.type
-    build_aar: bool = args.android_aar
-    if build_aar:
-        if not path.exists(ANDROID_PROJECT):
-            print("Error: android project does not exist.")
-            sys.exit(-1)
-        gradlew_exec = path.join(ANDROID_PROJECT, "gradlew")
-        return [gradlew_exec, "clean", f"assemble{build_type.capitalize()}"]
+    build_args = [
+        "--extra_toolchains=@androidndk//:all",
+        "--config=android",
+        "--copt=-fPIC",
+        "--define=OPENCV=source",
+    ]
     if arch.startswith("arm64"):
         arch = "arm64-v8a"
-    build_args = TARGET_ARGS[target]
     build_args.append(f"--cpu={arch}")
     return build_args
 
 
 def build_desktop(args: Namespace) -> list[str]:
-    target: str = args.target
     arch: str = args.arch
-    build_args = TARGET_ARGS[target][sys.platform]
+    desktop_args = {
+        "linux": [
+            "--copt=-DMESA_EGL_NO_X11_HEADERS",
+            "--copt=-DEGL_NO_X11",
+            "--copt=-fPIC",
+            "--define=OPENCV=source",
+        ],
+        "darwin": [
+            "--define=OPENCV=source",
+            "--define=MEDIAPIPE_DISABLE_GPU=1",
+        ],
+        "win32": [
+            "--conlyopt=/std:c11",
+            "--conlyopt=/experimental:c11atomics",
+            "--define=OPENCV=source",
+            "--define=MEDIAPIPE_DISABLE_GPU=1",
+        ],
+    }
+    build_args = desktop_args[sys.platform]
     if sys.platform == "darwin":
         if arch == "arm64":
             build_args.append("--cpu=darwin_arm64")
@@ -115,11 +79,32 @@ def build_desktop(args: Namespace) -> list[str]:
 
 
 def build_ios(args: Namespace) -> list[str]:
-    target: str = args.target
     arch: str = args.arch
-    build_args = TARGET_ARGS[target]
+    build_args = [
+        "--apple_generate_dsym=false",
+        "--config=ios",
+    ]
     if arch:
         build_args.append(f"--ios_multi_cpus={arch}")
+    return build_args
+
+
+def build_web(args: Namespace) -> list[str]:
+    build_args = [
+        "--incompatible_enable_cc_toolchain_resolution",
+        "--crosstool_top=@emsdk//emscripten_toolchain:everything",
+        "--host_crosstool_top=@bazel_tools//tools/cpp:toolchain",
+        "--copt=-D_LARGEFILE64_SOURCE",
+        "--copt=-sSIDE_MODULE=1",
+        "--copt=-sSUPPORT_LONGJMP='wasm'",
+        "--copt=-pthread",
+        "--linkopt=-sSIDE_MODULE=1",
+        "--linkopt=-sSUPPORT_LONGJMP='wasm'",
+        "--linkopt=-sWASM_BIGINT",
+        "--linkopt=-pthread",
+        "--define=OPENCV=source",
+        "--define=MEDIAPIPE_DISABLE_GPU=1",
+    ]
     return build_args
 
 
@@ -131,34 +116,21 @@ def build(args: Namespace):
     else:
         mode = "dbg"
     build_args = ["-c", mode]
-    if target == "android":
-        build_aar: bool = args.android_aar
-        cmds = build_android(args)
-        if build_aar:
-            run(cmds, cwd=ANDROID_PROJECT, check=True)
-            return
-        else:
-            build_args.extend(cmds)
-    elif target == "desktop":
-        build_args.extend(build_desktop(args))
-    elif target == "ios":
-        build_args.extend(build_ios(args))
-    else:
-        build_args.extend(TARGET_ARGS[target])
+    build_targets = {
+        "android": build_android,
+        "desktop": build_desktop,
+        "ios": build_ios,
+        "web": build_web,
+    }
+    target_args = build_targets[target](args)
+    build_args.extend(target_args)
     build_args.append(TARGETS[target])
     bazel_build(build_args)
 
 
 def copy_android(args: Namespace):
-    build_type: str = args.type
-    build_aar: bool = args.android_aar
     output: str = args.output
     arch: str = args.arch
-    if build_aar:
-        src = path.join(ANDROID_PROJECT, f"build/outputs/aar/GDMP-{build_type}.aar")
-        dst = path.join(output, "GDMP.android.aar")
-        copyfile(src, dst)
-        return
     src = path.join(MEDIAPIPE_DIR, "bazel-bin/external/GDMP/GDMP/android/libGDMP.so")
     filename = path.basename(src).split(".")
     filename = ".".join([filename[0], "android", filename[-1]])
@@ -166,15 +138,14 @@ def copy_android(args: Namespace):
     copyfile(src, dst)
     if arch.startswith("arm64"):
         arch = "arm64-v8a"
-    opencv_lib = []
-    opencv_lib.extend(glob.glob(
+    opencv_lib = glob.glob(
         path.join(
             MEDIAPIPE_DIR,
             "bazel-mediapipe/external/android_opencv/sdk/native/libs",
             arch,
             "libopencv_java4.so",
         )
-    ))
+    )
     for lib in opencv_lib:
         copyfile(lib, path.join(output, path.basename(lib)))
 
@@ -263,9 +234,6 @@ if __name__ == "__main__":
     )
     parser.add_argument("--arch", default="", help="library architecture")
     parser.add_argument("--output", help="build output directory")
-    parser.add_argument(
-        "--android-aar", help="build android aar plugin", action="store_true"
-    )
     args = parser.parse_args()
     if not args.arch:
         machine = platform.machine().lower()
