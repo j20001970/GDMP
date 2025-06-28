@@ -7,8 +7,6 @@ cc_library(
         "//GDMP/gpu:gpu_resources",
         "@godot-cpp//:godot",
     ] + select({
-        "@platforms//os:android": [":camera_helper_android"],
-        "@platforms//os:ios": [":camera_helper_ios"],
         "//conditions:default": [":camera_helper_stub"],
     }),
 )

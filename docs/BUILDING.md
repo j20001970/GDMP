@@ -28,7 +28,7 @@ Run `build.py --help` to see all options.
 ## Building for Android
 **Windows users**: Cross-compiling Android library on Windows is currently not supported, please set up WSL or Linux VM before proceed to the instructions below.
 
-1. Install Android SDK and NDK, then setting `ANDROID_HOME` and `ANDROID_NDK_HOME` environment variable that point to your install location.
+1. Install Android NDK, then setting `ANDROID_NDK_HOME` environment variable that point to your install location.
 
     You will also need to uncomment the last 2 lines of `mediapipe/WORKSPACE` (`android_ndk_repository` and its `bind` alias) that added eariler during setup.
 
@@ -40,7 +40,6 @@ Run `build.py --help` to see all options.
     build.py android --arch arm64-v8a
     ```
     to build library for `arm64-v8a` architecture.
-3. Run `build.py android --android-aar` to build Android plugin.
 
 **Linking prebuilt OpenCV**: GDMP builds OpenCV from source on Android by default, if you want to use pre-built OpenCV libraries, you will need to:
 
