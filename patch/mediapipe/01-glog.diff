@@ -1,17 +1,63 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -118,10 +159,10 @@ http_archive(
- # 2020-08-21
- http_archive(
-     name = "com_github_glog_glog",
--    sha256 = "8a83bf982f37bb70825df71a9709fa90ea9f4447fb3c099e1d720a439d88bad6",
--    strip_prefix = "glog-0.6.0",
-+    sha256 = "2c6e4643814bcf059b6c9f941f7403153c524a80a2e436a49ac4f4faa4b44bb0",
-+    strip_prefix = "glog-31429d85b8ffad6027dcf821242687f3c6c85df9",
-     urls = [
--        "https://github.com/google/glog/archive/v0.6.0.tar.gz",
-+        "https://github.com/google/glog/archive/31429d85b8ffad6027dcf821242687f3c6c85df9.tar.gz",
+@@ -154,11 +201,22 @@ http_archive(
      ],
  )
  
++http_archive(
++    name = "com_github_glog_glog_emscripten",
++    build_file = "@//third_party:glog_no_gflags.BUILD",
++    sha256 = "00e4a87e87b7e7612f519a41e491f16623b12423620006f59f5688bfd8d13b08",
++    strip_prefix = "glog-0.7.1",
++    urls = [
++        "https://github.com/google/glog/archive/v0.7.1.tar.gz",
++    ],
++)
++
+ # 2023-06-05
+ # This version of Glog is required for Windows support, but currently causes
+ # crashes on some Android devices.
+ http_archive(
+     name = "com_github_glog_glog_windows",
++    build_file = "@//third_party:glog_no_gflags.BUILD",
+     patch_args = [
+         "-p1",
+     ],
+diff --git a/third_party/BUILD b/third_party/BUILD
+--- a/third_party/BUILD
++++ b/third_party/BUILD
+@@ -40,29 +40,14 @@ cc_library(
+     name = "glog",
+     visibility = ["//visibility:public"],
+     deps = select({
+-        "//mediapipe:android_x86": [
+-            "@com_github_glog_glog_no_gflags//:glog",
+-        ],
+-        "//mediapipe:android_x86_64": [
+-            "@com_github_glog_glog_no_gflags//:glog",
+-        ],
+-        "//mediapipe:android_arm": [
+-            "@com_github_glog_glog_no_gflags//:glog",
+-        ],
+-        "//mediapipe:android_arm64": [
+-            "@com_github_glog_glog_no_gflags//:glog",
+-        ],
+-        "//mediapipe:ios": [
+-            "@com_github_glog_glog_no_gflags//:glog",
+-        ],
+-        "//mediapipe:macos": [
+-            "@com_github_glog_glog//:glog",
+-        ],
+         "//mediapipe:windows": [
+             "@com_github_glog_glog_windows//:glog",
+         ],
++        "//mediapipe:emscripten": [
++            "@com_github_glog_glog_emscripten//:glog",
++        ],
+         "//conditions:default": [
+-            "@com_github_glog_glog//:glog",
++            "@com_github_glog_glog_no_gflags//:glog",
+         ],
+     }),
+ )
