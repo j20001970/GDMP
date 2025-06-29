@@ -10,6 +10,8 @@ DATA = [
 
 # List of enabled tasks.
 TASKS = [
+    "//GDMP/tasks/audio:audio_classifier",
+    "//GDMP/tasks/audio:audio_embedder",
     "//GDMP/tasks/vision:face_detector",
     "//GDMP/tasks/vision:face_landmarker",
     "//GDMP/tasks/vision:face_stylizer",
