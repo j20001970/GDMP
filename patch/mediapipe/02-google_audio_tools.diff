@@ -1,0 +1,392 @@
+diff --git a/WORKSPACE b/WORKSPACE
+--- a/WORKSPACE
++++ b/WORKSPACE
+@@ -488,6 +488,28 @@ http_archive(
+     urls = ["https://github.com/google/multichannel-audio-tools/archive/bbf15de4b7cd825d650296d21917afc07e8fe18b.tar.gz"],
+ )
+ 
++http_archive(
++    name = "com_google_audio_tools_emscripten",
++    patch_args = ["-p1"],
++    # TODO: Fix this in AudioTools directly
++    patches = ["@//third_party:com_google_audio_tools_fixes.diff"],
++    repo_mapping = {"@com_github_glog_glog": "@com_github_glog_glog_emscripten"},
++    sha256 = "7d7227cc6bb1f8917a9c9013e8f3578ec681c49e20fe2fc38ba90965394de60c",
++    strip_prefix = "multichannel-audio-tools-bbf15de4b7cd825d650296d21917afc07e8fe18b",
++    urls = ["https://github.com/google/multichannel-audio-tools/archive/bbf15de4b7cd825d650296d21917afc07e8fe18b.tar.gz"],
++)
++
++http_archive(
++    name = "com_google_audio_tools_windows",
++    patch_args = ["-p1"],
++    # TODO: Fix this in AudioTools directly
++    patches = ["@//third_party:com_google_audio_tools_fixes.diff"],
++    repo_mapping = {"@com_github_glog_glog": "@com_github_glog_glog_windows"},
++    sha256 = "7d7227cc6bb1f8917a9c9013e8f3578ec681c49e20fe2fc38ba90965394de60c",
++    strip_prefix = "multichannel-audio-tools-bbf15de4b7cd825d650296d21917afc07e8fe18b",
++    urls = ["https://github.com/google/multichannel-audio-tools/archive/bbf15de4b7cd825d650296d21917afc07e8fe18b.tar.gz"],
++)
++
+ http_archive(
+     name = "pffft",
+     build_file = "@//third_party:pffft.BUILD",
+diff --git a/mediapipe/calculators/audio/BUILD b/mediapipe/calculators/audio/BUILD
+--- a/mediapipe/calculators/audio/BUILD
++++ b/mediapipe/calculators/audio/BUILD
+@@ -166,9 +166,18 @@ cc_library(
+         "//mediapipe/util:time_series_util",
+         "@com_google_absl//absl/log:absl_check",
+         "@com_google_absl//absl/strings",
+-        "@com_google_audio_tools//audio/dsp/mfcc",
+         "@eigen_archive//:eigen3",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp/mfcc",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp/mfcc",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp/mfcc",
++        ],
++    }),
+     alwayslink = 1,
+ )
+ 
+@@ -187,10 +196,21 @@ cc_library(
+         "@com_google_absl//absl/log:absl_check",
+         "@com_google_absl//absl/log:absl_log",
+         "@com_google_absl//absl/strings",
+-        "@com_google_audio_tools//audio/dsp:resampler",
+-        "@com_google_audio_tools//audio/dsp:resampler_q",
+         "@eigen_archive//:eigen3",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp:resampler",
++            "@com_google_audio_tools_emscripten//audio/dsp:resampler_q",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp:resampler",
++            "@com_google_audio_tools_windows//audio/dsp:resampler_q",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp:resampler",
++            "@com_google_audio_tools//audio/dsp:resampler_q",
++        ],
++    }),
+     alwayslink = 1,
+ )
+ 
+@@ -215,9 +235,18 @@ cc_library(
+         "//mediapipe/util:time_series_util",
+         "@com_google_absl//absl/log:absl_check",
+         "@com_google_absl//absl/status",
+-        "@com_google_audio_tools//audio/dsp:resampler_q",
+         "@eigen_archive//:eigen3",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp:resampler_q",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp:resampler_q",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp:resampler_q",
++        ],
++    }),
+     alwayslink = 1,
+ )
+ 
+@@ -252,10 +281,21 @@ cc_library(
+         "//mediapipe/util:time_series_util",
+         "@com_google_absl//absl/status",
+         "@com_google_absl//absl/strings",
+-        "@com_google_audio_tools//audio/dsp:window_functions",
+-        "@com_google_audio_tools//audio/dsp/spectrogram",
+         "@eigen_archive//:eigen3",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp:window_functions",
++            "@com_google_audio_tools_emscripten//audio/dsp/spectrogram",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp:window_functions",
++            "@com_google_audio_tools_windows//audio/dsp/spectrogram",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp:window_functions",
++            "@com_google_audio_tools//audio/dsp/spectrogram",
++        ],
++    }),
+     alwayslink = 1,
+ )
+ 
+@@ -272,9 +312,18 @@ cc_library(
+         "//mediapipe/framework/port:ret_check",
+         "//mediapipe/util:time_series_util",
+         "@com_google_absl//absl/log:absl_check",
+-        "@com_google_audio_tools//audio/dsp:window_functions",
+         "@eigen_archive//:eigen3",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp:window_functions",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp:window_functions",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp:window_functions",
++        ],
++    }),
+     alwayslink = 1,
+ )
+ 
+@@ -309,9 +358,18 @@ cc_library(
+         "//mediapipe/framework/port:status",
+         "//mediapipe/util:time_series_util",
+         "@com_google_absl//absl/status",
+-        "@com_google_audio_tools//audio/linear_filters:two_tap_fir_filter",
+         "@eigen_archive//:eigen3",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/linear_filters:two_tap_fir_filter",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/linear_filters:two_tap_fir_filter",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/linear_filters:two_tap_fir_filter",
++        ],
++    }),
+     alwayslink = 1,
+ )
+ 
+@@ -335,9 +393,18 @@ cc_test(
+         "@com_google_absl//absl/log:absl_log",
+         "@com_google_absl//absl/status",
+         "@com_google_absl//absl/strings",
+-        "@com_google_audio_tools//audio/dsp:number_util",
+         "@eigen_archive//:eigen3",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp:number_util",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp:number_util",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp:number_util",
++        ],
++    }),
+ )
+ 
+ cc_test(
+@@ -384,9 +451,18 @@ cc_test(
+         "//mediapipe/framework/port:gtest_main",
+         "//mediapipe/framework/port:status",
+         "//mediapipe/util:time_series_test_util",
+-        "@com_google_audio_tools//audio/dsp/mfcc",
+         "@eigen_archive//:eigen3",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp/mfcc",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp/mfcc",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp/mfcc",
++        ],
++    }),
+ )
+ 
+ cc_test(
+@@ -405,9 +481,18 @@ cc_test(
+         "//mediapipe/util:time_series_util",
+         "@com_google_absl//absl/log:absl_log",
+         "@com_google_absl//absl/status",
+-        "@com_google_audio_tools//audio/dsp:number_util",
+         "@eigen_archive//:eigen3",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp:number_util",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp:number_util",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp:number_util",
++        ],
++    }),
+ )
+ 
+ cc_test(
+@@ -458,9 +543,18 @@ cc_test(
+         "//mediapipe/util:time_series_util",
+         "@com_google_absl//absl/log:absl_log",
+         "@com_google_absl//absl/status",
+-        "@com_google_audio_tools//audio/dsp:window_functions",
+         "@eigen_archive//:eigen3",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp:window_functions",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp:window_functions",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp:window_functions",
++        ],
++    }),
+ )
+ 
+ cc_test(
+@@ -477,11 +571,24 @@ cc_test(
+         "//mediapipe/framework/port:status",
+         "//mediapipe/framework/tool:validate_type",
+         "//mediapipe/util:time_series_test_util",
+-        "@com_google_audio_tools//audio/dsp:resampler",
+-        "@com_google_audio_tools//audio/dsp:resampler_q",
+-        "@com_google_audio_tools//audio/dsp:signal_vector_util",
+         "@eigen_archive//:eigen3",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp:resampler",
++            "@com_google_audio_tools_emscripten//audio/dsp:resampler_q",
++            "@com_google_audio_tools_emscripten//audio/dsp:signal_vector_util",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp:resampler",
++            "@com_google_audio_tools_windows//audio/dsp:resampler_q",
++            "@com_google_audio_tools_windows//audio/dsp:signal_vector_util",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp:resampler",
++            "@com_google_audio_tools//audio/dsp:resampler_q",
++            "@com_google_audio_tools//audio/dsp:signal_vector_util",
++        ],
++    }),
+ )
+ 
+ cc_test(
+@@ -499,7 +606,16 @@ cc_test(
+         "//mediapipe/util:time_series_test_util",
+         "@com_google_absl//absl/status",
+         "@com_google_absl//absl/types:span",
+-        "@com_google_audio_tools//audio/dsp:resampler_q",
+         "@eigen_archive//:eigen3",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp:resampler_q",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp:resampler_q",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp:resampler_q",
++        ],
++    }),
+ )
+diff --git a/mediapipe/calculators/tensor/BUILD b/mediapipe/calculators/tensor/BUILD
+--- a/mediapipe/calculators/tensor/BUILD
++++ b/mediapipe/calculators/tensor/BUILD
+@@ -102,11 +102,22 @@ cc_library(
+         "@com_google_absl//absl/status",
+         "@com_google_absl//absl/status:statusor",
+         "@com_google_absl//absl/strings:str_format",
+-        "@com_google_audio_tools//audio/dsp:resampler_q",
+-        "@com_google_audio_tools//audio/dsp:window_functions",
+         "@org_tensorflow//tensorflow/lite/c:common",
+         "@pffft",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp:resampler_q",
++            "@com_google_audio_tools_emscripten//audio/dsp:window_functions",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp:resampler_q",
++            "@com_google_audio_tools_windows//audio/dsp:window_functions",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp:resampler_q",
++            "@com_google_audio_tools//audio/dsp:window_functions",
++        ],
++    }),
+     alwayslink = 1,
+ )
+ 
+@@ -125,9 +136,18 @@ cc_test(
+         "//mediapipe/framework/port:gtest_main",
+         "//mediapipe/framework/port:parse_text_proto",
+         "@com_google_absl//absl/strings",
+-        "@com_google_audio_tools//audio/dsp:resampler_q",
+         "@org_tensorflow//tensorflow/lite/c:common",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp:resampler_q",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp:resampler_q",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp:resampler_q",
++        ],
++    }),
+ )
+ 
+ mediapipe_proto_library(
+@@ -151,9 +171,18 @@ cc_library(
+         "//mediapipe/framework/port:ret_check",
+         "@com_google_absl//absl/algorithm:container",
+         "@com_google_absl//absl/status",
+-        "@com_google_audio_tools//audio/dsp:window_functions",
+         "@pffft",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp:window_functions",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp:window_functions",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp:window_functions",
++        ],
++    }),
+     alwayslink = 1,
+ )
+ 
+@@ -171,8 +200,17 @@ cc_test(
+         "//mediapipe/framework/port:parse_text_proto",
+         "@com_google_absl//absl/status",
+         "@com_google_absl//absl/strings",
+-        "@com_google_audio_tools//audio/dsp:window_functions",
+-    ],
++    ] + select({
++        "//mediapipe:emscripten": [
++            "@com_google_audio_tools_emscripten//audio/dsp:window_functions",
++        ],
++        "//mediapipe:windows": [
++            "@com_google_audio_tools_windows//audio/dsp:window_functions",
++        ],
++        "//conditions:default": [
++            "@com_google_audio_tools//audio/dsp:window_functions",
++        ],
++    }),
+ )
+ 
+ mediapipe_proto_library(
