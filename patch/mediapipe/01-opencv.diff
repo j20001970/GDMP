@@ -15,19 +15,25 @@ diff --git a/WORKSPACE b/WORKSPACE
 diff --git a/third_party/BUILD b/third_party/BUILD
 --- a/third_party/BUILD
 +++ b/third_party/BUILD
-@@ -188,9 +188,6 @@ bzl_library(
+@@ -188,12 +188,6 @@ bzl_library(
  # linker, so if library A depends on library B, library B must come _after_.
  # Hence core is at the bottom.
  OPENCV_MODULES = [
 -    "calib3d",
 -    "features2d",
 -    "highgui",
-     "video",
-     "videoio",
-     "imgcodecs",
-@@ -204,7 +201,8 @@ OPENCV_MODULES = [
+-    "video",
+-    "videoio",
+-    "imgcodecs",
+     "imgproc",
+     "core",
+ ]
+@@ -202,9 +196,10 @@ OPENCV_MODULES = [
+ # still only builds the shared libraries, so we have to choose one or the
+ # other. We build shared libraries by default, but this variable can be used
  # to switch to static libraries.
- OPENCV_SHARED_LIBS = True
+-OPENCV_SHARED_LIBS = True
++OPENCV_SHARED_LIBS = False
  
 -OPENCV_SO_VERSION = "3.4"
 +OPENCV_SO_VERSION = "411"
@@ -141,7 +147,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
 -        for module in OPENCV_MODULES
 -    ] if not OPENCV_SHARED_LIBS else None,
 +    out_static_libs = select({
-+        "@bazel_tools//src/conditions:windows": [
++        "@platforms//os:windows": [
 +            "opencv_%s%s.lib" % (module, OPENCV_DLL_VERSION)
 +            for module in OPENCV_MODULES
 +        ],

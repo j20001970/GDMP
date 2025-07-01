@@ -9,8 +9,6 @@ cc_library(
     ] + select({
         "@platforms//os:android": [":camera_helper_android"],
         "@platforms//os:ios": [":camera_helper_ios"],
-        "@platforms//os:linux": [":camera_helper_cv"],
-        "@platforms//os:windows": [":camera_helper_cv"],
         "//conditions:default": [":camera_helper_stub"],
     }),
 )
