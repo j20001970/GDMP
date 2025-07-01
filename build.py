@@ -15,6 +15,7 @@ TARGETS = {
     "android": "@GDMP//GDMP/android:GDMP",
     "desktop": "@GDMP//GDMP/desktop:GDMP",
     "ios": "@GDMP//GDMP/ios:GDMP",
+    "web": "@GDMP//GDMP/web:GDMP",
 }
 
 
@@ -203,6 +204,13 @@ def copy_ios(args: Namespace):
         f.extractall(output)
 
 
+def copy_web(args: Namespace):
+    output: str = args.output
+    src = path.join(MEDIAPIPE_DIR, "bazel-bin/external/GDMP/GDMP/web/GDMP.wasm")
+    dst = path.join(output, "GDMP.web.wasm")
+    copyfile(src, dst)
+
+
 def copy_output(args: Namespace):
     target: str = args.target
     output: str = args.output
@@ -213,6 +221,7 @@ def copy_output(args: Namespace):
         "android": copy_android,
         "desktop": copy_desktop,
         "ios": copy_ios,
+        "web": copy_web,
     }
     copy_actions[target](args)
 

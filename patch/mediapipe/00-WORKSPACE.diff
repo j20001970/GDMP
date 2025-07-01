@@ -1,7 +1,7 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -2,6 +2,47 @@ workspace(name = "mediapipe")
+@@ -2,6 +2,53 @@ workspace(name = "mediapipe")
  
  load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
  
@@ -19,6 +19,12 @@ diff --git a/WORKSPACE b/WORKSPACE
 +http_archive(
 +    name = "emsdk",
 +    strip_prefix = "emsdk-3.1.64/bazel",
++    patch_args = [
++        "-p2",
++    ],
++    patches = [
++        "@GDMP//patch:emsdk_link_wrapper.diff",
++    ],
 +    url = "https://github.com/emscripten-core/emsdk/archive/3.1.64.tar.gz",
 +)
 +

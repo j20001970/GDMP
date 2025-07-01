@@ -18,8 +18,12 @@ TASKS = [
     "//GDMP/tasks/vision:holistic_landmarker",
     "//GDMP/tasks/vision:image_classifier",
     "//GDMP/tasks/vision:image_embedder",
-    "//GDMP/tasks/vision:image_segmenter",
-    "//GDMP/tasks/vision:interactive_segmenter",
     "//GDMP/tasks/vision:object_detector",
     "//GDMP/tasks/vision:pose_landmarker",
-]
+] + select({
+    "@platforms//os:emscripten": [],
+    "//conditions:default": [
+        "//GDMP/tasks/vision:image_segmenter",
+        "//GDMP/tasks/vision:interactive_segmenter",
+    ],
+})

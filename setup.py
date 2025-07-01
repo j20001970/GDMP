@@ -69,6 +69,8 @@ def apply_patch(patch_dir: str) -> None:
         print("Error: 'git' or 'patch' cannot be found for applying patches.")
         sys.exit(-1)
     for p, _, _ in os.walk(patch_dir):
+        if p == patch_dir:
+            continue
         patches = glob.glob(path.join(p, "*.diff"))
         if len(patches) == 0:
             continue
