@@ -11,14 +11,42 @@
 #include "Reference.hpp"
 #include "String.hpp"
 
-#include "mediapipe/tasks/cc/audio/core/running_mode.h"
-#include "mediapipe/tasks/cc/vision/core/running_mode.h"
-
 #include "mediapipe/tasks/cc/core/base_options.h"
 
 using namespace godot;
-using namespace mediapipe::tasks;
 using namespace mediapipe::tasks::core;
+
+// Common properties of a GDMP task class.
+// bool _registered: a internal bool for indicating that if this task has been registered.
+// std::map<std::string, std::function<void()>> get_register_map(): a map of task classes that are registered with this task.
+// void _register_tasks(): for registering task classes inside the register map
+// void _register_task(): for registering this task and associated classes to godot ClassDB.
+// register_task(const std::string&, std::function<void()>): for registering other task classes with this task.
+#define GDMP_TASK_CLASS                                                              \
+private:                                                                             \
+	static bool _registered;                                                         \
+	static std::map<std::string, std::function<void()>> &get_register_map() {        \
+		static std::map<std::string, std::function<void()>> register_map;            \
+		return register_map;                                                         \
+	}                                                                                \
+	static void _register_tasks() {                                                  \
+		for (auto func : get_register_map())                                         \
+			func.second();                                                           \
+	}                                                                                \
+	static void _register_task();                                                    \
+                                                                                     \
+protected:                                                                           \
+	static bool register_task(const std::string &name, std::function<void()> func) { \
+		auto &register_map = get_register_map();                                     \
+		if (auto it = register_map.find(name); it == register_map.end())             \
+			register_map.insert(std::make_pair(name, func));                         \
+		return true;                                                                 \
+	}
+
+// Register TASK_CLASS with WITH_CLASS.
+// WITH_CLASS should be the direct base class of TASK_CLASS to ensure the order of registration.
+#define GDMP_REGISTER_TASK(TASK_CLASS, WITH_CLASS) \
+	bool TASK_CLASS::_registered = WITH_CLASS::register_task(#TASK_CLASS, TASK_CLASS::_register_task);
 
 class MediaPipeTaskBaseOptions : public Reference {
 		GODOT_CLASS(MediaPipeTaskBaseOptions, Reference)
@@ -52,36 +80,10 @@ class MediaPipeTaskBaseOptions : public Reference {
 };
 
 class MediaPipeTask : public Reference {
-	private:
-		static std::map<std::string, std::function<void()>> &get_register_map();
-
-	protected:
-		static bool register_task(const std::string &name, std::function<void()> func);
+		GDMP_TASK_CLASS
 
 	public:
-		enum AudioRunningMode {
-			RUNNING_MODE_AUDIO_CLIPS = audio::core::RunningMode::AUDIO_CLIPS,
-			RUNNING_MODE_AUDIO_STREAM = audio::core::RunningMode::AUDIO_STREAM,
-		};
-
-		enum VisionRunningMode {
-			RUNNING_MODE_IMAGE = vision::core::RunningMode::IMAGE,
-			RUNNINE_MODE_VIDEO = vision::core::RunningMode::VIDEO,
-			RUNNING_MODE_LIVE_STREAM = vision::core::RunningMode::LIVE_STREAM
-		};
-
 		static void register_tasks();
 };
-
-#define GDMP_TASK_CLASS(NAME, TASK) \
-	GODOT_CLASS(NAME, Reference)    \
-private:                            \
-	static bool _registered;        \
-	static void _register_task();   \
-                                    \
-	std::unique_ptr<TASK> task;
-
-#define GDMP_REGISTER_TASK(CLASS_NAME) \
-	bool CLASS_NAME::_registered = MediaPipeTask::register_task(#CLASS_NAME, CLASS_NAME::_register_task);
 
 #endif

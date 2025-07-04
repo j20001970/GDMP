@@ -1,7 +1,5 @@
 #include "face_detector.h"
 
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipeFaceDetector::_register_methods() {
 	register_method("initialize", &MediaPipeFaceDetector::initialize);
 	register_method("detect", &MediaPipeFaceDetector::detect);
@@ -20,7 +18,7 @@ bool MediaPipeFaceDetector::initialize(Ref<MediaPipeTaskBaseOptions> base_option
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<FaceDetectorOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->min_detection_confidence = min_detection_confidence;
 	options->min_suppression_threshold = min_suppression_threshold;
 	if (running_mode == RUNNING_MODE_LIVE_STREAM)
@@ -75,4 +73,4 @@ bool MediaPipeFaceDetector::detect_async(Ref<MediaPipeImage> image, uint64_t tim
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipeFaceDetector);
+GDMP_REGISTER_TASK(MediaPipeFaceDetector, MediaPipeVisionTask);

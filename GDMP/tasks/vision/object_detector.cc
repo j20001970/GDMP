@@ -1,7 +1,5 @@
 #include "object_detector.h"
 
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipeObjectDetector::_register_methods() {
 	register_method("initialize", &MediaPipeObjectDetector::initialize);
 	register_method("detect", &MediaPipeObjectDetector::detect);
@@ -23,7 +21,7 @@ bool MediaPipeObjectDetector::initialize(
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<ObjectDetectorOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->display_names_locale = display_names_locale.utf8().get_data();
 	options->max_results = max_results;
 	options->score_threshold = score_threshold;
@@ -85,4 +83,4 @@ bool MediaPipeObjectDetector::detect_async(Ref<MediaPipeImage> image, uint64_t t
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipeObjectDetector);
+GDMP_REGISTER_TASK(MediaPipeObjectDetector, MediaPipeVisionTask);

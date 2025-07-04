@@ -9,9 +9,7 @@
 #include "mediapipe/tasks/cc/vision/hand_landmarker/hand_landmarker.h"
 
 #include "GDMP/framework/image.h"
-#include "GDMP/tasks/containers/classification_result.h"
-#include "GDMP/tasks/containers/landmark.h"
-#include "GDMP/tasks/task.h"
+#include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::vision::hand_landmarker;
@@ -33,8 +31,8 @@ class MediaPipeHandLandmarkerResult : public Reference {
 		Array get_hand_world_landmarks();
 };
 
-class MediaPipeHandLandmarker : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipeHandLandmarker, HandLandmarker)
+class MediaPipeHandLandmarker : public MediaPipeVisionTask {
+		GDMP_VISION_TASK_CLASS(MediaPipeHandLandmarker, HandLandmarker)
 
 	public:
 		static void _register_methods();

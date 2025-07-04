@@ -11,7 +11,7 @@
 #include "mediapipe/tasks/cc/vision/image_segmenter/image_segmenter.h"
 
 #include "GDMP/framework/image.h"
-#include "GDMP/tasks/task.h"
+#include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::vision::image_segmenter;
@@ -35,8 +35,8 @@ class MediaPipeImageSegmenterResult : public Reference {
 		bool has_category_mask();
 };
 
-class MediaPipeImageSegmenter : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipeImageSegmenter, ImageSegmenter)
+class MediaPipeImageSegmenter : public MediaPipeVisionTask {
+		GDMP_VISION_TASK_CLASS(MediaPipeImageSegmenter, ImageSegmenter)
 
 	public:
 		static void _register_methods();

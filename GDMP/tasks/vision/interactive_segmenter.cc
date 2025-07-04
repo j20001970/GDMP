@@ -1,7 +1,5 @@
 #include "interactive_segmenter.h"
 
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipeInteractiveSegmenter::_register_methods() {
 	register_method("initialize", &MediaPipeInteractiveSegmenter::initialize);
 	register_method("segment", &MediaPipeInteractiveSegmenter::segment);
@@ -38,12 +36,12 @@ Ref<MediaPipeImageSegmenterResult> MediaPipeInteractiveSegmenter::segment(
 	RegionOfInterest roi;
 	if (keypoint != Vector2::ZERO && scribble.size() == 0) {
 		roi.format = RegionOfInterest::Format::kKeyPoint;
-		roi.keypoint = components::containers::NormalizedKeypoint();
+		roi.keypoint = mediapipe::tasks::components::containers::NormalizedKeypoint();
 		roi.keypoint->x = keypoint.x;
 		roi.keypoint->y = keypoint.y;
 	} else if (keypoint == Vector2::ZERO && scribble.size() != 0) {
 		roi.format = RegionOfInterest::Format::kScribble;
-		roi.scribble = std::vector<components::containers::NormalizedKeypoint>();
+		roi.scribble = std::vector<mediapipe::tasks::components::containers::NormalizedKeypoint>();
 		roi.scribble->resize(scribble.size());
 		for (int i = 0; i < scribble.size(); i++) {
 			roi.scribble.value()[i].x = scribble[i].x;
@@ -59,4 +57,4 @@ Ref<MediaPipeImageSegmenterResult> MediaPipeInteractiveSegmenter::segment(
 	return segment_result;
 }
 
-GDMP_REGISTER_TASK(MediaPipeInteractiveSegmenter);
+GDMP_REGISTER_TASK(MediaPipeInteractiveSegmenter, MediaPipeVisionTask);

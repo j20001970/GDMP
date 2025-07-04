@@ -1,7 +1,5 @@
 #include "face_stylizer.h"
 
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipeFaceStylizer::_register_methods() {
 	register_method("initialize", &MediaPipeFaceStylizer::initialize);
 	register_method("stylize", &MediaPipeFaceStylizer::stylize);
@@ -39,4 +37,4 @@ Ref<MediaPipeImage> MediaPipeFaceStylizer::stylize(Ref<MediaPipeImage> image, Re
 	return stylize_result;
 }
 
-GDMP_REGISTER_TASK(MediaPipeFaceStylizer);
+GDMP_REGISTER_TASK(MediaPipeFaceStylizer, MediaPipeVisionTask);

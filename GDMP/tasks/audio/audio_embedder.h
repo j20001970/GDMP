@@ -7,14 +7,13 @@
 
 #include "mediapipe/tasks/cc/audio/audio_embedder/audio_embedder.h"
 
-#include "GDMP/tasks/containers/embedding_result.h"
-#include "GDMP/tasks/task.h"
+#include "GDMP/tasks/audio/audio_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::audio::audio_embedder;
 
-class MediaPipeAudioEmbedder : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipeAudioEmbedder, AudioEmbedder)
+class MediaPipeAudioEmbedder : public MediaPipeAudioTask {
+		GDMP_AUDIO_TASK_CLASS(MediaPipeAudioEmbedder, AudioEmbedder)
 
 	public:
 		static void _register_methods();

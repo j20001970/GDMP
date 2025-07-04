@@ -9,8 +9,7 @@
 #include "mediapipe/tasks/cc/vision/pose_landmarker/pose_landmarker.h"
 
 #include "GDMP/framework/image.h"
-#include "GDMP/tasks/containers/landmark.h"
-#include "GDMP/tasks/task.h"
+#include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::vision::pose_landmarker;
@@ -34,8 +33,8 @@ class MediaPipePoseLandmarkerResult : public Reference {
 		bool has_segmentation_masks();
 };
 
-class MediaPipePoseLandmarker : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipePoseLandmarker, PoseLandmarker)
+class MediaPipePoseLandmarker : public MediaPipeVisionTask {
+		GDMP_VISION_TASK_CLASS(MediaPipePoseLandmarker, PoseLandmarker)
 
 	public:
 		static void _register_methods();

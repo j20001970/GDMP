@@ -9,14 +9,14 @@
 #include "mediapipe/tasks/cc/vision/interactive_segmenter/interactive_segmenter.h"
 
 #include "GDMP/framework/image.h"
-#include "GDMP/tasks/task.h"
 #include "GDMP/tasks/vision/image_segmenter.h"
+#include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::vision::interactive_segmenter;
 
-class MediaPipeInteractiveSegmenter : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipeInteractiveSegmenter, InteractiveSegmenter)
+class MediaPipeInteractiveSegmenter : public MediaPipeVisionTask {
+		GDMP_VISION_TASK_CLASS(MediaPipeInteractiveSegmenter, InteractiveSegmenter)
 
 	public:
 		static void _register_methods();

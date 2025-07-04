@@ -6,13 +6,11 @@
 #include "PoolArrays.hpp"
 #include "Rect2.hpp"
 #include "Reference.hpp"
-#include "String.hpp"
 
 #include "mediapipe/tasks/cc/vision/gesture_recognizer/gesture_recognizer.h"
 
 #include "GDMP/framework/image.h"
-#include "GDMP/proto/proto.h"
-#include "GDMP/tasks/task.h"
+#include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::vision::gesture_recognizer;
@@ -35,8 +33,8 @@ class MediaPipeGestureRecognizerResult : public Reference {
 		Array get_hand_world_landmarks();
 };
 
-class MediaPipeGestureRecognizer : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipeGestureRecognizer, GestureRecognizer)
+class MediaPipeGestureRecognizer : public MediaPipeVisionTask {
+		GDMP_VISION_TASK_CLASS(MediaPipeGestureRecognizer, GestureRecognizer)
 
 	public:
 		static void _register_methods();

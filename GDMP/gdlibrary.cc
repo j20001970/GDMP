@@ -60,9 +60,8 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	// ResourceProvider
 	set_resource_provider();
 	// Tasks
-	register_class<MediaPipeTaskRunner>();
 	MediaPipeTask::register_tasks();
-	register_class<MediaPipeTaskBaseOptions>();
+	register_class<MediaPipeTaskRunner>();
 	register_class<MediaPipeCategory>();
 	register_class<MediaPipeClassifications>();
 	register_class<MediaPipeClassificationResult>();

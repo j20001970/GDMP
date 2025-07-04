@@ -1,6 +1,7 @@
 #include "face_landmarker.h"
 
-#include "GDMP/tasks/vision/vision_task.h"
+#include "GDMP/tasks/containers/classification_result.h"
+#include "GDMP/tasks/containers/landmark.h"
 
 void MediaPipeFaceLandmarkerResult::_register_methods() {
 	register_method("get_face_landmarks", &MediaPipeFaceLandmarkerResult::get_face_landmarks);
@@ -62,7 +63,7 @@ bool MediaPipeFaceLandmarker::initialize(
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<FaceLandmarkerOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->num_faces = num_faces;
 	options->min_face_detection_confidence = min_face_detection_confidence;
 	options->min_face_presence_confidence = min_face_presence_confidence;
@@ -120,4 +121,4 @@ bool MediaPipeFaceLandmarker::detect_async(Ref<MediaPipeImage> image, uint64_t t
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipeFaceLandmarker);
+GDMP_REGISTER_TASK(MediaPipeFaceLandmarker, MediaPipeVisionTask);

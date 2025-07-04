@@ -1,6 +1,6 @@
 #include "audio_classifier.h"
 
-#include "GDMP/tasks/audio/audio_task.h"
+#include "GDMP/tasks/containers/classification_result.h"
 
 void MediaPipeAudioClassifier::_register_methods() {
 	register_method("intialize", &MediaPipeAudioClassifier::initialize);
@@ -22,7 +22,7 @@ bool MediaPipeAudioClassifier::initialize(
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<AudioClassifierOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->classifier_options.display_names_locale = display_names_locale.utf8().get_data();
 	options->classifier_options.max_results = max_results;
 	options->classifier_options.score_threshold = score_threshold;
@@ -73,4 +73,4 @@ bool MediaPipeAudioClassifier::classify_async(PoolRealArray audio_data, int num_
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipeAudioClassifier);
+GDMP_REGISTER_TASK(MediaPipeAudioClassifier, MediaPipeAudioTask);

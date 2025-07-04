@@ -5,7 +5,6 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":audio_task",
-        "//GDMP/tasks:task",
         "//GDMP/tasks/containers:classification_result",
         "@mediapipe//mediapipe/tasks/cc/audio/audio_classifier",
         "@godot-cpp//:godot",
@@ -20,7 +19,6 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":audio_task",
-        "//GDMP/tasks:task",
         "//GDMP/tasks/containers:embedding_result",
         "@mediapipe//mediapipe/tasks/cc/audio/audio_embedder",
         "@godot-cpp//:godot",
@@ -34,6 +32,7 @@ cc_library(
     hdrs = ["audio_task.h"],
     visibility = ["//visibility:public"],
     deps = [
+        "//GDMP/tasks:task",
         "@mediapipe//mediapipe/framework/formats:matrix",
         "@mediapipe//mediapipe/tasks/cc/audio/core:running_mode",
         "@godot-cpp//:godot",

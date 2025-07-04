@@ -1,7 +1,5 @@
 #include "image_classifier.h"
 
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipeImageClassifier::_register_methods() {
 	register_method("initialize", &MediaPipeImageClassifier::initialize);
 	register_method("classify", &MediaPipeImageClassifier::classify);
@@ -23,7 +21,7 @@ bool MediaPipeImageClassifier::initialize(
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<ImageClassifierOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->classifier_options.display_names_locale = display_names_locale.utf8().get_data();
 	options->classifier_options.max_results = max_results;
 	options->classifier_options.score_threshold = score_threshold;
@@ -85,4 +83,4 @@ bool MediaPipeImageClassifier::classify_async(Ref<MediaPipeImage> image, uint64_
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipeImageClassifier);
+GDMP_REGISTER_TASK(MediaPipeImageClassifier, MediaPipeVisionTask);

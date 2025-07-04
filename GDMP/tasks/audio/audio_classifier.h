@@ -8,14 +8,13 @@
 
 #include "mediapipe/tasks/cc/audio/audio_classifier/audio_classifier.h"
 
-#include "GDMP/tasks/containers/classification_result.h"
-#include "GDMP/tasks/task.h"
+#include "GDMP/tasks/audio/audio_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::audio::audio_classifier;
 
-class MediaPipeAudioClassifier : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipeAudioClassifier, AudioClassifier)
+class MediaPipeAudioClassifier : public MediaPipeAudioTask {
+		GDMP_AUDIO_TASK_CLASS(MediaPipeAudioClassifier, AudioClassifier)
 
 	public:
 		static void _register_methods();

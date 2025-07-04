@@ -10,9 +10,7 @@
 #include "mediapipe/tasks/cc/vision/face_landmarker/face_landmarker.h"
 
 #include "GDMP/framework/image.h"
-#include "GDMP/tasks/containers/classification_result.h"
-#include "GDMP/tasks/containers/landmark.h"
-#include "GDMP/tasks/task.h"
+#include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::vision::face_landmarker;
@@ -35,8 +33,8 @@ class MediaPipeFaceLandmarkerResult : public Reference {
 		bool has_face_blendshapes();
 };
 
-class MediaPipeFaceLandmarker : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipeFaceLandmarker, FaceLandmarker)
+class MediaPipeFaceLandmarker : public MediaPipeVisionTask {
+		GDMP_VISION_TASK_CLASS(MediaPipeFaceLandmarker, FaceLandmarker)
 
 	public:
 		static void _register_methods();

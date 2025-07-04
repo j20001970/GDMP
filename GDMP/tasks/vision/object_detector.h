@@ -10,13 +10,13 @@
 
 #include "GDMP/framework/image.h"
 #include "GDMP/tasks/containers/detection_result.h"
-#include "GDMP/tasks/task.h"
+#include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::vision;
 
-class MediaPipeObjectDetector : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipeObjectDetector, ObjectDetector)
+class MediaPipeObjectDetector : public MediaPipeVisionTask {
+		GDMP_VISION_TASK_CLASS(MediaPipeObjectDetector, ObjectDetector)
 
 	public:
 		static void _register_methods();

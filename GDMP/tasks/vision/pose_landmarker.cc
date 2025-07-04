@@ -1,6 +1,6 @@
 #include "pose_landmarker.h"
 
-#include "GDMP/tasks/vision/vision_task.h"
+#include "GDMP/tasks/containers/landmark.h"
 
 void MediaPipePoseLandmarkerResult::_register_methods() {
 	register_method("get_segmentation_masks", &MediaPipePoseLandmarkerResult::get_segmentation_masks);
@@ -71,7 +71,7 @@ bool MediaPipePoseLandmarker::initialize(
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<PoseLandmarkerOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->num_poses = num_poses;
 	options->min_pose_detection_confidence = min_pose_detection_confidence;
 	options->min_pose_presence_confidence = min_pose_presence_confidence;
@@ -129,4 +129,4 @@ bool MediaPipePoseLandmarker::detect_async(Ref<MediaPipeImage> image, uint64_t t
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipePoseLandmarker);
+GDMP_REGISTER_TASK(MediaPipePoseLandmarker, MediaPipeVisionTask);

@@ -1,7 +1,5 @@
 #include "image_segmenter.h"
 
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipeImageSegmenterResult::_register_methods() {
 	register_method("get_confidence_masks", &MediaPipeImageSegmenterResult::get_confidence_masks);
 	register_method("get_category_mask", &MediaPipeImageSegmenterResult::get_category_mask);
@@ -66,7 +64,7 @@ bool MediaPipeImageSegmenter::initialize(
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<ImageSegmenterOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->display_names_locale = display_names_locale.utf8().get_data();
 	options->output_confidence_masks = output_confidence_masks;
 	options->output_category_mask = output_category_mask;
@@ -130,4 +128,4 @@ PoolStringArray MediaPipeImageSegmenter::get_labels() {
 	return labels;
 }
 
-GDMP_REGISTER_TASK(MediaPipeImageSegmenter);
+GDMP_REGISTER_TASK(MediaPipeImageSegmenter, MediaPipeVisionTask);

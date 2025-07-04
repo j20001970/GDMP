@@ -1,7 +1,5 @@
 #include "gesture_recognizer.h"
 
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipeGestureRecognizerResult::_register_methods() {
 	register_method("get_gestures", &MediaPipeGestureRecognizerResult::get_gestures);
 	register_method("get_handedness", &MediaPipeGestureRecognizerResult::get_handedness);
@@ -74,7 +72,7 @@ bool MediaPipeGestureRecognizer::initialize(
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<GestureRecognizerOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->num_hands = num_hands;
 	options->min_hand_detection_confidence = min_hand_detection_confidence;
 	options->min_hand_presence_confidence = min_hand_presence_confidence;
@@ -131,4 +129,4 @@ bool MediaPipeGestureRecognizer::recognize_async(Ref<MediaPipeImage> image, uint
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipeGestureRecognizer);
+GDMP_REGISTER_TASK(MediaPipeGestureRecognizer, MediaPipeVisionTask);
