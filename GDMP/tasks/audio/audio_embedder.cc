@@ -1,24 +1,25 @@
 #include "audio_embedder.h"
 
-#include "GDMP/tasks/audio/audio_task.h"
+#include "godot_cpp/core/class_db.hpp"
+#include "godot_cpp/core/error_macros.hpp"
 
 void MediaPipeAudioEmbedder::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("intialize", "base_options", "running_mode", "l2_normalize", "quantize"),
 			&MediaPipeAudioEmbedder::initialize, DEFVAL(RUNNING_MODE_AUDIO_CLIPS), DEFVAL(false), DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("embed", "audio_data", "num_channels", "audio_sample_rate"), &MediaPipeAudioEmbedder::embed);
 	ClassDB::bind_method(D_METHOD("embed_async", "audio_data", "num_channels", "audio_sample_rate", "timestamp_ms"), &MediaPipeAudioEmbedder::embed_async);
-	ADD_SIGNAL(MethodInfo("result_callback",PropertyInfo(Variant::ARRAY, "result", PROPERTY_HINT_ARRAY_TYPE, MediaPipeAudioEmbedder::get_class_static())));
+	ADD_SIGNAL(MethodInfo("result_callback", PropertyInfo(Variant::ARRAY, "result", PROPERTY_HINT_ARRAY_TYPE, MediaPipeAudioEmbedder::get_class_static())));
 }
 
 void MediaPipeAudioEmbedder::_register_task() {
 	ClassDB::register_class<MediaPipeAudioEmbedder>();
 }
 
-bool MediaPipeAudioEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_options, AudioRunningMode running_mode, bool l2_normalize, bool quantize) {
+bool MediaPipeAudioEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode, bool l2_normalize, bool quantize) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<AudioEmbedderOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->embedder_options.l2_normalize = l2_normalize;
 	options->embedder_options.quantize = quantize;
 	if (running_mode == RUNNING_MODE_AUDIO_STREAM)
@@ -62,4 +63,4 @@ bool MediaPipeAudioEmbedder::embed_async(PackedFloat32Array audio_data, int num_
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipeAudioEmbedder);
+GDMP_REGISTER_TASK(MediaPipeAudioEmbedder, MediaPipeAudioTask);

@@ -3,8 +3,6 @@
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/core/error_macros.hpp"
 
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipeImageSegmenterResult::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_confidence_masks"), &MediaPipeImageSegmenterResult::get_confidence_masks);
 	ClassDB::bind_method(D_METHOD("get_category_mask"), &MediaPipeImageSegmenterResult::get_category_mask);
@@ -71,12 +69,12 @@ void MediaPipeImageSegmenter::_register_task() {
 }
 
 bool MediaPipeImageSegmenter::initialize(
-		Ref<MediaPipeTaskBaseOptions> base_options, VisionRunningMode running_mode,
+		Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode,
 		const String &display_names_locale, bool output_confidence_masks, bool output_category_mask) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<ImageSegmenterOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->display_names_locale = display_names_locale.utf8().get_data();
 	options->output_confidence_masks = output_confidence_masks;
 	options->output_category_mask = output_category_mask;
@@ -140,4 +138,4 @@ PackedStringArray MediaPipeImageSegmenter::get_labels() {
 	return labels;
 }
 
-GDMP_REGISTER_TASK(MediaPipeImageSegmenter);
+GDMP_REGISTER_TASK(MediaPipeImageSegmenter, MediaPipeVisionTask);

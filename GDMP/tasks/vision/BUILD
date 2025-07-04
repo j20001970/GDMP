@@ -179,7 +179,8 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//GDMP/tasks:task",
-        "@mediapipe//mediapipe/tasks/cc/vision/core:image_processing_options",
         "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/tasks/cc/vision/core:image_processing_options",
+        "@mediapipe//mediapipe/tasks/cc/vision/core:running_mode",
     ],
 )

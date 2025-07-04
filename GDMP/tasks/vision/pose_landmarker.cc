@@ -3,8 +3,6 @@
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/core/error_macros.hpp"
 
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipePoseLandmarkerResult::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_segmentation_masks"), &MediaPipePoseLandmarkerResult::get_segmentation_masks);
 	ClassDB::bind_method(D_METHOD("get_pose_landmarks"), &MediaPipePoseLandmarkerResult::get_pose_landmarks);
@@ -77,12 +75,12 @@ void MediaPipePoseLandmarker::_register_task() {
 }
 
 bool MediaPipePoseLandmarker::initialize(
-		Ref<MediaPipeTaskBaseOptions> base_options, VisionRunningMode running_mode,
+		Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode,
 		int num_poses, float min_pose_detection_confidence, float min_pose_presence_confidence, float min_tracking_confidence, bool output_segmentation_masks) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<PoseLandmarkerOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->num_poses = num_poses;
 	options->min_pose_detection_confidence = min_pose_detection_confidence;
 	options->min_pose_presence_confidence = min_pose_presence_confidence;
@@ -140,4 +138,4 @@ bool MediaPipePoseLandmarker::detect_async(Ref<MediaPipeImage> image, uint64_t t
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipePoseLandmarker);
+GDMP_REGISTER_TASK(MediaPipePoseLandmarker, MediaPipeVisionTask);

@@ -3,8 +3,6 @@
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/core/error_macros.hpp"
 
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipeFaceStylizer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize", "base_options"), &MediaPipeFaceStylizer::initialize);
 	ClassDB::bind_method(D_METHOD("stylize", "image", "region_of_interest", "rotation_degrees"),
@@ -40,4 +38,4 @@ Ref<MediaPipeImage> MediaPipeFaceStylizer::stylize(Ref<MediaPipeImage> image, Re
 	return stylize_result;
 }
 
-GDMP_REGISTER_TASK(MediaPipeFaceStylizer);
+GDMP_REGISTER_TASK(MediaPipeFaceStylizer, MediaPipeVisionTask);

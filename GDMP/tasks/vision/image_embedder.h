@@ -5,19 +5,19 @@
 
 #include "GDMP/framework/image.h"
 #include "GDMP/tasks/containers/embedding_result.h"
-#include "GDMP/tasks/task.h"
+#include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::vision::image_embedder;
 
-class MediaPipeImageEmbedder : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipeImageEmbedder, ImageEmbedder)
+class MediaPipeImageEmbedder : public MediaPipeVisionTask {
+		GDMP_VISION_TASK_CLASS(MediaPipeImageEmbedder, ImageEmbedder)
 
 	protected:
 		static void _bind_methods();
 
 	public:
-		bool initialize(Ref<MediaPipeTaskBaseOptions> base_options, VisionRunningMode running_mode, bool l2_normalize, bool quantize);
+		bool initialize(Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode, bool l2_normalize, bool quantize);
 		Ref<MediaPipeEmbeddingResult> embed(Ref<MediaPipeImage> image, Rect2 region_of_interest, int rotation_degrees);
 		Ref<MediaPipeEmbeddingResult> embed_video(Ref<MediaPipeImage> image, uint64_t timestamp_ms, Rect2 region_of_interest, int rotation_degrees);
 		bool embed_async(Ref<MediaPipeImage> image, uint64_t timestamp_ms, Rect2 region_of_interest, int rotation_degrees);

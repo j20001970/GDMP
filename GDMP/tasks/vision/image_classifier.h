@@ -10,20 +10,20 @@
 
 #include "GDMP/framework/image.h"
 #include "GDMP/tasks/containers/classification_result.h"
-#include "GDMP/tasks/task.h"
+#include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::vision::image_classifier;
 
-class MediaPipeImageClassifier : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipeImageClassifier, ImageClassifier)
+class MediaPipeImageClassifier : public MediaPipeVisionTask {
+		GDMP_VISION_TASK_CLASS(MediaPipeImageClassifier, ImageClassifier)
 
 	protected:
 		static void _bind_methods();
 
 	public:
 		bool initialize(
-				Ref<MediaPipeTaskBaseOptions> base_options, VisionRunningMode running_mode,
+				Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode,
 				const String &display_names_locale, int max_results, float score_threshold,
 				PackedStringArray category_allowlist, PackedStringArray category_denylist);
 		Ref<MediaPipeClassificationResult> classify(Ref<MediaPipeImage> image, Rect2 region_of_interest, int rotation_degrees);

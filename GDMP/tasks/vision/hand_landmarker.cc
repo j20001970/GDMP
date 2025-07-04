@@ -1,6 +1,7 @@
 #include "hand_landmarker.h"
 
-#include "GDMP/tasks/vision/vision_task.h"
+#include "godot_cpp/core/class_db.hpp"
+#include "godot_cpp/core/error_macros.hpp"
 
 void MediaPipeHandLandmarkerResult::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_handedness"), &MediaPipeHandLandmarkerResult::get_handedness);
@@ -67,12 +68,12 @@ void MediaPipeHandLandmarker::_register_task() {
 }
 
 bool MediaPipeHandLandmarker::initialize(
-		Ref<MediaPipeTaskBaseOptions> base_options, VisionRunningMode running_mode,
+		Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode,
 		int num_hands, float min_hand_detection_confidence, float min_hand_presence_confidence, float min_tracking_confidence) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<HandLandmarkerOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->num_hands = num_hands;
 	options->min_hand_detection_confidence = min_hand_detection_confidence;
 	options->min_hand_presence_confidence = min_hand_presence_confidence;
@@ -129,4 +130,4 @@ bool MediaPipeHandLandmarker::detect_async(Ref<MediaPipeImage> image, uint64_t t
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipeHandLandmarker);
+GDMP_REGISTER_TASK(MediaPipeHandLandmarker, MediaPipeVisionTask);

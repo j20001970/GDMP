@@ -9,21 +9,21 @@
 
 #include "mediapipe/tasks/cc/audio/audio_classifier/audio_classifier.h"
 
+#include "GDMP/tasks/audio/audio_task.h"
 #include "GDMP/tasks/containers/classification_result.h"
-#include "GDMP/tasks/task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::audio::audio_classifier;
 
-class MediaPipeAudioClassifier : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipeAudioClassifier, AudioClassifier)
+class MediaPipeAudioClassifier : public MediaPipeAudioTask {
+		GDMP_AUDIO_TASK_CLASS(MediaPipeAudioClassifier, AudioClassifier)
 
 	protected:
 		static void _bind_methods();
 
 	public:
 		bool initialize(
-				Ref<MediaPipeTaskBaseOptions> base_options, AudioRunningMode running_mode,
+				Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode,
 				const String &display_names_locale, int max_results, float score_threshold,
 				PackedStringArray category_allowlist, PackedStringArray category_denylist);
 		TypedArray<MediaPipeClassificationResult> classify(PackedFloat32Array audio_data, int num_channels, double audio_sample_rate);

@@ -3,8 +3,6 @@
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/core/error_macros.hpp"
 
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipeFaceDetector::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize", "base_options", "running_mode", "min_detection_confidence", "min_suppression_threshold"),
 			&MediaPipeFaceDetector::initialize, DEFVAL(RUNNING_MODE_IMAGE), DEFVAL(0.5), DEFVAL(0.3));
@@ -24,11 +22,11 @@ void MediaPipeFaceDetector::_register_task() {
 	ClassDB::register_class<MediaPipeFaceDetector>();
 }
 
-bool MediaPipeFaceDetector::initialize(Ref<MediaPipeTaskBaseOptions> base_options, VisionRunningMode running_mode, float min_detection_confidence, float min_suppression_threshold) {
+bool MediaPipeFaceDetector::initialize(Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode, float min_detection_confidence, float min_suppression_threshold) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<FaceDetectorOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->min_detection_confidence = min_detection_confidence;
 	options->min_suppression_threshold = min_suppression_threshold;
 	if (running_mode == RUNNING_MODE_LIVE_STREAM)
@@ -83,4 +81,4 @@ bool MediaPipeFaceDetector::detect_async(Ref<MediaPipeImage> image, uint64_t tim
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipeFaceDetector);
+GDMP_REGISTER_TASK(MediaPipeFaceDetector, MediaPipeVisionTask);

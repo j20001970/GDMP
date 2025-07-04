@@ -47,10 +47,8 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	// ResourceProvider
 	set_resource_provider();
 	// Tasks
-	ClassDB::register_class<MediaPipeTaskRunner>();
-	ClassDB::register_class<MediaPipeTask>(true);
 	MediaPipeTask::register_tasks();
-	ClassDB::register_class<MediaPipeTaskBaseOptions>();
+	ClassDB::register_class<MediaPipeTaskRunner>();
 	ClassDB::register_class<MediaPipeCategory>();
 	ClassDB::register_class<MediaPipeClassifications>();
 	ClassDB::register_class<MediaPipeClassificationResult>();

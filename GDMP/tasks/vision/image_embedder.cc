@@ -3,8 +3,6 @@
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/core/error_macros.hpp"
 
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipeImageEmbedder::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize", "base_options", "running_mode", "l2_normalize", "quantize"),
 			&MediaPipeImageEmbedder::initialize, DEFVAL(RUNNING_MODE_IMAGE), DEFVAL(false), DEFVAL(false));
@@ -24,11 +22,11 @@ void MediaPipeImageEmbedder::_register_task() {
 	ClassDB::register_class<MediaPipeImageEmbedder>();
 }
 
-bool MediaPipeImageEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_options, VisionRunningMode running_mode, bool l2_normalize, bool quantize) {
+bool MediaPipeImageEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode, bool l2_normalize, bool quantize) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<ImageEmbedderOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
     options->embedder_options.l2_normalize = l2_normalize;
     options->embedder_options.quantize = quantize;
 	if (running_mode == RUNNING_MODE_LIVE_STREAM)
@@ -83,4 +81,4 @@ bool MediaPipeImageEmbedder::embed_async(Ref<MediaPipeImage> image, uint64_t tim
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipeImageEmbedder);
+GDMP_REGISTER_TASK(MediaPipeImageEmbedder, MediaPipeVisionTask);

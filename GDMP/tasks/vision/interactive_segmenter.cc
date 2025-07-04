@@ -3,8 +3,6 @@
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/core/error_macros.hpp"
 
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipeInteractiveSegmenter::_bind_methods() {
 	ClassDB::bind_method(
 			D_METHOD("initialize", "base_options", "output_confidence_masks", "output_category_mask"),
@@ -42,12 +40,12 @@ Ref<MediaPipeImageSegmenterResult> MediaPipeInteractiveSegmenter::segment(
 	RegionOfInterest roi;
 	if (!keypoint.is_zero_approx() && scribble.is_empty()) {
 		roi.format = RegionOfInterest::Format::kKeyPoint;
-		roi.keypoint = components::containers::NormalizedKeypoint();
+		roi.keypoint = mediapipe::tasks::components::containers::NormalizedKeypoint();
 		roi.keypoint->x = keypoint.x;
 		roi.keypoint->y = keypoint.y;
 	} else if (keypoint.is_zero_approx() && !scribble.is_empty()) {
 		roi.format = RegionOfInterest::Format::kScribble;
-		roi.scribble = std::vector<components::containers::NormalizedKeypoint>();
+		roi.scribble = std::vector<mediapipe::tasks::components::containers::NormalizedKeypoint>();
 		roi.scribble->resize(scribble.size());
 		for (int i = 0; i < scribble.size(); i++) {
 			roi.scribble.value()[i].x = scribble[i].x;
@@ -63,4 +61,4 @@ Ref<MediaPipeImageSegmenterResult> MediaPipeInteractiveSegmenter::segment(
 	return segment_result;
 }
 
-GDMP_REGISTER_TASK(MediaPipeInteractiveSegmenter);
+GDMP_REGISTER_TASK(MediaPipeInteractiveSegmenter, MediaPipeVisionTask);

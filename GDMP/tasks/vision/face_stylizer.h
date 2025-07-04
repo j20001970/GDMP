@@ -6,13 +6,13 @@
 #include "mediapipe/tasks/cc/vision/face_stylizer/face_stylizer.h"
 
 #include "GDMP/framework/image.h"
-#include "GDMP/tasks/task.h"
+#include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::vision::face_stylizer;
 
-class MediaPipeFaceStylizer : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipeFaceStylizer, FaceStylizer)
+class MediaPipeFaceStylizer : public MediaPipeVisionTask {
+		GDMP_VISION_TASK_CLASS(MediaPipeFaceStylizer, FaceStylizer)
 
 	protected:
 		static void _bind_methods();

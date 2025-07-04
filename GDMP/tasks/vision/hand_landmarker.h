@@ -11,7 +11,7 @@
 #include "GDMP/framework/image.h"
 #include "GDMP/tasks/containers/classification_result.h"
 #include "GDMP/tasks/containers/landmark.h"
-#include "GDMP/tasks/task.h"
+#include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::vision::hand_landmarker;
@@ -34,15 +34,15 @@ class MediaPipeHandLandmarkerResult : public RefCounted {
 		TypedArray<MediaPipeLandmarks> get_hand_world_landmarks();
 };
 
-class MediaPipeHandLandmarker : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipeHandLandmarker, HandLandmarker)
+class MediaPipeHandLandmarker : public MediaPipeVisionTask {
+		GDMP_VISION_TASK_CLASS(MediaPipeHandLandmarker, HandLandmarker)
 
 	protected:
 		static void _bind_methods();
 
 	public:
 		bool initialize(
-				Ref<MediaPipeTaskBaseOptions> base_options, VisionRunningMode running_mode,
+				Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode,
 				int num_hands, float min_hand_detection_confidence, float min_hand_presence_confidence, float min_tracking_confidence);
 		Ref<MediaPipeHandLandmarkerResult> detect(Ref<MediaPipeImage> image, Rect2 region_of_interest, int rotation_degrees);
 		Ref<MediaPipeHandLandmarkerResult> detect_video(Ref<MediaPipeImage> image, uint64_t timestamp_ms, Rect2 region_of_interest, int rotation_degrees);

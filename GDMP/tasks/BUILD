@@ -4,8 +4,6 @@ cc_library(
     hdrs = ["task.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "@mediapipe//mediapipe/tasks/cc/audio/core:running_mode",
-        "@mediapipe//mediapipe/tasks/cc/vision/core:running_mode",
         "@godot-cpp//:godot",
         "@mediapipe//mediapipe/tasks/cc/core:base_options",
     ],

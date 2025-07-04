@@ -10,7 +10,7 @@
 
 #include "GDMP/framework/image.h"
 #include "GDMP/tasks/containers/landmark.h"
-#include "GDMP/tasks/task.h"
+#include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::vision::pose_landmarker;
@@ -35,15 +35,15 @@ class MediaPipePoseLandmarkerResult : public RefCounted {
 		bool has_segmentation_masks();
 };
 
-class MediaPipePoseLandmarker : public MediaPipeTask {
-		GDMP_TASK_CLASS(MediaPipePoseLandmarker, PoseLandmarker)
+class MediaPipePoseLandmarker : public MediaPipeVisionTask {
+		GDMP_VISION_TASK_CLASS(MediaPipePoseLandmarker, PoseLandmarker)
 
 	protected:
 		static void _bind_methods();
 
 	public:
 		bool initialize(
-				Ref<MediaPipeTaskBaseOptions> base_options, VisionRunningMode running_mode,
+				Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode,
 				int num_poses, float min_pose_detection_confidence, float min_pose_presence_confidence, float min_tracking_confidence, bool output_segmentation_masks);
 		Ref<MediaPipePoseLandmarkerResult> detect(Ref<MediaPipeImage> image, Rect2 region_of_interest, int rotation_degrees);
 		Ref<MediaPipePoseLandmarkerResult> detect_video(Ref<MediaPipeImage> image, uint64_t timestamp_ms, Rect2 region_of_interest, int rotation_degrees);

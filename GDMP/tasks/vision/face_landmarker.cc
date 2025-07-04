@@ -3,10 +3,6 @@
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/core/error_macros.hpp"
 
-#include "mediapipe/framework/formats/matrix.h"
-
-#include "GDMP/tasks/vision/vision_task.h"
-
 void MediaPipeFaceLandmarkerResult::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_face_landmarks"), &MediaPipeFaceLandmarkerResult::get_face_landmarks);
 	ClassDB::bind_method(D_METHOD("get_face_blendshapes"), &MediaPipeFaceLandmarkerResult::get_face_blendshapes);
@@ -99,13 +95,13 @@ void MediaPipeFaceLandmarker::_register_task() {
 }
 
 bool MediaPipeFaceLandmarker::initialize(
-		Ref<MediaPipeTaskBaseOptions> base_options, VisionRunningMode running_mode,
+		Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode,
 		int num_faces, float min_face_detection_confidence, float min_face_presence_confidence, float min_tracking_confidence,
 		bool output_face_blendshapes, bool output_facial_transformation_matrixes) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<FaceLandmarkerOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->num_faces = num_faces;
 	options->min_face_detection_confidence = min_face_detection_confidence;
 	options->min_face_presence_confidence = min_face_presence_confidence;
@@ -164,4 +160,4 @@ bool MediaPipeFaceLandmarker::detect_async(Ref<MediaPipeImage> image, uint64_t t
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipeFaceLandmarker);
+GDMP_REGISTER_TASK(MediaPipeFaceLandmarker, MediaPipeVisionTask);

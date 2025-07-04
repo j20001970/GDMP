@@ -3,8 +3,6 @@
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/core/error_macros.hpp"
 
-#include "GDMP/tasks/audio/audio_task.h"
-
 void MediaPipeAudioClassifier::_bind_methods() {
 	ClassDB::bind_method(D_METHOD(
 								 "intialize", "base_options", "running_mode",
@@ -13,7 +11,7 @@ void MediaPipeAudioClassifier::_bind_methods() {
 			&MediaPipeAudioClassifier::initialize, DEFVAL(RUNNING_MODE_AUDIO_CLIPS), DEFVAL(String("en")), DEFVAL(-1), DEFVAL(0.0f), DEFVAL(PackedStringArray()), DEFVAL(PackedStringArray()));
 	ClassDB::bind_method(D_METHOD("classify", "audio_data", "num_channels", "audio_sample_rate"), &MediaPipeAudioClassifier::classify);
 	ClassDB::bind_method(D_METHOD("classify_async", "audio_data", "num_channels", "audio_sample_rate", "timestamp_ms"), &MediaPipeAudioClassifier::classify_async);
-	ADD_SIGNAL(MethodInfo("result_callback",PropertyInfo(Variant::ARRAY, "result", PROPERTY_HINT_ARRAY_TYPE, MediaPipeClassificationResult::get_class_static())));
+	ADD_SIGNAL(MethodInfo("result_callback", PropertyInfo(Variant::ARRAY, "result", PROPERTY_HINT_ARRAY_TYPE, MediaPipeClassificationResult::get_class_static())));
 }
 
 void MediaPipeAudioClassifier::_register_task() {
@@ -21,13 +19,13 @@ void MediaPipeAudioClassifier::_register_task() {
 }
 
 bool MediaPipeAudioClassifier::initialize(
-		Ref<MediaPipeTaskBaseOptions> base_options, AudioRunningMode running_mode,
+		Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode,
 		const String &display_names_locale, int max_results, float score_threshold,
 		PackedStringArray category_allowlist, PackedStringArray category_denylist) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
 	auto options = std::make_unique<AudioClassifierOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->running_mode = RunningMode(running_mode);
+	options->running_mode = get_running_mode(running_mode);
 	options->classifier_options.display_names_locale = display_names_locale.utf8().get_data();
 	options->classifier_options.max_results = max_results;
 	options->classifier_options.score_threshold = score_threshold;
@@ -78,4 +76,4 @@ bool MediaPipeAudioClassifier::classify_async(PackedFloat32Array audio_data, int
 	return result.ok();
 }
 
-GDMP_REGISTER_TASK(MediaPipeAudioClassifier);
+GDMP_REGISTER_TASK(MediaPipeAudioClassifier, MediaPipeAudioTask);
