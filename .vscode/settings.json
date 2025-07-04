@@ -2,5 +2,6 @@
     "clangd.arguments": [
         "-header-insertion=never"
     ],
-    "explorer.excludeGitIgnore": true
+    "explorer.excludeGitIgnore": true,
+    "editor.formatOnSave": true
 }
