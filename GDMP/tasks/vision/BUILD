@@ -6,7 +6,6 @@ cc_library(
     deps = [
         ":vision_task",
         "//GDMP/framework:image",
-        "//GDMP/tasks:task",
         "//GDMP/tasks/containers:detection_result",
         "@mediapipe//mediapipe/tasks/cc/vision/face_detector",
         "@godot-cpp//:godot",
@@ -22,7 +21,6 @@ cc_library(
     deps = [
         ":vision_task",
         "//GDMP/framework:image",
-        "//GDMP/tasks:task",
         "//GDMP/tasks/containers:classification_result",
         "//GDMP/tasks/containers:landmark",
         "@mediapipe//mediapipe/tasks/cc/vision/face_landmarker",
@@ -39,7 +37,6 @@ cc_library(
     deps = [
         ":vision_task",
         "//GDMP/framework:image",
-        "//GDMP/tasks:task",
         "@mediapipe//mediapipe/tasks/cc/vision/face_stylizer",
         "@godot-cpp//:godot",
     ],
@@ -55,7 +52,6 @@ cc_library(
         ":vision_task",
         "//GDMP/framework:image",
         "//GDMP/proto",
-        "//GDMP/tasks:task",
         "@mediapipe//mediapipe/tasks/cc/vision/gesture_recognizer",
         "@godot-cpp//:godot",
     ],
@@ -70,7 +66,6 @@ cc_library(
     deps = [
         ":vision_task",
         "//GDMP/framework:image",
-        "//GDMP/tasks:task",
         "//GDMP/tasks/containers:classification_result",
         "//GDMP/tasks/containers:landmark",
         "@mediapipe//mediapipe/tasks/cc/vision/hand_landmarker",
@@ -96,7 +91,6 @@ cc_library(
     deps = [
         ":vision_task",
         "//GDMP/framework:image",
-        "//GDMP/tasks:task",
         "//GDMP/tasks/containers:classification_result",
         "@mediapipe//mediapipe/tasks/cc/vision/image_classifier",
         "@godot-cpp//:godot",
@@ -112,7 +106,6 @@ cc_library(
     deps = [
         ":vision_task",
         "//GDMP/framework:image",
-        "//GDMP/tasks:task",
         "//GDMP/tasks/containers:embedding_result",
         "@mediapipe//mediapipe/tasks/cc/vision/image_embedder",
         "@godot-cpp//:godot",
@@ -128,7 +121,6 @@ cc_library(
     deps = [
         ":vision_task",
         "//GDMP/framework:image",
-        "//GDMP/tasks:task",
         "@mediapipe//mediapipe/tasks/cc/vision/image_segmenter",
         "@godot-cpp//:godot",
     ],
@@ -144,7 +136,6 @@ cc_library(
         ":image_segmenter",
         ":vision_task",
         "//GDMP/framework:image",
-        "//GDMP/tasks:task",
         "@mediapipe//mediapipe/tasks/cc/vision/interactive_segmenter",
         "@godot-cpp//:godot",
     ],
@@ -159,7 +150,6 @@ cc_library(
     deps = [
         ":vision_task",
         "//GDMP/framework:image",
-        "//GDMP/tasks:task",
         "//GDMP/tasks/containers:detection_result",
         "@mediapipe//mediapipe/tasks/cc/vision/object_detector",
         "@godot-cpp//:godot",
@@ -175,7 +165,6 @@ cc_library(
     deps = [
         ":vision_task",
         "//GDMP/framework:image",
-        "//GDMP/tasks:task",
         "//GDMP/tasks/containers:landmark",
         "@mediapipe//mediapipe/tasks/cc/vision/pose_landmarker",
         "@godot-cpp//:godot",
@@ -189,6 +178,7 @@ cc_library(
     hdrs = ["vision_task.h"],
     visibility = ["//visibility:public"],
     deps = [
+        "//GDMP/tasks:task",
         "@mediapipe//mediapipe/tasks/cc/vision/core:image_processing_options",
         "@godot-cpp//:godot",
     ],
