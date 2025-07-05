@@ -19,6 +19,8 @@
 #include "GDMP/tasks/containers/embedding_result.h"
 #include "GDMP/tasks/containers/keypoint.h"
 #include "GDMP/tasks/containers/landmark.h"
+#include "GDMP/tasks/processors/classifier_options.h"
+#include "GDMP/tasks/processors/embedder_options.h"
 #include "GDMP/tasks/task.h"
 #include "GDMP/tasks/task_runner.h"
 #include "GDMP/util/resource_util.h"
@@ -62,6 +64,7 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	// Tasks
 	MediaPipeTask::register_tasks();
 	register_class<MediaPipeTaskRunner>();
+	// Task containers
 	register_class<MediaPipeCategory>();
 	register_class<MediaPipeClassifications>();
 	register_class<MediaPipeClassificationResult>();
@@ -74,4 +77,7 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	register_class<MediaPipeLandmarks>();
 	register_class<MediaPipeNormalizedLandmark>();
 	register_class<MediaPipeNormalizedLandmarks>();
+	// Task processors
+	register_class<MediaPipeClassifierOptions>();
+	register_class<MediaPipeEmbedderOptions>();
 }

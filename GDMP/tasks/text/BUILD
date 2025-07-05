@@ -5,6 +5,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":text_task",
+        "//GDMP/tasks/processors:classifier_options",
         "@godot-cpp//:godot",
         "@mediapipe//mediapipe/tasks/cc/text/language_detector",
     ],
@@ -19,6 +20,7 @@ cc_library(
     deps = [
         ":text_task",
         "//GDMP/tasks/containers:classification_result",
+        "//GDMP/tasks/processors:classifier_options",
         "@godot-cpp//:godot",
         "@mediapipe//mediapipe/tasks/cc/text/text_classifier",
     ],
@@ -33,6 +35,7 @@ cc_library(
     deps = [
         ":text_task",
         "//GDMP/tasks/containers:embedding_result",
+        "//GDMP/tasks/processors:embedder_options",
         "@godot-cpp//:godot",
         "@mediapipe//mediapipe/tasks/cc/text/text_embedder",
     ],

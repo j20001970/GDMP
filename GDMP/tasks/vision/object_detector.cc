@@ -14,23 +14,18 @@ void MediaPipeObjectDetector::_register_task() {
 
 void MediaPipeObjectDetector::_init() {}
 
-bool MediaPipeObjectDetector::initialize(
-		Ref<MediaPipeTaskBaseOptions> base_options, int running_mode,
-		String display_names_locale, int max_results, float score_threshold,
-		PoolStringArray category_allowlist, PoolStringArray category_denylist) {
+bool MediaPipeObjectDetector::initialize(Ref<MediaPipeTaskBaseOptions> base_options, int running_mode, Ref<MediaPipeClassifierOptions> classifier_options) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
+	ERR_FAIL_COND_V(classifier_options.is_null(), false);
 	auto options = std::make_unique<ObjectDetectorOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
 	options->running_mode = get_running_mode(running_mode);
-	options->display_names_locale = display_names_locale.utf8().get_data();
-	options->max_results = max_results;
-	options->score_threshold = score_threshold;
-	if (category_allowlist.size())
-		for (int i = 0; i < category_allowlist.size(); i++)
-			options->category_allowlist.push_back(category_allowlist[i].utf8().get_data());
-	if (category_denylist.size())
-		for (int i = 0; i < category_denylist.size(); i++)
-			options->category_denylist.push_back(category_denylist[i].utf8().get_data());
+	const ClassifierOptions &classifier_options_ = classifier_options->get_options();
+	options->display_names_locale = classifier_options_.display_names_locale;
+	options->max_results = classifier_options_.max_results;
+	options->score_threshold = classifier_options_.score_threshold;
+	options->category_allowlist = classifier_options_.category_allowlist;
+	options->category_denylist = classifier_options_.category_denylist;
 	if (running_mode == RUNNING_MODE_LIVE_STREAM)
 		options->result_callback = [this](absl::StatusOr<ObjectDetectorResult> result, const mediapipe::Image image, uint64_t timestamp_ms) {
 			Ref<MediaPipeDetectionResult> callback_result;
