@@ -4,7 +4,7 @@
 #include "godot_cpp/core/error_macros.hpp"
 
 void MediaPipeAudioEmbedder::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("intialize", "base_options", "running_mode", "l2_normalize", "quantize"),
+	ClassDB::bind_method(D_METHOD("initialize", "base_options", "running_mode", "l2_normalize", "quantize"),
 			&MediaPipeAudioEmbedder::initialize, DEFVAL(RUNNING_MODE_AUDIO_CLIPS), DEFVAL(false), DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("embed", "audio_data", "num_channels", "audio_sample_rate"), &MediaPipeAudioEmbedder::embed);
 	ClassDB::bind_method(D_METHOD("embed_async", "audio_data", "num_channels", "audio_sample_rate", "timestamp_ms"), &MediaPipeAudioEmbedder::embed_async);

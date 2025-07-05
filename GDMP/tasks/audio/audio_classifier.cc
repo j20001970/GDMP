@@ -5,7 +5,7 @@
 
 void MediaPipeAudioClassifier::_bind_methods() {
 	ClassDB::bind_method(D_METHOD(
-								 "intialize", "base_options", "running_mode",
+								 "initialize", "base_options", "running_mode",
 								 "display_names_locale", "max_results", "score_threshold",
 								 "category_allowlist", "category_denylist"),
 			&MediaPipeAudioClassifier::initialize, DEFVAL(RUNNING_MODE_AUDIO_CLIPS), DEFVAL(String("en")), DEFVAL(-1), DEFVAL(0.0f), DEFVAL(PackedStringArray()), DEFVAL(PackedStringArray()));
