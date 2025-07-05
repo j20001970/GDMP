@@ -1,0 +1,16 @@
+diff --git a/mediapipe/tasks/cc/text/language_detector/BUILD b/mediapipe/tasks/cc/text/language_detector/BUILD
+--- a/mediapipe/tasks/cc/text/language_detector/BUILD
++++ b/mediapipe/tasks/cc/text/language_detector/BUILD
+@@ -20,6 +20,12 @@ cc_library(
+     name = "language_detector",
+     srcs = ["language_detector.cc"],
+     hdrs = ["language_detector.h"],
++    copts = select({
++        "//conditions:default": [],
++        "//mediapipe:windows": [
++            "/std:c++20",
++        ],
++    }),
+     visibility = ["//visibility:public"],
+     deps = [
+         "//mediapipe/framework/api2:builder",
