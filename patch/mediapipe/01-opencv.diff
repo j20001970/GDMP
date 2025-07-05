@@ -57,7 +57,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
          "WITH_OPENCL": "OFF",
          "WITH_WEBP": "OFF",
          # Optimization flags
-@@ -252,48 +248,68 @@ cmake(
+@@ -252,48 +233,60 @@ cmake(
          # ccache would be able to work across sandboxed Bazel builds, either.
          # In any case, Bazel does its own caching of the rule's outputs.
          "ENABLE_CCACHE": "OFF",
@@ -116,15 +116,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
 -    ],
 +    copts = select({
 +        "@platforms//os:emscripten": [
-+            "-sDISABLE_EXCEPTION_CATCHING=1",
-+            "-fexceptions",
 +            "-msimd128",
-+        ],
-+        "//conditions:default": None,
-+    }),
-+    linkopts = select({
-+        "@platforms//os:emscripten": [
-+            "--oformat=wasm",
 +        ],
 +        "//conditions:default": None,
 +    }),
