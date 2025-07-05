@@ -3,7 +3,7 @@
 #include "GDMP/tasks/containers/classification_result.h"
 
 void MediaPipeAudioClassifier::_register_methods() {
-	register_method("intialize", &MediaPipeAudioClassifier::initialize);
+	register_method("initialize", &MediaPipeAudioClassifier::initialize);
 	register_method("classify", &MediaPipeAudioClassifier::classify);
 	register_method("classify_async", &MediaPipeAudioClassifier::classify_async);
 	register_signal<MediaPipeAudioClassifier>("result_callback");

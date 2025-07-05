@@ -3,7 +3,7 @@
 #include "GDMP/tasks/containers/embedding_result.h"
 
 void MediaPipeAudioEmbedder::_register_methods() {
-	register_method("intialize", &MediaPipeAudioEmbedder::initialize);
+	register_method("initialize", &MediaPipeAudioEmbedder::initialize);
 	register_method("embed", &MediaPipeAudioEmbedder::embed);
 	register_method("embed_async", &MediaPipeAudioEmbedder::embed_async);
 	register_signal<MediaPipeAudioEmbedder>("result_callback");
