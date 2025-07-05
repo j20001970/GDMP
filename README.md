@@ -1,5 +1,5 @@
 # GDMP
-GDMP is a [Godot Engine](https://godotengine.org) 3.3+ plugin for utilizing [MediaPipe](https://developers.google.com/mediapipe) framework and solutions.
+GDMP is a [Godot Engine](https://godotengine.org) plugin for utilizing [MediaPipe](https://developers.google.com/mediapipe) framework and solutions.
 
 **Notice:** This branch is for Godot 3.x (GDNative).
 
