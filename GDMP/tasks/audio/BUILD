@@ -6,6 +6,7 @@ cc_library(
     deps = [
         ":audio_task",
         "//GDMP/tasks/containers:classification_result",
+        "//GDMP/tasks/processors:classifier_options",
         "@mediapipe//mediapipe/tasks/cc/audio/audio_classifier",
         "@godot-cpp//:godot",
     ],
@@ -20,6 +21,7 @@ cc_library(
     deps = [
         ":audio_task",
         "//GDMP/tasks/containers:embedding_result",
+        "//GDMP/tasks/processors:embedder_options",
         "@mediapipe//mediapipe/tasks/cc/audio/audio_embedder",
         "@godot-cpp//:godot",
     ],

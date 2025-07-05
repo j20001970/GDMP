@@ -7,6 +7,7 @@
 #include "mediapipe/tasks/cc/text/text_embedder/text_embedder.h"
 
 #include "GDMP/tasks/containers/embedding_result.h"
+#include "GDMP/tasks/processors/embedder_options.h"
 #include "GDMP/tasks/text/text_task.h"
 
 using namespace godot;
@@ -19,7 +20,7 @@ class MediaPipeTextEmbedder : public MediaPipeTextTask {
 		static void _bind_methods();
 
 	public:
-		bool initialize(Ref<MediaPipeTaskBaseOptions> base_options, bool l2_normalize, bool quantize);
+		bool initialize(Ref<MediaPipeTaskBaseOptions> base_options, Ref<MediaPipeEmbedderOptions> embedder_options);
 		Ref<MediaPipeEmbeddingResult> embed(const String &text);
 };
 

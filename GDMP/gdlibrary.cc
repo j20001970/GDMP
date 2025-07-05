@@ -20,6 +20,8 @@
 #include "GDMP/tasks/containers/embedding_result.h"
 #include "GDMP/tasks/containers/keypoint.h"
 #include "GDMP/tasks/containers/landmark.h"
+#include "GDMP/tasks/processors/classifier_options.h"
+#include "GDMP/tasks/processors/embedder_options.h"
 #include "GDMP/tasks/task.h"
 #include "GDMP/tasks/task_runner.h"
 #include "GDMP/util/resource_util.h"
@@ -49,6 +51,7 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	// Tasks
 	MediaPipeTask::register_tasks();
 	ClassDB::register_class<MediaPipeTaskRunner>();
+	// Task containers
 	ClassDB::register_class<MediaPipeCategory>();
 	ClassDB::register_class<MediaPipeClassifications>();
 	ClassDB::register_class<MediaPipeClassificationResult>();
@@ -61,6 +64,9 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<MediaPipeLandmarks>();
 	ClassDB::register_class<MediaPipeNormalizedLandmark>();
 	ClassDB::register_class<MediaPipeNormalizedLandmarks>();
+	// Task processors
+	ClassDB::register_class<MediaPipeClassifierOptions>();
+	ClassDB::register_class<MediaPipeEmbedderOptions>();
 }
 
 void uninitialize_mediapipe_module(ModuleInitializationLevel p_level) {

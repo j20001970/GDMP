@@ -4,7 +4,7 @@
 #include "godot_cpp/core/error_macros.hpp"
 
 void MediaPipeTextEmbedder::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("initialize", "base_options", "l2_normalize", "quantize"), &MediaPipeTextEmbedder::initialize);
+	ClassDB::bind_method(D_METHOD("initialize", "base_options", "embedder_options"), &MediaPipeTextEmbedder::initialize);
 	ClassDB::bind_method(D_METHOD("embed", "text"), &MediaPipeTextEmbedder::embed);
 }
 
@@ -12,12 +12,12 @@ void MediaPipeTextEmbedder::_register_task() {
 	ClassDB::register_class<MediaPipeTextEmbedder>();
 }
 
-bool MediaPipeTextEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_options, bool l2_normalize, bool quantize) {
+bool MediaPipeTextEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_options, Ref<MediaPipeEmbedderOptions> embedder_options) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
+	ERR_FAIL_COND_V(embedder_options.is_null(), false);
 	auto options = std::make_unique<TextEmbedderOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->embedder_options.l2_normalize = l2_normalize;
-	options->embedder_options.quantize = quantize;
+	options->embedder_options = embedder_options->get_options();
 	auto create_task = TextEmbedder::Create(std::move(options));
 	if (create_task.ok())
 		task = std::move(create_task.value());

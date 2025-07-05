@@ -24,6 +24,8 @@ cc_library(
         "//GDMP/tasks/containers:embedding_result",
         "//GDMP/tasks/containers:keypoint",
         "//GDMP/tasks/containers:landmark",
+        "//GDMP/tasks/processors:classifier_options",
+        "//GDMP/tasks/processors:embedder_options",
         "//GDMP/util:resource_util",
         "@godot-cpp//:godot",
     ] + CALCULATORS + TASKS,

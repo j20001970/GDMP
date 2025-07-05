@@ -4,11 +4,7 @@
 #include "godot_cpp/core/error_macros.hpp"
 
 void MediaPipeTextClassifier::_bind_methods() {
-	ClassDB::bind_method(D_METHOD(
-								 "initialize", "base_options",
-								 "display_names_locale", "max_results", "score_threshold",
-								 "category_allowlist", "category_denylist"),
-			&MediaPipeTextClassifier::initialize, DEFVAL(String("en")), DEFVAL(-1), DEFVAL(0.0f), DEFVAL(PackedStringArray()), DEFVAL(PackedStringArray()));
+	ClassDB::bind_method(D_METHOD("initialize", "base_options", "classifier_options"), &MediaPipeTextClassifier::initialize);
 	ClassDB::bind_method(D_METHOD("classify", "text"), &MediaPipeTextClassifier::classify);
 }
 
@@ -16,21 +12,12 @@ void MediaPipeTextClassifier::_register_task() {
 	ClassDB::register_class<MediaPipeTextClassifier>();
 }
 
-bool MediaPipeTextClassifier::initialize(
-		Ref<MediaPipeTaskBaseOptions> base_options,
-		const String &display_names_locale, int max_results, float score_threshold,
-		PackedStringArray category_allowlist, PackedStringArray category_denylist) {
+bool MediaPipeTextClassifier::initialize(Ref<MediaPipeTaskBaseOptions> base_options, Ref<MediaPipeClassifierOptions> classifier_options) {
+	ERR_FAIL_COND_V(base_options.is_null(), false);
+	ERR_FAIL_COND_V(classifier_options.is_null(), false);
 	auto options = std::make_unique<TextClassifierOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
-	options->classifier_options.display_names_locale = display_names_locale.utf8().get_data();
-	options->classifier_options.max_results = max_results;
-	options->classifier_options.score_threshold = score_threshold;
-	if (category_allowlist.size())
-		for (auto e : category_allowlist)
-			options->classifier_options.category_allowlist.push_back(e.utf8().get_data());
-	if (category_denylist.size())
-		for (auto e : category_denylist)
-			options->classifier_options.category_denylist.push_back(e.utf8().get_data());
+	options->classifier_options = classifier_options->get_options();
 	auto create_task = TextClassifier::Create(std::move(options));
 	if (create_task.ok())
 		task = std::move(create_task.value());

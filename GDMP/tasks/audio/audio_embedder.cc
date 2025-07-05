@@ -4,8 +4,7 @@
 #include "godot_cpp/core/error_macros.hpp"
 
 void MediaPipeAudioEmbedder::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("initialize", "base_options", "running_mode", "l2_normalize", "quantize"),
-			&MediaPipeAudioEmbedder::initialize, DEFVAL(RUNNING_MODE_AUDIO_CLIPS), DEFVAL(false), DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("initialize", "base_options", "running_mode", "embedder_options"), &MediaPipeAudioEmbedder::initialize);
 	ClassDB::bind_method(D_METHOD("embed", "audio_data", "num_channels", "audio_sample_rate"), &MediaPipeAudioEmbedder::embed);
 	ClassDB::bind_method(D_METHOD("embed_async", "audio_data", "num_channels", "audio_sample_rate", "timestamp_ms"), &MediaPipeAudioEmbedder::embed_async);
 	ADD_SIGNAL(MethodInfo("result_callback", PropertyInfo(Variant::ARRAY, "result", PROPERTY_HINT_ARRAY_TYPE, MediaPipeAudioEmbedder::get_class_static())));
@@ -15,13 +14,13 @@ void MediaPipeAudioEmbedder::_register_task() {
 	ClassDB::register_class<MediaPipeAudioEmbedder>();
 }
 
-bool MediaPipeAudioEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode, bool l2_normalize, bool quantize) {
+bool MediaPipeAudioEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode, Ref<MediaPipeEmbedderOptions> embedder_options) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
+	ERR_FAIL_COND_V(embedder_options.is_null(), false);
 	auto options = std::make_unique<AudioEmbedderOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
 	options->running_mode = get_running_mode(running_mode);
-	options->embedder_options.l2_normalize = l2_normalize;
-	options->embedder_options.quantize = quantize;
+	options->embedder_options = embedder_options->get_options();
 	if (running_mode == RUNNING_MODE_AUDIO_STREAM)
 		options->result_callback = [this](absl::StatusOr<AudioEmbedderResult> result) {
 			Ref<MediaPipeEmbeddingResult> callback_result;

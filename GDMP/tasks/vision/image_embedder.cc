@@ -4,8 +4,7 @@
 #include "godot_cpp/core/error_macros.hpp"
 
 void MediaPipeImageEmbedder::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("initialize", "base_options", "running_mode", "l2_normalize", "quantize"),
-			&MediaPipeImageEmbedder::initialize, DEFVAL(RUNNING_MODE_IMAGE), DEFVAL(false), DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("initialize", "base_options", "running_mode", "embedder_options"), &MediaPipeImageEmbedder::initialize);
 	ClassDB::bind_method(D_METHOD("embed", "image", "region_of_interest", "rotation_degrees"),
 			&MediaPipeImageEmbedder::embed, DEFVAL(Rect2()), DEFVAL(0));
 	ClassDB::bind_method(D_METHOD("embed_video", "image", "timestamp_ms", "region_of_interest", "rotation_degrees"),
@@ -22,13 +21,13 @@ void MediaPipeImageEmbedder::_register_task() {
 	ClassDB::register_class<MediaPipeImageEmbedder>();
 }
 
-bool MediaPipeImageEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode, bool l2_normalize, bool quantize) {
+bool MediaPipeImageEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode, Ref<MediaPipeEmbedderOptions> embedder_options) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
+	ERR_FAIL_COND_V(embedder_options.is_null(), false);
 	auto options = std::make_unique<ImageEmbedderOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
 	options->running_mode = get_running_mode(running_mode);
-    options->embedder_options.l2_normalize = l2_normalize;
-    options->embedder_options.quantize = quantize;
+	options->embedder_options = embedder_options->get_options();
 	if (running_mode == RUNNING_MODE_LIVE_STREAM)
 		options->result_callback = [this](absl::StatusOr<ImageEmbedderResult> result, const mediapipe::Image image, uint64_t timestamp_ms) {
 			Ref<MediaPipeEmbeddingResult> callback_result;
