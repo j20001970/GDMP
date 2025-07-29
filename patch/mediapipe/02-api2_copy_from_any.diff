@@ -1,7 +1,7 @@
-diff --git a/mediapipe/framework/api2/builder.h b/mediapipe/framework/api2/builder.h
---- a/mediapipe/framework/api2/builder.h
-+++ b/mediapipe/framework/api2/builder.h
-@@ -533,7 +533,13 @@ class NodeBase {
+diff --git a/mediapipe/framework/api3/internal/graph_builder.h b/mediapipe/framework/api3/internal/graph_builder.h
+--- a/mediapipe/framework/api3/internal/graph_builder.h
++++ b/mediapipe/framework/api3/internal/graph_builder.h
+@@ -353,7 +353,13 @@ class NodeBuilder {
      OptionsT* option_ptr = option.get();
      node_options_[kTypeId<OptionsT>] = {
          std::move(option),
