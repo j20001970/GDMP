@@ -17,7 +17,7 @@ class MediaPipeGraphBuilder : public RefCounted {
 		GDCLASS(MediaPipeGraphBuilder, RefCounted)
 
 	private:
-		mediapipe::api2::builder::Graph builder;
+		builder::Graph builder;
 		TypedArray<MediaPipeGraphNode> nodes;
 
 	protected:
@@ -31,13 +31,15 @@ class MediaPipeGraphBuilder : public RefCounted {
 		// MediaPipeGraphBuilder is responsible for invalidating its nodes when deleted.
 		Ref<MediaPipeGraphNode> add_node(const String &type);
 
-		// Connect the graph input stream input_name to node with tag tag_name.
-		bool connect_input_to(const String &input_name, Ref<MediaPipeGraphNode> node, const String &tag_name);
-		// Connect the node with tag tag_name to graph output stream output_name.
-		bool connect_to_output(Ref<MediaPipeGraphNode> node, const String &tag_name, const String &output_name);
+		Ref<MediaPipeNodeSource> get_input_index(int index);
+		Ref<MediaPipeNodeSource> get_input_tag(const String &tag);
+		Ref<MediaPipeNodeDestination> get_output_index(int index);
+		Ref<MediaPipeNodeDestination> get_output_tag(const String &tag);
 
 		// Get a copy of graph config of this graph builder.
 		Ref<MediaPipeGraphConfig> get_config();
+
+		builder::Graph &get_builder();
 };
 
 #endif

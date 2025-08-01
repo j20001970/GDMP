@@ -4,15 +4,17 @@
 
 void MediaPipeGraphBuilder::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("add_node", "type"), &MediaPipeGraphBuilder::add_node);
-	ClassDB::bind_method(D_METHOD("connect_input_to", "input_name", "node", "tag_name"), &MediaPipeGraphBuilder::connect_input_to);
-	ClassDB::bind_method(D_METHOD("connect_to_output", "node", "tag_name", "output_name"), &MediaPipeGraphBuilder::connect_to_output);
+	ClassDB::bind_method(D_METHOD("get_input_index", "index"), &MediaPipeGraphBuilder::get_input_index);
+	ClassDB::bind_method(D_METHOD("get_input_tag", "tag"), &MediaPipeGraphBuilder::get_input_tag);
+	ClassDB::bind_method(D_METHOD("get_output_index", "index"), &MediaPipeGraphBuilder::get_output_index);
+	ClassDB::bind_method(D_METHOD("get_output_tag", "tag"), &MediaPipeGraphBuilder::get_output_tag);
 	ClassDB::bind_method(D_METHOD("get_config"), &MediaPipeGraphBuilder::get_config);
 }
 
 MediaPipeGraphBuilder::~MediaPipeGraphBuilder() {
 	for (int i = 0; i < nodes.size(); i++) {
 		Ref<MediaPipeGraphNode> node = nodes[i];
-		node->invalidate();
+		node->node = nullptr;
 	}
 }
 
@@ -23,21 +25,27 @@ Ref<MediaPipeGraphNode> MediaPipeGraphBuilder::add_node(const String &type) {
 	return godot_node;
 }
 
-bool MediaPipeGraphBuilder::connect_input_to(const String &input_name, Ref<MediaPipeGraphNode> node, const String &tag_name) {
-	auto src = builder.In(tag_name.utf8().get_data()).SetName(input_name.utf8().get_data());
-	auto dst = node->get_node()->In(tag_name.utf8().get_data());
-	src.ConnectTo(dst);
-	return true;
+Ref<MediaPipeNodeSource> MediaPipeGraphBuilder::get_input_index(int index) {
+	return memnew(MediaPipeNodeSource(this, index));
 }
 
-bool MediaPipeGraphBuilder::connect_to_output(Ref<MediaPipeGraphNode> node, const String &tag_name, const String &output_name) {
-	auto src = node->get_node()->Out(tag_name.utf8().get_data()).SetName(output_name.utf8().get_data());
-	auto dst = builder.Out(tag_name.utf8().get_data());
-	src.ConnectTo(dst);
-	return true;
+Ref<MediaPipeNodeSource> MediaPipeGraphBuilder::get_input_tag(const String &tag) {
+	return memnew(MediaPipeNodeSource(this, tag));
+}
+
+Ref<MediaPipeNodeDestination> MediaPipeGraphBuilder::get_output_index(int index) {
+	return memnew(MediaPipeNodeDestination(this, index));
+}
+
+Ref<MediaPipeNodeDestination> MediaPipeGraphBuilder::get_output_tag(const String &tag) {
+	return memnew(MediaPipeNodeDestination(this, tag));
 }
 
 Ref<MediaPipeGraphConfig> MediaPipeGraphBuilder::get_config() {
 	Ref<MediaPipeGraphConfig> config = memnew(MediaPipeGraphConfig(builder.GetConfig()));
 	return config;
+}
+
+builder::Graph &MediaPipeGraphBuilder::get_builder() {
+	return builder;
 }

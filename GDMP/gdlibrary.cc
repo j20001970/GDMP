@@ -40,6 +40,8 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<MediaPipeGraphConfig>();
 	ClassDB::register_class<MediaPipeGraphNode>();
 	ClassDB::register_class<MediaPipeImage>();
+	ClassDB::register_class<MediaPipeNodeDestination>();
+	ClassDB::register_class<MediaPipeNodeSource>();
 	ClassDB::register_class<MediaPipePacket>();
 	// GPU
 	ClassDB::register_class<MediaPipeGPUHelper>();

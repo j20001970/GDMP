@@ -3,23 +3,18 @@
 #include <string>
 
 #include "godot_cpp/core/class_db.hpp"
-#include "godot_cpp/variant/string.hpp"
 
 void MediaPipeGraphNode::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_options"), &MediaPipeGraphNode::get_options);
 	ClassDB::bind_method(D_METHOD("set_options", "options"), &MediaPipeGraphNode::set_options);
-}
-
-MediaPipeGraphNode::MediaPipeGraphNode() {
-	node = nullptr;
+	ClassDB::bind_method(D_METHOD("get_input_index", "index"), &MediaPipeGraphNode::get_input_index);
+	ClassDB::bind_method(D_METHOD("get_input_tag", "tag"), &MediaPipeGraphNode::get_input_tag);
+	ClassDB::bind_method(D_METHOD("get_output_index", "index"), &MediaPipeGraphNode::get_output_index);
+	ClassDB::bind_method(D_METHOD("get_output_tag", "tag"), &MediaPipeGraphNode::get_output_tag);
 }
 
 MediaPipeGraphNode::MediaPipeGraphNode(mediapipe::api2::builder::GenericNode *node) {
 	this->node = node;
-}
-
-void MediaPipeGraphNode::invalidate() {
-	node = nullptr;
 }
 
 Ref<MediaPipeProto> MediaPipeGraphNode::get_options() {
@@ -44,6 +39,26 @@ bool MediaPipeGraphNode::set_options(Ref<MediaPipeProto> proto) {
 	node->GetOptions<protobuf::Any>().mutable_type_url()->swap(type_name);
 	node->GetOptions<protobuf::Any>().mutable_value()->swap(bytes);
 	return true;
+}
+
+Ref<MediaPipeNodeDestination> MediaPipeGraphNode::get_input_index(int index) {
+	ERR_FAIL_NULL_V(node, nullptr);
+	return memnew(MediaPipeNodeDestination(this, index));
+}
+
+Ref<MediaPipeNodeDestination> MediaPipeGraphNode::get_input_tag(const String &tag) {
+	ERR_FAIL_NULL_V(node, nullptr);
+	return memnew(MediaPipeNodeDestination(this, tag));
+}
+
+Ref<MediaPipeNodeSource> MediaPipeGraphNode::get_output_index(int index) {
+	ERR_FAIL_NULL_V(node, nullptr);
+	return memnew(MediaPipeNodeSource(this, index));
+}
+
+Ref<MediaPipeNodeSource> MediaPipeGraphNode::get_output_tag(const String &tag) {
+	ERR_FAIL_NULL_V(node, nullptr);
+	return memnew(MediaPipeNodeSource(this, tag));
 }
 
 builder::GenericNode *MediaPipeGraphNode::get_node() {
