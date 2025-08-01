@@ -36,6 +36,7 @@ cc_library(
     srcs = [
         "graph_builder.cc",
         "graph_node.cc",
+        "node_port.cc",
     ],
     hdrs = [
         "graph_builder.h",

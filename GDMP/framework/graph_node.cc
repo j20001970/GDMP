@@ -2,11 +2,13 @@
 
 #include <string>
 
-#include "String.hpp"
-
 void MediaPipeGraphNode::_register_methods() {
 	register_method("get_options", &MediaPipeGraphNode::get_options);
 	register_method("set_options", &MediaPipeGraphNode::set_options);
+	register_method("get_input_index", &MediaPipeGraphNode::get_input_index);
+	register_method("get_input_tag", &MediaPipeGraphNode::get_input_tag);
+	register_method("get_output_index", &MediaPipeGraphNode::get_output_index);
+	register_method("get_output_tag", &MediaPipeGraphNode::get_output_tag);
 }
 
 void MediaPipeGraphNode::_init() {
@@ -17,10 +19,6 @@ MediaPipeGraphNode *MediaPipeGraphNode::_new(mediapipe::api2::builder::GenericNo
 	MediaPipeGraphNode *n = MediaPipeGraphNode::_new();
 	n->node = node;
 	return n;
-}
-
-void MediaPipeGraphNode::invalidate() {
-	node = nullptr;
 }
 
 Ref<MediaPipeProto> MediaPipeGraphNode::get_options() {
@@ -45,6 +43,26 @@ bool MediaPipeGraphNode::set_options(Ref<MediaPipeProto> proto) {
 	node->GetOptions<protobuf::Any>().mutable_type_url()->swap(type_name);
 	node->GetOptions<protobuf::Any>().mutable_value()->swap(bytes);
 	return true;
+}
+
+Ref<MediaPipeNodeDestination> MediaPipeGraphNode::get_input_index(int index) {
+	ERR_FAIL_NULL_V(node, nullptr);
+	return Ref(MediaPipeNodeDestination::_new(this, index));
+}
+
+Ref<MediaPipeNodeDestination> MediaPipeGraphNode::get_input_tag(String tag) {
+	ERR_FAIL_NULL_V(node, nullptr);
+	return Ref(MediaPipeNodeDestination::_new(this, tag));
+}
+
+Ref<MediaPipeNodeSource> MediaPipeGraphNode::get_output_index(int index) {
+	ERR_FAIL_NULL_V(node, nullptr);
+	return Ref(MediaPipeNodeSource::_new(this, index));
+}
+
+Ref<MediaPipeNodeSource> MediaPipeGraphNode::get_output_tag(String tag) {
+	ERR_FAIL_NULL_V(node, nullptr);
+	return Ref(MediaPipeNodeSource::_new(this, tag));
 }
 
 builder::GenericNode *MediaPipeGraphNode::get_node() {

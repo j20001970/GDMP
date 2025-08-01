@@ -53,6 +53,8 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	register_class<MediaPipeGraphConfig>();
 	register_class<MediaPipeGraphNode>();
 	register_class<MediaPipeImage>();
+	register_class<MediaPipeNodeDestination>();
+	register_class<MediaPipeNodeSource>();
 	register_class<MediaPipePacket>();
 	// GPU
 	register_class<MediaPipeGPUHelper>();

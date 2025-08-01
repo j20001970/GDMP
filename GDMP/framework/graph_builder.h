@@ -19,7 +19,7 @@ class MediaPipeGraphBuilder : public Reference {
 		GODOT_CLASS(MediaPipeGraphBuilder, Reference)
 
 	private:
-		mediapipe::api2::builder::Graph builder;
+		builder::Graph builder;
 		Array nodes;
 
 	public:
@@ -31,15 +31,17 @@ class MediaPipeGraphBuilder : public Reference {
 		// Add a node into the graph, returning reference to the node.
 		// Returned MediaPipeGraphNode are valid during the lifetime of their corresponding graph builder.
 		// MediaPipeGraphBuilder is responsible for invalidating its nodes when deleted.
-		Ref<MediaPipeGraphNode> add_node(const String &type);
+		Ref<MediaPipeGraphNode> add_node(String type);
 
-		// Connect the graph input stream input_name to node with tag tag_name.
-		bool connect_input_to(String input_name, Ref<MediaPipeGraphNode> node, String tag_name);
-		// Connect the node with tag tag_name to graph output stream output_name.
-		bool connect_to_output(Ref<MediaPipeGraphNode> node, String tag_name, String output_name);
+		Ref<MediaPipeNodeSource> get_input_index(int index);
+		Ref<MediaPipeNodeSource> get_input_tag(String tag);
+		Ref<MediaPipeNodeDestination> get_output_index(int index);
+		Ref<MediaPipeNodeDestination> get_output_tag(String tag);
 
 		// Get a copy of graph config of this graph builder.
 		Ref<MediaPipeGraphConfig> get_config();
+
+		builder::Graph &get_builder();
 };
 
 #endif
