@@ -7,9 +7,6 @@
 #include "Reference.hpp"
 
 #include "mediapipe/framework/formats/image.h"
-#if !MEDIAPIPE_DISABLE_GPU
-#include "mediapipe/gpu/gpu_buffer.h"
-#endif
 
 #include "GDMP/framework/packet.h"
 
@@ -42,9 +39,9 @@ class MediaPipeImage : public Reference {
 
 		// Get a copy of godot::Image.
 		// Convert GPU image to CPU when necessary.
-		Ref<godot::Image> get_godot_image();
+		Ref<Image> get_godot_image();
 		// Copy the data of godot::Image to the image.
-		void set_godot_image(Ref<godot::Image> image);
+		void set_godot_image(Ref<Image> image);
 
 		// Get a mediapipe::Image packet from this image.
 		Ref<MediaPipePacket> get_packet();

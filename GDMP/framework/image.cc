@@ -3,6 +3,8 @@
 #include "Defs.hpp"
 #include "PoolArrays.hpp"
 
+#include "GDMP/util/image.h"
+
 void MediaPipeImage::_register_methods() {
 	register_method("is_gpu_image", &MediaPipeImage::is_gpu_image);
 	register_method("convert_to_cpu", &MediaPipeImage::convert_to_cpu);
@@ -51,66 +53,21 @@ void MediaPipeImage::convert_to_cpu() {
 }
 
 Ref<Image> MediaPipeImage::get_godot_image() {
-	Ref<Image> godot_image;
-	if (is_gpu_image())
-		convert_to_cpu();
-
-	mediapipe::ImageFrameSharedPtr image_frame = image.GetImageFrameSharedPtr();
-	ERR_FAIL_COND_V(image_frame == nullptr, godot_image);
-	PoolByteArray data;
-	data.resize(image_frame->PixelDataSize());
-	Image::Format image_format;
-	switch (image.image_format()) {
-		case mediapipe::ImageFormat::SRGB:
-			image_format = Image::FORMAT_RGB8;
-			image_frame->CopyToBuffer(data.write().ptr(), data.size());
-			break;
-		case mediapipe::ImageFormat::SRGBA:
-			image_format = Image::FORMAT_RGBA8;
-			image_frame->CopyToBuffer(data.write().ptr(), data.size());
-			break;
-		case mediapipe::ImageFormat::GRAY8:
-			image_format = Image::FORMAT_L8;
-			image_frame->CopyToBuffer(data.write().ptr(), data.size());
-			break;
-		case mediapipe::ImageFormat::VEC32F1:
-			image_format = Image::FORMAT_RF;
-			image_frame->CopyToBuffer((float *)data.write().ptr(), data.size());
-			break;
-		default:
-			ERR_PRINT("Unsupported image format.");
-			return godot_image;
+	if (image == nullptr) {
+		return nullptr;
 	}
-	godot_image = Ref(godot::Image::_new());
-	godot_image->create_from_data(image_frame->Width(), image_frame->Height(), false, image_format, data);
-	return godot_image;
+	if (is_gpu_image()) {
+		convert_to_cpu();
+	}
+	return util::get_image(image);
 }
 
-void MediaPipeImage::set_godot_image(Ref<godot::Image> image) {
-	ERR_FAIL_COND(image.is_null());
-	mediapipe::ImageFormat::Format image_format;
-	switch (image->get_format()) {
-		case Image::FORMAT_L8:
-			image_format = mediapipe::ImageFormat::GRAY8;
-			break;
-		case Image::FORMAT_RGB8:
-			image_format = mediapipe::ImageFormat::SRGB;
-			break;
-		case Image::FORMAT_RGBA8:
-			image_format = mediapipe::ImageFormat::SRGBA;
-			break;
-		case Image::FORMAT_RF:
-			image_format = mediapipe::ImageFormat::VEC32F1;
-			break;
-		default:
-			ERR_PRINT("Unsupported image format.");
-			return;
+void MediaPipeImage::set_godot_image(Ref<Image> image) {
+	if (image.is_null()) {
+		this->image = nullptr;
+		return;
 	}
-	auto image_frame = std::make_shared<mediapipe::ImageFrame>();
-	image_frame->CopyPixelData(
-			image_format, image->get_width(), image->get_height(),
-			image->get_data().read().ptr(), mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
-	this->image = mediapipe::Image(image_frame);
+	this->image = util::get_image(image);
 }
 
 Ref<MediaPipePacket> MediaPipeImage::get_packet() {
