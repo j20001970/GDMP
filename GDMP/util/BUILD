@@ -1,4 +1,15 @@
 cc_library(
+    name = "image",
+    srcs = ["image.cc"],
+    hdrs = ["image.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/framework/formats:image",
+    ],
+)
+
+cc_library(
     name = "packet_map",
     srcs = ["packet_map.cc"],
     hdrs = ["packet_map.h"],

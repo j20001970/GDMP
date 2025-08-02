@@ -5,6 +5,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":packet",
+        "//GDMP/util:image",
         "@mediapipe//mediapipe/framework/formats:image",
         "@godot-cpp//:godot",
     ] + select({
