@@ -1,5 +1,7 @@
 #include "gesture_recognizer.h"
 
+#include "GDMP/proto/proto.h"
+
 void MediaPipeGestureRecognizerResult::_register_methods() {
 	register_method("get_gestures", &MediaPipeGestureRecognizerResult::get_gestures);
 	register_method("get_handedness", &MediaPipeGestureRecognizerResult::get_handedness);

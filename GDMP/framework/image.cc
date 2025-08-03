@@ -1,7 +1,6 @@
 #include "image.h"
 
 #include "Defs.hpp"
-#include "PoolArrays.hpp"
 
 #include "GDMP/util/image.h"
 
@@ -70,21 +69,6 @@ void MediaPipeImage::set_godot_image(Ref<Image> image) {
 	this->image = util::get_image(image);
 }
 
-Ref<MediaPipePacket> MediaPipeImage::get_packet() {
-	mediapipe::Packet packet = mediapipe::MakePacket<mediapipe::Image>(image);
-	return MediaPipePacket::_new(packet);
-}
-
-Ref<MediaPipePacket> MediaPipeImage::get_image_frame_packet() {
-	Ref<MediaPipePacket> packet;
-	auto image_frame = image.GetImageFrameSharedPtr();
-	ERR_FAIL_COND_V(image_frame == nullptr, packet);
-	auto image = std::make_unique<mediapipe::ImageFrame>();
-	image->CopyFrom(*image_frame, mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
-	packet = Ref(MediaPipePacket::_new(mediapipe::Adopt(image.release())));
-	return packet;
-}
-
 void MediaPipeImage::set_image_from_packet(Ref<MediaPipePacket> packet) {
 	ERR_FAIL_COND(packet.is_null());
 	mediapipe::Packet p = packet->get_packet();
@@ -103,6 +87,19 @@ void MediaPipeImage::set_image_from_packet(Ref<MediaPipePacket> packet) {
 #endif
 	} else
 		ERR_PRINT("Unsupported packet type.");
+}
+
+Ref<MediaPipePacket> MediaPipeImage::get_packet() {
+	mediapipe::Packet packet = mediapipe::MakePacket<mediapipe::Image>(image);
+	return Ref(MediaPipePacket::_new(packet));
+}
+
+Ref<MediaPipePacket> MediaPipeImage::get_image_frame_packet() {
+	ERR_FAIL_NULL_V(image, nullptr);
+	mediapipe::ImageFrameSharedPtr image_frame_ptr = image.GetImageFrameSharedPtr();
+	auto image_frame = std::make_unique<mediapipe::ImageFrame>();
+	image_frame->CopyFrom(*image_frame_ptr, mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
+	return Ref(MediaPipePacket::_new(mediapipe::Adopt(image_frame.release())));
 }
 
 mediapipe::Image MediaPipeImage::get_mediapipe_image() {

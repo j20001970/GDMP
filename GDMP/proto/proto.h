@@ -9,6 +9,8 @@
 
 #include "google/protobuf/message.h"
 
+#include "GDMP/framework/packet.h"
+
 using namespace godot;
 using namespace google;
 
@@ -63,6 +65,8 @@ class MediaPipeProto : public Reference {
 
 		// Returns a new copy of the proto message.
 		Ref<MediaPipeProto> duplicate();
+
+		Ref<MediaPipePacket> get_packet();
 
 		// Get underlying protobuf::Message.
 		protobuf::Message *get_message();

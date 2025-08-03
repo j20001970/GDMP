@@ -10,6 +10,7 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
+        "//GDMP/framework:packet",
         "@com_google_protobuf//:protobuf",
         "@godot-cpp//:godot",
     ],

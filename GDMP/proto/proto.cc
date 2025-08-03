@@ -19,6 +19,7 @@ void MediaPipeProto::_register_methods() {
 	register_method("get_repeated", &MediaPipeProto::get_repeated);
 	register_method("set", &MediaPipeProto::set);
 	register_method("duplicate", &MediaPipeProto::duplicate);
+	register_method("get_packet", &MediaPipeProto::get_packet);
 }
 
 MediaPipeProto *MediaPipeProto::_new(const protobuf::Message &message) {
@@ -196,6 +197,13 @@ bool MediaPipeProto::set(String field_name, Variant value) {
 Ref<MediaPipeProto> MediaPipeProto::duplicate() {
 	ERR_FAIL_COND_V(!is_initialized(), nullptr);
 	return MediaPipeProto::_new(*message);
+}
+
+Ref<MediaPipePacket> MediaPipeProto::get_packet() {
+	protobuf::Message *message = this->message->New();
+	message->CopyFrom(*this->message);
+	mediapipe::Packet packet = mediapipe::Adopt(message);
+	return Ref(MediaPipePacket::_new(packet));
 }
 
 protobuf::Message *MediaPipeProto::get_message() {
