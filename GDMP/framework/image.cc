@@ -12,9 +12,32 @@ void MediaPipeImage::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_image", "image"), &MediaPipeImage::set_godot_image);
 	ClassDB::bind_method(D_METHOD("get_packet"), &MediaPipeImage::get_packet);
 	ClassDB::bind_method(D_METHOD("get_image_frame_packet"), &MediaPipeImage::get_image_frame_packet);
-	ClassDB::bind_method(D_METHOD("set_image_from_packet", "packet"), &MediaPipeImage::set_image_from_packet);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "image", PROPERTY_HINT_RESOURCE_TYPE, Image::get_class_static()), "set_image", "get_image");
 }
+
+bool MediaPipeImage::_register_packet_types = register_packet_types();
+
+bool MediaPipeImage::register_packet_types() {
+#if !MEDIAPIPE_DISABLE_GPU
+	std::function<Variant(const mediapipe::Packet &)> get_gpu_buffer = [](const mediapipe::Packet &packet) {
+		const mediapipe::GpuBuffer &gpu_buffer = packet.Get<mediapipe::GpuBuffer>();
+		return memnew(MediaPipeImage(gpu_buffer));
+	};
+	MediaPipePacket::add_packet_type({ MediaPipePacket::validate_packet_type<mediapipe::GpuBuffer>, get_gpu_buffer });
+#endif
+	std::function<Variant(const mediapipe::Packet &)> get_image = [](const mediapipe::Packet &packet) {
+		const mediapipe::Image &image = packet.Get<mediapipe::Image>();
+		return memnew(MediaPipeImage(image));
+	};
+	MediaPipePacket::add_packet_type({ MediaPipePacket::validate_packet_type<mediapipe::Image>, get_image });
+	std::function<Variant(const mediapipe::Packet &)> get_image_frame = [](const mediapipe::Packet &packet) {
+		auto image_frame = std::make_unique<mediapipe::ImageFrame>();
+		image_frame->CopyFrom(packet.Get<mediapipe::ImageFrame>(), mediapipe::ImageFrame::kDefaultAlignmentBoundary);
+		return memnew(MediaPipeImage(std::move(image_frame)));
+	};
+	MediaPipePacket::add_packet_type({ MediaPipePacket::validate_packet_type<mediapipe::ImageFrame>, get_image_frame });
+	return true;
+};
 
 MediaPipeImage::MediaPipeImage() = default;
 
@@ -61,26 +84,6 @@ void MediaPipeImage::set_godot_image(Ref<Image> image) {
 		return;
 	}
 	this->image = util::get_image(image);
-}
-
-void MediaPipeImage::set_image_from_packet(Ref<MediaPipePacket> packet) {
-	ERR_FAIL_COND(packet.is_null());
-	mediapipe::Packet p = packet->get_packet();
-	if (p.ValidateAsType<mediapipe::Image>().ok()) {
-		auto image = p.Get<mediapipe::Image>();
-		this->image = image;
-	} else if (p.ValidateAsType<mediapipe::ImageFrame>().ok()) {
-		auto &image_frame = p.Get<mediapipe::ImageFrame>();
-		auto image = std::make_shared<mediapipe::ImageFrame>();
-		image->CopyFrom(image_frame, image_frame.kGlDefaultAlignmentBoundary);
-		this->image = mediapipe::Image(image);
-#if !MEDIAPIPE_DISABLE_GPU
-	} else if (p.ValidateAsType<mediapipe::GpuBuffer>().ok()) {
-		auto gpu_buffer = p.Get<mediapipe::GpuBuffer>();
-		this->image = mediapipe::Image(gpu_buffer);
-#endif
-	} else
-		ERR_PRINT("Unsupported packet type.");
 }
 
 Ref<MediaPipePacket> MediaPipeImage::get_packet() {

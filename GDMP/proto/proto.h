@@ -16,6 +16,10 @@ using namespace google;
 class MediaPipeProto : public RefCounted {
 		GDCLASS(MediaPipeProto, RefCounted);
 
+	private:
+		static bool _register_packet_types;
+		static bool register_packet_types();
+
 	protected:
 		static void _bind_methods();
 

@@ -24,6 +24,34 @@ void MediaPipeProto::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_packet"), &MediaPipeProto::get_packet);
 }
 
+bool MediaPipeProto::_register_packet_types = register_packet_types();
+
+bool MediaPipeProto::register_packet_types() {
+	std::function<bool(const mediapipe::Packet &)> validate_proto = [](const mediapipe::Packet &packet) {
+		return packet.ValidateAsProtoMessageLite().ok();
+	};
+	std::function<Variant(const mediapipe::Packet &)> get_proto = [](const mediapipe::Packet &packet) {
+		auto &proto = packet.GetProtoMessageLite();
+		return memnew(MediaPipeProto(proto));
+	};
+	MediaPipePacket::add_packet_type({ validate_proto, get_proto });
+	std::function<bool(const mediapipe::Packet &)> validate_vector_proto = [](const mediapipe::Packet &packet) {
+		return packet.GetVectorOfProtoMessageLitePtrs().ok();
+	};
+	std::function<Variant(const mediapipe::Packet &)> get_vector_proto = [](const mediapipe::Packet &packet) {
+		TypedArray<MediaPipeProto> array;
+		auto vector_proto = packet.GetVectorOfProtoMessageLitePtrs().value();
+		array.resize(vector_proto.size());
+		for (int i = 0; i < vector_proto.size(); i++) {
+			auto proto = vector_proto[i];
+			array[i] = memnew(MediaPipeProto(*proto));
+		}
+		return array;
+	};
+	MediaPipePacket::add_packet_type({ validate_vector_proto, get_vector_proto });
+	return true;
+}
+
 String MediaPipeProto::_to_string() const {
 	String class_name = this->get_class_static();
 	String type_name = "null";

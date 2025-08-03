@@ -15,6 +15,9 @@ class MediaPipeImage : public RefCounted {
 		GDCLASS(MediaPipeImage, RefCounted)
 
 	private:
+		static bool _register_packet_types;
+		static bool register_packet_types();
+
 		mediapipe::Image image;
 
 	protected:
@@ -48,9 +51,6 @@ class MediaPipeImage : public RefCounted {
 		// Get a mediapipe::ImageFrame packet from this image.
 		// For making mediapipe::GpuBuffer packet, refer to MediaPipeGPUHelper::make_gpu_buffer_packet.
 		Ref<MediaPipePacket> get_image_frame_packet();
-
-		// Set the image from a packet that contains either mediapipe::Image, mediapipe::ImageFrame or mediapipe::GpuBuffer.
-		void set_image_from_packet(Ref<MediaPipePacket> packet);
 
 		// Get underlying mediapipe::Image.
 		mediapipe::Image get_mediapipe_image();
