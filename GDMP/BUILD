@@ -1,10 +1,9 @@
 load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile_commands")
-load("//GDMP:GDMP.bzl", "CALCULATORS", "DATA", "TASKS")
+load("//GDMP:GDMP.bzl", "CALCULATORS", "TASKS")
 
 cc_library(
     name = "GDMP",
     srcs = ["gdlibrary.cc"],
-    data = DATA,
     visibility = ["//visibility:public"],
     deps = [
         "//GDMP/framework:graph",

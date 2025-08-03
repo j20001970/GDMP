@@ -1,11 +1,11 @@
 """GDMP configuration"""
 
 CALCULATORS = [
-    # Put additional calculator dependencies here.
-]
-
-DATA = [
-    # Put additional data used by tasks or calculator dependencies here.
+    "@mediapipe//mediapipe/calculators/util:annotation_overlay_calculator",
+    "@mediapipe//mediapipe/calculators/util:detections_to_render_data_calculator",
+    "@mediapipe//mediapipe/calculators/util:landmarks_to_render_data_calculator",
+    "@mediapipe//mediapipe/calculators/util:labels_to_render_data_calculator",
+    "@mediapipe//mediapipe/calculators/util:rect_to_render_data_calculator",
 ]
 
 # List of enabled tasks.
