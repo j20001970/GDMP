@@ -21,6 +21,7 @@ void MediaPipeProto::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_repeated", "field_name", "index"), &MediaPipeProto::get_repeated);
 	ClassDB::bind_method(D_METHOD("set", "field_name", "value"), &MediaPipeProto::set);
 	ClassDB::bind_method(D_METHOD("duplicate"), &MediaPipeProto::duplicate);
+	ClassDB::bind_method(D_METHOD("get_packet"), &MediaPipeProto::get_packet);
 }
 
 String MediaPipeProto::_to_string() const {
@@ -181,6 +182,13 @@ bool MediaPipeProto::set(const String &field_name, Variant value) {
 Ref<MediaPipeProto> MediaPipeProto::duplicate() {
 	ERR_FAIL_COND_V(!is_initialized(), nullptr);
 	return memnew(MediaPipeProto(*message));
+}
+
+Ref<MediaPipePacket> MediaPipeProto::get_packet() {
+	protobuf::Message *message = this->message->New();
+	message->CopyFrom(*this->message);
+	mediapipe::Packet packet = mediapipe::Adopt(message);
+	return memnew(MediaPipePacket(packet));
 }
 
 protobuf::Message *MediaPipeProto::get_message() {
