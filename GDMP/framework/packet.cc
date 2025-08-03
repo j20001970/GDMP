@@ -17,6 +17,33 @@ void MediaPipePacket::_register_methods() {
 	register_property<MediaPipePacket, int64_t>("timestamp", &MediaPipePacket::set_timestamp, &MediaPipePacket::get_timestamp, mediapipe::Timestamp::Unset().Value());
 }
 
+PacketTypeList &MediaPipePacket::get_packet_type_list() {
+	static PacketTypeList type_list;
+	return type_list;
+}
+
+bool MediaPipePacket::_register_packet_types = register_packet_types();
+
+bool MediaPipePacket::register_packet_types() {
+	add_packet_type({ validate_packet_type<bool>, get_packet_type<bool> });
+	add_packet_type({ validate_packet_type<int32_t>, get_packet_type<int32_t> });
+	add_packet_type({ validate_packet_type<int64_t>, get_packet_type<int64_t> });
+	add_packet_type({ validate_packet_type<float>, get_packet_type<float> });
+	std::function<Variant(const mediapipe::Packet &)> get_string = [](const mediapipe::Packet &packet) {
+		return packet.Get<std::string>().c_str();
+	};
+	add_packet_type({ MediaPipePacket::validate_packet_type<std::string>, get_string });
+	return true;
+};
+
+bool MediaPipePacket::add_packet_type(PacketType packet_type) {
+	ERR_FAIL_NULL_V(packet_type.first, false);
+	ERR_FAIL_NULL_V(packet_type.second, false);
+	PacketTypeList &type_list = get_packet_type_list();
+	type_list.push_back(packet_type);
+	return true;
+}
+
 MediaPipePacket *MediaPipePacket::_new(const mediapipe::Packet &packet) {
 	MediaPipePacket *p = MediaPipePacket::_new();
 	p->packet = packet;
@@ -41,16 +68,12 @@ Variant MediaPipePacket::get() {
 	if (is_empty()) {
 		return Variant();
 	}
-	if (packet.ValidateAsType<bool>().ok())
-		return packet.Get<bool>();
-	if (packet.ValidateAsType<int32_t>().ok())
-		return packet.Get<int32_t>();
-	if (packet.ValidateAsType<int64_t>().ok())
-		return packet.Get<int64_t>();
-	if (packet.ValidateAsType<float>().ok())
-		return packet.Get<float>();
-	if (packet.ValidateAsType<std::string>().ok())
-		return packet.Get<std::string>().c_str();
+	const PacketTypeList &type_list = get_packet_type_list();
+	for (const PacketType &type : type_list) {
+		if (type.first(packet)) {
+			return type.second(packet);
+		}
+	}
 	ERR_PRINT("Unsupported type");
 	return Variant();
 }

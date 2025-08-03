@@ -17,6 +17,10 @@ using namespace google;
 class MediaPipeProto : public Reference {
 		GODOT_CLASS(MediaPipeProto, Reference);
 
+	private:
+		static bool _register_packet_types;
+		static bool register_packet_types();
+
 	protected:
 		protobuf::Message *message;
 

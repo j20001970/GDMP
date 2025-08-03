@@ -40,6 +40,34 @@ MediaPipeProto *MediaPipeProto::_new(const protobuf::MessageLite &message) {
 	return proto;
 }
 
+bool MediaPipeProto::_register_packet_types = register_packet_types();
+
+bool MediaPipeProto::register_packet_types() {
+	std::function<bool(const mediapipe::Packet &)> validate_proto = [](const mediapipe::Packet &packet) {
+		return packet.ValidateAsProtoMessageLite().ok();
+	};
+	std::function<Variant(const mediapipe::Packet &)> get_proto = [](const mediapipe::Packet &packet) {
+		auto &proto = packet.GetProtoMessageLite();
+		return Ref(MediaPipeProto::_new(proto));
+	};
+	MediaPipePacket::add_packet_type({ validate_proto, get_proto });
+	std::function<bool(const mediapipe::Packet &)> validate_vector_proto = [](const mediapipe::Packet &packet) {
+		return packet.GetVectorOfProtoMessageLitePtrs().ok();
+	};
+	std::function<Variant(const mediapipe::Packet &)> get_vector_proto = [](const mediapipe::Packet &packet) {
+		Array array;
+		auto vector_proto = packet.GetVectorOfProtoMessageLitePtrs().value();
+		array.resize(vector_proto.size());
+		for (int i = 0; i < vector_proto.size(); i++) {
+			auto proto = vector_proto[i];
+			array[i] = Ref(MediaPipeProto::_new(*proto));
+		}
+		return array;
+	};
+	MediaPipePacket::add_packet_type({ validate_vector_proto, get_vector_proto });
+	return true;
+}
+
 String MediaPipeProto::_to_string() const {
 	String class_name = this->get_class();
 	String type_name = "null";
