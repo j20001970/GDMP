@@ -7,7 +7,7 @@
 
 #include "GDMP/framework/packet.h"
 
-PacketMap dict_to_packet_map(Dictionary dict) {
+PacketMap util::dict_to_packet_map(Dictionary dict) {
 	PacketMap packet_map;
 	Array keys = dict.keys();
 	for (int i = 0; i < keys.size(); i++) {
@@ -24,7 +24,7 @@ PacketMap dict_to_packet_map(Dictionary dict) {
 	return packet_map;
 }
 
-Dictionary packet_map_to_dict(PacketMap &packet_map) {
+Dictionary util::packet_map_to_dict(PacketMap &packet_map) {
 	Dictionary dict;
 	for (auto &pair : packet_map)
 		dict[pair.first.data()] = MediaPipePacket::_new(pair.second);

@@ -39,7 +39,7 @@ void MediaPipeGraph::_init() {
 }
 
 bool MediaPipeGraph::initialize(Ref<MediaPipeGraphConfig> config, Dictionary side_packets) {
-	std::map<std::string, mediapipe::Packet> packets = dict_to_packet_map(side_packets);
+	std::map<std::string, mediapipe::Packet> packets = util::dict_to_packet_map(side_packets);
 	absl::Status result = graph->Initialize(config->get_config(), packets);
 	if (!result.ok())
 		ERR_PRINT(result.message().data());
@@ -72,7 +72,7 @@ Ref<MediaPipePacket> MediaPipeGraph::get_output_side_packet(String packet_name) 
 }
 
 bool MediaPipeGraph::run(Dictionary extra_side_packets) {
-	std::map<std::string, mediapipe::Packet> packets = dict_to_packet_map(extra_side_packets);
+	std::map<std::string, mediapipe::Packet> packets = util::dict_to_packet_map(extra_side_packets);
 	absl::Status result = graph->Run(packets);
 	if (!result.ok())
 		ERR_PRINT(result.message().data());
@@ -80,7 +80,7 @@ bool MediaPipeGraph::run(Dictionary extra_side_packets) {
 }
 
 bool MediaPipeGraph::start_run(Dictionary extra_side_packets) {
-	std::map<std::string, mediapipe::Packet> packets = dict_to_packet_map(extra_side_packets);
+	std::map<std::string, mediapipe::Packet> packets = util::dict_to_packet_map(extra_side_packets);
 	absl::Status result = graph->StartRun(packets);
 	if (!result.ok())
 		ERR_PRINT(result.message().data());

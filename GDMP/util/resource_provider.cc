@@ -1,4 +1,4 @@
-#include "resource_util.h"
+#include "resource_provider.h"
 
 #include <string>
 
@@ -9,7 +9,6 @@
 #include "PoolArrays.hpp"
 #include "String.hpp"
 
-#include "mediapipe/framework/port/status.h"
 #include "mediapipe/util/resource_util_custom.h"
 #include "mediapipe/util/resource_util_internal.h"
 
@@ -35,6 +34,6 @@ absl::Status GetResourceContents(const std::string &path, std::string *output) {
 	return mediapipe::internal::DefaultGetResourceContents(path, output, true);
 }
 
-void set_resource_provider() {
+void util::set_resource_provider() {
 	mediapipe::SetCustomGlobalResourceProvider(GetResourceContents);
 }

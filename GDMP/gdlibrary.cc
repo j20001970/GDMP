@@ -23,7 +23,7 @@
 #include "GDMP/tasks/processors/embedder_options.h"
 #include "GDMP/tasks/task.h"
 #include "GDMP/tasks/task_runner.h"
-#include "GDMP/util/resource_util.h"
+#include "GDMP/util/resource_provider.h"
 
 #ifdef __ANDROID__
 #include "GDMP/android/asset_util.h"
@@ -62,7 +62,7 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	// I/O
 	register_class<MediaPipeCameraHelper>();
 	// ResourceProvider
-	set_resource_provider();
+	util::set_resource_provider();
 	// Tasks
 	MediaPipeTask::register_tasks();
 	register_class<MediaPipeTaskRunner>();

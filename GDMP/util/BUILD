@@ -11,9 +11,9 @@ cc_library(
 )
 
 cc_library(
-    name = "resource_util",
-    srcs = ["resource_util.cc"],
-    hdrs = ["resource_util.h"],
+    name = "resource_provider",
+    srcs = ["resource_provider.cc"],
+    hdrs = ["resource_provider.h"],
     visibility = ["//visibility:public"],
     deps = [
         "@mediapipe//mediapipe/framework/port:status",
