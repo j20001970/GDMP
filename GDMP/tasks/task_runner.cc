@@ -21,7 +21,7 @@ bool MediaPipeTaskRunner::initialize(Ref<MediaPipeGraphConfig> config, Callable 
 		packets_callback = [this, callback](auto result) -> void {
 			Dictionary outputs;
 			if (result.ok())
-				outputs = packet_map_to_dict(result.value());
+				outputs = util::packet_map_to_dict(result.value());
 			else
 				ERR_PRINT(result.status().message().data());
 			callback.call_deferred(outputs);
@@ -38,10 +38,10 @@ bool MediaPipeTaskRunner::initialize(Ref<MediaPipeGraphConfig> config, Callable 
 Dictionary MediaPipeTaskRunner::process(Dictionary inputs) {
 	Dictionary outputs;
 	ERR_FAIL_COND_V(task_runner == nullptr, outputs);
-	PacketMap packet_map = dict_to_packet_map(inputs);
+	PacketMap packet_map = util::dict_to_packet_map(inputs);
 	absl::StatusOr<PacketMap> result = task_runner->Process(packet_map);
 	if (result.ok())
-		outputs = packet_map_to_dict(result.value());
+		outputs = util::packet_map_to_dict(result.value());
 	else
 		ERR_PRINT(result.status().message().data());
 	return outputs;
@@ -49,7 +49,7 @@ Dictionary MediaPipeTaskRunner::process(Dictionary inputs) {
 
 bool MediaPipeTaskRunner::send(Dictionary inputs) {
 	ERR_FAIL_COND_V(task_runner == nullptr, false);
-	PacketMap packet_map = dict_to_packet_map(inputs);
+	PacketMap packet_map = util::dict_to_packet_map(inputs);
 	absl::Status result = task_runner->Send(packet_map);
 	if (!result.ok())
 		ERR_PRINT(result.message().data());

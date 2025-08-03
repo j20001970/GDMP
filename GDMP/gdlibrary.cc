@@ -24,7 +24,7 @@
 #include "GDMP/tasks/processors/embedder_options.h"
 #include "GDMP/tasks/task.h"
 #include "GDMP/tasks/task_runner.h"
-#include "GDMP/util/resource_util.h"
+#include "GDMP/util/resource_provider.h"
 
 using namespace godot;
 
@@ -49,7 +49,7 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	// I/O
 	ClassDB::register_class<MediaPipeCameraHelper>();
 	// ResourceProvider
-	set_resource_provider();
+	util::set_resource_provider();
 	// Tasks
 	MediaPipeTask::register_tasks();
 	ClassDB::register_class<MediaPipeTaskRunner>();

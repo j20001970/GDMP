@@ -26,7 +26,7 @@ cc_library(
         "//GDMP/tasks/containers:landmark",
         "//GDMP/tasks/processors:classifier_options",
         "//GDMP/tasks/processors:embedder_options",
-        "//GDMP/util:resource_util",
+        "//GDMP/util:resource_provider",
         "@godot-cpp//:godot",
     ] + CALCULATORS + TASKS,
     alwayslink = 1,
