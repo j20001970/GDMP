@@ -7,6 +7,8 @@
 
 #include "mediapipe/tasks/cc/components/containers/classification_result.h"
 
+#include "GDMP/framework/packet.h"
+#include "GDMP/proto/proto.h"
 #include "GDMP/tasks/containers/category.h"
 
 using namespace godot;
@@ -16,12 +18,17 @@ class MediaPipeClassifications : public RefCounted {
 		GDCLASS(MediaPipeClassifications, RefCounted)
 
 	private:
+		typedef mediapipe::ClassificationList ProtoType;
+
 		Classifications classifications;
 
 	protected:
 		static void _bind_methods();
 
 	public:
+		static ProtoType to_proto(const Classifications &classifications);
+		static Ref<MediaPipePacket> make_vector_proto_packet(TypedArray<MediaPipeClassifications> array);
+
 		MediaPipeClassifications();
 		MediaPipeClassifications(const Classifications &classifications);
 
@@ -30,6 +37,8 @@ class MediaPipeClassifications : public RefCounted {
 		String get_head_name() const;
 
 		bool has_head_name() const;
+
+		Ref<MediaPipeProto> get_proto();
 };
 
 class MediaPipeClassificationResult : public RefCounted {

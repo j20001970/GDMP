@@ -5,6 +5,7 @@
 #include "godot_cpp/variant/variant.hpp"
 
 void MediaPipeNormalizedKeypoint::_bind_methods() {
+	ClassDB::bind_static_method(MediaPipeNormalizedKeypoint::get_class_static(), D_METHOD("make_vector_proto_packet", "array"), &MediaPipeNormalizedKeypoint::make_vector_proto_packet);
 	ClassDB::bind_method(D_METHOD("get_x"), &MediaPipeNormalizedKeypoint::get_x);
 	ClassDB::bind_method(D_METHOD("get_y"), &MediaPipeNormalizedKeypoint::get_y);
 	ClassDB::bind_method(D_METHOD("get_point"), &MediaPipeNormalizedKeypoint::get_point);
@@ -12,11 +13,37 @@ void MediaPipeNormalizedKeypoint::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_score"), &MediaPipeNormalizedKeypoint::get_score);
 	ClassDB::bind_method(D_METHOD("has_label"), &MediaPipeNormalizedKeypoint::has_label);
 	ClassDB::bind_method(D_METHOD("has_score"), &MediaPipeNormalizedKeypoint::has_score);
+	ClassDB::bind_method(D_METHOD("get_proto"), &MediaPipeNormalizedKeypoint::get_proto);
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "x"), "", "get_x");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "y"), "", "get_y");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "point"), "", "get_point");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "label"), "", "get_label");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "score"), "", "get_score");
+}
+
+mediapipe::LocationData::RelativeKeypoint MediaPipeNormalizedKeypoint::to_proto(const NormalizedKeypoint &keypoint) {
+	ProtoType proto;
+	proto.set_x(keypoint.x);
+	proto.set_y(keypoint.y);
+	if (keypoint.label.has_value()) {
+		proto.set_keypoint_label(keypoint.label.value());
+	}
+	if (keypoint.score.has_value()) {
+		proto.set_score(keypoint.score.value());
+	}
+	return proto;
+}
+
+Ref<MediaPipePacket> MediaPipeNormalizedKeypoint::make_vector_proto_packet(TypedArray<MediaPipeNormalizedKeypoint> array) {
+	std::vector<ProtoType> vector;
+	vector.reserve(array.size());
+	for (int i = 0; i < array.size(); i++) {
+		Ref<MediaPipeNormalizedKeypoint> keypoint = array[i];
+		ERR_BREAK(keypoint.is_null());
+		vector.push_back(to_proto(keypoint->keypoint));
+	}
+	mediapipe::Packet packet = mediapipe::MakePacket<std::vector<ProtoType>>(vector);
+	return memnew(MediaPipePacket(packet));
 }
 
 MediaPipeNormalizedKeypoint::MediaPipeNormalizedKeypoint() {
@@ -62,4 +89,8 @@ bool MediaPipeNormalizedKeypoint::has_label() const {
 
 bool MediaPipeNormalizedKeypoint::has_score() const {
 	return keypoint.score.has_value();
+}
+
+Ref<MediaPipeProto> MediaPipeNormalizedKeypoint::get_proto() {
+	return memnew(MediaPipeProto(to_proto(keypoint)));
 }

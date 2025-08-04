@@ -5,13 +5,55 @@
 #include "godot_cpp/variant/variant.hpp"
 
 void MediaPipeDetection::_bind_methods() {
+	ClassDB::bind_static_method(MediaPipeDetection::get_class_static(), D_METHOD("make_vector_proto_packet", "array"), &MediaPipeDetection::make_vector_proto_packet);
 	ClassDB::bind_method(D_METHOD("get_categories"), &MediaPipeDetection::get_categories);
 	ClassDB::bind_method(D_METHOD("get_bounding_box"), &MediaPipeDetection::get_bounding_box);
 	ClassDB::bind_method(D_METHOD("get_keypoints"), &MediaPipeDetection::get_keypoints);
 	ClassDB::bind_method(D_METHOD("has_keypoints"), &MediaPipeDetection::has_keypoints);
+	ClassDB::bind_method(D_METHOD("get_proto"), &MediaPipeDetection::get_proto);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "categories", PROPERTY_HINT_ARRAY_TYPE, MediaPipeCategory::get_class_static()), "", "get_categories");
 	ADD_PROPERTY(PropertyInfo(Variant::RECT2I, "bounding_box"), "", "get_bounding_box");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "keypoints", PROPERTY_HINT_ARRAY_TYPE, MediaPipeNormalizedKeypoint::get_class_static()), "", "get_keypoints");
+}
+
+mediapipe::Detection MediaPipeDetection::to_proto(const Detection &detection) {
+	ProtoType proto;
+	proto.mutable_label_id()->Reserve(detection.categories.size());
+	proto.mutable_score()->Reserve(detection.categories.size());
+	proto.mutable_label()->Reserve(detection.categories.size());
+	proto.mutable_display_name()->Reserve(detection.categories.size());
+	for (const Category &category : detection.categories) {
+		proto.mutable_label_id()->Add(category.index);
+		proto.mutable_score()->Add(category.score);
+		proto.mutable_label()->Add(category.category_name.value_or(""));
+		proto.mutable_display_name()->Add(category.display_name.value_or(""));
+	}
+	proto.mutable_location_data()->set_format(mediapipe::LocationData::BOUNDING_BOX);
+	const Rect &bounding_box = detection.bounding_box;
+	proto.mutable_location_data()->mutable_bounding_box()->set_xmin(bounding_box.left);
+	proto.mutable_location_data()->mutable_bounding_box()->set_ymin(bounding_box.top);
+	proto.mutable_location_data()->mutable_bounding_box()->set_width(bounding_box.right - bounding_box.left);
+	proto.mutable_location_data()->mutable_bounding_box()->set_height(bounding_box.bottom - bounding_box.top);
+	if (detection.keypoints.has_value()) {
+		const auto &keypoints = detection.keypoints.value();
+		proto.mutable_location_data()->mutable_relative_keypoints()->Reserve(keypoints.size());
+		for (const NormalizedKeypoint &keypoint : keypoints) {
+			proto.mutable_location_data()->mutable_relative_keypoints()->Add()->CopyFrom(MediaPipeNormalizedKeypoint::to_proto(keypoint));
+		}
+	}
+	return proto;
+}
+
+Ref<MediaPipePacket> MediaPipeDetection::make_vector_proto_packet(TypedArray<MediaPipeDetection> array) {
+	std::vector<ProtoType> vector;
+	vector.reserve(array.size());
+	for (int i = 0; i < array.size(); i++) {
+		Ref<MediaPipeDetection> detection = array[i];
+		ERR_BREAK(detection.is_null());
+		vector.push_back(to_proto(detection->detection));
+	}
+	mediapipe::Packet packet = mediapipe::MakePacket<std::vector<ProtoType>>(vector);
+	return memnew(MediaPipePacket(packet));
 }
 
 MediaPipeDetection::MediaPipeDetection() = default;
@@ -59,9 +101,36 @@ bool MediaPipeDetection::has_keypoints() const {
 	return detection.keypoints.has_value();
 }
 
+Ref<MediaPipeProto> MediaPipeDetection::get_proto() {
+	return memnew(MediaPipeProto(to_proto(detection)));
+}
+
 void MediaPipeDetectionResult::_bind_methods() {
+	ClassDB::bind_static_method(MediaPipeDetectionResult::get_class_static(), D_METHOD("make_vector_proto_packet", "array"), &MediaPipeDetectionResult::make_vector_proto_packet);
 	ClassDB::bind_method(D_METHOD("get_detections"), &MediaPipeDetectionResult::get_detections);
+	ClassDB::bind_method(D_METHOD("get_proto"), &MediaPipeDetectionResult::get_proto);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "detections", PROPERTY_HINT_ARRAY_TYPE, MediaPipeDetection::get_class_static()), "", "get_detections");
+}
+
+mediapipe::DetectionList MediaPipeDetectionResult::to_proto(const DetectionResult &result) {
+	ProtoType proto;
+	proto.mutable_detection()->Reserve(result.detections.size());
+	for (const Detection &detection : result.detections) {
+		proto.mutable_detection()->Add()->CopyFrom(MediaPipeDetection::to_proto(detection));
+	}
+	return proto;
+}
+
+Ref<MediaPipePacket> MediaPipeDetectionResult::make_vector_proto_packet(TypedArray<MediaPipeDetectionResult> array) {
+	std::vector<ProtoType> vector;
+	vector.reserve(array.size());
+	for (int i = 0; i < array.size(); i++) {
+		Ref<MediaPipeDetectionResult> result = array[i];
+		ERR_BREAK(result.is_null());
+		vector.push_back(to_proto(result->result));
+	}
+	mediapipe::Packet packet = mediapipe::MakePacket<std::vector<ProtoType>>(vector);
+	return memnew(MediaPipePacket(packet));
 }
 
 MediaPipeDetectionResult::MediaPipeDetectionResult() = default;
@@ -78,4 +147,8 @@ TypedArray<MediaPipeDetection> MediaPipeDetectionResult::get_detections() const 
 		array[i] = memnew(MediaPipeDetection(detection));
 	}
 	return array;
+}
+
+Ref<MediaPipeProto> MediaPipeDetectionResult::get_proto() {
+	return memnew(MediaPipeProto(to_proto(result)));
 }

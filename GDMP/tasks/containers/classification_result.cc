@@ -5,13 +5,36 @@
 #include "godot_cpp/variant/variant.hpp"
 
 void MediaPipeClassifications::_bind_methods() {
+	ClassDB::bind_static_method(MediaPipeClassifications::get_class_static(), D_METHOD("make_vector_proto_packet", "array"), &MediaPipeClassifications::make_vector_proto_packet);
 	ClassDB::bind_method(D_METHOD("get_categories"), &MediaPipeClassifications::get_categories);
 	ClassDB::bind_method(D_METHOD("get_head_index"), &MediaPipeClassifications::get_head_index);
 	ClassDB::bind_method(D_METHOD("get_head_name"), &MediaPipeClassifications::get_head_name);
 	ClassDB::bind_method(D_METHOD("has_head_name"), &MediaPipeClassifications::has_head_name);
+	ClassDB::bind_method(D_METHOD("get_proto"), &MediaPipeClassifications::get_proto);
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "categories", PROPERTY_HINT_ARRAY_TYPE, MediaPipeCategory::get_class_static()), "", "get_categories");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "head_index"), "", "get_head_index");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "head_name"), "", "get_head_name");
+}
+
+mediapipe::ClassificationList MediaPipeClassifications::to_proto(const Classifications &classifications) {
+	ProtoType proto;
+	proto.mutable_classification()->Reserve(classifications.categories.size());
+	for (const Category &category : classifications.categories) {
+		proto.mutable_classification()->Add(MediaPipeCategory::to_proto(category));
+	}
+	return proto;
+}
+
+Ref<MediaPipePacket> MediaPipeClassifications::make_vector_proto_packet(TypedArray<MediaPipeClassifications> array) {
+	std::vector<ProtoType> vector;
+	vector.reserve(array.size());
+	for (int i = 0; i < array.size(); i++) {
+		Ref<MediaPipeClassifications> classifications = array[i];
+		ERR_BREAK(classifications.is_null());
+		vector.push_back(to_proto(classifications->classifications));
+	}
+	mediapipe::Packet packet = mediapipe::MakePacket<std::vector<ProtoType>>(vector);
+	return memnew(MediaPipePacket(packet));
 }
 
 MediaPipeClassifications::MediaPipeClassifications() {
@@ -46,6 +69,10 @@ String MediaPipeClassifications::get_head_name() const {
 
 bool MediaPipeClassifications::has_head_name() const {
 	return classifications.head_name.has_value();
+}
+
+Ref<MediaPipeProto> MediaPipeClassifications::get_proto() {
+	return memnew(MediaPipeProto(to_proto(classifications)));
 }
 
 void MediaPipeClassificationResult::_bind_methods() {

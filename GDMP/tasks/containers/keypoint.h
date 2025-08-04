@@ -5,7 +5,10 @@
 #include "godot_cpp/variant/string.hpp"
 #include "godot_cpp/variant/vector2.hpp"
 
+#include "mediapipe/framework/formats/location_data.pb.h"
 #include "mediapipe/tasks/cc/components/containers/keypoint.h"
+
+#include "GDMP/proto/proto.h"
 
 using namespace godot;
 using namespace mediapipe::tasks::components::containers;
@@ -14,12 +17,17 @@ class MediaPipeNormalizedKeypoint : public RefCounted {
 		GDCLASS(MediaPipeNormalizedKeypoint, RefCounted)
 
 	private:
+		typedef mediapipe::LocationData::RelativeKeypoint ProtoType;
+
 		NormalizedKeypoint keypoint;
 
 	protected:
 		static void _bind_methods();
 
 	public:
+		static ProtoType to_proto(const NormalizedKeypoint &keypoint);
+		static Ref<MediaPipePacket> make_vector_proto_packet(TypedArray<MediaPipeNormalizedKeypoint> array);
+
 		MediaPipeNormalizedKeypoint();
 		MediaPipeNormalizedKeypoint(const NormalizedKeypoint &keypoint);
 
@@ -31,6 +39,8 @@ class MediaPipeNormalizedKeypoint : public RefCounted {
 
 		bool has_label() const;
 		bool has_score() const;
+
+		Ref<MediaPipeProto> get_proto();
 };
 
 #endif
