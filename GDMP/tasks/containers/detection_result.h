@@ -8,6 +8,9 @@
 
 #include "mediapipe/tasks/cc/components/containers/detection_result.h"
 
+#include "GDMP/framework/packet.h"
+#include "GDMP/proto/proto.h"
+
 using namespace godot;
 using namespace mediapipe::tasks::components::containers;
 
@@ -15,11 +18,15 @@ class MediaPipeDetection : public Reference {
 		GODOT_CLASS(MediaPipeDetection, Reference)
 
 	private:
+		typedef mediapipe::Detection ProtoType;
+
 		Detection detection;
 
 	public:
 		static void _register_methods();
 		static MediaPipeDetection *_new(const Detection &detection);
+
+		static ProtoType to_proto(const Detection &detection);
 
 		void _init();
 
@@ -28,21 +35,31 @@ class MediaPipeDetection : public Reference {
 		Array get_keypoints() const;
 
 		bool has_keypoints() const;
+
+		Ref<MediaPipeProto> get_proto();
+		Ref<MediaPipePacket> make_vector_proto_packet(Array array);
 };
 
 class MediaPipeDetectionResult : public Reference {
 		GODOT_CLASS(MediaPipeDetectionResult, Reference)
 
 	private:
+		typedef mediapipe::DetectionList ProtoType;
+
 		DetectionResult result;
 
 	public:
 		static void _register_methods();
 		static MediaPipeDetectionResult *_new(const DetectionResult &result);
 
+		static ProtoType to_proto(const DetectionResult &result);
+
 		void _init();
 
 		Array get_detections() const;
+
+		Ref<MediaPipeProto> get_proto();
+		Ref<MediaPipePacket> make_vector_proto_packet(Array array);
 };
 
 #endif

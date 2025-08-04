@@ -4,6 +4,7 @@ cc_library(
     hdrs = ["category.h"],
     visibility = ["//visibility:public"],
     deps = [
+        "//GDMP/proto",
         "@mediapipe//mediapipe/tasks/cc/components/containers:category",
         "@godot-cpp//:godot",
     ],
@@ -16,6 +17,8 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":category",
+        "//GDMP/framework:packet",
+        "//GDMP/proto",
         "@mediapipe//mediapipe/tasks/cc/components/containers:classification_result",
         "@godot-cpp//:godot",
     ],
@@ -29,6 +32,8 @@ cc_library(
     deps = [
         ":category",
         ":keypoint",
+        "//GDMP/framework:packet",
+        "//GDMP/proto",
         "@mediapipe//mediapipe/tasks/cc/components/containers:detection_result",
         "@godot-cpp//:godot",
     ],
@@ -51,6 +56,8 @@ cc_library(
     hdrs = ["keypoint.h"],
     visibility = ["//visibility:public"],
     deps = [
+        "//GDMP/proto",
+        "@mediapipe//mediapipe/framework/formats:location_data_cc_proto",
         "@mediapipe//mediapipe/tasks/cc/components/containers:keypoint",
         "@godot-cpp//:godot",
     ],
@@ -62,6 +69,8 @@ cc_library(
     hdrs = ["landmark.h"],
     visibility = ["//visibility:public"],
     deps = [
+        "//GDMP/framework:packet",
+        "//GDMP/proto",
         "@mediapipe//mediapipe/tasks/cc/components/containers:landmark",
         "@godot-cpp//:godot",
     ],

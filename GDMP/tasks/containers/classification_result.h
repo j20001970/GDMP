@@ -8,6 +8,9 @@
 
 #include "mediapipe/tasks/cc/components/containers/classification_result.h"
 
+#include "GDMP/framework/packet.h"
+#include "GDMP/proto/proto.h"
+
 using namespace godot;
 using namespace mediapipe::tasks::components::containers;
 
@@ -15,11 +18,15 @@ class MediaPipeClassifications : public Reference {
 		GODOT_CLASS(MediaPipeClassifications, Reference)
 
 	private:
+		typedef mediapipe::ClassificationList ProtoType;
+
 		Classifications classifications;
 
 	public:
 		static void _register_methods();
 		static MediaPipeClassifications *_new(const Classifications &classifications);
+
+		static ProtoType to_proto(const Classifications &classifications);
 
 		void _init();
 
@@ -28,6 +35,9 @@ class MediaPipeClassifications : public Reference {
 		String get_head_name() const;
 
 		bool has_head_name() const;
+
+		Ref<MediaPipeProto> get_proto();
+		Ref<MediaPipePacket> make_vector_proto_packet(Array array);
 };
 
 class MediaPipeClassificationResult : public Reference {

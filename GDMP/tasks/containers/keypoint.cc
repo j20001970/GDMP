@@ -8,12 +8,27 @@ void MediaPipeNormalizedKeypoint::_register_methods() {
 	register_method("get_score", &MediaPipeNormalizedKeypoint::get_score);
 	register_method("has_label", &MediaPipeNormalizedKeypoint::has_label);
 	register_method("has_score", &MediaPipeNormalizedKeypoint::has_score);
+	register_method("get_proto", &MediaPipeNormalizedKeypoint::get_proto);
+	register_method("make_vector_proto_packet", &MediaPipeNormalizedKeypoint::make_vector_proto_packet);
 }
 
 MediaPipeNormalizedKeypoint *MediaPipeNormalizedKeypoint::_new(const NormalizedKeypoint &keypoint) {
 	MediaPipeNormalizedKeypoint *k = MediaPipeNormalizedKeypoint::_new();
 	k->keypoint = keypoint;
 	return k;
+}
+
+mediapipe::LocationData::RelativeKeypoint MediaPipeNormalizedKeypoint::to_proto(const NormalizedKeypoint &keypoint) {
+	ProtoType proto;
+	proto.set_x(keypoint.x);
+	proto.set_y(keypoint.y);
+	if (keypoint.label.has_value()) {
+		proto.set_keypoint_label(keypoint.label.value());
+	}
+	if (keypoint.score.has_value()) {
+		proto.set_score(keypoint.score.value());
+	}
+	return proto;
 }
 
 void MediaPipeNormalizedKeypoint::_init() {
@@ -55,4 +70,20 @@ bool MediaPipeNormalizedKeypoint::has_label() const {
 
 bool MediaPipeNormalizedKeypoint::has_score() const {
 	return keypoint.score.has_value();
+}
+
+Ref<MediaPipeProto> MediaPipeNormalizedKeypoint::get_proto() {
+	return Ref(MediaPipeProto::_new(to_proto(keypoint)));
+}
+
+Ref<MediaPipePacket> MediaPipeNormalizedKeypoint::make_vector_proto_packet(Array array) {
+	std::vector<ProtoType> vector;
+	vector.reserve(array.size());
+	for (int i = 0; i < array.size(); i++) {
+		Ref<MediaPipeNormalizedKeypoint> keypoint = array[i];
+		ERR_BREAK(keypoint.is_null());
+		vector.push_back(to_proto(keypoint->keypoint));
+	}
+	mediapipe::Packet packet = mediapipe::MakePacket<std::vector<ProtoType>>(vector);
+	return Ref(MediaPipePacket::_new(packet));
 }

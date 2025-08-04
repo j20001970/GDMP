@@ -9,12 +9,23 @@ void MediaPipeClassifications::_register_methods() {
 	register_method("get_head_index", &MediaPipeClassifications::get_head_index);
 	register_method("get_head_name", &MediaPipeClassifications::get_head_name);
 	register_method("has_head_name", &MediaPipeClassifications::has_head_name);
+	register_method("get_proto", &MediaPipeClassifications::get_proto);
+	register_method("make_vector_proto_packet", &MediaPipeClassifications::make_vector_proto_packet);
 }
 
 MediaPipeClassifications *MediaPipeClassifications::_new(const Classifications &classifications) {
 	MediaPipeClassifications *c = MediaPipeClassifications::_new();
 	c->classifications = classifications;
 	return c;
+}
+
+mediapipe::ClassificationList MediaPipeClassifications::to_proto(const Classifications &classifications) {
+	ProtoType proto;
+	proto.mutable_classification()->Reserve(classifications.categories.size());
+	for (const Category &category : classifications.categories) {
+		proto.mutable_classification()->Add(MediaPipeCategory::to_proto(category));
+	}
+	return proto;
 }
 
 void MediaPipeClassifications::_init() {
@@ -45,6 +56,22 @@ String MediaPipeClassifications::get_head_name() const {
 
 bool MediaPipeClassifications::has_head_name() const {
 	return classifications.head_name.has_value();
+}
+
+Ref<MediaPipeProto> MediaPipeClassifications::get_proto() {
+	return Ref(MediaPipeProto::_new(to_proto(classifications)));
+}
+
+Ref<MediaPipePacket> MediaPipeClassifications::make_vector_proto_packet(Array array) {
+	std::vector<ProtoType> vector;
+	vector.reserve(array.size());
+	for (int i = 0; i < array.size(); i++) {
+		Ref<MediaPipeClassifications> classifications = array[i];
+		ERR_BREAK(classifications.is_null());
+		vector.push_back(to_proto(classifications->classifications));
+	}
+	mediapipe::Packet packet = mediapipe::MakePacket<std::vector<ProtoType>>(vector);
+	return Ref(MediaPipePacket::_new(packet));
 }
 
 void MediaPipeClassificationResult::_register_methods() {
