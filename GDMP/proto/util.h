@@ -8,6 +8,8 @@
 using namespace godot;
 using namespace google;
 
+namespace util {
+
 const protobuf::Message *get_prototype(const std::string &name);
 
 const protobuf::Message *get_prototype(const protobuf::Descriptor *descriptor);
@@ -16,10 +18,14 @@ const protobuf::FieldDescriptor *get_field_descriptor(const protobuf::Message &m
 
 Variant get_field(const protobuf::Message &message, const protobuf::FieldDescriptor *field);
 
+Variant get_repeated_field(const protobuf::Message &message, const protobuf::FieldDescriptor *field);
+
 Variant get_repeated_field(const protobuf::Message &message, const protobuf::FieldDescriptor *field, int index);
 
-Variant get_repeated_field_all(const protobuf::Message &message, const protobuf::FieldDescriptor *field);
-
 bool set_field(protobuf::Message &message, const protobuf::FieldDescriptor *field, Variant value);
+
+bool set_repeated_field(protobuf::Message &message, const protobuf::FieldDescriptor *field, Variant value);
+
+} //namespace util
 
 #endif
