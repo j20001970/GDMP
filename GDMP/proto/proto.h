@@ -59,13 +59,13 @@ class MediaPipeProto : public Reference {
 		int get_repeated_field_size(String field_name);
 
 		// Get the value from the field of the proto.
-		Variant get(String field_name);
+		Variant get_field(String field_name);
 		// Get the value of repeated field on index.
-		Variant get_repeated(String field_name, int index);
+		Variant get_repeated_field(String field_name, int index);
 
 		// Set the value of the field for the proto.
 		// Return true on success.
-		bool set(String field_name, Variant value);
+		bool set_field(String field_name, Variant value);
 
 		// Returns a new copy of the proto message.
 		Ref<MediaPipeProto> duplicate();
