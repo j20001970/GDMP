@@ -9,7 +9,8 @@
 #include "mediapipe/tasks/cc/vision/gesture_recognizer/gesture_recognizer.h"
 
 #include "GDMP/framework/image.h"
-#include "GDMP/proto/proto.h"
+#include "GDMP/tasks/containers/classification_result.h"
+#include "GDMP/tasks/containers/landmark.h"
 #include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
@@ -28,10 +29,10 @@ class MediaPipeGestureRecognizerResult : public RefCounted {
 		MediaPipeGestureRecognizerResult();
 		MediaPipeGestureRecognizerResult(const GestureRecognizerResult &result);
 
-		TypedArray<MediaPipeProto> get_gestures();
-		TypedArray<MediaPipeProto> get_handedness();
-		TypedArray<MediaPipeProto> get_hand_landmarks();
-		TypedArray<MediaPipeProto> get_hand_world_landmarks();
+		TypedArray<MediaPipeClassifications> get_gestures();
+		TypedArray<MediaPipeClassifications> get_handedness();
+		TypedArray<MediaPipeNormalizedLandmarks> get_hand_landmarks();
+		TypedArray<MediaPipeLandmarks> get_hand_world_landmarks();
 };
 
 class MediaPipeGestureRecognizer : public MediaPipeVisionTask {

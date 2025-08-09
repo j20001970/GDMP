@@ -20,39 +20,39 @@ MediaPipeGestureRecognizerResult::MediaPipeGestureRecognizerResult(const Gesture
 	this->result = result;
 }
 
-TypedArray<MediaPipeProto> MediaPipeGestureRecognizerResult::get_gestures() {
-	TypedArray<MediaPipeProto> array;
+TypedArray<MediaPipeClassifications> MediaPipeGestureRecognizerResult::get_gestures() {
+	TypedArray<MediaPipeClassifications> array;
 	auto gestures = result.gestures;
 	array.resize(gestures.size());
 	for (int i = 0; i < gestures.size(); i++)
-		array[i] = memnew(MediaPipeProto(gestures[i]));
+		array[i] = memnew(MediaPipeClassifications(ConvertToClassifications(gestures[i])));
 	return array;
 }
 
-TypedArray<MediaPipeProto> MediaPipeGestureRecognizerResult::get_handedness() {
-	TypedArray<MediaPipeProto> array;
+TypedArray<MediaPipeClassifications> MediaPipeGestureRecognizerResult::get_handedness() {
+	TypedArray<MediaPipeClassifications> array;
 	auto handedness = result.handedness;
 	array.resize(handedness.size());
 	for (int i = 0; i < handedness.size(); i++)
-		array[i] = memnew(MediaPipeProto(handedness[i]));
+		array[i] = memnew(MediaPipeClassifications(ConvertToClassifications(handedness[i])));
 	return array;
 }
 
-TypedArray<MediaPipeProto> MediaPipeGestureRecognizerResult::get_hand_landmarks() {
-	TypedArray<MediaPipeProto> array;
+TypedArray<MediaPipeNormalizedLandmarks> MediaPipeGestureRecognizerResult::get_hand_landmarks() {
+	TypedArray<MediaPipeNormalizedLandmarks> array;
 	auto hand_landmarks = result.hand_landmarks;
 	array.resize(hand_landmarks.size());
 	for (int i = 0; i < hand_landmarks.size(); i++)
-		array[i] = memnew(MediaPipeProto(hand_landmarks[i]));
+		array[i] = memnew(MediaPipeNormalizedLandmarks(ConvertToNormalizedLandmarks(hand_landmarks[i])));
 	return array;
 }
 
-TypedArray<MediaPipeProto> MediaPipeGestureRecognizerResult::get_hand_world_landmarks() {
-	TypedArray<MediaPipeProto> array;
+TypedArray<MediaPipeLandmarks> MediaPipeGestureRecognizerResult::get_hand_world_landmarks() {
+	TypedArray<MediaPipeLandmarks> array;
 	auto hand_world_landmarks = result.hand_world_landmarks;
 	array.resize(hand_world_landmarks.size());
 	for (int i = 0; i < hand_world_landmarks.size(); i++)
-		array[i] = memnew(MediaPipeProto(hand_world_landmarks[i]));
+		array[i] = memnew(MediaPipeLandmarks(ConvertToLandmarks(hand_world_landmarks[i])));
 	return array;
 }
 
