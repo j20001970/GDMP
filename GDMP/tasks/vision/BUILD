@@ -51,7 +51,8 @@ cc_library(
     deps = [
         ":vision_task",
         "//GDMP/framework:image",
-        "//GDMP/proto",
+        "//GDMP/tasks/containers:classification_result",
+        "//GDMP/tasks/containers:landmark",
         "@mediapipe//mediapipe/tasks/cc/vision/gesture_recognizer",
         "@godot-cpp//:godot",
     ],

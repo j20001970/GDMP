@@ -1,6 +1,7 @@
 #include "gesture_recognizer.h"
 
-#include "GDMP/proto/proto.h"
+#include "GDMP/tasks/containers/classification_result.h"
+#include "GDMP/tasks/containers/landmark.h"
 
 void MediaPipeGestureRecognizerResult::_register_methods() {
 	register_method("get_gestures", &MediaPipeGestureRecognizerResult::get_gestures);
@@ -22,7 +23,7 @@ Array MediaPipeGestureRecognizerResult::get_gestures() {
 	auto gestures = result.gestures;
 	array.resize(gestures.size());
 	for (int i = 0; i < gestures.size(); i++)
-		array[i] = MediaPipeProto::_new(gestures[i]);
+		array[i] = MediaPipeClassifications::_new(ConvertToClassifications(gestures[i]));
 	return array;
 }
 
@@ -31,7 +32,7 @@ Array MediaPipeGestureRecognizerResult::get_handedness() {
 	auto handedness = result.handedness;
 	array.resize(handedness.size());
 	for (int i = 0; i < handedness.size(); i++)
-		array[i] = MediaPipeProto::_new(handedness[i]);
+		array[i] = MediaPipeClassifications::_new(ConvertToClassifications(handedness[i]));
 	return array;
 }
 
@@ -40,7 +41,7 @@ Array MediaPipeGestureRecognizerResult::get_hand_landmarks() {
 	auto hand_landmarks = result.hand_landmarks;
 	array.resize(hand_landmarks.size());
 	for (int i = 0; i < hand_landmarks.size(); i++)
-		array[i] = MediaPipeProto::_new(hand_landmarks[i]);
+		array[i] = MediaPipeNormalizedLandmarks::_new(ConvertToNormalizedLandmarks(hand_landmarks[i]));
 	return array;
 }
 
@@ -49,7 +50,7 @@ Array MediaPipeGestureRecognizerResult::get_hand_world_landmarks() {
 	auto hand_world_landmarks = result.hand_world_landmarks;
 	array.resize(hand_world_landmarks.size());
 	for (int i = 0; i < hand_world_landmarks.size(); i++)
-		array[i] = MediaPipeProto::_new(hand_world_landmarks[i]);
+		array[i] = MediaPipeLandmarks::_new(ConvertToLandmarks(hand_world_landmarks[i]));
 	return array;
 }
 
