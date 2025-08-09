@@ -1,6 +1,11 @@
 """GDMP configuration"""
 
 CALCULATORS = [
+    "@mediapipe//mediapipe/calculators/core:begin_loop_calculator",
+    "@mediapipe//mediapipe/calculators/core:end_loop_calculator",
+    "@mediapipe//mediapipe/calculators/core:concatenate_vector_calculator",
+    "@mediapipe//mediapipe/calculators/core:split_vector_calculator",
+    "@mediapipe//mediapipe/calculators/core:split_proto_list_calculator",
     "@mediapipe//mediapipe/calculators/util:annotation_overlay_calculator",
     "@mediapipe//mediapipe/calculators/util:detections_to_render_data_calculator",
     "@mediapipe//mediapipe/calculators/util:landmarks_to_render_data_calculator",
