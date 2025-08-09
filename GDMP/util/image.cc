@@ -40,7 +40,7 @@ Ref<godot::Image> util::get_image(const mediapipe::ImageFrameSharedPtr image_fra
 	Ref<godot::Image> image;
 	ERR_FAIL_NULL_V(image_frame, image);
 	PackedByteArray data;
-	data.resize(image_frame->PixelDataSize());
+	data.resize(image_frame->PixelDataSizeStoredContiguously());
 	godot::Image::Format image_format;
 	switch (image_frame->Format()) {
 		case mediapipe::ImageFormat::SRGB:
