@@ -58,7 +58,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
          "WITH_OPENCL": "OFF",
          "WITH_WEBP": "OFF",
          # Optimization flags
-@@ -252,48 +234,59 @@ cmake(
+@@ -252,48 +234,58 @@ cmake(
          # ccache would be able to work across sandboxed Bazel builds, either.
          # In any case, Bazel does its own caching of the rule's outputs.
          "ENABLE_CCACHE": "OFF",
@@ -70,8 +70,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
 +            "WITH_KLEIDICV": "OFF",
 +        },
 +        "@platforms//os:windows": {
-+            "BUILD_SHARED_LIBS": "ON",
-+            "OPENCV_SKIP_VISIBILITY_HIDDEN": "ON",
++            "BUILD_WITH_STATIC_CRT": "OFF",
 +            "OPENCV_BIN_INSTALL_PATH": "bin",
 +            "OPENCV_LIB_INSTALL_PATH": "lib",
 +        },

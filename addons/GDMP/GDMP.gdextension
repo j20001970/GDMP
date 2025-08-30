@@ -14,10 +14,3 @@ android.arm64 = "res://addons/GDMP/libs/arm64/libGDMP.android.so"
 android.x86_64 = "res://addons/GDMP/libs/x86_64/libGDMP.android.so"
 ios = "res://addons/GDMP/libs/GDMP.ios.framework"
 web = "res://addons/GDMP/libs/GDMP.web.wasm"
-
-[dependencies]
-
-windows.x86_64 = {
-    "res://addons/GDMP/libs/x86_64/opencv_core4110.dll": "",
-    "res://addons/GDMP/libs/x86_64/opencv_imgproc4110.dll": "",
-}
