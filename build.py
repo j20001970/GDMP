@@ -26,7 +26,7 @@ def bazel_build(args: list[str]):
             "Error: Cannot find bazel, please check bazel is installed and is in PATH."
         )
         sys.exit(-1)
-    cmd = [bazel_exec, "build"]
+    cmd = [bazel_exec, "build", "-c", "opt"]
     cmd.extend(args)
     run(cmd, cwd=MEDIAPIPE_DIR, check=True)
 
@@ -113,20 +113,13 @@ def build_web(args: Namespace) -> list[str]:
 
 def build(args: Namespace):
     target: str = args.target
-    build_type: str = args.type
-    if build_type == "release":
-        mode = "opt"
-    else:
-        mode = "dbg"
-    build_args = ["-c", mode]
     build_targets = {
         "android": build_android,
         "desktop": build_desktop,
         "ios": build_ios,
         "web": build_web,
     }
-    target_args = build_targets[target](args)
-    build_args.extend(target_args)
+    build_args = build_targets[target](args)
     build_args.append(TARGETS[target])
     bazel_build(build_args)
 
@@ -232,9 +225,6 @@ def copy_output(args: Namespace):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("target", choices=list(TARGETS), help="build target")
-    parser.add_argument(
-        "--type", choices=["debug", "release"], default="release", help="build type"
-    )
     parser.add_argument("--arch", default="", help="library architecture")
     parser.add_argument("--output", help="build output directory")
     args = parser.parse_args()
