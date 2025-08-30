@@ -45,7 +45,7 @@ jobs:
         working-directory: ${{ env.work-dir }}
         run: |
           source ./venv/Scripts/activate
-          python ./build.py desktop --type release --output build/${{ matrix.arch }}
+          python ./build.py desktop --output build/${{ matrix.arch }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4

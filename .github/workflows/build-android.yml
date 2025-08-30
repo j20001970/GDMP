@@ -49,7 +49,7 @@ jobs:
         run: |
           source ./venv/bin/activate
           export ANDROID_NDK_HOME=$ANDROID_NDK_LATEST_HOME
-          python ./build.py android --arch ${{ matrix.arch }} --type release --output build/${{ matrix.arch }}
+          python ./build.py android --arch ${{ matrix.arch }} --output build/${{ matrix.arch }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4

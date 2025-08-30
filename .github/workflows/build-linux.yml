@@ -56,7 +56,7 @@ jobs:
         run: |
           ./scripts/flatpak_env.sh << EOF
           source ./venv/bin/activate
-          python ./build.py desktop --arch ${{ matrix.arch }} --type release --output build/${{ matrix.arch }}
+          python ./build.py desktop --arch ${{ matrix.arch }} --output build/${{ matrix.arch }}
           EOF
 
       - name: Upload Artifacts
