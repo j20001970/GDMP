@@ -19,6 +19,6 @@ iOS.arm64="res://addons/GDMP/libs/GDMP.ios.framework"
 Android.arm64-v8a=[  ]
 Android.x86_64=[  ]
 OSX.64=[  ]
-Windows.64=[ "res://addons/GDMP/libs/opencv_core4110.dll", "res://addons/GDMP/libs/opencv_imgproc4110.dll" ]
+Windows.64=[  ]
 X11.64=[  ]
 iOS.arm64=[  ]
