@@ -83,9 +83,8 @@ def build_ios(args: Namespace) -> list[str]:
     build_args = [
         "--apple_generate_dsym=false",
         "--config=ios",
+        "--define=OPENCV=source",
     ]
-    if arch:
-        build_args.append(f"--ios_multi_cpus={arch}")
     return build_args
 
 
@@ -195,7 +194,9 @@ def copy_desktop(args: Namespace):
 
 def copy_ios(args: Namespace):
     output: str = args.output
-    src = path.join(MEDIAPIPE_DIR, "bazel-bin/external/GDMP/GDMP/ios/GDMP.zip")
+    src = path.join(
+        MEDIAPIPE_DIR, "bazel-bin/external/GDMP/GDMP/ios/GDMP.xcframework.zip"
+    )
     with zipfile.ZipFile(src) as f:
         f.extractall(output)
 

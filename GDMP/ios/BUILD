@@ -1,17 +1,22 @@
-load("@build_bazel_rules_apple//apple:ios.bzl", "ios_framework")
+load("@build_bazel_rules_apple//apple:apple.bzl", "apple_xcframework")
 
-ios_framework(
+apple_xcframework(
     name = "GDMP",
-    bundle_id = "io.gdmp",
+    bundle_id = "",
     bundle_name = "GDMP.ios",
-    families = [
-        "iphone",
-        "ipad",
-    ],
+    families_required = {
+        "ios": [
+            "iphone",
+            "ipad",
+        ],
+    },
     infoplists = ["Info.plist"],
-    minimum_os_version = "12.0",
-    deps = [
-        "//GDMP",
-        "@ios_opencv//:OpencvFramework",
-    ],
+    ios = {
+        "device": ["arm64"],
+        "simulator": ["arm64", "x86_64"],
+    },
+    minimum_os_versions = {
+        "ios": "12.0",
+    },
+    deps = ["//GDMP"],
 )
