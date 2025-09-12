@@ -50,7 +50,8 @@ Run `build.py --help` to see all options.
 1. Install [Xcode](https://developer.apple.com/xcode), then switch to installed Xcode by using `xcode-select`
 2. Run `build.py ios` to build iOS library
 
-    Bazel should build GDMP for your Mac's CPU architecture by default, if you would like to build multiple architectures, append `--arch x86_64,arm64` to the build command to build both x86_64 and arm64 architectures for example.
+    By default, GDMP build arm64 architecture for iOS device, and both arm64 and x86_64 for iOS simulator.
+    If you would like to customize which platform or architecture to build, modify `ios` attribute in `GDMP/ios/BUILD`.
 
 ## Building for Linux
 **Flatpak environment**: If you intend to distribute the library, you might want to use an environment isolated from host before you proceed. You can use `scripts/flatpak_env.sh` to enable Flatpak environment.

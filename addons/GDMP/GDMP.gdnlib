@@ -12,7 +12,7 @@ Android.x86_64="res://addons/GDMP/libs/x86_64/libGDMP.android.so"
 OSX.64="res://addons/GDMP/libs/x86_64/libGDMP.macos.dylib"
 Windows.64="res://addons/GDMP/libs/x86_64/GDMP.windows.dll"
 X11.64="res://addons/GDMP/libs/x86_64/libGDMP.linux.so"
-iOS.arm64="res://addons/GDMP/libs/GDMP.ios.framework"
+iOS.arm64="res://addons/GDMP/libs/GDMP.ios.xcframework"
 
 [dependencies]
 

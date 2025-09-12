@@ -15,6 +15,16 @@ diff --git a/WORKSPACE b/WORKSPACE
 diff --git a/third_party/BUILD b/third_party/BUILD
 --- a/third_party/BUILD
 +++ b/third_party/BUILD
+@@ -164,9 +149,6 @@ alias(
+     actual = select({
+         ":opencv_source_build": ":opencv_cmake",
+         ":opencv_prebuilt_build": ":opencv_prebuilt",
+-        ":opencv_ios_sim_arm64_source_build": "@ios_opencv_source//:opencv",
+-        ":opencv_ios_arm64_source_build": "@ios_opencv_source//:opencv",
+-        ":opencv_ios_x86_64_source_build": "@ios_opencv_source//:opencv",
+         "//conditions:default": ":opencv_binary",
+     }),
+     visibility = ["//visibility:public"],
 @@ -188,12 +188,6 @@ bzl_library(
  # linker, so if library A depends on library B, library B must come _after_.
  # Hence core is at the bottom.
