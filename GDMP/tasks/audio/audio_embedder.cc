@@ -37,10 +37,10 @@ bool MediaPipeAudioEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_optio
 	return create_task.ok();
 }
 
-Array MediaPipeAudioEmbedder::embed(PoolRealArray audio_data, int num_channels, double audio_sample_rate) {
+Array MediaPipeAudioEmbedder::embed(PoolVector2Array audio_data, bool is_stereo, double audio_sample_rate) {
 	Array embed_result;
 	ERR_FAIL_COND_V(task == nullptr, embed_result);
-	mediapipe::Matrix audio_clip = make_audio_matrix(audio_data, num_channels);
+	mediapipe::Matrix audio_clip = make_audio_matrix(audio_data, is_stereo);
 	auto result = task->Embed(audio_clip, audio_sample_rate);
 	if (result.ok()) {
 		const std::vector<EmbeddingResult> &results = result.value();
@@ -54,9 +54,9 @@ Array MediaPipeAudioEmbedder::embed(PoolRealArray audio_data, int num_channels, 
 	return embed_result;
 }
 
-bool MediaPipeAudioEmbedder::embed_async(PoolRealArray audio_data, int num_channels, double audio_sample_rate, uint64_t timestamp_ms) {
+bool MediaPipeAudioEmbedder::embed_async(PoolVector2Array audio_data, bool is_stereo, double audio_sample_rate, uint64_t timestamp_ms) {
 	ERR_FAIL_COND_V(task == nullptr, false);
-	mediapipe::Matrix audio_block = make_audio_matrix(audio_data, num_channels);
+	mediapipe::Matrix audio_block = make_audio_matrix(audio_data, is_stereo);
 	auto result = task->EmbedAsync(audio_block, audio_sample_rate, timestamp_ms);
 	if (!result.ok())
 		ERR_PRINT(result.message().data());

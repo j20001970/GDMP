@@ -37,10 +37,10 @@ bool MediaPipeAudioClassifier::initialize(Ref<MediaPipeTaskBaseOptions> base_opt
 	return create_task.ok();
 }
 
-Array MediaPipeAudioClassifier::classify(PoolRealArray audio_data, int num_channels, double audio_sample_rate) {
+Array MediaPipeAudioClassifier::classify(PoolVector2Array audio_data, bool is_stereo, double audio_sample_rate) {
 	Array classify_result;
 	ERR_FAIL_COND_V(task == nullptr, classify_result);
-	mediapipe::Matrix audio_clip = make_audio_matrix(audio_data, num_channels);
+	mediapipe::Matrix audio_clip = make_audio_matrix(audio_data, is_stereo);
 	auto result = task->Classify(audio_clip, audio_sample_rate);
 	if (result.ok()) {
 		const std::vector<AudioClassifierResult> &results = result.value();
@@ -54,9 +54,9 @@ Array MediaPipeAudioClassifier::classify(PoolRealArray audio_data, int num_chann
 	return classify_result;
 }
 
-bool MediaPipeAudioClassifier::classify_async(PoolRealArray audio_data, int num_channels, double audio_sample_rate, uint64_t timestamp_ms) {
+bool MediaPipeAudioClassifier::classify_async(PoolVector2Array audio_data, bool is_stereo, double audio_sample_rate, uint64_t timestamp_ms) {
 	ERR_FAIL_COND_V(task == nullptr, false);
-	mediapipe::Matrix audio_block = make_audio_matrix(audio_data, num_channels);
+	mediapipe::Matrix audio_block = make_audio_matrix(audio_data, is_stereo);
 	auto result = task->ClassifyAsync(audio_block, audio_sample_rate, timestamp_ms);
 	if (!result.ok())
 		ERR_PRINT(result.message().data());

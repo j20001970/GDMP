@@ -22,8 +22,8 @@ class MediaPipeAudioClassifier : public MediaPipeAudioTask {
 		void _init();
 
 		bool initialize(Ref<MediaPipeTaskBaseOptions> base_options, int running_mode, Ref<MediaPipeClassifierOptions> classifier_options);
-		Array classify(PoolRealArray audio_data, int num_channels, double audio_sample_rate);
-		bool classify_async(PoolRealArray audio_data, int num_channels, double audio_sample_rate, uint64_t timestamp_ms);
+		Array classify(PoolVector2Array audio_data, bool is_stereo, double audio_sample_rate);
+		bool classify_async(PoolVector2Array audio_data, bool is_stereo, double audio_sample_rate, uint64_t timestamp_ms);
 };
 
 #endif

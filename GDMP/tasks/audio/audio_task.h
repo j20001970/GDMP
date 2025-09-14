@@ -33,6 +33,6 @@ private:                                  \
 
 RunningMode get_running_mode(int p_mode);
 
-mediapipe::Matrix make_audio_matrix(PoolRealArray audio_data, int num_channels);
+mediapipe::Matrix make_audio_matrix(PoolVector2Array audio_data, bool is_stereo);
 
 #endif
