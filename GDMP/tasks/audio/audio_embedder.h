@@ -2,7 +2,7 @@
 #define GDMP_TASK_AUDIO_AUDIO_EMBEDDER
 
 #include "godot_cpp/classes/ref.hpp"
-#include "godot_cpp/variant/packed_float32_array.hpp"
+#include "godot_cpp/variant/packed_vector2_array.hpp"
 #include "godot_cpp/variant/typed_array.hpp"
 
 #include "mediapipe/tasks/cc/audio/audio_embedder/audio_embedder.h"
@@ -22,8 +22,8 @@ class MediaPipeAudioEmbedder : public MediaPipeAudioTask {
 
 	public:
 		bool initialize(Ref<MediaPipeTaskBaseOptions> base_options, RunningMode running_mode, Ref<MediaPipeEmbedderOptions> embedder_options);
-		TypedArray<MediaPipeEmbeddingResult> embed(PackedFloat32Array audio_data, int num_channels, double audio_sample_rate);
-		bool embed_async(PackedFloat32Array audio_data, int num_channels, double audio_sample_rate, uint64_t timestamp_ms);
+		TypedArray<MediaPipeEmbeddingResult> embed(PackedVector2Array audio_data, bool is_stereo, double audio_sample_rate);
+		bool embed_async(PackedVector2Array audio_data, bool is_stereo, double audio_sample_rate, uint64_t timestamp_ms);
 };
 
 #endif

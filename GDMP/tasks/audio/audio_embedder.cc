@@ -5,9 +5,9 @@
 
 void MediaPipeAudioEmbedder::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize", "base_options", "running_mode", "embedder_options"), &MediaPipeAudioEmbedder::initialize);
-	ClassDB::bind_method(D_METHOD("embed", "audio_data", "num_channels", "audio_sample_rate"), &MediaPipeAudioEmbedder::embed);
-	ClassDB::bind_method(D_METHOD("embed_async", "audio_data", "num_channels", "audio_sample_rate", "timestamp_ms"), &MediaPipeAudioEmbedder::embed_async);
-	ADD_SIGNAL(MethodInfo("result_callback", PropertyInfo(Variant::ARRAY, "result", PROPERTY_HINT_ARRAY_TYPE, MediaPipeAudioEmbedder::get_class_static())));
+	ClassDB::bind_method(D_METHOD("embed", "audio_data", "is_stereo", "audio_sample_rate"), &MediaPipeAudioEmbedder::embed);
+	ClassDB::bind_method(D_METHOD("embed_async", "audio_data", "is_stereo", "audio_sample_rate", "timestamp_ms"), &MediaPipeAudioEmbedder::embed_async);
+	ADD_SIGNAL(MethodInfo("result_callback", PropertyInfo(Variant::OBJECT, "result", PROPERTY_HINT_RESOURCE_TYPE, MediaPipeEmbeddingResult::get_class_static())));
 }
 
 void MediaPipeAudioEmbedder::_register_task() {
@@ -36,10 +36,10 @@ bool MediaPipeAudioEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_optio
 	return create_task.ok();
 }
 
-TypedArray<MediaPipeEmbeddingResult> MediaPipeAudioEmbedder::embed(PackedFloat32Array audio_data, int num_channels, double audio_sample_rate) {
+TypedArray<MediaPipeEmbeddingResult> MediaPipeAudioEmbedder::embed(PackedVector2Array audio_data, bool is_stereo, double audio_sample_rate) {
 	TypedArray<MediaPipeEmbeddingResult> embed_result;
 	ERR_FAIL_COND_V(task == nullptr, embed_result);
-	mediapipe::Matrix audio_clip = make_audio_matrix(audio_data, num_channels);
+	mediapipe::Matrix audio_clip = make_audio_matrix(audio_data, is_stereo);
 	auto result = task->Embed(audio_clip, audio_sample_rate);
 	if (result.ok()) {
 		const std::vector<EmbeddingResult> &results = result.value();
@@ -53,9 +53,9 @@ TypedArray<MediaPipeEmbeddingResult> MediaPipeAudioEmbedder::embed(PackedFloat32
 	return embed_result;
 }
 
-bool MediaPipeAudioEmbedder::embed_async(PackedFloat32Array audio_data, int num_channels, double audio_sample_rate, uint64_t timestamp_ms) {
+bool MediaPipeAudioEmbedder::embed_async(PackedVector2Array audio_data, bool is_stereo, double audio_sample_rate, uint64_t timestamp_ms) {
 	ERR_FAIL_COND_V(task == nullptr, false);
-	mediapipe::Matrix audio_block = make_audio_matrix(audio_data, num_channels);
+	mediapipe::Matrix audio_block = make_audio_matrix(audio_data, is_stereo);
 	auto result = task->EmbedAsync(audio_block, audio_sample_rate, timestamp_ms);
 	if (!result.ok())
 		ERR_PRINT(result.message().data());
