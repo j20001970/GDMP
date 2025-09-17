@@ -105,7 +105,6 @@ def build_web(args: Namespace) -> list[str]:
         "--linkopt=-sWASM_BIGINT",
         "--linkopt=--oformat=wasm",
         "--define=OPENCV=source",
-        "--define=MEDIAPIPE_DISABLE_GPU=1",
     ]
     return build_args
 
