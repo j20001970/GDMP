@@ -3,7 +3,6 @@
 import os
 import platform
 import sys
-from argparse import ArgumentParser
 from os import chdir, path
 from shutil import which
 from subprocess import run
@@ -31,13 +30,6 @@ else:  # Linux/MacOS should work roughly the same
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument("--type", choices=["debug", "release"], default="release")
-    args = parser.parse_args()
-    if args.type == "release":
-        build_type = "opt"
-    else:
-        build_type = "dbg"
 
     # check bazel executable
     bazel_exec = which("bazelisk") or which("bazel")
@@ -48,14 +40,11 @@ if __name__ == "__main__":
         sys.exit(-1)
 
     bazel_args = [bazel_exec, "run"]
+    bazel_args.append("--action_env=HERMETIC_PYTHON_VERSION=3.12")
+    bazel_args.extend([TARGET, "--", "-c", "opt"])
+    bazel_args.append("--action_env=HERMETIC_PYTHON_VERSION=3.12")
 
     if sys.platform == "win32":
-        bazel_args.extend(action_env)
-
-    bazel_args.extend([TARGET, "--", "-c", build_type])
-
-    if sys.platform == "win32":
-        bazel_args.extend(action_env)
         bazel_args.extend(["--define", "MEDIAPIPE_DISABLE_GPU=1"])
 
     chdir(MEDIAPIPE_DIR)

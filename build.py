@@ -27,6 +27,7 @@ def bazel_build(args: list[str]):
         )
         sys.exit(-1)
     cmd = [bazel_exec, "build", "-c", "opt"]
+    cmd.append("--action_env=HERMETIC_PYTHON_VERSION=3.12")
     cmd.extend(args)
     run(cmd, cwd=MEDIAPIPE_DIR, check=True)
 
