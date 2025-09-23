@@ -1,7 +1,8 @@
 {
+    "editor.formatOnSave": true,
+    "explorer.excludeGitIgnore": true,
+    "bazel.buildifierExecutable": "./bin/buildifier",
     "clangd.arguments": [
         "-header-insertion=never"
     ],
-    "explorer.excludeGitIgnore": true,
-    "editor.formatOnSave": true
 }
