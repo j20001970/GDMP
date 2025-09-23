@@ -29,11 +29,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
       - name: Setup
         shell: bash
         working-directory: ${{ env.work-dir }}
@@ -44,7 +39,6 @@ jobs:
         shell: bash
         working-directory: ${{ env.work-dir }}
         run: |
-          source ./venv/Scripts/activate
           python ./build.py desktop --output build/${{ matrix.arch }}
 
       - name: Upload Artifacts

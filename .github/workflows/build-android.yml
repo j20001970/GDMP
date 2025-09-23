@@ -28,11 +28,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
       - name: Setup
         working-directory: ${{ env.work-dir }}
         run: |
@@ -41,7 +36,6 @@ jobs:
       - name: Build
         working-directory: ${{ env.work-dir }}
         run: |
-          source ./venv/bin/activate
           export ANDROID_NDK_HOME=$ANDROID_NDK_LATEST_HOME
           python ./build.py android --arch ${{ matrix.arch }} --output build/${{ matrix.arch }}
 

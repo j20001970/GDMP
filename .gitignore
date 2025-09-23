@@ -1,3 +1,6 @@
+# Ignore executables directory
+/bin
+
 # Ignore Python venv directory
 venv/
 

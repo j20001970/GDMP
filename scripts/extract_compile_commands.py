@@ -32,7 +32,8 @@ else:  # Linux/MacOS should work roughly the same
 if __name__ == "__main__":
 
     # check bazel executable
-    bazel_exec = which("bazelisk") or which("bazel")
+    bin_path = path.join(ROOT_DIR, "bin")
+    bazel_exec = which("bazelisk", path=bin_path) or which("bazel")
     if bazel_exec is None:
         print(
             "Error: Cannot find bazel, please check bazel is installed and is in environment paths."
