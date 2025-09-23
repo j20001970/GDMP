@@ -20,7 +20,8 @@ TARGETS = {
 
 
 def bazel_build(args: list[str]):
-    bazel_exec = which("bazelisk") or which("bazel")
+    bin_path = path.join(path.dirname(__file__), "bin")
+    bazel_exec = which("bazelisk", path=bin_path) or which("bazel")
     if bazel_exec is None:
         print(
             "Error: Cannot find bazel, please check bazel is installed and is in PATH."

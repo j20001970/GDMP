@@ -4,10 +4,9 @@ import glob
 import os
 import platform
 import sys
-import venv
 from argparse import ArgumentParser, Namespace
-from os import path, unlink
-from shutil import rmtree, which
+from os import makedirs, path
+from shutil import which
 from subprocess import run
 import urllib.request
 import stat
@@ -22,13 +21,11 @@ MEDIAPIPE_WORKSPACE = path.join(MEDIAPIPE_DIR, "WORKSPACE")
 
 GDMP_SRC_DIR = path.join(ROOT_DIR, "GDMP")
 GDMP_PATCH_DIR = path.join(ROOT_DIR, "patch")
-GDMP_VENV_DIR = path.join(ROOT_DIR, "venv")
-
-DEFAULT_OPENCV_VERSION = "3.4.10"
+GDMP_BIN_DIR = path.join(ROOT_DIR, "bin")
 
 current_platform = platform.system().lower()
-current_arch = platform.machine().lower()
 if current_platform == "windows":
+    DEFAULT_OPENCV_VERSION = "3.4.10"
     DEFAULT_OPENCV_INSTALL_PATH_REPLACE = 'path = "C:\\\\opencv\\\\build",'
     OPENCV_INSTALL_PATH_FORMAT = 'path = "{}",'
 
@@ -36,19 +33,19 @@ if current_platform == "windows":
     DEFAULT_OPENCV_VERSION_REPLACE = 'OPENCV_VERSION = "3410"'
     OPENCV_VERSION_FORMAT = 'OPENCV_VERSION = "{}"'
 
+current_arch = platform.machine().lower()
+if current_arch in ["aarch64", "arm64"]:
+    current_arch = "arm64"
+if current_arch in ["amd64", "x86_64"]:
+    current_arch = "amd64"
+
 
 def generate_bindings(api_json_path: str) -> None:
-    # Could use a contextmanager but that feels like overkill
-    oldcwd = os.getcwd()
-    os.chdir(GODOT_CPP_DIR)
-    sys.path.append(os.getcwd())
-
+    sys.path.append(GODOT_CPP_DIR)
     import binding_generator as bg
 
-    bg.generate_bindings(api_json_path, True)
-
+    bg.generate_bindings(api_json_path, True, output_dir=GODOT_CPP_DIR)
     sys.path.pop()
-    os.chdir(oldcwd)
 
 
 def apply_patch(patch_dir: str) -> None:
@@ -113,78 +110,42 @@ def workspace_android_rules() -> None:
 
 def download_progress_hook(count, block_size, total_size):
     percent = int(count * block_size * 100 / total_size)
-    print(f"\rDownloading: {percent}%", end='')
+    print(f"\rDownloading: {percent}%", end="")
 
-def create_venv(current_platform: str, current_arch: str, no_download: bool) -> None:
-    if not path.exists(GDMP_VENV_DIR):
-        venv.create(GDMP_VENV_DIR, with_pip=True)
-        if not path.exists(GDMP_VENV_DIR):
-            raise RuntimeError(f"Unable to create venv at path {GDMP_VENV_DIR}")
 
-    pip_bin: str = "{}/bin/pip"
-    activate_command: str = "source venv/bin/activate"
-    if current_platform == "windows":
-        pip_bin = "{}/Scripts/pip.exe"
-        activate_command = "source venv/Scripts/activate"
-
-    if no_download:
-        return
-
-    # Download latest Bazelisk and add to venv path
+def download_bazel_tools() -> None:
+    makedirs(GDMP_BIN_DIR, exist_ok=True)
 
     print(f"Downloading Bazelisk for {current_platform}({current_arch})")
-    bazelisk_url = "https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-" 
-
+    bazelisk_url = f"https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-{current_platform}-{current_arch}"
     if current_platform == "windows":
-        bazelisk_url += f"{current_platform}-amd64.exe"
-        urllib.request.urlretrieve(bazelisk_url, "venv/Scripts/bazel.exe", reporthook=download_progress_hook)
-
-    else:
-        # Linux and MacOS hosts
-        bazel_path = "venv/bin/bazel"
-
-        if current_arch == "amd64" or current_arch == "x86_64":
-            bazelisk_url += f"{current_platform}-amd64"
-            urllib.request.urlretrieve(bazelisk_url, bazel_path, reporthook=download_progress_hook)
-
-            # Give downloaded file executable permissions
-            perms = os.stat(bazel_path).st_mode
-            os.chmod(bazel_path, perms | stat.S_IXUSR)
-
-        elif current_arch == "arm64" or current_arch == "aarch64":
-            bazelisk_url += f"{current_platform}-arm64"
-            urllib.request.urlretrieve(bazelisk_url, bazel_path, reporthook=download_progress_hook)
-
-            perms = os.stat(bazel_path).st_mode
-            os.chmod(bazel_path, perms | stat.S_IXUSR)
-
-        else:
-            print(f"Could not get Bazelisk for your platform: {current_platform} {current_arch}")
+        bazelisk_url += ".exe"
+    bazelisk_path = path.join(GDMP_BIN_DIR, "bazelisk")
+    if current_platform == "windows":
+        bazelisk_path += ".exe"
+    urllib.request.urlretrieve(
+        bazelisk_url, bazelisk_path, reporthook=download_progress_hook
+    )
     print()
-
-    # Download latest Buildifier and add to venv path
+    perms = os.stat(bazelisk_path).st_mode
+    os.chmod(bazelisk_path, perms | stat.S_IXUSR)
 
     print(f"Donwloading Buildifier for {current_platform}({current_arch})")
-    buildifier_url = "https://github.com/bazelbuild/buildtools/releases/download/latest/buildifier-{platform}-{arch}"
-
+    buildifier_url = f"https://github.com/bazelbuild/buildtools/releases/latest/download/buildifier-{current_platform}-{current_arch}"
     if current_platform == "windows":
-        buildifier_path = "venv/Scripts/buildifier.exe"
-        buildifier_url = buildifier_url.format(platform=current_platform, arch="amd64")
-        buildifier_url += ".exe"
-    else:
-        buildifier_path = "venv/bin/buildifier"
-        arch = "amd64" if current_arch == "amd64" or current_arch == "x86_64" else current_arch
-        bazelisk_url = bazelisk_url.format(platform=current_platform, arch=arch)
-
-    urllib.request.urlretrieve(bazelisk_url, buildifier_path, reporthook=download_progress_hook)
-
-    if not current_platform == "windows":
-        perms = os.stat(buildifier_path).st_mode
-        os.chmod(buildifier_path, perms | stat.S_IXUSR)
-
-    print(
-        f"\n++++++\nPlease activate the venv before building GDMP by running `{activate_command}`\n++++++\n"
+        if current_arch == "amd64":
+            buildifier_url += ".exe"
+        else:
+            return  # Buildifier for Windows only available on amd64
+    buildifier_path = path.join(GDMP_BIN_DIR, "buildifier")
+    if current_platform == "windows":
+        buildifier_path += ".exe"
+    urllib.request.urlretrieve(
+        buildifier_url, buildifier_path, reporthook=download_progress_hook
     )
+    print()
+    perms = os.stat(buildifier_path).st_mode
+    os.chmod(buildifier_path, perms | stat.S_IXUSR)
 
 
 if __name__ == "__main__":
@@ -197,12 +158,10 @@ if __name__ == "__main__":
         help="Path to a pre-generated api.json file. Defaults to api.json provided by godot-cpp",
     )
     parser.add_argument(
-        "--godot-binary",
-        required=False,
-        help="Path to the Godot editor binary for generating bindings",
+        "--no-download",
+        action="store_true",
+        help="Do not download additional executables.",
     )
-
-    parser.add_argument("--no-download", action='store_true', help="Do not download additional executables to venv.")
 
     # Platform specific
     if current_platform == "windows":
@@ -220,20 +179,6 @@ if __name__ == "__main__":
     args: Namespace = parser.parse_args()
 
     api_json_path: str = path.abspath(args.api_json)
-    if args.godot_binary:
-        godot_binary = path.abspath(args.godot_binary)
-        os.chdir(ROOT_DIR)
-        run(
-            [
-                args.godot_binary,
-                "--gdnative-generate-json-api",
-                "--no-window",
-                "api.json",
-            ],
-            check=True,
-        )
-        api_json_path = path.join(os.getcwd(), "api.json")
-
     generate_bindings(api_json_path)
 
     apply_patch(GDMP_PATCH_DIR)
@@ -259,4 +204,5 @@ if __name__ == "__main__":
                 args.custom_opencv_version.replace(".", ""),
             )
 
-    create_venv(current_platform, current_arch, args.no_download)
+    if not args.no_download:
+        download_bazel_tools()
