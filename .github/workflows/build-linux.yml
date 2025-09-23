@@ -26,7 +26,7 @@ jobs:
     name: Linux ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     env:
-      SDK_VERSION: "24.08"
+      SDK_VERSION: "25.08"
     steps:
       - name: Set Working Directory
         if: ${{ inputs.working-directory != '' }}
