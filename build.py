@@ -44,8 +44,8 @@ def build_desktop(args: Namespace) -> list[str]:
         ],
         "darwin": [
             "--apple_generate_dsym=false",
+            "--copt=-DMEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER",
             "--define=OPENCV=source",
-            "--define=MEDIAPIPE_DISABLE_GPU=1",
         ],
         "win32": [
             "--conlyopt=/std:c11",
