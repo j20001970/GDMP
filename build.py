@@ -55,6 +55,7 @@ def build_desktop(args: Namespace) -> list[str]:
             "--define=OPENCV=source",
         ],
         "darwin": [
+            "--apple_generate_dsym=false",
             "--define=OPENCV=source",
             "--define=MEDIAPIPE_DISABLE_GPU=1",
         ],
@@ -69,8 +70,10 @@ def build_desktop(args: Namespace) -> list[str]:
     if sys.platform == "darwin":
         if arch == "arm64":
             build_args.append("--cpu=darwin_arm64")
+            build_args.append("--macos_minimum_os=11.0")
         elif arch == "x86_64":
             build_args.append("--cpu=darwin_x86_64")
+            build_args.append("--macos_minimum_os=10.13")
             build_args.append("--define=xnn_enable_avxvnniint8=false")
     elif sys.platform == "linux":
         if arch == "arm64":
