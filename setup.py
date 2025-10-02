@@ -104,9 +104,12 @@ def workspace_android_rules() -> None:
         content = f.read()
     with open(MEDIAPIPE_WORKSPACE, "a") as f:
         if not "androidndk" in content:
-            f.write('#android_ndk_repository(name = "androidndk", api_level=21)\n')
+            f.write('android_ndk_repository(name = "androidndk", api_level=21)\n')
         if not "android/crosstool" in content:
-            f.write('#bind(name = "android/crosstool", actual = "@androidndk//:toolchain")\n')
+            f.write(
+                'bind(name = "android/crosstool", actual = "@androidndk//:toolchain")\n'
+            )
+
 
 def download_progress_hook(count, block_size, total_size):
     percent = int(count * block_size * 100 / total_size)

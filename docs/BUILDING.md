@@ -30,8 +30,6 @@ Run `build.py --help` to see all options.
 
 1. Install Android NDK, then setting `ANDROID_NDK_HOME` environment variable that point to your install location.
 
-    You will also need to uncomment the last 2 lines of `mediapipe/WORKSPACE` (`android_ndk_repository` and its `bind` alias) that added eariler during setup.
-
     Refer to [MediaPipe docs](https://developers.google.com/mediapipe/framework/getting_started/android#prerequisite) for more details.
 2. Run `build.py android` to build Android native libraries.
 
