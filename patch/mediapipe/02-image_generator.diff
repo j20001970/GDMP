@@ -1,0 +1,11 @@
+diff --git a/mediapipe/tasks/cc/vision/image_generator/BUILD b/mediapipe/tasks/cc/vision/image_generator/BUILD
+--- a/mediapipe/tasks/cc/vision/image_generator/BUILD
++++ b/mediapipe/tasks/cc/vision/image_generator/BUILD
+@@ -105,6 +105,7 @@ cc_library(
+     name = "image_generator",
+     srcs = ["image_generator.cc"],
+     hdrs = ["image_generator.h"],
++    visibility = ["//visibility:public"],
+     deps = [
+         ":image_generator_graph",
+         ":image_generator_result",
