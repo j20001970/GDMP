@@ -111,6 +111,20 @@ cc_library(
 )
 
 cc_library(
+    name = "image_generator",
+    srcs = ["image_generator.cc"],
+    hdrs = ["image_generator.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":vision_task",
+        "//GDMP/framework:image",
+        "@mediapipe//mediapipe/tasks/cc/vision/image_generator",
+        "@godot-cpp//:godot",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
     name = "image_segmenter",
     srcs = ["image_segmenter.cc"],
     hdrs = ["image_segmenter.h"],
