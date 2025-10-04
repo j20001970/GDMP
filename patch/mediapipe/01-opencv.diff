@@ -25,7 +25,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
          "//conditions:default": ":opencv_binary",
      }),
      visibility = ["//visibility:public"],
-@@ -188,12 +188,6 @@ bzl_library(
+@@ -188,11 +173,6 @@ bzl_library(
  # linker, so if library A depends on library B, library B must come _after_.
  # Hence core is at the bottom.
  OPENCV_MODULES = [
@@ -34,11 +34,10 @@ diff --git a/third_party/BUILD b/third_party/BUILD
 -    "highgui",
 -    "video",
 -    "videoio",
--    "imgcodecs",
+     "imgcodecs",
      "imgproc",
      "core",
- ]
-@@ -202,9 +196,10 @@ OPENCV_MODULES = [
+@@ -202,9 +182,10 @@ OPENCV_MODULES = [
  # still only builds the shared libraries, so we have to choose one or the
  # other. We build shared libraries by default, but this variable can be used
  # to switch to static libraries.
@@ -51,7 +50,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
  
  cmake(
      name = "opencv_cmake",
-@@ -219,11 +196,14 @@ cmake(
+@@ -219,11 +200,14 @@ cmake(
          "BUILD_PERF_TESTS": "OFF",
          "BUILD_EXAMPLES": "OFF",
          "BUILD_SHARED_LIBS": "ON" if OPENCV_SHARED_LIBS else "OFF",
@@ -69,7 +68,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
          "WITH_OPENCL": "OFF",
          "WITH_WEBP": "OFF",
          # Optimization flags
-@@ -252,48 +232,58 @@ cmake(
+@@ -252,48 +236,61 @@ cmake(
          # ccache would be able to work across sandboxed Bazel builds, either.
          # In any case, Bazel does its own caching of the rule's outputs.
          "ENABLE_CCACHE": "OFF",
@@ -79,6 +78,9 @@ diff --git a/third_party/BUILD b/third_party/BUILD
 +            "BUILD_ANDROID_PROJECTS": "OFF",
 +            "OPENCV_LIB_ARCHIVE_INSTALL_PATH": "lib",
 +            "WITH_KLEIDICV": "OFF",
++        },
++        "@platforms//os:ios": {
++            "IOS": "1",
 +        },
 +        "@platforms//os:windows": {
 +            "BUILD_WITH_STATIC_CRT": "OFF",
