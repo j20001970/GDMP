@@ -34,15 +34,5 @@ refresh_compile_commands(
     name = "refresh_compile_commands",
     targets = {
         "@GDMP//GDMP:GDMP": "",
-        "@GDMP//GDMP/android:asset_util": """
-        --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
-        --crosstool_top=//external:android/crosstool
-        --cpu=arm64-v8a
-        """,
-        "@GDMP//GDMP/android:jni": """
-        --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
-        --crosstool_top=//external:android/crosstool
-        --cpu=arm64-v8a
-        """,
     },
 )

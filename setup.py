@@ -11,17 +11,11 @@ from subprocess import run
 import urllib.request
 import stat
 
-ROOT_DIR = path.dirname(__file__)
+from config import *
 
-GODOT_CPP_DIR = path.join(ROOT_DIR, "godot-cpp")
 GODOT_CPP_API_JSON = path.join(GODOT_CPP_DIR, "gdextension/extension_api.json")
-
-MEDIAPIPE_DIR = path.join(ROOT_DIR, "mediapipe")
 MEDIAPIPE_WORKSPACE = path.join(MEDIAPIPE_DIR, "WORKSPACE")
-
-GDMP_SRC_DIR = path.join(ROOT_DIR, "GDMP")
 GDMP_PATCH_DIR = path.join(ROOT_DIR, "patch")
-GDMP_BIN_DIR = path.join(ROOT_DIR, "bin")
 
 current_platform = platform.system().lower()
 if current_platform == "windows":
