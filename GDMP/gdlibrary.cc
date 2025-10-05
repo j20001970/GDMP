@@ -11,7 +11,6 @@
 #include "GDMP/framework/packet.h"
 #include "GDMP/gpu/gpu_helper.h"
 #include "GDMP/gpu/gpu_resources.h"
-#include "GDMP/io/camera_helper.h"
 #include "GDMP/proto/proto.h"
 #include "GDMP/tasks/containers/category.h"
 #include "GDMP/tasks/containers/classification_result.h"
@@ -59,8 +58,6 @@ extern "C" void GDN_EXPORT mediapipe_nativescript_init(void *handle) {
 	// GPU
 	register_class<MediaPipeGPUHelper>();
 	register_class<MediaPipeGPUResources>();
-	// I/O
-	register_class<MediaPipeCameraHelper>();
 	// ResourceProvider
 	util::set_resource_provider();
 	// Tasks
