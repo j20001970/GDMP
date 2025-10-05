@@ -1,7 +1,8 @@
 # Ignore executables directory
 /bin
 
-# Ignore Python venv directory
+# Ignore Python directories
+__pycache__/
 venv/
 
 # Ignore clangd compilation database files

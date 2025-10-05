@@ -9,7 +9,7 @@ from os import makedirs, path, remove
 from shutil import copyfile, which
 from subprocess import run
 
-MEDIAPIPE_DIR = path.join(path.dirname(__file__), "mediapipe")
+from config import *
 
 TARGETS = {
     "android": "@GDMP//GDMP/android:GDMP",
@@ -17,20 +17,6 @@ TARGETS = {
     "ios": "@GDMP//GDMP/ios:GDMP",
     "web": "@GDMP//GDMP/web:GDMP",
 }
-
-
-def bazel_build(args: list[str]):
-    bin_path = path.join(path.dirname(__file__), "bin")
-    bazel_exec = which("bazelisk", path=bin_path) or which("bazel")
-    if bazel_exec is None:
-        print(
-            "Error: Cannot find bazel, please check bazel is installed and is in PATH."
-        )
-        sys.exit(-1)
-    cmd = [bazel_exec, "build", "-c", "opt"]
-    cmd.append("--action_env=HERMETIC_PYTHON_VERSION=3.12")
-    cmd.extend(args)
-    run(cmd, cwd=MEDIAPIPE_DIR, check=True)
 
 
 def build_android(args: Namespace) -> list[str]:
@@ -114,7 +100,7 @@ def build_web(args: Namespace) -> list[str]:
     return build_args
 
 
-def build(args: Namespace):
+def get_build_args(args: Namespace) -> [str]:
     target: str = args.target
     build_targets = {
         "android": build_android,
@@ -122,9 +108,19 @@ def build(args: Namespace):
         "ios": build_ios,
         "web": build_web,
     }
-    build_args = build_targets[target](args)
+    build_args = ["-c", "opt", "--action_env=HERMETIC_PYTHON_VERSION=3.12"]
+    build_args.extend(build_targets[target](args))
+    return build_args
+
+
+def build(args: Namespace):
+    target: str = args.target
+    bazel_exec = get_bazel()
+    build_args = get_build_args(args)
     build_args.append(TARGETS[target])
-    bazel_build(build_args)
+    cmd = [bazel_exec, "build"]
+    cmd.extend(build_args)
+    run(cmd, cwd=MEDIAPIPE_DIR, check=True)
 
 
 def copy_android(args: Namespace):
@@ -227,7 +223,7 @@ def copy_output(args: Namespace):
     copy_actions[target](args)
 
 
-if __name__ == "__main__":
+def get_args() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument("target", choices=list(TARGETS), help="build target")
     parser.add_argument("--arch", default="", help="library architecture")
@@ -239,5 +235,10 @@ if __name__ == "__main__":
             args.arch = "x86_64"
         elif machine in ["aarch64", "arm64"]:
             args.arch = "arm64"
+    return args
+
+
+if __name__ == "__main__":
+    args = get_args()
     build(args)
     copy_output(args)
