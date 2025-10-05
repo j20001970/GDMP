@@ -13,7 +13,6 @@ cc_library(
         "//GDMP/framework:packet",
         "//GDMP/gpu:gpu_helper",
         "//GDMP/gpu:gpu_resources",
-        "//GDMP/io:camera_helper",
         "//GDMP/proto:proto",
         "//GDMP/tasks:task",
         "//GDMP/tasks:task_runner",
