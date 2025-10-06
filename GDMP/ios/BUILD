@@ -13,7 +13,10 @@ apple_xcframework(
     infoplists = ["Info.plist"],
     ios = {
         "device": ["arm64"],
-        "simulator": ["arm64", "x86_64"],
+        "simulator": [
+            "arm64",
+            "x86_64",
+        ],
     },
     minimum_os_versions = {
         "ios": "12.0",

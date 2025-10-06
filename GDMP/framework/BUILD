@@ -1,13 +1,14 @@
+package(default_visibility = ["//visibility:public"])
+
 cc_library(
     name = "image",
     srcs = ["image.cc"],
     hdrs = ["image.h"],
-    visibility = ["//visibility:public"],
     deps = [
         ":packet",
         "//GDMP/util:image",
-        "@mediapipe//mediapipe/framework/formats:image",
         "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/framework/formats:image",
     ] + select({
         "@mediapipe//mediapipe/gpu:disable_gpu": [],
         "//conditions:default": ["@mediapipe//mediapipe/gpu:gpu_buffer"],
@@ -18,7 +19,6 @@ cc_library(
     name = "graph",
     srcs = ["graph.cc"],
     hdrs = ["graph.h"],
-    visibility = ["//visibility:public"],
     deps = [
         ":graph_config",
         ":packet",
@@ -43,7 +43,6 @@ cc_library(
         "graph_builder.h",
         "graph_node.h",
     ],
-    visibility = ["//visibility:public"],
     deps = [
         ":graph_config",
         "//GDMP/proto",
@@ -56,7 +55,6 @@ cc_library(
     name = "graph_config",
     srcs = ["graph_config.cc"],
     hdrs = ["graph_config.h"],
-    visibility = ["//visibility:public"],
     deps = [
         "//GDMP/proto",
         "@godot-cpp//:godot",
@@ -68,7 +66,6 @@ cc_library(
     name = "packet",
     srcs = ["packet.cc"],
     hdrs = ["packet.h"],
-    visibility = ["//visibility:public"],
     deps = [
         "//GDMP/util:image",
         "@godot-cpp//:godot",

@@ -1,12 +1,13 @@
+package(default_visibility = ["//visibility:public"])
+
 cc_library(
     name = "category",
     srcs = ["category.cc"],
     hdrs = ["category.h"],
-    visibility = ["//visibility:public"],
     deps = [
         "//GDMP/proto",
-        "@mediapipe//mediapipe/tasks/cc/components/containers:category",
         "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/tasks/cc/components/containers:category",
     ],
 )
 
@@ -14,13 +15,12 @@ cc_library(
     name = "classification_result",
     srcs = ["classification_result.cc"],
     hdrs = ["classification_result.h"],
-    visibility = ["//visibility:public"],
     deps = [
         ":category",
         "//GDMP/framework:packet",
         "//GDMP/proto",
-        "@mediapipe//mediapipe/tasks/cc/components/containers:classification_result",
         "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/tasks/cc/components/containers:classification_result",
     ],
 )
 
@@ -28,14 +28,13 @@ cc_library(
     name = "detection_result",
     srcs = ["detection_result.cc"],
     hdrs = ["detection_result.h"],
-    visibility = ["//visibility:public"],
     deps = [
         ":category",
         ":keypoint",
         "//GDMP/framework:packet",
         "//GDMP/proto",
-        "@mediapipe//mediapipe/tasks/cc/components/containers:detection_result",
         "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/tasks/cc/components/containers:detection_result",
     ],
 )
 
@@ -43,10 +42,9 @@ cc_library(
     name = "embedding_result",
     srcs = ["embedding_result.cc"],
     hdrs = ["embedding_result.h"],
-    visibility = ["//visibility:public"],
     deps = [
-        "@mediapipe//mediapipe/tasks/cc/components/containers:embedding_result",
         "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/tasks/cc/components/containers:embedding_result",
     ],
 )
 
@@ -54,12 +52,11 @@ cc_library(
     name = "keypoint",
     srcs = ["keypoint.cc"],
     hdrs = ["keypoint.h"],
-    visibility = ["//visibility:public"],
     deps = [
         "//GDMP/proto",
+        "@godot-cpp//:godot",
         "@mediapipe//mediapipe/framework/formats:location_data_cc_proto",
         "@mediapipe//mediapipe/tasks/cc/components/containers:keypoint",
-        "@godot-cpp//:godot",
     ],
 )
 
@@ -67,11 +64,10 @@ cc_library(
     name = "landmark",
     srcs = ["landmark.cc"],
     hdrs = ["landmark.h"],
-    visibility = ["//visibility:public"],
     deps = [
         "//GDMP/framework:packet",
         "//GDMP/proto",
-        "@mediapipe//mediapipe/tasks/cc/components/containers:landmark",
         "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/tasks/cc/components/containers:landmark",
     ],
 )

@@ -1,8 +1,9 @@
+package(default_visibility = ["//visibility:public"])
+
 cc_library(
     name = "gpu_helper",
     srcs = ["gpu_helper.cc"],
     hdrs = ["gpu_helper.h"],
-    visibility = ["//visibility:public"],
     deps = [
         ":gpu_resources",
         "//GDMP/framework:image",
@@ -25,9 +26,8 @@ cc_library(
     name = "gpu_resources",
     srcs = ["gpu_resources.cc"],
     hdrs = ["gpu_resources.h"],
-    visibility = ["//visibility:public"],
     deps = [
-        "@mediapipe//mediapipe/gpu:gpu_shared_data_internal",
         "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/gpu:gpu_shared_data_internal",
     ],
 )
