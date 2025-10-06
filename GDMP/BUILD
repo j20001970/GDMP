@@ -1,10 +1,11 @@
 load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile_commands")
 load("//GDMP:GDMP.bzl", "CALCULATORS", "TASKS")
 
+package(default_visibility = ["//visibility:public"])
+
 cc_library(
     name = "GDMP",
     srcs = ["gdlibrary.cc"],
-    visibility = ["//visibility:public"],
     deps = [
         "//GDMP/framework:graph",
         "//GDMP/framework:graph_builder",
@@ -13,7 +14,7 @@ cc_library(
         "//GDMP/framework:packet",
         "//GDMP/gpu:gpu_helper",
         "//GDMP/gpu:gpu_resources",
-        "//GDMP/proto:proto",
+        "//GDMP/proto",
         "//GDMP/tasks:task",
         "//GDMP/tasks:task_runner",
         "//GDMP/tasks/containers:category",

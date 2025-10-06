@@ -9,6 +9,5 @@ cc_binary(
         ],
     }),
     linkshared = 1,
-    visibility = ["//visibility:public"],
     deps = ["//GDMP"],
 )
