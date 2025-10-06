@@ -147,7 +147,7 @@ if __name__ == "__main__":
 
     # Extension generation
     parser.add_argument(
-        "--extension-api-json",
+        "--api-json",
         default=GODOT_CPP_API_JSON,
         help="Path to a pre-generated extension_api.json file. Defaults to extension_api.json provided by godot-cpp",
     )
@@ -172,7 +172,7 @@ if __name__ == "__main__":
 
     args: Namespace = parser.parse_args()
 
-    api_json_path: str = path.abspath(args.extension_api_json)
+    api_json_path: str = path.abspath(args.api_json)
     generate_bindings(api_json_path)
 
     apply_patch(GDMP_PATCH_DIR)
