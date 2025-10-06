@@ -35,7 +35,10 @@ class MediaPipeGPUHelper : public Reference {
 		void _init();
 
 		// Initialize GPU helper from GPU resources.
-		void initialize(Ref<MediaPipeGPUResources> gpu_resources);
+		bool initialize(Ref<MediaPipeGPUResources> gpu_resources);
+
+		// Check if the helper is initialized.
+		bool is_initialized();
 
 		// Make a GPU image.
 		// Return the image as-is if it is already a GPU image.

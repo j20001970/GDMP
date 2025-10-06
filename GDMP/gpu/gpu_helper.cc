@@ -3,27 +3,21 @@
 #if !MEDIAPIPE_DISABLE_GPU
 #include "mediapipe/gpu/gpu_buffer.h"
 #endif
-#ifdef __APPLE__
-#include "mediapipe/objc/util.h"
-#endif
 
 #if !MEDIAPIPE_DISABLE_GPU
 mediapipe::GpuBuffer MediaPipeGPUHelper::get_gpu_buffer(mediapipe::Image image) {
 	mediapipe::GpuBuffer gpu_buffer;
-#if MEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER
-	gpu_buffer = image.GetGpuBuffer();
-#else
 	ERR_FAIL_COND_V(!gpu_helper.Initialized(), gpu_buffer);
 	gpu_helper.RunInGlContext([this, &image, &gpu_buffer]() -> void {
 		gpu_buffer = image.GetGpuBuffer();
 	});
-#endif
 	return gpu_buffer;
 }
 #endif
 
 void MediaPipeGPUHelper::_register_methods() {
 	register_method("initialize", &MediaPipeGPUHelper::initialize);
+	register_method("is_initialized", &MediaPipeGPUHelper::is_initialized);
 	register_method("make_gpu_image", &MediaPipeGPUHelper::make_gpu_image);
 	register_method("make_gpu_buffer_packet", &MediaPipeGPUHelper::make_gpu_buffer_packet);
 }
@@ -38,12 +32,23 @@ MediaPipeGPUHelper *MediaPipeGPUHelper::_new(mediapipe::GpuResources *gpu_resour
 
 void MediaPipeGPUHelper::_init() {}
 
-void MediaPipeGPUHelper::initialize(Ref<MediaPipeGPUResources> gpu_resources) {
+bool MediaPipeGPUHelper::initialize(Ref<MediaPipeGPUResources> gpu_resources) {
 #if !MEDIAPIPE_DISABLE_GPU
-	ERR_FAIL_COND(gpu_resources.is_null());
+	ERR_FAIL_COND_V(gpu_resources.is_null(), false);
 	gpu_helper.InitializeForTest(gpu_resources->get_gpu_resources().get());
+	return gpu_helper.Initialized();
 #else
 	ERR_PRINT("GPU support is disabled in this build.");
+	return false;
+#endif
+}
+
+bool MediaPipeGPUHelper::is_initialized() {
+#if !MEDIAPIPE_DISABLE_GPU
+	return gpu_helper.Initialized();
+#else
+	ERR_PRINT("GPU support is disabled in this build.");
+	return false;
 #endif
 }
 
