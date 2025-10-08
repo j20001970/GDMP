@@ -75,7 +75,7 @@ bool MediaPipeFaceLandmarker::initialize(
 			if (result.ok())
 				callback_result = Ref(MediaPipeFaceLandmarkerResult::_new(result.value()));
 			Ref<MediaPipeImage> callback_image = MediaPipeImage::_new(image);
-			emit_signal("result_callback", callback_result, callback_image, timestamp_ms);
+			call_deferred("emit_signal", "result_callback", callback_result, callback_image, timestamp_ms);
 		};
 	auto create_task = FaceLandmarker::Create(std::move(options));
 	if (create_task.ok())

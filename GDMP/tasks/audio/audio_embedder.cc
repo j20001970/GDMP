@@ -27,7 +27,7 @@ bool MediaPipeAudioEmbedder::initialize(Ref<MediaPipeTaskBaseOptions> base_optio
 			Ref<MediaPipeEmbeddingResult> callback_result;
 			if (result.ok())
 				callback_result = Ref(MediaPipeEmbeddingResult::_new(result.value()));
-			emit_signal("result_callback", callback_result);
+			call_deferred("emit_signal", "result_callback", callback_result);
 		};
 	auto create_task = AudioEmbedder::Create(std::move(options));
 	if (create_task.ok())

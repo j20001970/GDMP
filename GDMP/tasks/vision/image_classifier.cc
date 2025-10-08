@@ -27,7 +27,7 @@ bool MediaPipeImageClassifier::initialize(Ref<MediaPipeTaskBaseOptions> base_opt
 			if (result.ok())
 				callback_result = Ref(MediaPipeClassificationResult::_new(result.value()));
 			Ref<MediaPipeImage> callback_image = MediaPipeImage::_new(image);
-			emit_signal("result_callback", callback_result, callback_image, timestamp_ms);
+			call_deferred("emit_signal", "result_callback", callback_result, callback_image, timestamp_ms);
 		};
 	auto create_task = ImageClassifier::Create(std::move(options));
 	if (create_task.ok())
