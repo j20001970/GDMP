@@ -39,7 +39,7 @@ bool MediaPipeObjectDetector::initialize(Ref<MediaPipeTaskBaseOptions> base_opti
 			if (result.ok())
 				callback_result = Ref(memnew(MediaPipeDetectionResult(result.value())));
 			Ref<MediaPipeImage> callback_image = memnew(MediaPipeImage(image));
-			emit_signal("result_callback", callback_result, callback_image, timestamp_ms);
+			call_deferred("emit_signal", "result_callback", callback_result, callback_image, timestamp_ms);
 		};
 	auto create_task = ObjectDetector::Create(std::move(options));
 	if (create_task.ok())

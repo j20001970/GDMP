@@ -26,7 +26,7 @@ bool MediaPipeAudioClassifier::initialize(Ref<MediaPipeTaskBaseOptions> base_opt
 			Ref<MediaPipeClassificationResult> callback_result;
 			if (result.ok())
 				callback_result = Ref(memnew(MediaPipeClassificationResult(result.value())));
-			emit_signal("result_callback", callback_result);
+			call_deferred("emit_signal", "result_callback", callback_result);
 		};
 	auto create_task = AudioClassifier::Create(std::move(options));
 	if (create_task.ok())
