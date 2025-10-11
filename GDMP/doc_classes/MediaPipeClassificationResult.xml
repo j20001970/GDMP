@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeClassificationResult" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe classification result.
+	</brief_description>
+	<description>
+		A MediaPipe task data container that defines classification results of a model.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="has_timestamp_ms" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the result has [member timestamp_ms].
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="classifications" type="MediaPipeClassifications[]" setter="" getter="get_classifications" default="[]">
+			The classification results for each head of the model.
+		</member>
+		<member name="timestamp_ms" type="int" setter="" getter="get_timestamp_ms" default="0">
+			The optional timestamp of the result in milliseconds.
+		</member>
+	</members>
+</class>

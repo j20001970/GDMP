@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeTaskRunner" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe task runner.
+	</brief_description>
+	<description>
+		The task runner can run in either synchronous or asynchronous mode, depending on the callback during initialization.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="close">
+			<return type="bool" />
+			<description>
+				Shuts down the task runner.
+			</description>
+		</method>
+		<method name="get_graph_config">
+			<return type="MediaPipeGraphConfig" />
+			<description>
+				Gets the [MediaPipeGraphConfig] of the task runner.
+			</description>
+		</method>
+		<method name="initialize">
+			<return type="bool" />
+			<param index="0" name="config" type="MediaPipeGraphConfig" />
+			<param index="1" name="callback" type="Callable" default="null" />
+			<description>
+				Initializes the task runner with [param config].
+				When running in asynchronous mode, [param callback] should accept a single [Dictionary] parameter which is the packet map of output streams.
+			</description>
+		</method>
+		<method name="process">
+			<return type="Dictionary" />
+			<param index="0" name="inputs" type="Dictionary" />
+			<description>
+				Processes the packet map [param inputs] in synchronous mode.
+				This method blocks current thread until a result is returned.
+			</description>
+		</method>
+		<method name="restart">
+			<return type="bool" />
+			<description>
+				Resets and restarts the task runner.
+			</description>
+		</method>
+		<method name="send">
+			<return type="bool" />
+			<param index="0" name="inputs" type="Dictionary" />
+			<description>
+				Sends the packet map [param inputs] in asynchronous mode. Returns [code]true[/code] on success.
+			</description>
+		</method>
+	</methods>
+</class>

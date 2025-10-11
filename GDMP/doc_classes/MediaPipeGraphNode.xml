@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeGraphNode" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Class representing a calculator node.
+	</brief_description>
+	<description>
+		[MediaPipeGraphNode] represents a calculator node created by [MediaPipeGraphBuilder].
+		The node should only be used with [MediaPipeGraphBuilder] that creates it, and other nodes created by the same builder.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_input_index">
+			<return type="MediaPipeNodeDestination" />
+			<param index="0" name="index" type="int" />
+			<description>
+				Gets the [MediaPipeNodeDestination] of the node by [param index].
+			</description>
+		</method>
+		<method name="get_input_tag">
+			<return type="MediaPipeNodeDestination" />
+			<param index="0" name="tag" type="String" />
+			<description>
+				Gets the [MediaPipeNodeDestination] of the node by [param tag].
+			</description>
+		</method>
+		<method name="get_options">
+			<return type="MediaPipeProto" />
+			<description>
+				Gets the options proto of the node.
+			</description>
+		</method>
+		<method name="get_output_index">
+			<return type="MediaPipeNodeSource" />
+			<param index="0" name="index" type="int" />
+			<description>
+				Gets the [MediaPipeNodeSource] of the node by [param index].
+			</description>
+		</method>
+		<method name="get_output_tag">
+			<return type="MediaPipeNodeSource" />
+			<param index="0" name="tag" type="String" />
+			<description>
+				Gets the [MediaPipeNodeSource] of the node by [param tag].
+			</description>
+		</method>
+		<method name="set_options">
+			<return type="bool" />
+			<param index="0" name="options" type="MediaPipeProto" />
+			<description>
+				Sets the options proto of the node.
+			</description>
+		</method>
+	</methods>
+</class>

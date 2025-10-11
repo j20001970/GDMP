@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeNormalizedKeypoint" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe normalized keypoint data.
+	</brief_description>
+	<description>
+		A keypoint, defined by the coordinates (x, y), normalized by the image dimensions.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_proto">
+			<return type="MediaPipeProto" />
+			<description>
+				Gets the [MediaPipeProto] with type [code]mediapipe::LocationData::RelativeKeypoint[/code].
+			</description>
+		</method>
+		<method name="has_label" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the keypoint has [member label].
+			</description>
+		</method>
+		<method name="has_score" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the keypoint has [member score].
+			</description>
+		</method>
+		<method name="make_vector_proto_packet" qualifiers="static">
+			<return type="MediaPipePacket" />
+			<param index="0" name="array" type="MediaPipeNormalizedKeypoint[]" />
+			<description>
+				Creates a [MediaPipePacket] that contains a vector of [code]mediapipe::LocationData::RelativeKeypoint[/code]s.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="label" type="String" setter="" getter="get_label" default="&quot;&quot;">
+			The optional label of the keypoint.
+		</member>
+		<member name="point" type="Vector2" setter="" getter="get_point" default="Vector2(0, 0)">
+			The convenient property to get [member x] and [member y] as [Vector2].
+		</member>
+		<member name="score" type="float" setter="" getter="get_score" default="0.0">
+			The optional score of the keypoint.
+		</member>
+		<member name="x" type="float" setter="" getter="get_x" default="0.0">
+			The x coordinate of the keypoint.
+		</member>
+		<member name="y" type="float" setter="" getter="get_y" default="0.0">
+			The y coordinate of the keypoint.
+		</member>
+	</members>
+</class>

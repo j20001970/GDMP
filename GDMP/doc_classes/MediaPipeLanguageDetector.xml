@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeLanguageDetector" inherits="MediaPipeTextTask" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe language detector task.
+	</brief_description>
+	<description>
+		MediaPipe text task for performing language prediction of an input text.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="detect">
+			<return type="MediaPipeLanguageDetectorPrediction[]" />
+			<param index="0" name="text" type="String" />
+			<description>
+				Predicts the language of [param text].
+			</description>
+		</method>
+		<method name="initialize">
+			<return type="bool" />
+			<param index="0" name="base_options" type="MediaPipeTaskBaseOptions" />
+			<param index="1" name="classifier_options" type="MediaPipeClassifierOptions" />
+			<description>
+				Initializes the language detector.
+			</description>
+		</method>
+	</methods>
+</class>

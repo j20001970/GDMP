@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeEmbedderOptions" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Embedder options for MediaPipe embedding extraction tasks.
+	</brief_description>
+	<description>
+		[MediaPipeEmbedderOptions] wraps common options for MediaPipe tasks that performs embedding extraction.
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="l2_normalize" type="bool" setter="set_l2_normalize" getter="get_l2_normalize" default="false">
+			Whether to normalize the returned feature vector with L2 norm.
+			Use this option only if the model does not already contain L2 normalization operation.
+		</member>
+		<member name="quantize" type="bool" setter="set_quantize" getter="get_quantize" default="false">
+			Whether the returned embedding should be quantized to bytes via scalar quantization.
+			Embeddings are assumed to have a value between [-1.0, 1.0], use [member l2_normalize] if this is not the case.
+		</member>
+	</members>
+</class>

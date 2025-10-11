@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeEmbedding" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe embedding data.
+	</brief_description>
+	<description>
+		A MediaPipe task data container for embedding result for a given embedder head.
+		Only either [member float_embedding] or [member quantized_embedding] will contain data, depending on whether the embedder was configured to perform scalar quantization.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="has_head_name" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the embedding has [member head_name].
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="float_embedding" type="PackedFloat32Array" setter="" getter="get_float_embedding" default="PackedFloat32Array()">
+			The float embedding.
+		</member>
+		<member name="head_index" type="int" setter="" getter="get_head_index" default="0">
+			The head index of the embedding.
+		</member>
+		<member name="head_name" type="String" setter="" getter="get_head_name" default="&quot;&quot;">
+			The optional head name of the embedding.
+		</member>
+		<member name="quantized_embedding" type="String" setter="" getter="get_quantized_embedding" default="&quot;&quot;">
+			The quantized embedding.
+		</member>
+	</members>
+</class>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeImageSegmenter" inherits="MediaPipeVisionTask" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MdiaPipe image segmenter.
+	</brief_description>
+	<description>
+		MediaPipe vision task for performing segmentation on the given image.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_labels">
+			<return type="PackedStringArray" />
+			<description>
+				Get the list of category label that the image segmenter can recognize.
+			</description>
+		</method>
+		<method name="initialize">
+			<return type="bool" />
+			<param index="0" name="base_options" type="MediaPipeTaskBaseOptions" />
+			<param index="1" name="running_mode" type="int" enum="MediaPipeVisionTask.RunningMode" default="1" />
+			<param index="2" name="display_names_locale" type="String" default="&quot;en&quot;" />
+			<param index="3" name="output_confidence_masks" type="bool" default="true" />
+			<param index="4" name="output_category_mask" type="bool" default="false" />
+			<description>
+				Initializes the image segmenter.
+			</description>
+		</method>
+		<method name="segment">
+			<return type="MediaPipeImageSegmenterResult" />
+			<param index="0" name="image" type="MediaPipeImage" />
+			<param index="1" name="region_of_interest" type="Rect2" default="Rect2(0, 0, 0, 0)" />
+			<param index="2" name="rotation_degrees" type="int" default="0" />
+			<description>
+				Performs image segmentation on [param image].
+				Only use this method when the task is initialized with [constant MediaPipeVisionTask.RUNNING_MODE_IMAGE].
+			</description>
+		</method>
+		<method name="segment_async">
+			<return type="bool" />
+			<param index="0" name="image" type="MediaPipeImage" />
+			<param index="1" name="region_of_interest" type="int" />
+			<param index="2" name="rotation_degrees" type="Rect2" default="Rect2(0, 0, 0, 0)" />
+			<param index="3" name="_unnamed_arg3" type="int" default="0" />
+			<description>
+				Sends [param image] to perform image segmentation.
+				Only use this method when the task is initialized with [constant MediaPipeVisionTask.RUNNING_MODE_LIVE_STREAM].
+			</description>
+		</method>
+		<method name="segment_video">
+			<return type="MediaPipeImageSegmenterResult" />
+			<param index="0" name="image" type="MediaPipeImage" />
+			<param index="1" name="region_of_interest" type="int" />
+			<param index="2" name="rotation_degrees" type="Rect2" default="Rect2(0, 0, 0, 0)" />
+			<param index="3" name="_unnamed_arg3" type="int" default="0" />
+			<description>
+				Performs image segmentation on video frame [param image].
+				Only use this method when the task is initialized with [constant MediaPipeVisionTask.RUNNING_MODE_VIDEO].
+			</description>
+		</method>
+	</methods>
+	<signals>
+		<signal name="result_callback">
+			<param index="0" name="result" type="MediaPipeImageSegmenterResult" />
+			<param index="1" name="image" type="MediaPipeImage" />
+			<param index="2" name="timestamp_ms" type="int" />
+			<description>
+				Emitted when image segmenter initialized with [constant MediaPipeVisionTask.RUNNING_MODE_LIVE_STREAM] returns segmentation result.
+			</description>
+		</signal>
+	</signals>
+</class>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeNormalizedLandmarks" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		A list of [MediaPipeNormalizedLandmark]s.
+	</brief_description>
+	<description>
+		A MediaPipe task data container that contains a list of [MediaPipeNormalizedLandmark]s.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_proto">
+			<return type="MediaPipeProto" />
+			<description>
+				Gets the [MediaPipeProto] with type [code]mediapipe::NormalizedLandmarkList[/code].
+			</description>
+		</method>
+		<method name="make_vector_proto_packet" qualifiers="static">
+			<return type="MediaPipePacket" />
+			<param index="0" name="array" type="MediaPipeNormalizedLandmarks[]" />
+			<description>
+				Creates a [MediaPipePacket] that contains a vector of [code]mediapipe::NormalizedLandmarkList[/code]s.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="landmarks" type="MediaPipeNormalizedLandmark[]" setter="" getter="get_landmarks" default="[]">
+			The list of normalized landmarks.
+		</member>
+	</members>
+</class>

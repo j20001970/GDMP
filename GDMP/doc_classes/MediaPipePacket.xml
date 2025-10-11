@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipePacket" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		A data container in MediaPipe framework.
+	</brief_description>
+	<description>
+		A packet in MediaPipe framework is a generic container that can hold data of any type.
+	</description>
+	<tutorials>
+		<link title="Framework concepts: Packets">https://ai.google.dev/edge/mediapipe/framework/framework_concepts/packets</link>
+	</tutorials>
+	<methods>
+		<method name="clear">
+			<return type="void" />
+			<description>
+				Clears the content of the packet.
+			</description>
+		</method>
+		<method name="get">
+			<return type="Variant" />
+			<description>
+				Gets the content of the packet.
+				Returns [code]null[/code] if the packet is empty or the type is not supported.
+			</description>
+		</method>
+		<method name="get_type_name">
+			<return type="String" />
+			<description>
+				Returns the type name of the packet.
+				If the packet is empty, or the type is not registered with MediaPipe macros, then empty string is returned.
+			</description>
+		</method>
+		<method name="is_empty">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the packet is empty.
+			</description>
+		</method>
+		<method name="set_bool">
+			<return type="void" />
+			<param index="0" name="value" type="bool" />
+			<description>
+				Sets packet content with a boolean value.
+			</description>
+		</method>
+		<method name="set_float">
+			<return type="void" />
+			<param index="0" name="value" type="float" />
+			<description>
+				Sets packet content with a float value.
+			</description>
+		</method>
+		<method name="set_image">
+			<return type="void" />
+			<param index="0" name="image" type="Image" />
+			<description>
+				Sets packet content with [param image] as [code]mediapipe::Image[/code].
+			</description>
+		</method>
+		<method name="set_image_frame">
+			<return type="void" />
+			<param index="0" name="image" type="Image" />
+			<description>
+				Sets packet content with [param image] as [code]mediapipe::ImageFrame[/code].
+			</description>
+		</method>
+		<method name="set_int32">
+			<return type="void" />
+			<param index="0" name="value" type="int" />
+			<description>
+				Sets packet content with a signed 32-bit integer value.
+			</description>
+		</method>
+		<method name="set_int64">
+			<return type="void" />
+			<param index="0" name="value" type="int" />
+			<description>
+				Sets packet content with a signed 64-bit integer value.
+			</description>
+		</method>
+		<method name="set_string">
+			<return type="void" />
+			<param index="0" name="value" type="String" />
+			<description>
+				Sets packet content with a [String] value.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="timestamp" type="int" setter="set_timestamp" getter="get_timestamp" default="-9223372036854775808">
+			The timestamp of the packet in microseconds.
+		</member>
+	</members>
+</class>

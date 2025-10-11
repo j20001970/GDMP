@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipePoseLandmarkerResult" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Pose landmarks detection result.
+	</brief_description>
+	<description>
+		The pose landmarker detection result from [MediaPipePoseLandmarker].
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="has_segmentation_masks">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the result has [member segmentation_masks].
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="pose_landmarks" type="MediaPipeNormalizedLandmarks[]" setter="" getter="get_pose_landmarks" default="[]">
+			Detected pose landmarks in normalized image coordinates.
+		</member>
+		<member name="pose_world_landmarks" type="MediaPipeLandmarks[]" setter="" getter="get_pose_world_landmarks" default="[]">
+			Detected pose landmarks in world coordinates.
+		</member>
+		<member name="segmentation_masks" type="MediaPipeImage[]" setter="" getter="get_segmentation_masks" default="[]">
+			Segmentation masks for pose.
+		</member>
+	</members>
+</class>

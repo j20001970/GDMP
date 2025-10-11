@@ -5,4 +5,8 @@
     "clangd.arguments": [
         "-header-insertion=never"
     ],
+    "xml.format.enabled": false,
+    "[xml]": {
+        "files.trimFinalNewlines": false
+    },
 }
