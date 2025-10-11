@@ -22,9 +22,6 @@ void MediaPipeGraph::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("cancel"), &MediaPipeGraph::cancel);
 	ClassDB::bind_method(D_METHOD("get_gpu_resources"), &MediaPipeGraph::get_gpu_resources);
 	ClassDB::bind_method(D_METHOD("set_gpu_resources", "gpu_resources"), &MediaPipeGraph::set_gpu_resources);
-	ADD_PROPERTY(
-			PropertyInfo(Variant::OBJECT, "gpu_resources", PROPERTY_HINT_RESOURCE_TYPE, MediaPipeGPUResources::get_class_static()),
-			"set_gpu_resources", "get_gpu_resources");
 	ADD_SIGNAL(MethodInfo("error", PropertyInfo(Variant::STRING, "message")));
 }
 
