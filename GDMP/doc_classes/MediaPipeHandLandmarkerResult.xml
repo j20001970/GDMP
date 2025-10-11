@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeHandLandmarkerResult" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe hand landmarker result.
+	</brief_description>
+	<description>
+		The hand landmarks detection result from [MediaPipeHandLandmarker].
+		Each element represents a single hand detected in the image.
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="hand_landmarks" type="MediaPipeNormalizedLandmarks[]" setter="" getter="get_hand_landmarks" default="[]">
+			The detected hand landmarks in normalized image coordinates.
+		</member>
+		<member name="hand_world_landmarks" type="MediaPipeLandmarks[]" setter="" getter="get_hand_world_landmarks" default="[]">
+			The detected hand landmarks in world coordinates.
+		</member>
+		<member name="handedness" type="MediaPipeClassifications[]" setter="" getter="get_handedness" default="[]">
+			The classification of handedness.
+		</member>
+	</members>
+</class>

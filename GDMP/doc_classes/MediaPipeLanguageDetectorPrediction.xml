@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeLanguageDetectorPrediction" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		A prediction of [MediaPipeLanguageDetector].
+	</brief_description>
+	<description>
+		A prediction of [MediaPipeLanguageDetector].
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="language_code" type="String" setter="" getter="get_language_code" default="&quot;&quot;">
+			The language code.
+		</member>
+		<member name="probability" type="float" setter="" getter="get_probability" default="0.0">
+			The probability between 0.0 and 1.0.
+		</member>
+	</members>
+</class>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeGraph" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		A directed acyclic graph (DAG) of MediaPipe calculator nodes.
+	</brief_description>
+	<description>
+		[MediaPipeGraph] provides the functionalities of CalculatorGraph in MediaPipe framework for running the graph.
+	</description>
+	<tutorials>
+		<link title="Framework concepts: Graphs">https://ai.google.dev/edge/mediapipe/framework/framework_concepts/graphs</link>
+	</tutorials>
+	<methods>
+		<method name="add_output_stream_callback">
+			<return type="bool" />
+			<param index="0" name="stream_name" type="String" />
+			<description>
+				Adds the packets callback to the output stream [param stream_name]. Returns [code]true[/code] on success.
+				This method can only be called before [method run] or [method start_run].
+			</description>
+		</method>
+		<method name="add_packet_to_input_stream">
+			<return type="bool" />
+			<param index="0" name="stream_name" type="String" />
+			<param index="1" name="packet" type="MediaPipePacket" />
+			<description>
+				Adds a [param packet] to input stream [param stream_name].
+			</description>
+		</method>
+		<method name="cancel">
+			<return type="void" />
+			<description>
+				Aborts the graph scheduler if not terminated.
+			</description>
+		</method>
+		<method name="close_all_input_streams">
+			<return type="bool" />
+			<description>
+				Closes all input streams in the graph.
+			</description>
+		</method>
+		<method name="close_all_packet_sources">
+			<return type="bool" />
+			<description>
+				Closes all input streams and source calculator nodes in the graph.
+			</description>
+		</method>
+		<method name="close_input_stream">
+			<return type="bool" />
+			<param index="0" name="stream_name" type="String" />
+			<description>
+				Closes the input stream [param stream_name] in the graph.
+			</description>
+		</method>
+		<method name="get_config">
+			<return type="MediaPipeGraphConfig" />
+			<description>
+				Gets the [MediaPipeGraphConfig] of the graph.
+			</description>
+		</method>
+		<method name="get_gpu_resources">
+			<return type="MediaPipeGPUResources" />
+			<description>
+				Gets the [MediaPipeGPUResources] of the graph. Returns [code]null[/code] if no GPU resources is set.
+			</description>
+		</method>
+		<method name="get_output_side_packet">
+			<return type="MediaPipePacket" />
+			<param index="0" name="packet_name" type="String" />
+			<description>
+				Gets the output side packet [param packet_name].
+			</description>
+		</method>
+		<method name="has_error">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the graph has encountered an error.
+			</description>
+		</method>
+		<method name="has_input_stream">
+			<return type="bool" />
+			<param index="0" name="stream_name" type="String" />
+			<description>
+				Returns [code]true[/code] if an input stream [param stream_name] exists in the graph.
+			</description>
+		</method>
+		<method name="initialize">
+			<return type="bool" />
+			<param index="0" name="config" type="MediaPipeGraphConfig" />
+			<param index="1" name="side_packets" type="Dictionary" default="{}" />
+			<description>
+				Initialize the graph from [param config].
+			</description>
+		</method>
+		<method name="run">
+			<return type="bool" />
+			<param index="0" name="extra_side_packets" type="Dictionary" default="{}" />
+			<description>
+				Runs the graph. This method is a blocking call and will return when all calculators are done.
+			</description>
+		</method>
+		<method name="set_gpu_resources">
+			<return type="void" />
+			<param index="0" name="gpu_resources" type="MediaPipeGPUResources" />
+			<description>
+				Sets the [MediaPipeGPUResources] of the graph.
+			</description>
+		</method>
+		<method name="start_run">
+			<return type="bool" />
+			<param index="0" name="extra_side_packets" type="Dictionary" default="{}" />
+			<description>
+				Starts running the graph, returns [code]true[/code] if the graph has started successfully.
+				The graph will continue to run until [method wait_until_done] or [method cancel] is called and returned.
+			</description>
+		</method>
+		<method name="wait_until_done">
+			<return type="bool" />
+			<description>
+				Waits for the current run to finish, all input streams have been closed, and all calculators are stopped.
+				This method can only be called after [method start_run].
+			</description>
+		</method>
+		<method name="wait_until_idle">
+			<return type="bool" />
+			<description>
+				Waits until the running graph is in the idle mode.
+				This method can only be called after [method start_run].
+			</description>
+		</method>
+	</methods>
+	<signals>
+		<signal name="error">
+			<param index="0" name="message" type="String" />
+			<description>
+				Emitted when the graph has encountered an error.
+			</description>
+		</signal>
+		<signal name="output_stream_callback">
+			<param index="0" name="stream_name" type="String" />
+			<param index="1" name="packet" type="MediaPipePacket" />
+			<description>
+				Emitted when [param stream_name] observed with [method add_output_stream_callback] has emitted a [param packet].
+			</description>
+		</signal>
+	</signals>
+</class>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeTextEmbedder" inherits="MediaPipeTextTask" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe text embedder task.
+	</brief_description>
+	<description>
+		MediaPipe text task for performing embedding extraction of an input text.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="embed">
+			<return type="MediaPipeEmbeddingResult" />
+			<param index="0" name="text" type="String" />
+			<description>
+				Performs embedding extraction on [param text].
+			</description>
+		</method>
+		<method name="initialize">
+			<return type="bool" />
+			<param index="0" name="base_options" type="MediaPipeTaskBaseOptions" />
+			<param index="1" name="embedder_options" type="MediaPipeEmbedderOptions" />
+			<description>
+				Initializes the text embedder.
+			</description>
+		</method>
+	</methods>
+</class>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeFaceLandmarker" inherits="MediaPipeVisionTask" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe face landmarker task.
+	</brief_description>
+	<description>
+		MediaPipe vision task for performing face landmarks detection on the given image.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="detect">
+			<return type="MediaPipeFaceLandmarkerResult" />
+			<param index="0" name="image" type="MediaPipeImage" />
+			<param index="1" name="region_of_interest" type="Rect2" default="Rect2(0, 0, 0, 0)" />
+			<param index="2" name="rotation_degrees" type="int" default="0" />
+			<description>
+				Performs face landmarks detection on [param image].
+				Only use this method when the task is initialized with [constant MediaPipeVisionTask.RUNNING_MODE_IMAGE].
+			</description>
+		</method>
+		<method name="detect_async">
+			<return type="bool" />
+			<param index="0" name="image" type="MediaPipeImage" />
+			<param index="1" name="timestamp_ms" type="int" />
+			<param index="2" name="region_of_interest" type="Rect2" default="Rect2(0, 0, 0, 0)" />
+			<param index="3" name="rotation_degrees" type="int" default="0" />
+			<description>
+				Sends [param image] to perform face landmarks detection.
+				Only use this method when the task is initialized with [constant MediaPipeVisionTask.RUNNING_MODE_LIVE_STREAM].
+			</description>
+		</method>
+		<method name="detect_video">
+			<return type="MediaPipeFaceLandmarkerResult" />
+			<param index="0" name="image" type="MediaPipeImage" />
+			<param index="1" name="timestamp_ms" type="int" />
+			<param index="2" name="region_of_interest" type="Rect2" default="Rect2(0, 0, 0, 0)" />
+			<param index="3" name="rotation_degrees" type="int" default="0" />
+			<description>
+				Performs face landmarks detection on video frame [param image].
+				Only use this method when the task is initialized with [constant MediaPipeVisionTask.RUNNING_MODE_VIDEO].
+			</description>
+		</method>
+		<method name="initialize">
+			<return type="bool" />
+			<param index="0" name="base_options" type="MediaPipeTaskBaseOptions" />
+			<param index="1" name="running_mode" type="int" enum="MediaPipeVisionTask.RunningMode" default="1" />
+			<param index="2" name="num_faces" type="int" default="1" />
+			<param index="3" name="min_face_detection_confidence" type="float" default="0.5" />
+			<param index="4" name="min_face_presence_confidence" type="float" default="0.5" />
+			<param index="5" name="min_tracking_confidence" type="float" default="0.5" />
+			<param index="6" name="output_face_blendshapes" type="bool" default="false" />
+			<param index="7" name="output_facial_transformation_matrixes" type="bool" default="false" />
+			<description>
+				Initializes the face landmarker.
+			</description>
+		</method>
+	</methods>
+	<signals>
+		<signal name="result_callback">
+			<param index="0" name="result" type="MediaPipeFaceLandmarkerResult" />
+			<param index="1" name="image" type="MediaPipeImage" />
+			<param index="2" name="timestamp_ms" type="int" />
+			<description>
+				Emitted when face landmarker initialized with [constant MediaPipeVisionTask.RUNNING_MODE_LIVE_STREAM] returns detection result.
+			</description>
+		</signal>
+	</signals>
+</class>

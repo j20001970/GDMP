@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeGraphConfig" inherits="MediaPipeProto" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		A protobuf description of a MediaPipe calculator graph.
+	</brief_description>
+	<description>
+		[MediaPipeGraphConfig] contains the proto that specifies the topology and functionality of a MediaPipe graph.
+	</description>
+	<tutorials>
+		<link title="Framework concepts: Graphs">https://ai.google.dev/edge/mediapipe/framework/framework_concepts/graphs</link>
+	</tutorials>
+</class>

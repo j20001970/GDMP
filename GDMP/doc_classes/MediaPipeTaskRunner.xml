@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeTaskRunner" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe task runner.
+	</brief_description>
+	<description>
+		[MediaPipeTaskRunner] is a high-level class for running MediaPipe graphs.
+		The task runner can run in either synchronous or asynchronous mode.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="close">
+			<return type="bool" />
+			<description>
+				Shuts down the task runner.
+			</description>
+		</method>
+		<method name="get_graph_config">
+			<return type="MediaPipeGraphConfig" />
+			<description>
+				Gets the [MediaPipeGraphConfig] of the task runner.
+			</description>
+		</method>
+		<method name="initialize">
+			<return type="bool" />
+			<param index="0" name="config" type="MediaPipeGraphConfig" />
+			<param index="1" name="async" type="bool" default="false" />
+			<param index="2" name="input_side_packets" type="Dictionary" default="{}" />
+			<param index="3" name="gpu_resources" type="MediaPipeGPUResources" default="null" />
+			<description>
+				Initializes the task runner with [param config]. Returns [code]true[/code] on success.
+				If [param async] is true, the task runner will run in asynchronous mode, [method send] should be used instead of [method process] for processing packets input.
+			</description>
+		</method>
+		<method name="process">
+			<return type="Dictionary" />
+			<param index="0" name="inputs" type="Dictionary" />
+			<description>
+				Processes the packet map [param inputs] in synchronous mode.
+				This method blocks current thread until a result is returned.
+			</description>
+		</method>
+		<method name="restart">
+			<return type="bool" />
+			<description>
+				Resets and restarts the task runner.
+			</description>
+		</method>
+		<method name="send">
+			<return type="bool" />
+			<param index="0" name="inputs" type="Dictionary" />
+			<description>
+				Sends the packet map [param inputs] in asynchronous mode. Returns [code]true[/code] on success.
+			</description>
+		</method>
+	</methods>
+	<signals>
+		<signal name="error">
+			<param index="0" name="message" type="String" />
+			<description>
+				Emitted when the task runner has encountered an error.
+			</description>
+		</signal>
+		<signal name="packets_callback">
+			<param index="0" name="packets" type="Dictionary" />
+			<description>
+				Emitted when the task runner running in asynchronous mode has returned output [param packets] processed from [method send].
+			</description>
+		</signal>
+	</signals>
+</class>

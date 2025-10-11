@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeClassifierOptions" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Classifier options for MediaPipe classification tasks.
+	</brief_description>
+	<description>
+		[MediaPipeClassifierOptions] wraps common options for MediaPipe tasks that performs classification.
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="category_allowlist" type="PackedStringArray" setter="set_category_allowlist" getter="get_category_allowlist" default="PackedStringArray()">
+			The allowlist of category names. If non-empty, detection results whose category name is not in this set will be filtered out.
+			Mutually exclusive with [member category_denylist].
+		</member>
+		<member name="category_denylist" type="PackedStringArray" setter="set_category_denylist" getter="get_category_denylist" default="PackedStringArray()">
+			The denylist of category names. If non-empty, detection results whose category name is in this set will be filtered out.
+			Mutually exclusive with [member category_allowlist].
+		</member>
+		<member name="display_names_locale" type="String" setter="set_display_names_locale" getter="get_display_names_locale" default="&quot;en&quot;">
+			The locale to use for display names.
+		</member>
+		<member name="max_results" type="int" setter="set_max_results" getter="get_max_results" default="-1">
+			The maximum number of top-scored classification results to return.
+			Returns all available results if &lt; 0.
+		</member>
+		<member name="score_threshold" type="float" setter="set_score_threshold" getter="get_score_threshold" default="0.0">
+			The score threshold, results below this value are rejected.
+		</member>
+	</members>
+</class>

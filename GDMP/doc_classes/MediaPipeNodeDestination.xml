@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeNodeDestination" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		The destination port of a [MediaPipeGraphNode] or [MediaPipeGraphBuilder].
+	</brief_description>
+	<description>
+		The destination port of a [MediaPipeGraphNode] or [MediaPipeGraphBuilder].
+	</description>
+	<tutorials>
+	</tutorials>
+</class>

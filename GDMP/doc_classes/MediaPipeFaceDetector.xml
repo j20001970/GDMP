@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeFaceDetector" inherits="MediaPipeVisionTask" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe face detector task.
+	</brief_description>
+	<description>
+		MediaPipe vision task for performing face detection on the given image.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="detect">
+			<return type="MediaPipeDetectionResult" />
+			<param index="0" name="image" type="MediaPipeImage" />
+			<param index="1" name="region_of_interest" type="Rect2" default="Rect2(0, 0, 0, 0)" />
+			<param index="2" name="rotation_degrees" type="int" default="0" />
+			<description>
+				Performs face detection on [param image].
+				Only use this method when the task is initialized with [constant MediaPipeVisionTask.RUNNING_MODE_IMAGE].
+			</description>
+		</method>
+		<method name="detect_async">
+			<return type="bool" />
+			<param index="0" name="image" type="MediaPipeImage" />
+			<param index="1" name="timestamp_ms" type="int" />
+			<param index="2" name="region_of_interest" type="Rect2" default="Rect2(0, 0, 0, 0)" />
+			<param index="3" name="rotation_degrees" type="int" default="0" />
+			<description>
+				Sends [param image] to perform face detection.
+				Only use this method when the task is initialized with [constant MediaPipeVisionTask.RUNNING_MODE_LIVE_STREAM].
+			</description>
+		</method>
+		<method name="detect_video">
+			<return type="MediaPipeDetectionResult" />
+			<param index="0" name="image" type="MediaPipeImage" />
+			<param index="1" name="timestamp_ms" type="int" />
+			<param index="2" name="region_of_interest" type="Rect2" default="Rect2(0, 0, 0, 0)" />
+			<param index="3" name="rotation_degrees" type="int" default="0" />
+			<description>
+				Performs face detection on video frame [param image].
+				Only use this method when the task is initialized with [constant MediaPipeVisionTask.RUNNING_MODE_VIDEO].
+			</description>
+		</method>
+		<method name="initialize">
+			<return type="bool" />
+			<param index="0" name="base_options" type="MediaPipeTaskBaseOptions" />
+			<param index="1" name="running_mode" type="int" enum="MediaPipeVisionTask.RunningMode" default="1" />
+			<param index="2" name="min_detection_confidence" type="float" default="0.5" />
+			<param index="3" name="min_suppression_threshold" type="float" default="0.3" />
+			<description>
+				Initializes the face detector.
+			</description>
+		</method>
+	</methods>
+	<signals>
+		<signal name="result_callback">
+			<param index="0" name="result" type="MediaPipeDetectionResult" />
+			<param index="1" name="image" type="MediaPipeImage" />
+			<param index="2" name="timestamp_ms" type="int" />
+			<description>
+				Emitted when face detector initialized with [constant MediaPipeVisionTask.RUNNING_MODE_LIVE_STREAM] returns detection result.
+			</description>
+		</signal>
+	</signals>
+</class>

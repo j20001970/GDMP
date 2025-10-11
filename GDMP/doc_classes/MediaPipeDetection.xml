@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeDetection" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe detection data.
+	</brief_description>
+	<description>
+		A MediaPipe task data container that represents a detection for a single bounding box.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_proto">
+			<return type="MediaPipeProto" />
+			<description>
+				Gets the [MediaPipeProto] with type [code]mediapipe::Detection[/code].
+			</description>
+		</method>
+		<method name="has_keypoints" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the detection has [member keypoints].
+			</description>
+		</method>
+		<method name="make_vector_proto_packet" qualifiers="static">
+			<return type="MediaPipePacket" />
+			<param index="0" name="array" type="MediaPipeDetection[]" />
+			<description>
+				Creates a [MediaPipePacket] that contains a vector of [code]mediapipe::Detection[/code]s.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="bounding_box" type="Rect2i" setter="" getter="get_bounding_box" default="Rect2i(0, 0, 0, 0)">
+			The bounding box location.
+		</member>
+		<member name="categories" type="MediaPipeCategory[]" setter="" getter="get_categories" default="[]">
+			The list of detected categories.
+		</member>
+		<member name="keypoints" type="MediaPipeNormalizedKeypoint[]" setter="" getter="get_keypoints" default="[]">
+			The optional list of keypoints associated with the detection.
+		</member>
+	</members>
+</class>

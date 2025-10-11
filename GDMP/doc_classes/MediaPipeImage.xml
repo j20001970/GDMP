@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeImage" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		A image class that wraps CPU and GPU data in MediaPipe.
+	</brief_description>
+	<description>
+		[MediaPipeImage] wraps CPU ([code]mediapipe::ImageFrame[/code]) and GPU ([code]mediapipe::GpuBuffer[/code]) image data.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="convert_to_cpu">
+			<return type="void" />
+			<description>
+				Converts the GPU image to CPU.
+			</description>
+		</method>
+		<method name="get_image_frame_packet">
+			<return type="MediaPipePacket" />
+			<description>
+				Gets a [MediaPipePacket] which contain the image as [code]mediapipe::ImageFrame[/code].
+			</description>
+		</method>
+		<method name="get_packet">
+			<return type="MediaPipePacket" />
+			<description>
+				Gets a [MediaPipePacket] which contain the image as [code]mediapipe::Image[/code].
+			</description>
+		</method>
+		<method name="is_gpu_image">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the image data is on GPU.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="image" type="Image" setter="set_image" getter="get_image">
+			The image data accessible on Godot.
+			Accessing this property will convert the image to CPU.
+		</member>
+	</members>
+</class>

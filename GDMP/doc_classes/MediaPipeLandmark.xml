@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeLandmark" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe landmark data.
+	</brief_description>
+	<description>
+		A MediaPipe task data container that represents a point in 3D space.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_proto">
+			<return type="MediaPipeProto" />
+			<description>
+				Gets the [MediaPipeProto] with type [code]mediapipe::Landmark[/code].
+			</description>
+		</method>
+		<method name="has_name" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the landmark has [member name].
+			</description>
+		</method>
+		<method name="has_presence" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the landmark has [member presence].
+			</description>
+		</method>
+		<method name="has_visibility" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the landmark has [member visibility].
+			</description>
+		</method>
+		<method name="make_vector_proto_packet" qualifiers="static">
+			<return type="MediaPipePacket" />
+			<param index="0" name="array" type="MediaPipeLandmark[]" />
+			<description>
+				Creates a [MediaPipePacket] that contains a vector of [code]mediapipe::Landmark[/code]s.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="name" type="String" setter="" getter="get_name" default="&quot;&quot;">
+			The optional name of the landmark.
+		</member>
+		<member name="presence" type="float" setter="" getter="get_presence" default="0.0">
+			The optional landmark presence between [0, 1].
+		</member>
+		<member name="visibility" type="float" setter="" getter="get_visibility" default="0.0">
+			The optional landmark visibility between [0, 1].
+		</member>
+		<member name="x" type="float" setter="" getter="get_x" default="0.0">
+			The x coordinate of the landmark.
+		</member>
+		<member name="y" type="float" setter="" getter="get_y" default="0.0">
+			The y coordinate of the landmark.
+		</member>
+		<member name="z" type="float" setter="" getter="get_z" default="0.0">
+			The z coordinate of the landmark.
+		</member>
+	</members>
+</class>

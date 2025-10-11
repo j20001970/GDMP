@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeFaceStylizer" inherits="MediaPipeVisionTask" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="initialize">
+			<return type="bool" />
+			<param index="0" name="base_options" type="MediaPipeTaskBaseOptions" />
+			<description>
+			</description>
+		</method>
+		<method name="stylize">
+			<return type="MediaPipeImage" />
+			<param index="0" name="image" type="MediaPipeImage" />
+			<param index="1" name="region_of_interest" type="Rect2" default="Rect2(0, 0, 0, 0)" />
+			<param index="2" name="rotation_degrees" type="int" default="0" />
+			<description>
+			</description>
+		</method>
+	</methods>
+</class>

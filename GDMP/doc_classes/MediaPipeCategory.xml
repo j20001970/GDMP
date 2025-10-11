@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeCategory" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe category data.
+	</brief_description>
+	<description>
+		A MediaPipe task data container that defines a single classification result.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_proto">
+			<return type="MediaPipeProto" />
+			<description>
+				Gets the [MediaPipeProto] with type [code]mediapipe::Classification[/code].
+			</description>
+		</method>
+		<method name="has_category_name" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the category has [member category_name].
+			</description>
+		</method>
+		<method name="has_display_name" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the category has [member display_name].
+			</description>
+		</method>
+		<method name="make_vector_proto_packet" qualifiers="static">
+			<return type="MediaPipePacket" />
+			<param index="0" name="array" type="MediaPipeCategory[]" />
+			<description>
+				Creates a [MediaPipePacket] that contains a vector of [code]mediapipe::Classification[/code]s.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="category_name" type="String" setter="" getter="get_category_name" default="&quot;&quot;">
+			The optional ID for the category.
+		</member>
+		<member name="display_name" type="String" setter="" getter="get_display_name" default="&quot;&quot;">
+			The optional human-readable name for the category.
+		</member>
+		<member name="index" type="int" setter="" getter="get_index" default="0">
+			The index of the category in the classification model output.
+		</member>
+		<member name="score" type="float" setter="" getter="get_score" default="0.0">
+			The score for this category, should be in the range between [0, 1].
+		</member>
+	</members>
+</class>

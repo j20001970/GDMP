@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeDetectionResult" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe detection result.
+	</brief_description>
+	<description>
+		A MediaPipe task data container that defines detection results of a model.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_proto">
+			<return type="MediaPipeProto" />
+			<description>
+				Gets the [MediaPipeProto] with type [code]mediapipe::DetectionList[/code].
+			</description>
+		</method>
+		<method name="make_vector_proto_packet" qualifiers="static">
+			<return type="MediaPipePacket" />
+			<param index="0" name="array" type="MediaPipeDetectionResult[]" />
+			<description>
+				Creates a [MediaPipePacket] that contains a vector of [code]mediapipe::DetectionList[/code]s.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="detections" type="MediaPipeDetection[]" setter="" getter="get_detections" default="[]">
+			The list of detections.
+		</member>
+	</members>
+</class>

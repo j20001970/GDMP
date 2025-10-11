@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeClassifications" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe classifications data.
+	</brief_description>
+	<description>
+		A MediaPipe task data container for classification results for a given classifier head.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_proto">
+			<return type="MediaPipeProto" />
+			<description>
+				Gets the [MediaPipeProto] with type [code]mediapipe::ClassificationList[/code].
+			</description>
+		</method>
+		<method name="has_head_name" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the classifications has [member head_name].
+			</description>
+		</method>
+		<method name="make_vector_proto_packet" qualifiers="static">
+			<return type="MediaPipePacket" />
+			<param index="0" name="array" type="MediaPipeClassifications[]" />
+			<description>
+				Creates a [MediaPipePacket] that contains a vector of [code]mediapipe::ClassificationList[/code]s.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="categories" type="MediaPipeCategory[]" setter="" getter="get_categories" default="[]">
+			The array of predicted categories.
+		</member>
+		<member name="head_index" type="int" setter="" getter="get_head_index" default="0">
+			The index of the classifier head.
+		</member>
+		<member name="head_name" type="String" setter="" getter="get_head_name" default="&quot;&quot;">
+			The optional name of the classifier head.
+		</member>
+	</members>
+</class>

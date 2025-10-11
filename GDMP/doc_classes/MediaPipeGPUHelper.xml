@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeGPUHelper" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Helper class for performing GPU-related operations.
+	</brief_description>
+	<description>
+		This is a helper class for performing GPU-related operations with given [MediaPipeGPUResources].
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="initialize">
+			<return type="bool" />
+			<param index="0" name="gpu_resources" type="MediaPipeGPUResources" />
+			<description>
+				Initializes the helper with given [param gpu_resources].
+				Returns [code]true[/code] on successful initialization.
+			</description>
+		</method>
+		<method name="is_initialized">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the helper has been previously initialized.
+			</description>
+		</method>
+		<method name="make_gpu_buffer_packet">
+			<return type="MediaPipePacket" />
+			<param index="0" name="image" type="MediaPipeImage" />
+			<description>
+				Gets a [MediaPipePacket] which contain the image as [code]mediapipe::GpuBuffer[/code].
+			</description>
+		</method>
+		<method name="make_gpu_image">
+			<return type="MediaPipeImage" />
+			<param index="0" name="image" type="MediaPipeImage" />
+			<description>
+				Gets a [MediaPipeImage] that uses GPU image data from [param image].
+				Returns [param image] as-is if it is already a GPU image.
+			</description>
+		</method>
+	</methods>
+</class>

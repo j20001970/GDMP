@@ -2,6 +2,11 @@ licenses(["notice"])  # MIT
 
 exports_files(["LICENSE"])
 
+exports_files(
+    glob(["**"]),
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
     name = "godot",
     srcs = glob([

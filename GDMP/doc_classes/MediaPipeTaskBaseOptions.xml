@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeTaskBaseOptions" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Base options for MediaPipe tasks.
+	</brief_description>
+	<description>
+		[MediaPipeTaskBaseOptions] wraps common task options for MediaPipe tasks.
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="delegate" type="int" setter="set_delegate" getter="get_delegate" enum="MediaPipeTaskBaseOptions.Delegate" default="0">
+			The delegate to run MediaPipe.
+		</member>
+		<member name="model_asset_buffer" type="PackedByteArray" setter="set_model_asset_buffer" getter="get_model_asset_buffer" default="PackedByteArray()">
+			The contents of model asset file.
+		</member>
+		<member name="model_asset_path" type="String" setter="set_model_asset_path" getter="get_model_asset_path" default="&quot;&quot;">
+			The path to the model asset.
+		</member>
+	</members>
+	<constants>
+		<constant name="DELEGATE_CPU" value="0" enum="Delegate">
+			CPU delegate.
+		</constant>
+		<constant name="DELEGATE_GPU" value="1" enum="Delegate">
+			GPU delegate.
+		</constant>
+		<constant name="DELEGATE_EDGETPU_NNAPI" value="2" enum="Delegate">
+			Edge TPU acceleration using NNAPI delegate.
+		</constant>
+	</constants>
+</class>

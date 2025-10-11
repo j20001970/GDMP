@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeAudioEmbedder" inherits="MediaPipeAudioTask" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe audio embedder task.
+	</brief_description>
+	<description>
+		MediaPipe audio task for performing audio embedding extraction on audio clips or audio stream.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="embed">
+			<return type="MediaPipeEmbeddingResult[]" />
+			<param index="0" name="audio_data" type="PackedVector2Array" />
+			<param index="1" name="is_stereo" type="bool" />
+			<param index="2" name="audio_sample_rate" type="float" />
+			<description>
+				Performs audio embedding extraction on [param audio_data].
+				Only use this method when the task is initialized with [constant MediaPipeAudioTask.RUNNING_MODE_AUDIO_CLIPS].
+			</description>
+		</method>
+		<method name="embed_async">
+			<return type="bool" />
+			<param index="0" name="audio_data" type="PackedVector2Array" />
+			<param index="1" name="is_stereo" type="bool" />
+			<param index="2" name="audio_sample_rate" type="float" />
+			<param index="3" name="timestamp_ms" type="int" />
+			<description>
+				Sends [param audio_data] to perform audio embedding extraction.
+				Only use this method when the task is initialized with [constant MediaPipeAudioTask.RUNNING_MODE_AUDIO_STREAM].
+			</description>
+		</method>
+		<method name="initialize">
+			<return type="bool" />
+			<param index="0" name="base_options" type="MediaPipeTaskBaseOptions" />
+			<param index="1" name="running_mode" type="int" enum="MediaPipeAudioTask.RunningMode" />
+			<param index="2" name="embedder_options" type="MediaPipeEmbedderOptions" />
+			<description>
+				Initializes the audio embedder.
+			</description>
+		</method>
+	</methods>
+	<signals>
+		<signal name="result_callback">
+			<param index="0" name="result" type="MediaPipeEmbeddingResult" />
+			<description>
+				Emitted when audio embedder initialized with [constant MediaPipeAudioTask.RUNNING_MODE_AUDIO_STREAM] returns embedding result.
+			</description>
+		</signal>
+	</signals>
+</class>

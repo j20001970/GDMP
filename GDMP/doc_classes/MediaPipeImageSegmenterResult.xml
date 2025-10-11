@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeImageSegmenterResult" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe image segmenter result.
+	</brief_description>
+	<description>
+		The output result of [MediaPipeImageSegmenter].
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="has_category_mask">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the result has [member category_mask].
+			</description>
+		</method>
+		<method name="has_confidence_masks">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the result has [member confidence_masks].
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="category_mask" type="MediaPipeImage" setter="" getter="get_category_mask">
+			The category mask of the segmentation, each pixel is a 8-bit unsigned integer that represents the class which the pixel in the original image was predicted to belong to.
+		</member>
+		<member name="confidence_masks" type="MediaPipeImage[]" setter="" getter="get_confidence_masks" default="[]">
+			The list of confidence masks where each pixel is the prediction confidence between [0, 1].
+		</member>
+	</members>
+</class>

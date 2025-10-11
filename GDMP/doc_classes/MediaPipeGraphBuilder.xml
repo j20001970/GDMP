@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeGraphBuilder" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		A class for building MediaPipe calculator graph.
+	</brief_description>
+	<description>
+		[MediaPipeGraphBuilder] can be used to build calculator graphs with code at runtime.
+	</description>
+	<tutorials>
+		<link title="Building Graphs in C++">https://ai.google.dev/edge/mediapipe/framework/framework_concepts/graphs_cpp</link>
+	</tutorials>
+	<methods>
+		<method name="add_node">
+			<return type="MediaPipeGraphNode" />
+			<param index="0" name="type" type="String" />
+			<description>
+				Creates a node with [param type].
+			</description>
+		</method>
+		<method name="get_config">
+			<return type="MediaPipeGraphConfig" />
+			<description>
+				Gets the [MediaPipeGraphConfig] of the graph builder.
+			</description>
+		</method>
+		<method name="get_input_index">
+			<return type="MediaPipeNodeSource" />
+			<param index="0" name="index" type="int" />
+			<description>
+				Gets the [MediaPipeNodeSource] of the graph by [param index].
+			</description>
+		</method>
+		<method name="get_input_tag">
+			<return type="MediaPipeNodeSource" />
+			<param index="0" name="tag" type="String" />
+			<description>
+				Gets the [MediaPipeNodeSource] of the graph by [param tag].
+			</description>
+		</method>
+		<method name="get_output_index">
+			<return type="MediaPipeNodeDestination" />
+			<param index="0" name="index" type="int" />
+			<description>
+				Gets the [MediaPipeNodeDestination] of the graph by [param index].
+			</description>
+		</method>
+		<method name="get_output_tag">
+			<return type="MediaPipeNodeDestination" />
+			<param index="0" name="tag" type="String" />
+			<description>
+				Gets the [MediaPipeNodeDestination] of the graph by [param tag].
+			</description>
+		</method>
+	</methods>
+</class>

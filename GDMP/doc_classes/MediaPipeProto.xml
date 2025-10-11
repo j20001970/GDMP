@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeProto" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		A protobuf message.
+	</brief_description>
+	<description>
+		Protobuf is a platform-agnostic and language-agnostic way of describing data structures.
+		Protobuf is extensively used in MediaPipe framework.
+	</description>
+	<tutorials>
+		<link title="Protocol Buffers Documentation">https://protobuf.dev</link>
+	</tutorials>
+	<methods>
+		<method name="duplicate">
+			<return type="MediaPipeProto" />
+			<description>
+				Returns a new copy of the proto.
+			</description>
+		</method>
+		<method name="get_field">
+			<return type="Variant" />
+			<param index="0" name="field_name" type="String" />
+			<description>
+				Gets the value of proto field [param field_name].
+				Returns [code]null[/code] if the field does not exist.
+				To get nested field value, use [code]/[/code] as separator.
+			</description>
+		</method>
+		<method name="get_fields">
+			<return type="PackedStringArray" />
+			<description>
+				Returns the list of proto fields.
+				Returns empty array if the proto is not initialized.
+			</description>
+		</method>
+		<method name="get_packet">
+			<return type="MediaPipePacket" />
+			<description>
+				Gets a [MediaPipePacket] which contain the proto.
+				Returns [code]null[/code] if the proto is not initialized.
+			</description>
+		</method>
+		<method name="get_repeated_field">
+			<return type="Variant" />
+			<param index="0" name="field_name" type="String" />
+			<param index="1" name="index" type="int" />
+			<description>
+				Gets the value of repeated field [param field_name] at [param index].
+				Returns [code]null[/code] if the field is not repeated or does not exist.
+			</description>
+		</method>
+		<method name="get_repeated_field_size">
+			<return type="int" />
+			<param index="0" name="field_name" type="String" />
+			<description>
+				Gets the size of repeated field [param field_name].
+			</description>
+		</method>
+		<method name="get_type_name">
+			<return type="String" />
+			<description>
+				Gets the type name of the proto.
+				Returns empty string if the proto is not initialized.
+			</description>
+		</method>
+		<method name="initialize">
+			<return type="bool" />
+			<param index="0" name="type_name" type="String" />
+			<description>
+				Initializes the proto with the type [param type_name]. Returns [code]true[/code] on success.
+			</description>
+		</method>
+		<method name="is_initialized">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the proto is initialized.
+			</description>
+		</method>
+		<method name="is_repeated_field">
+			<return type="bool" />
+			<param index="0" name="field_name" type="String" />
+			<description>
+				Returns [code]true[/code] if the proto field [param field_name] is repeated.
+			</description>
+		</method>
+		<method name="parse_from_buffer">
+			<return type="bool" />
+			<param index="0" name="buffer" type="PackedByteArray" />
+			<description>
+				Parses [param buffer] into the proto.
+				The proto need to be initialized with the expected type before parsing the buffer.
+			</description>
+		</method>
+		<method name="parse_from_string">
+			<return type="bool" />
+			<param index="0" name="string" type="String" />
+			<description>
+				Parses [param string] into the proto.
+				The proto need to be initialized with the expected type before parsing the string.
+			</description>
+		</method>
+		<method name="serialize_to_buffer">
+			<return type="PackedByteArray" />
+			<description>
+				Serializes the proto to byte array.
+			</description>
+		</method>
+		<method name="serialize_to_string">
+			<return type="String" />
+			<description>
+				Serializes the proto to [String].
+			</description>
+		</method>
+		<method name="set_field">
+			<return type="bool" />
+			<param index="0" name="field_name" type="String" />
+			<param index="1" name="value" type="Variant" />
+			<description>
+				Sets the proto field [param field_name] with [param value]. Returns [code]true[/code] on success.
+			</description>
+		</method>
+	</methods>
+</class>

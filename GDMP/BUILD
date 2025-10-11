@@ -7,6 +7,7 @@ cc_library(
     name = "GDMP",
     srcs = ["gdlibrary.cc"],
     deps = [
+        "//GDMP/doc_classes",
         "//GDMP/framework:graph",
         "//GDMP/framework:graph_builder",
         "//GDMP/framework:graph_config",

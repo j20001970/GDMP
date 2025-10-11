@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeVisionTask" inherits="MediaPipeTask" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Base class for MediaPipe vision tasks.
+	</brief_description>
+	<description>
+		Base class for MediaPipe vision tasks.
+	</description>
+	<tutorials>
+	</tutorials>
+	<constants>
+		<constant name="RUNNING_MODE_IMAGE" value="1" enum="RunningMode">
+			Runs the vision task on single image inputs.
+		</constant>
+		<constant name="RUNNING_MODE_VIDEO" value="2" enum="RunningMode">
+			Runs the vision task on video frames.
+		</constant>
+		<constant name="RUNNING_MODE_LIVE_STREAM" value="3" enum="RunningMode">
+			Runs the vision task on live stream of input data.
+		</constant>
+	</constants>
+</class>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeNodeSource" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		The source port of a [MediaPipeGraphNode] or [MediaPipeGraphBuilder].
+	</brief_description>
+	<description>
+		The source port of a [MediaPipeGraphNode] or [MediaPipeGraphBuilder].
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="connect_to">
+			<return type="bool" />
+			<param index="0" name="destination" type="MediaPipeNodeDestination" />
+			<param index="1" name="stream_name" type="String" />
+			<description>
+				Connects the stream [param stream_name] to [param destination]. Returns [code]true[/code] on success.
+			</description>
+		</method>
+	</methods>
+</class>

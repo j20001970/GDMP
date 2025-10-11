@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeAudioTask" inherits="MediaPipeTask" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Base class for MediaPipe audio tasks.
+	</brief_description>
+	<description>
+		Base class for MediaPipe audio tasks.
+	</description>
+	<tutorials>
+	</tutorials>
+	<constants>
+		<constant name="RUNNING_MODE_AUDIO_CLIPS" value="1" enum="RunningMode">
+			Run the audio task on single audio clips.
+		</constant>
+		<constant name="RUNNING_MODE_AUDIO_STREAM" value="2" enum="RunningMode">
+			Run the audio task on an audio stream.
+		</constant>
+	</constants>
+</class>

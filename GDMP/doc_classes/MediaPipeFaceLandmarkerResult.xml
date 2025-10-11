@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MediaPipeFaceLandmarkerResult" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		MediaPipe face landmarker result.
+	</brief_description>
+	<description>
+		The hand landmarks detection result from [MediaPipeFaceLandmarker].
+		Each element represents a single face detected in the image.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="has_face_blendshapes">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the result has [member face_blendshapes].
+			</description>
+		</method>
+		<method name="has_facial_transformation_matrixes">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the result has [member facial_transformation_matrixes].
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="face_blendshapes" type="MediaPipeClassifications[]" setter="" getter="get_face_blendshapes" default="[]">
+			The optional face blendshapes result.
+		</member>
+		<member name="face_landmarks" type="MediaPipeNormalizedLandmarks[]" setter="" getter="get_face_landmarks" default="[]">
+			The detected face landmarks in normalized image coordinates.
+		</member>
+		<member name="facial_transformation_matrixes" type="Array" setter="" getter="get_facial_transformation_matrixes" default="[]">
+			The optional facial transformation matrix.
+		</member>
+	</members>
+</class>
