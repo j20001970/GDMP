@@ -23,7 +23,6 @@ void MediaPipeGraph::_register_methods() {
 	register_method("cancel", &MediaPipeGraph::cancel);
 	register_method("get_gpu_resources", &MediaPipeGraph::get_gpu_resources);
 	register_method("set_gpu_resources", &MediaPipeGraph::set_gpu_resources);
-	register_property<MediaPipeGraph, Ref<MediaPipeGPUResources>>("gpu_resources", &MediaPipeGraph::set_gpu_resources, &MediaPipeGraph::get_gpu_resources, nullptr);
 	register_signal<MediaPipeGraph>("error");
 }
 
