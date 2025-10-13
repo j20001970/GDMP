@@ -19,7 +19,7 @@ class MediaPipeLandmark : public RefCounted {
 	private:
 		typedef mediapipe::Landmark ProtoType;
 
-		Landmark landmark;
+		Landmark landmark = {};
 
 	protected:
 		static void _bind_methods();
@@ -51,7 +51,7 @@ class MediaPipeNormalizedLandmark : public RefCounted {
 	private:
 		typedef mediapipe::NormalizedLandmark ProtoType;
 
-		NormalizedLandmark landmark;
+		NormalizedLandmark landmark = {};
 
 	protected:
 		static void _bind_methods();
@@ -83,7 +83,7 @@ class MediaPipeLandmarks : public RefCounted {
 	private:
 		typedef mediapipe::LandmarkList ProtoType;
 
-		Landmarks landmarks;
+		Landmarks landmarks = {};
 
 	protected:
 		static void _bind_methods();
@@ -106,7 +106,7 @@ class MediaPipeNormalizedLandmarks : public RefCounted {
 	private:
 		typedef mediapipe::NormalizedLandmarkList ProtoType;
 
-		NormalizedLandmarks landmarks;
+		NormalizedLandmarks landmarks = {};
 
 	protected:
 		static void _bind_methods();

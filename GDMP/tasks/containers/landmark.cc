@@ -50,11 +50,7 @@ Ref<MediaPipePacket> MediaPipeLandmark::make_vector_proto_packet(TypedArray<Medi
 	return memnew(MediaPipePacket(packet));
 }
 
-MediaPipeLandmark::MediaPipeLandmark() {
-	landmark.x = 0;
-	landmark.y = 0;
-	landmark.z = 0;
-}
+MediaPipeLandmark::MediaPipeLandmark() = default;
 
 MediaPipeLandmark::MediaPipeLandmark(const Landmark &landmark) {
 	this->landmark = landmark;
@@ -158,11 +154,7 @@ Ref<MediaPipePacket> MediaPipeNormalizedLandmark::make_vector_proto_packet(Typed
 	return memnew(MediaPipePacket(packet));
 }
 
-MediaPipeNormalizedLandmark::MediaPipeNormalizedLandmark() {
-	landmark.x = 0;
-	landmark.y = 0;
-	landmark.z = 0;
-}
+MediaPipeNormalizedLandmark::MediaPipeNormalizedLandmark() = default;
 
 MediaPipeNormalizedLandmark::MediaPipeNormalizedLandmark(const NormalizedLandmark &landmark) {
 	this->landmark = landmark;

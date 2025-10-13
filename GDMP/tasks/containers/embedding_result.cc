@@ -16,9 +16,7 @@ void MediaPipeEmbedding::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "head_name"), "", "get_head_name");
 }
 
-MediaPipeEmbedding::MediaPipeEmbedding() {
-	embedding.head_index = 0;
-}
+MediaPipeEmbedding::MediaPipeEmbedding() = default;
 
 MediaPipeEmbedding::MediaPipeEmbedding(const Embedding &embedding) {
 	this->embedding = embedding;

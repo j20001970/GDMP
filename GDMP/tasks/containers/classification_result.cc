@@ -37,9 +37,7 @@ Ref<MediaPipePacket> MediaPipeClassifications::make_vector_proto_packet(TypedArr
 	return memnew(MediaPipePacket(packet));
 }
 
-MediaPipeClassifications::MediaPipeClassifications() {
-	classifications.head_index = 0;
-}
+MediaPipeClassifications::MediaPipeClassifications() = default;
 
 MediaPipeClassifications::MediaPipeClassifications(const Classifications &classifications) {
 	this->classifications = classifications;

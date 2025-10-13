@@ -46,10 +46,7 @@ Ref<MediaPipePacket> MediaPipeNormalizedKeypoint::make_vector_proto_packet(Typed
 	return memnew(MediaPipePacket(packet));
 }
 
-MediaPipeNormalizedKeypoint::MediaPipeNormalizedKeypoint() {
-	keypoint.x = 0;
-	keypoint.y = 0;
-}
+MediaPipeNormalizedKeypoint::MediaPipeNormalizedKeypoint() = default;
 
 MediaPipeNormalizedKeypoint::MediaPipeNormalizedKeypoint(const NormalizedKeypoint &keypoint) {
 	this->keypoint = keypoint;

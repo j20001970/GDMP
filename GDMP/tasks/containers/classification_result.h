@@ -20,7 +20,7 @@ class MediaPipeClassifications : public RefCounted {
 	private:
 		typedef mediapipe::ClassificationList ProtoType;
 
-		Classifications classifications;
+		Classifications classifications = {};
 
 	protected:
 		static void _bind_methods();
@@ -45,7 +45,7 @@ class MediaPipeClassificationResult : public RefCounted {
 		GDCLASS(MediaPipeClassificationResult, RefCounted)
 
 	private:
-		ClassificationResult result;
+		ClassificationResult result = {};
 
 	protected:
 		static void _bind_methods();

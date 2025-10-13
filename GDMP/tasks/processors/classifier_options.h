@@ -13,7 +13,7 @@ class MediaPipeClassifierOptions : public RefCounted {
 		GDCLASS(MediaPipeClassifierOptions, RefCounted)
 
 	private:
-		ClassifierOptions options;
+		ClassifierOptions options = {};
 
 	protected:
 		static void _bind_methods();

@@ -19,7 +19,7 @@ class MediaPipeNormalizedKeypoint : public RefCounted {
 	private:
 		typedef mediapipe::LocationData::RelativeKeypoint ProtoType;
 
-		NormalizedKeypoint keypoint;
+		NormalizedKeypoint keypoint = {};
 
 	protected:
 		static void _bind_methods();

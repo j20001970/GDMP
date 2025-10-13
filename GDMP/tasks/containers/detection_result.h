@@ -22,7 +22,7 @@ class MediaPipeDetection : public RefCounted {
 	private:
 		typedef mediapipe::Detection ProtoType;
 
-		Detection detection;
+		Detection detection = {};
 
 	protected:
 		static void _bind_methods();
@@ -49,7 +49,7 @@ class MediaPipeDetectionResult : public RefCounted {
 	private:
 		typedef mediapipe::DetectionList ProtoType;
 
-		DetectionResult result;
+		DetectionResult result = {};
 
 	protected:
 		static void _bind_methods();

@@ -12,7 +12,7 @@ class MediaPipeEmbedderOptions : public RefCounted {
 		GDCLASS(MediaPipeEmbedderOptions, RefCounted)
 
 	private:
-		EmbedderOptions options;
+		EmbedderOptions options = {};
 
 	protected:
 		static void _bind_methods();

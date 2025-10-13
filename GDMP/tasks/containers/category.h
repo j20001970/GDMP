@@ -17,7 +17,7 @@ class MediaPipeCategory : public RefCounted {
 	private:
 		typedef mediapipe::Classification ProtoType;
 
-		Category category;
+		Category category = {};
 
 	protected:
 		static void _bind_methods();

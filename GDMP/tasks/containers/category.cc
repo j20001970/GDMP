@@ -44,10 +44,7 @@ Ref<MediaPipePacket> MediaPipeCategory::make_vector_proto_packet(TypedArray<Medi
 	return memnew(MediaPipePacket(packet));
 }
 
-MediaPipeCategory::MediaPipeCategory() {
-	category.index = 0;
-	category.score = 0;
-}
+MediaPipeCategory::MediaPipeCategory() = default;
 
 MediaPipeCategory::MediaPipeCategory(const Category &category) {
 	this->category = category;

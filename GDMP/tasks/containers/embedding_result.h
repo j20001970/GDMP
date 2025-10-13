@@ -15,7 +15,7 @@ class MediaPipeEmbedding : public RefCounted {
 		GDCLASS(MediaPipeEmbedding, RefCounted)
 
 	private:
-		Embedding embedding;
+		Embedding embedding = {};
 
 	protected:
 		static void _bind_methods();
@@ -36,7 +36,7 @@ class MediaPipeEmbeddingResult : public RefCounted {
 		GDCLASS(MediaPipeEmbeddingResult, RefCounted)
 
 	private:
-		EmbeddingResult result;
+		EmbeddingResult result = {};
 
 	protected:
 		static void _bind_methods();
