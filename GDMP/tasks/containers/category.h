@@ -19,7 +19,7 @@ class MediaPipeCategory : public Reference {
 	private:
 		typedef mediapipe::Classification ProtoType;
 
-		Category category;
+		Category category = {};
 
 	public:
 		static void _register_methods();

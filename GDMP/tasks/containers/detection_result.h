@@ -20,7 +20,7 @@ class MediaPipeDetection : public Reference {
 	private:
 		typedef mediapipe::Detection ProtoType;
 
-		Detection detection;
+		Detection detection = {};
 
 	public:
 		static void _register_methods();
@@ -46,7 +46,7 @@ class MediaPipeDetectionResult : public Reference {
 	private:
 		typedef mediapipe::DetectionList ProtoType;
 
-		DetectionResult result;
+		DetectionResult result = {};
 
 	public:
 		static void _register_methods();

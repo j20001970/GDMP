@@ -28,9 +28,7 @@ mediapipe::ClassificationList MediaPipeClassifications::to_proto(const Classific
 	return proto;
 }
 
-void MediaPipeClassifications::_init() {
-	classifications.head_index = 0;
-}
+void MediaPipeClassifications::_init() {}
 
 Array MediaPipeClassifications::get_categories() const {
 	Array array;

@@ -16,7 +16,7 @@ class MediaPipeEmbedding : public Reference {
 		GODOT_CLASS(MediaPipeEmbedding, Reference)
 
 	private:
-		Embedding embedding;
+		Embedding embedding = {};
 
 	public:
 		static void _register_methods();
@@ -36,7 +36,7 @@ class MediaPipeEmbeddingResult : public Reference {
 		GODOT_CLASS(MediaPipeEmbeddingResult, Reference)
 
 	private:
-		EmbeddingResult result;
+		EmbeddingResult result = {};
 
 	public:
 		static void _register_methods();

@@ -21,7 +21,7 @@ class MediaPipeNormalizedKeypoint : public Reference {
 	private:
 		typedef mediapipe::LocationData::RelativeKeypoint ProtoType;
 
-		NormalizedKeypoint keypoint;
+		NormalizedKeypoint keypoint = {};
 
 	public:
 		static void _register_methods();

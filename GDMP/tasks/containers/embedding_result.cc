@@ -16,9 +16,7 @@ MediaPipeEmbedding *MediaPipeEmbedding::_new(const Embedding &embedding) {
 	return e;
 }
 
-void MediaPipeEmbedding::_init() {
-	embedding.head_index = 0;
-}
+void MediaPipeEmbedding::_init() {}
 
 PoolRealArray MediaPipeEmbedding::get_float_embedding() const {
 	PoolRealArray array;

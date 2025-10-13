@@ -31,10 +31,7 @@ mediapipe::LocationData::RelativeKeypoint MediaPipeNormalizedKeypoint::to_proto(
 	return proto;
 }
 
-void MediaPipeNormalizedKeypoint::_init() {
-	keypoint.x = 0;
-	keypoint.y = 0;
-}
+void MediaPipeNormalizedKeypoint::_init() {}
 
 float MediaPipeNormalizedKeypoint::get_x() const {
 	return keypoint.x;

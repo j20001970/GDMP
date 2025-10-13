@@ -32,10 +32,7 @@ mediapipe::Classification MediaPipeCategory::to_proto(const Category &category) 
 	return proto;
 }
 
-void MediaPipeCategory::_init() {
-	category.index = 0;
-	category.score = 0;
-}
+void MediaPipeCategory::_init() {}
 
 int MediaPipeCategory::get_index() const {
 	return category.index;

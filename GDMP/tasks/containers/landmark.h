@@ -20,7 +20,7 @@ class MediaPipeLandmark : public Reference {
 	private:
 		typedef mediapipe::Landmark ProtoType;
 
-		Landmark landmark;
+		Landmark landmark = {};
 
 	public:
 		static void _register_methods();
@@ -51,7 +51,7 @@ class MediaPipeNormalizedLandmark : public Reference {
 	private:
 		typedef mediapipe::NormalizedLandmark ProtoType;
 
-		NormalizedLandmark landmark;
+		NormalizedLandmark landmark = {};
 
 	public:
 		static void _register_methods();
@@ -82,7 +82,7 @@ class MediaPipeLandmarks : public Reference {
 	private:
 		typedef mediapipe::LandmarkList ProtoType;
 
-		Landmarks landmarks;
+		Landmarks landmarks = {};
 
 	public:
 		static void _register_methods();
@@ -104,7 +104,7 @@ class MediaPipeNormalizedLandmarks : public Reference {
 	private:
 		typedef mediapipe::NormalizedLandmarkList ProtoType;
 
-		NormalizedLandmarks landmarks;
+		NormalizedLandmarks landmarks = {};
 
 	public:
 		static void _register_methods();

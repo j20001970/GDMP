@@ -36,11 +36,7 @@ mediapipe::Landmark MediaPipeLandmark::to_proto(const Landmark &landmark) {
 	return proto;
 }
 
-void MediaPipeLandmark::_init() {
-	landmark.x = 0;
-	landmark.y = 0;
-	landmark.z = 0;
-}
+void MediaPipeLandmark::_init() {}
 
 float MediaPipeLandmark::get_x() const {
 	return landmark.x;
@@ -140,11 +136,7 @@ mediapipe::NormalizedLandmark MediaPipeNormalizedLandmark::to_proto(const Normal
 	return proto;
 }
 
-void MediaPipeNormalizedLandmark::_init() {
-	landmark.x = 0;
-	landmark.y = 0;
-	landmark.z = 0;
-}
+void MediaPipeNormalizedLandmark::_init() {}
 
 float MediaPipeNormalizedLandmark::get_x() const {
 	return landmark.x;

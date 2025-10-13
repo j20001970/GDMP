@@ -20,7 +20,7 @@ class MediaPipeClassifications : public Reference {
 	private:
 		typedef mediapipe::ClassificationList ProtoType;
 
-		Classifications classifications;
+		Classifications classifications = {};
 
 	public:
 		static void _register_methods();
@@ -44,7 +44,7 @@ class MediaPipeClassificationResult : public Reference {
 		GODOT_CLASS(MediaPipeClassificationResult, Reference)
 
 	private:
-		ClassificationResult result;
+		ClassificationResult result = {};
 
 	public:
 		static void _register_methods();

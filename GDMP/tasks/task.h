@@ -54,7 +54,7 @@ class MediaPipeTaskBaseOptions : public Reference {
 	private:
 		PoolByteArray model_asset_buffer;
 		String model_asset_path;
-		int delegate;
+		int delegate = BaseOptions::Delegate::CPU;
 
 	public:
 		static void _register_methods();

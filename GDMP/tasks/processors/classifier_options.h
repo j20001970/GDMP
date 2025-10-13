@@ -15,7 +15,7 @@ class MediaPipeClassifierOptions : public Reference {
 		GODOT_CLASS(MediaPipeClassifierOptions, Reference)
 
 	private:
-		ClassifierOptions options;
+		ClassifierOptions options = {};
 
 	public:
 		static void _register_methods();

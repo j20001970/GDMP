@@ -13,7 +13,7 @@ class MediaPipeEmbedderOptions : public Reference {
 		GODOT_CLASS(MediaPipeEmbedderOptions, Reference)
 
 	private:
-		EmbedderOptions options;
+		EmbedderOptions options = {};
 
 	public:
 		static void _register_methods();
