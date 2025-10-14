@@ -36,3 +36,5 @@ Ref<MediaPipeEmbeddingResult> MediaPipeTextEmbedder::embed(const String &text) {
 		ERR_PRINT(result.status().message().data());
 	return embed_result;
 }
+
+GDMP_REGISTER_TASK(MediaPipeTextEmbedder, MediaPipeTextTask)
