@@ -35,7 +35,7 @@ class MediaPipeGraph : public RefCounted {
 		Ref<MediaPipeGraphConfig> get_config();
 
 		// Add a packet callback for the graph output stream.
-		bool add_output_stream_callback(const String &stream_name, Callable callback);
+		bool add_output_stream_callback(const String &stream_name);
 		// Get output side packet by name.
 		Ref<MediaPipePacket> get_output_side_packet(const String &packet_name);
 

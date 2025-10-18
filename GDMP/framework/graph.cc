@@ -7,7 +7,7 @@
 void MediaPipeGraph::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize", "config", "side_packets"), &MediaPipeGraph::initialize, DEFVAL(Dictionary()));
 	ClassDB::bind_method(D_METHOD("get_config"), &MediaPipeGraph::get_config);
-	ClassDB::bind_method(D_METHOD("add_output_stream_callback", "stream_name", "callback"), &MediaPipeGraph::add_output_stream_callback);
+	ClassDB::bind_method(D_METHOD("add_output_stream_callback", "stream_name"), &MediaPipeGraph::add_output_stream_callback);
 	ClassDB::bind_method(D_METHOD("get_output_side_packet", "packet_name"), &MediaPipeGraph::get_output_side_packet);
 	ClassDB::bind_method(D_METHOD("run", "extra_side_packets"), &MediaPipeGraph::run, DEFVAL(Dictionary()));
 	ClassDB::bind_method(D_METHOD("start_run", "extra_side_packets"), &MediaPipeGraph::start_run, DEFVAL(Dictionary()));
@@ -23,6 +23,9 @@ void MediaPipeGraph::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_gpu_resources"), &MediaPipeGraph::get_gpu_resources);
 	ClassDB::bind_method(D_METHOD("set_gpu_resources", "gpu_resources"), &MediaPipeGraph::set_gpu_resources);
 	ADD_SIGNAL(MethodInfo("error", PropertyInfo(Variant::STRING, "message")));
+	ADD_SIGNAL(MethodInfo("output_stream_callback",
+			PropertyInfo(Variant::STRING, "stream_name"),
+			PropertyInfo(Variant::OBJECT, "packet", godot::PROPERTY_HINT_RESOURCE_TYPE, MediaPipePacket::get_class_static())));
 }
 
 MediaPipeGraph::MediaPipeGraph() {
@@ -48,10 +51,11 @@ Ref<MediaPipeGraphConfig> MediaPipeGraph::get_config() {
 	return memnew(MediaPipeGraphConfig(graph->Config()));
 }
 
-bool MediaPipeGraph::add_output_stream_callback(const String &stream_name, Callable callback) {
+bool MediaPipeGraph::add_output_stream_callback(const String &stream_name) {
 	std::function<absl::Status(const mediapipe::Packet &)> packet_callback;
-	packet_callback = [this, callback](const mediapipe::Packet &packet) -> absl::Status {
-		callback.call_deferred(memnew(MediaPipePacket(packet)));
+	packet_callback = [this, stream_name](const mediapipe::Packet &packet) -> absl::Status {
+		Ref<MediaPipePacket> p = memnew(MediaPipePacket(packet));
+		call_deferred("emit_signal", "output_stream_callback", stream_name, p);
 		return absl::OkStatus();
 	};
 	absl::Status result = graph->ObserveOutputStream(stream_name.utf8().get_data(), packet_callback);
