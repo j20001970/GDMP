@@ -24,6 +24,7 @@ void MediaPipeGraph::_register_methods() {
 	register_method("get_gpu_resources", &MediaPipeGraph::get_gpu_resources);
 	register_method("set_gpu_resources", &MediaPipeGraph::set_gpu_resources);
 	register_signal<MediaPipeGraph>("error");
+	register_signal<MediaPipeGraph>("output_stream_callback");
 }
 
 void MediaPipeGraph::_init() {
@@ -49,10 +50,10 @@ Ref<MediaPipeGraphConfig> MediaPipeGraph::get_config() {
 	return MediaPipeGraphConfig::_new(graph->Config());
 }
 
-bool MediaPipeGraph::add_output_stream_callback(const String &stream_name, Object *object, String method) {
+bool MediaPipeGraph::add_output_stream_callback(String stream_name) {
 	std::function<absl::Status(const mediapipe::Packet &)> packet_callback;
-	packet_callback = [this, &object, &method](const mediapipe::Packet &packet) -> absl::Status {
-		object->call_deferred(method, MediaPipePacket::_new(packet));
+	packet_callback = [this, stream_name](const mediapipe::Packet &packet) -> absl::Status {
+		call_deferred("emit_signal", "output_stream_callback", stream_name, p);
 		return absl::OkStatus();
 	};
 	absl::Status result = graph->ObserveOutputStream(stream_name.utf8().get_data(), packet_callback);
