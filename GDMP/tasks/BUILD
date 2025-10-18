@@ -17,6 +17,7 @@ cc_library(
     deps = [
         "//GDMP/framework:graph_config",
         "//GDMP/framework:packet",
+        "//GDMP/gpu:gpu_resources",
         "//GDMP/util:packet_map",
         "@godot-cpp//:godot",
         "@mediapipe//mediapipe/tasks/cc/core:base_options",
