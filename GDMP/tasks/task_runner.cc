@@ -33,7 +33,9 @@ bool MediaPipeTaskRunner::initialize(Ref<MediaPipeGraphConfig> config, bool asyn
 	PacketMap side_packets = {};
 	if (input_side_packets.size() > 0)
 		side_packets = util::dict_to_packet_map(input_side_packets);
+#if !MEDIAPIPE_DISABLE_GPU
 	std::shared_ptr<mediapipe::GpuResources> gpu = nullptr;
+#endif
 	if (gpu_resources.is_valid())
 #if !MEDIAPIPE_DISABLE_GPU
 		gpu = gpu_resources->get_gpu_resources();
