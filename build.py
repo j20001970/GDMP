@@ -48,6 +48,7 @@ def build_desktop(args: Namespace) -> list[str]:
             "--define=MEDIAPIPE_DISABLE_GPU=1",
         ],
         "win32": [
+            "--copt=/Zc:preprocessor",
             "--conlyopt=/std:c11",
             "--conlyopt=/experimental:c11atomics",
             "--define=OPENCV=source",
@@ -57,10 +58,14 @@ def build_desktop(args: Namespace) -> list[str]:
     build_args = desktop_args[sys.platform]
     if sys.platform == "darwin":
         if arch == "arm64":
-            build_args.append("--cpu=darwin_arm64")
+            build_args.append(
+                "--platforms=@build_bazel_apple_support//platforms:macos_arm64"
+            )
             build_args.append("--macos_minimum_os=11.0")
         elif arch == "x86_64":
-            build_args.append("--cpu=darwin_x86_64")
+            build_args.append(
+                "--platforms=@build_bazel_apple_support//platforms:macos_x86_64"
+            )
             build_args.append("--macos_minimum_os=10.13")
             build_args.append("--define=xnn_enable_avxvnniint8=false")
     elif sys.platform == "linux":
@@ -82,8 +87,6 @@ def build_ios(args: Namespace) -> list[str]:
 def build_web(args: Namespace) -> list[str]:
     build_args = [
         "--incompatible_enable_cc_toolchain_resolution",
-        "--crosstool_top=@emsdk//emscripten_toolchain:everything",
-        "--host_crosstool_top=@bazel_tools//tools/cpp:toolchain",
         "--copt=-D_LARGEFILE64_SOURCE",
         "--copt=-fexceptions",
         "--copt=-pthread",
@@ -109,6 +112,8 @@ def get_build_args(args: Namespace) -> [str]:
         "web": build_web,
     }
     build_args = ["-c", "opt", "--action_env=HERMETIC_PYTHON_VERSION=3.12"]
+    build_args.append("--verbose_failures")
+    build_args.append("--toolchain_resolution_debug=.*")
     build_args.extend(build_targets[target](args))
     return build_args
 
