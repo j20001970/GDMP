@@ -1,0 +1,32 @@
+diff --git a/mediapipe/framework/BUILD b/mediapipe/framework/BUILD
+--- a/mediapipe/framework/BUILD
++++ b/mediapipe/framework/BUILD
+@@ -284,6 +284,12 @@ cc_library(
+         ":calculator_context",
+         ":calculator_contract",
+     ],
++    copts = select({
++        "//mediapipe:windows": [
++            "/std:c++17",
++        ],
++        "//conditions:default": [],
++    }),
+ )
+ 
+ cc_library(
+diff --git a/mediapipe/gpu/BUILD b/mediapipe/gpu/BUILD
+--- a/mediapipe/gpu/BUILD
++++ b/mediapipe/gpu/BUILD
+@@ -50,6 +50,12 @@ cc_library(
+         ],
+         "//mediapipe/gpu:disable_gpu": [],
+     }),
++    copts = select({
++        "//mediapipe:windows": [
++            "/std:c++17",
++        ],
++        "//conditions:default": [],
++    }),
+ )
+ 
+ cc_library(

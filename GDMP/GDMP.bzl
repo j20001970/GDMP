@@ -16,13 +16,11 @@ CALCULATORS = [
 # List of enabled tasks.
 TASKS = [
     "//GDMP/tasks/audio:audio_classifier",
-    "//GDMP/tasks/audio:audio_embedder",
     "//GDMP/tasks/text:language_detector",
     "//GDMP/tasks/text:text_classifier",
     "//GDMP/tasks/text:text_embedder",
     "//GDMP/tasks/vision:face_detector",
     "//GDMP/tasks/vision:face_landmarker",
-    "//GDMP/tasks/vision:face_stylizer",
     "//GDMP/tasks/vision:gesture_recognizer",
     "//GDMP/tasks/vision:hand_landmarker",
     "//GDMP/tasks/vision:holistic_landmarker",

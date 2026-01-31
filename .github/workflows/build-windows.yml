@@ -35,6 +35,12 @@ jobs:
         run: |
           python ./setup.py
 
+      - name: Workaround for MSVC MAX_PATH
+        shell: bash
+        working-directory: ${{ env.work-dir }}
+        run: |
+          echo "startup --output_base=C:\\\\out" >> mediapipe/.bazelrc
+
       - name: Build
         shell: bash
         working-directory: ${{ env.work-dir }}
