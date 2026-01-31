@@ -1,0 +1,34 @@
+# Based on https://github.com/google-ai-edge/mediapipe/pull/6284
+diff --git a/mediapipe/framework/api3/calculator_context.h b/mediapipe/framework/api3/calculator_context.h
+--- a/mediapipe/framework/api3/calculator_context.h
++++ b/mediapipe/framework/api3/calculator_context.h
+@@ -431,7 +431,7 @@ auto VisitPacketOrDie(F&& visitor, const mediapipe::Packet& packet) {
+   return std::forward<F>(visitor)(packet.Get<T>());
+ }
+ 
+-template <typename T, typename U, typename... Rest, int&... DoNotSpecify,
++template <typename T, typename U, typename... Rest,
+           typename F>
+ auto VisitPacketOrDie(F&& visitor, const mediapipe::Packet& packet) {
+   if (packet.ValidateAsType<T>().ok()) {
+@@ -447,7 +447,7 @@ auto VisitPacketAsPacketOrDie(F&& visitor, const mediapipe::Packet& packet) {
+   return std::forward<F>(visitor)(WrapLegacyPacket<T>(packet).value());
+ }
+ 
+-template <typename T, typename U, typename... Rest, int&... DoNotSpecify,
++template <typename T, typename U, typename... Rest,
+           typename F>
+ auto VisitPacketAsPacketOrDie(F&& visitor, const mediapipe::Packet& packet) {
+   if (packet.ValidateAsType<T>().ok()) {
+diff --git a/mediapipe/framework/api3/graph.h b/mediapipe/framework/api3/graph.h
+--- a/mediapipe/framework/api3/graph.h
++++ b/mediapipe/framework/api3/graph.h
+@@ -107,6 +107,8 @@ class Graph;
+ class GenericGraph;
+ class FunctionGraphBuilder;
+ 
++template <typename NodeT>
++class SubgraphContext;
+ // `GraphNode` is returned by `Graph<...>::AddNode<...>()` function.
+ //
+ // Common pattern to use it:

@@ -51,3 +51,24 @@ diff --git a/third_party/BUILD b/third_party/BUILD
          ],
      }),
  )
+diff --git a/third_party/com_github_glog_glog_windows_patch.diff b/third_party/com_github_glog_glog_windows_patch.diff
+--- a/third_party/com_github_glog_glog_windows_patch.diff
++++ b/third_party/com_github_glog_glog_windows_patch.diff
+@@ -10,17 +10,3 @@ index dacd934..d7b3d78 100644
+          "-DGLOG_BAZEL_BUILD",
+          # Inject a C++ namespace.
+          "-DGOOGLE_NAMESPACE='%s'" % namespace,
+-@@ -145,7 +144,13 @@ def glog_library(namespace = "google", with_gflags = 1, **kwargs):
+-         ],
+-     })
+- 
+-+    c14_opts = ["-std=c++14"]
+-+    c17_opts = ["-std=c++17"]
+-+
+-     final_lib_copts = select({
+-+        "@bazel_tools//src/conditions:windows": c17_opts,
+-+         "//conditions:default": c14_opts,
+-+    }) + select({
+-         "@bazel_tools//src/conditions:windows": common_copts + windows_only_copts,
+-         "@bazel_tools//src/conditions:darwin": common_copts + linux_or_darwin_copts + darwin_only_copts,
+-         "@bazel_tools//src/conditions:freebsd": common_copts + linux_or_darwin_copts + freebsd_only_copts,

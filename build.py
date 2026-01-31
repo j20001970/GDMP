@@ -45,14 +45,18 @@ def build_desktop(args: Namespace) -> list[str]:
             "--define=OPENCV=source",
         ],
         "darwin": [
+            "--incompatible_enable_cc_toolchain_resolution",
             "--apple_platform_type=macos",
             "--apple_generate_dsym=false",
             "--copt=-DMEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER",
             "--define=OPENCV=source",
         ],
         "win32": [
+            "--copt=/Zc:preprocessor",
             "--conlyopt=/std:c11",
             "--conlyopt=/experimental:c11atomics",
+            "--per_file_copt=mediapipe/framework/legacy_calculator_support\\.cc@/std:c++17",
+            "--per_file_copt=mediapipe/gpu/gpu_service\\.cc@/std:c++17",
             "--define=OPENCV=source",
             "--define=MEDIAPIPE_DISABLE_GPU=1",
         ],
@@ -75,6 +79,7 @@ def build_desktop(args: Namespace) -> list[str]:
 def build_ios(args: Namespace) -> list[str]:
     arch: str = args.arch
     build_args = [
+        "--incompatible_enable_cc_toolchain_resolution",
         "--apple_generate_dsym=false",
         "--apple_platform_type=ios",
         "--define=OPENCV=source",
@@ -85,8 +90,6 @@ def build_ios(args: Namespace) -> list[str]:
 def build_web(args: Namespace) -> list[str]:
     build_args = [
         "--incompatible_enable_cc_toolchain_resolution",
-        "--crosstool_top=@emsdk//emscripten_toolchain:everything",
-        "--host_crosstool_top=@bazel_tools//tools/cpp:toolchain",
         "--copt=-D_LARGEFILE64_SOURCE",
         "--copt=-fexceptions",
         "--copt=-pthread",
