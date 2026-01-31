@@ -1,0 +1,31 @@
+diff --git a/mediapipe/framework/tool/BUILD b/mediapipe/framework/tool/BUILD
+--- a/mediapipe/framework/tool/BUILD
++++ b/mediapipe/framework/tool/BUILD
+@@ -296,7 +296,12 @@ cc_binary(
+         "@com_google_absl//absl/flags:parse",
+         "@com_google_absl//absl/log:absl_check",
+         "@com_google_absl//absl/strings",
+-    ],
++    ] + select({
++        "//mediapipe:windows": [
++            "@zlib//:zlib",
++        ],
++        "//conditions:default": [],
++    }),
+ )
+ 
+ cc_library(
+@@ -313,7 +318,12 @@ cc_library(
+         "//mediapipe/framework/port:ret_check",
+         "@com_google_absl//absl/container:flat_hash_map",
+         "@com_google_absl//absl/synchronization",
+-    ],
++    ] + select({
++        "//mediapipe:windows": [
++            "@zlib//:zlib",
++        ],
++        "//conditions:default": [],
++    }),
+ )
+ 
+ mediapipe_cc_test(

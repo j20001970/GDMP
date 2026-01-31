@@ -78,6 +78,8 @@ When linking prebuilt OpenCV libraries, build script will not copy required libr
     Refer to [MediaPipe documentation](https://developers.google.com/mediapipe/framework/getting_started/install#installing_on_windows) for more details.
 3. Run `build.py desktop` to build desktop library.
 
+**MSVC MAX_PATH Workaround**: Prior to Bazel 8.4, if you run into "file not found" error during compilation, please add `startup --output_base=<shorter path here>` to `mediapipe/.bazelrc` to shorten the length of file paths.
+
 **Linking prebuilt OpenCV**: GDMP builds OpenCV from source on Windows by default, if you want to use pre-compiled OpenCV libraries, you will need to:
 
 1. Modify `mediapipe/WORKSPACE` for `path` under `windows_opencv` if OpenCV is not installed on `C:\opencv`

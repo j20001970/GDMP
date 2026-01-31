@@ -1,0 +1,16 @@
+diff --git a/WORKSPACE b/WORKSPACE
+--- a/WORKSPACE
++++ b/WORKSPACE
+@@ -314,9 +314,9 @@ http_archive(
+ http_archive(
+     name = "pthreadpool",
+     # `curl -L <url> | shasum -a 256`
+-    sha256 = "d5a78b017839ee0474e6aef6e21742b03f641b260f29faf9538a0a6b8fae0704",
+-    strip_prefix = "pthreadpool-995229919303dd98c0f1b3b585b54527067ef893",
+-    urls = ["https://github.com/google/pthreadpool/archive/995229919303dd98c0f1b3b585b54527067ef893.zip"],
++    sha256 = "656cfa7d40fa0658626b205e046e554955c277df37e93fde70dac31f2a378864",
++    strip_prefix = "pthreadpool-d928dff5a683458bdd3226cd33872fa802fba3c6",
++    urls = ["https://github.com/google/pthreadpool/archive/d928dff5a683458bdd3226cd33872fa802fba3c6.zip"],
+ )
+ 
+ # TF on 2025-07-01
