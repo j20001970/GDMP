@@ -51,10 +51,11 @@ diff --git a/third_party/BUILD b/third_party/BUILD
  
  cmake(
      name = "opencv_cmake",
-@@ -219,11 +199,13 @@ cmake(
+@@ -219,11 +196,14 @@ cmake(
          "BUILD_PERF_TESTS": "OFF",
          "BUILD_EXAMPLES": "OFF",
          "BUILD_SHARED_LIBS": "ON" if OPENCV_SHARED_LIBS else "OFF",
++        "BUILD_opencv_apps": "OFF",
 +        "WITH_CAROTENE": 'OFF',
 +        "WITH_IPP": "OFF",
          "WITH_ITT": "OFF",
@@ -68,7 +69,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
          "WITH_OPENCL": "OFF",
          "WITH_WEBP": "OFF",
          # Optimization flags
-@@ -252,48 +234,58 @@ cmake(
+@@ -252,48 +232,58 @@ cmake(
          # ccache would be able to work across sandboxed Bazel builds, either.
          # In any case, Bazel does its own caching of the rule's outputs.
          "ENABLE_CCACHE": "OFF",
