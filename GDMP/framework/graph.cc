@@ -31,7 +31,7 @@ void MediaPipeGraph::_init() {
 	graph = std::make_unique<mediapipe::CalculatorGraph>();
 	std::function<void(const absl::Status &)> error_callback;
 	error_callback = [this](const absl::Status status) -> void {
-		call_deferred("emit_signal", "error", status.message().data());
+		((Object *)(this))->call_deferred("emit_signal", Array::make("error", status.message().data()));
 	};
 	absl::Status set_error_callback = graph->SetErrorCallback(error_callback);
 	if (!set_error_callback.ok())
@@ -53,7 +53,8 @@ Ref<MediaPipeGraphConfig> MediaPipeGraph::get_config() {
 bool MediaPipeGraph::add_output_stream_callback(String stream_name) {
 	std::function<absl::Status(const mediapipe::Packet &)> packet_callback;
 	packet_callback = [this, stream_name](const mediapipe::Packet &packet) -> absl::Status {
-		call_deferred("emit_signal", "output_stream_callback", stream_name, p);
+		Ref<MediaPipePacket> p = MediaPipePacket::_new(packet);
+		((Object *)this)->call_deferred("emit_signal", Array::make("output_stream_callback", stream_name, p));
 		return absl::OkStatus();
 	};
 	absl::Status result = graph->ObserveOutputStream(stream_name.utf8().get_data(), packet_callback);
