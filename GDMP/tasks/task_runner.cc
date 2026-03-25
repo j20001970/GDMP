@@ -45,11 +45,16 @@ bool MediaPipeTaskRunner::initialize(Ref<MediaPipeGraphConfig> config, bool asyn
 	ErrorFn error_fn = [this](absl::Status status) -> void {
 		call_deferred("emit_signal", "error", status.message().data());
 	};
+	auto create_task = TaskRunner::Create({
+			.config = config->get_config(),
+			.op_resolver = std::move(op_resolver),
+			.packets_callback = packets_callback,
+			.input_side_packets = side_packets,
 #if !MEDIAPIPE_DISABLE_GPU
-	auto create_task = TaskRunner::Create(config->get_config(), std::move(op_resolver), packets_callback, nullptr, side_packets, gpu, error_fn);
-#else
-	auto create_task = TaskRunner::Create(config->get_config(), std::move(op_resolver), packets_callback, nullptr, side_packets, error_fn);
+			.resources = gpu,
 #endif
+			.error_fn = error_fn,
+	});
 	if (create_task.ok())
 		task_runner = std::move(create_task.value());
 	else
