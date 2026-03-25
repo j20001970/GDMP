@@ -10,16 +10,12 @@ exports_files(
 cc_library(
     name = "godot",
     srcs = glob([
-        "src/*.cpp",
-        "src/*/*.cpp",
-        "gen/src/*.cpp",
-        "gen/src/*/*.cpp",
+        "gen/src/**",
+        "src/**",
     ]),
     hdrs = glob([
-        "gdextension/*.h",
-        "include/godot_cpp/*.hpp",
-        "include/godot_cpp/*/*.hpp",
-        "gen/include/godot_cpp/*/*.hpp",
+        "gen/include/**",
+        "include/**",
     ]),
     copts = select({
         "@platforms//os:windows": [
@@ -38,7 +34,6 @@ cc_library(
         "//conditions:default": [],
     }),
     includes = [
-        "gdextension",
         "gen/include",
         "include",
     ],

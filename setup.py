@@ -13,7 +13,8 @@ import stat
 
 from config import *
 
-GODOT_CPP_API_JSON = path.join(GODOT_CPP_DIR, "gdextension/extension_api.json")
+GODOT_CPP_API_JSON = path.join(GODOT_CPP_DIR, "gdextension/extension_api-4-4.json")
+GODOT_CPP_INTF_JSON = path.join(GODOT_CPP_DIR, "gdextension/gdextension_interface.json")
 MEDIAPIPE_WORKSPACE = path.join(MEDIAPIPE_DIR, "WORKSPACE")
 GDMP_PATCH_DIR = path.join(ROOT_DIR, "patch")
 
@@ -38,7 +39,9 @@ def generate_bindings(api_json_path: str) -> None:
     sys.path.append(GODOT_CPP_DIR)
     import binding_generator as bg
 
-    bg.generate_bindings(api_json_path, True, output_dir=GODOT_CPP_DIR)
+    bg.generate_bindings(
+        api_json_path, GODOT_CPP_INTF_JSON, True, output_dir=GODOT_CPP_DIR
+    )
     sys.path.pop()
 
 
