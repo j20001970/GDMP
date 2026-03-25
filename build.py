@@ -112,6 +112,8 @@ def get_build_args(args: Namespace) -> [str]:
         "web": build_web,
     }
     build_args = ["-c", "opt", "--action_env=HERMETIC_PYTHON_VERSION=3.12"]
+    build_args.append("--verbose_failures")
+    build_args.append("--toolchain_resolution_debug=.*")
     build_args.extend(build_targets[target](args))
     return build_args
 
