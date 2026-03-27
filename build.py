@@ -25,6 +25,7 @@ def build_android(args: Namespace) -> list[str]:
         "--extra_toolchains=@androidndk//:all",
         "--config=android",
         "--copt=-fPIC",
+        "--linkopt=-Wl,-z,max-page-size=16384",
         "--define=OPENCV=source",
     ]
     if arch.startswith("arm64"):
