@@ -12,6 +12,7 @@
 #include "GDMP/framework/packet.h"
 #include "GDMP/gpu/gpu_helper.h"
 #include "GDMP/gpu/gpu_resources.h"
+#include "GDMP/io/camera_helper.h"
 #include "GDMP/proto/proto.h"
 #include "GDMP/tasks/containers/category.h"
 #include "GDMP/tasks/containers/classification_result.h"
@@ -45,6 +46,8 @@ void initialize_mediapipe_module(ModuleInitializationLevel p_level) {
 	// GPU
 	ClassDB::register_class<MediaPipeGPUHelper>();
 	ClassDB::register_class<MediaPipeGPUResources>();
+	// I/O
+	ClassDB::register_class<MediaPipeCameraHelper>();
 	// ResourceProvider
 	util::set_resource_provider();
 	// Tasks
