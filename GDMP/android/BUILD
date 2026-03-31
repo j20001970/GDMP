@@ -12,6 +12,7 @@ cc_library(
     name = "jni",
     srcs = ["jni.cc"],
     hdrs = ["jni.h"],
+    visibility = ["//visibility:public"],
     deps = [
         ":asset_util",
         "@godot-cpp//:godot",
