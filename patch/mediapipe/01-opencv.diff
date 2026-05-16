@@ -1,7 +1,7 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -524,8 +560,8 @@ http_archive(
+@@ -473,8 +473,8 @@ http_archive(
  http_archive(
      name = "opencv",
      build_file_content = all_content,
@@ -15,17 +15,17 @@ diff --git a/WORKSPACE b/WORKSPACE
 diff --git a/third_party/BUILD b/third_party/BUILD
 --- a/third_party/BUILD
 +++ b/third_party/BUILD
-@@ -164,9 +149,6 @@ alias(
+@@ -123,9 +123,6 @@ alias(
+     name = "opencv",
      actual = select({
          ":opencv_source_build": ":opencv_cmake",
-         ":opencv_prebuilt_build": ":opencv_prebuilt",
 -        ":opencv_ios_sim_arm64_source_build": "@ios_opencv_source//:opencv",
 -        ":opencv_ios_arm64_source_build": "@ios_opencv_source//:opencv",
 -        ":opencv_ios_x86_64_source_build": "@ios_opencv_source//:opencv",
          "//conditions:default": ":opencv_binary",
      }),
      visibility = ["//visibility:public"],
-@@ -188,12 +188,6 @@ bzl_library(
+@@ -147,12 +144,6 @@ bzl_library(
  # linker, so if library A depends on library B, library B must come _after_.
  # Hence core is at the bottom.
  OPENCV_MODULES = [
@@ -38,7 +38,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
      "imgproc",
      "core",
  ]
-@@ -202,9 +196,10 @@ OPENCV_MODULES = [
+@@ -161,9 +152,10 @@ OPENCV_MODULES = [
  # still only builds the shared libraries, so we have to choose one or the
  # other. We build shared libraries by default, but this variable can be used
  # to switch to static libraries.
@@ -51,7 +51,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
  
  cmake(
      name = "opencv_cmake",
-@@ -219,11 +196,14 @@ cmake(
+@@ -178,11 +170,14 @@ cmake(
          "BUILD_PERF_TESTS": "OFF",
          "BUILD_EXAMPLES": "OFF",
          "BUILD_SHARED_LIBS": "ON" if OPENCV_SHARED_LIBS else "OFF",
@@ -69,7 +69,7 @@ diff --git a/third_party/BUILD b/third_party/BUILD
          "WITH_OPENCL": "OFF",
          "WITH_WEBP": "OFF",
          # Optimization flags
-@@ -252,48 +232,58 @@ cmake(
+@@ -211,48 +206,58 @@ cmake(
          # ccache would be able to work across sandboxed Bazel builds, either.
          # In any case, Bazel does its own caching of the rule's outputs.
          "ENABLE_CCACHE": "OFF",

@@ -19,11 +19,11 @@ bool MediaPipeInteractiveSegmenter::initialize(
 		Ref<MediaPipeTaskBaseOptions> base_options,
 		bool output_confidence_masks, bool output_category_mask) {
 	ERR_FAIL_COND_V(base_options.is_null(), false);
-	auto options = std::make_unique<InteractiveSegmenterOptions>();
+	auto options = std::make_unique<InteractiveSegmenterLegacyOptions>();
 	options->base_options = std::move(*base_options->get_base_options());
 	options->output_confidence_masks = output_confidence_masks;
 	options->output_category_mask = output_category_mask;
-	auto create_task = InteractiveSegmenter::Create(std::move(options));
+	auto create_task = InteractiveSegmenterLegacy::Create(std::move(options));
 	if (create_task.ok())
 		task = std::move(create_task.value());
 	else

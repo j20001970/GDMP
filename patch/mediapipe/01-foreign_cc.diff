@@ -1,0 +1,16 @@
+diff --git a/MODULE.bazel b/MODULE.bazel
+--- a/MODULE.bazel
++++ b/MODULE.bazel
+@@ -15,5 +15,12 @@ single_version_override(
+ )
+ 
++bazel_dep(name = "rules_foreign_cc", version = "0.15.1")
++git_override(
++    module_name = "rules_foreign_cc",
++    remote = "https://github.com/bazel-contrib/rules_foreign_cc",
++    commit = "329140e4a0aef17dfc8e2907acd851e3d7d7a08c",
++)
++
+ bazel_dep(name = "rules_kotlin", version = "1.9.6")
+ bazel_dep(name = "rules_shell", version = "0.4.1")
+ bazel_dep(name = "rules_pkg", version = "1.0.1")

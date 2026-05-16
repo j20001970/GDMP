@@ -134,7 +134,7 @@ cc_library(
         ":vision_task",
         "//GDMP/framework:image",
         "@godot-cpp//:godot",
-        "@mediapipe//mediapipe/tasks/cc/vision/interactive_segmenter",
+        "@mediapipe//mediapipe/tasks/cc/vision/interactive_segmenter_legacy",
     ],
     alwayslink = 1,
 )

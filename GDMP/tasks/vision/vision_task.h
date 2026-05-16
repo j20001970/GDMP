@@ -35,7 +35,7 @@ VARIANT_ENUM_CAST(MediaPipeVisionTask::RunningMode)
 private:                                   \
 	std::unique_ptr<TASK> task;
 
-RunningMode get_running_mode(MediaPipeVisionTask::RunningMode p_mode);
+mediapipe::tasks::vision::core::RunningMode get_running_mode(MediaPipeVisionTask::RunningMode p_mode);
 
 ImageProcessingOptions make_image_processing_options(Rect2 roi, int rotation_degrees);
 

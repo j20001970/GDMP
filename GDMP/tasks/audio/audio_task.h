@@ -34,7 +34,7 @@ VARIANT_ENUM_CAST(MediaPipeAudioTask::RunningMode)
 private:                                  \
 	std::unique_ptr<TASK> task;
 
-RunningMode get_running_mode(MediaPipeAudioTask::RunningMode p_mode);
+mediapipe::tasks::audio::core::RunningMode get_running_mode(MediaPipeAudioTask::RunningMode p_mode);
 
 mediapipe::Matrix make_audio_matrix(PackedVector2Array audio_data, bool is_stereo);
 

@@ -145,6 +145,13 @@ def download_bazel_tools() -> None:
     os.chmod(buildifier_path, perms | stat.S_IXUSR)
 
 
+def symlink(src, dst):
+    if current_platform == "windows":
+        run(f'mklink /J "{dst}" "{src}"', check=True, shell=True)
+    else:
+        os.symlink(src, dst, True)
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
 
@@ -179,6 +186,9 @@ if __name__ == "__main__":
     generate_bindings(api_json_path)
 
     apply_patch(GDMP_PATCH_DIR)
+
+    if not path.exists(path.join(MEDIAPIPE_DIR, "patch")):
+        symlink(GDMP_PATCH_DIR, path.join(MEDIAPIPE_DIR, "patch"))
 
     workspace_android_rules()
 
