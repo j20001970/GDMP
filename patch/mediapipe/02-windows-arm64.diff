@@ -2,7 +2,7 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -263,6 +263,8 @@ http_archive(
+@@ -189,6 +189,8 @@ http_archive(
  http_archive(
      name = "XNNPACK",
      # `curl -L <url> | shasum -a 256`
@@ -11,7 +11,7 @@ diff --git a/WORKSPACE b/WORKSPACE
      sha256 = "7235b2b55fbf11b64f38db130efae0f293d2d6d6fd90613221b598a8847f41c5",
      strip_prefix = "XNNPACK-68167d1fefa50296f0588ec280f48c58357ca898",
      url = "https://github.com/google/XNNPACK/archive/68167d1fefa50296f0588ec280f48c58357ca898.zip",
-@@ -303,6 +303,10 @@ http_archive(
+@@ -236,6 +238,10 @@ http_archive(
  # 2025-09-08
  http_archive(
      name = "cpuinfo",
@@ -22,10 +22,10 @@ diff --git a/WORKSPACE b/WORKSPACE
      sha256 = "c0254ce97f7abc778dd2df0aaca1e0506dba1cd514fdb9fe88c07849393f8ef4",
      strip_prefix = "cpuinfo-8a9210069b5a37dd89ed118a783945502a30a4ae",
      urls = [
-@@ -346,6 +346,7 @@ http_archive(
-         # Works around Bazel issue with objc_library.
+@@ -273,6 +279,7 @@ http_archive(
          # See https://github.com/bazelbuild/bazel/issues/19912
          "@//third_party:org_tensorflow_objc_build_fixes.diff",
+         "@//third_party:org_tensorflow_verifier_int4.diff",
 +        "@GDMP//patch:org_tensorflow_icu_windows_arm64.diff",
      ],
      sha256 = _TENSORFLOW_SHA256,

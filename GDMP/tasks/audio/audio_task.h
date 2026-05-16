@@ -31,7 +31,7 @@ class MediaPipeAudioTask : public MediaPipeTask {
 private:                                  \
 	std::unique_ptr<TASK> task;
 
-RunningMode get_running_mode(int p_mode);
+mediapipe::tasks::audio::core::RunningMode get_running_mode(int p_mode);
 
 mediapipe::Matrix make_audio_matrix(PoolVector2Array audio_data, bool is_stereo);
 

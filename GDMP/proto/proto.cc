@@ -27,17 +27,19 @@ MediaPipeProto *MediaPipeProto::_new(const protobuf::Message &message) {
 	MediaPipeProto *proto = MediaPipeProto::_new();
 	const protobuf::Descriptor *descriptor = message.GetDescriptor();
 	const protobuf::Message *prototype = util::get_prototype(descriptor);
-	proto->message = prototype->New();
-	proto->message->CopyFrom(message);
+	protobuf::Message *copy = prototype->New();
+	copy->CopyFrom(message);
+	proto->message = std::unique_ptr<protobuf::Message>(copy);
 	return proto;
 }
 
 MediaPipeProto *MediaPipeProto::_new(const protobuf::MessageLite &message) {
 	MediaPipeProto *proto = MediaPipeProto::_new();
-	const std::string &type_name = message.GetTypeName();
+	const std::string &type_name = message.GetTypeName().data();
 	const protobuf::Message *prototype = util::get_prototype(type_name);
-	proto->message = prototype->New();
-	proto->message->ParseFromString(message.SerializeAsString());
+	protobuf::Message *copy = prototype->New();
+	copy->ParseFromString(message.SerializeAsString());
+	proto->message = std::unique_ptr<protobuf::Message>(copy);
 	return proto;
 }
 
@@ -198,7 +200,7 @@ Ref<MediaPipeProto> MediaPipeProto::duplicate() {
 
 Ref<MediaPipePacket> MediaPipeProto::get_packet() {
 	ERR_FAIL_COND_V(!is_initialized(), nullptr);
-	auto create_packet = mediapipe::packet_internal::PacketFromDynamicProto(message->GetTypeName(), message->SerializeAsString());
+	auto create_packet = mediapipe::packet_internal::PacketFromDynamicProto(message->GetTypeName().data(), message->SerializeAsString());
 	ERR_FAIL_COND_V(!create_packet.ok(), nullptr);
 	return Ref(MediaPipePacket::_new(create_packet.value()));
 }

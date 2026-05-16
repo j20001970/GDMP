@@ -25,7 +25,6 @@ def build_android(args: Namespace) -> list[str]:
     build_args = [
         "--crosstool_top=//external:android/crosstool",
         "--extra_toolchains=@androidndk//:all",
-        "--host_crosstool_top=@bazel_tools//tools/cpp:toolchain",
         "--copt=-fPIC",
         "--linkopt=-Wl,-z,max-page-size=16384",
         "--define=OPENCV=source",
@@ -49,12 +48,12 @@ def build_desktop(args: Namespace) -> list[str]:
             "--define=OPENCV=source",
         ],
         "darwin": [
-            "--incompatible_enable_cc_toolchain_resolution",
             "--apple_platform_type=macos",
             "--copt=-DMEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER",
             "--define=OPENCV=source",
         ],
         "win32": [
+            "--noincompatible_enable_cc_toolchain_resolution",
             "--copt=/Zc:preprocessor",
             "--copt=/utf-8",
             "--conlyopt=/std:c11",
@@ -103,7 +102,6 @@ def build_desktop(args: Namespace) -> list[str]:
 def build_ios(args: Namespace) -> list[str]:
     debug: bool = args.debug
     build_args = [
-        "--incompatible_enable_cc_toolchain_resolution",
         "--apple_platform_type=ios",
         "--define=OPENCV=source",
     ]
@@ -117,18 +115,14 @@ def build_ios(args: Namespace) -> list[str]:
 
 def build_web(args: Namespace) -> list[str]:
     build_args = [
-        "--incompatible_enable_cc_toolchain_resolution",
-        "--copt=-D_LARGEFILE64_SOURCE",
         "--copt=-fexceptions",
         "--copt=-pthread",
         "--copt=-sDISABLE_EXCEPTION_CATCHING=1",
         "--copt=-sSIDE_MODULE=1",
-        "--copt=-sSUPPORT_LONGJMP='wasm'",
         "--linkopt=-pthread",
         "--linkopt=-sSIDE_MODULE=1",
-        "--linkopt=-sSUPPORT_LONGJMP='wasm'",
-        "--linkopt=-sWASM_BIGINT",
         "--linkopt=--oformat=wasm",
+        "--per_file_copt=external/zlib/.*\\.c@-D_LARGEFILE64_SOURCE",
         "--define=OPENCV=source",
     ]
     return build_args

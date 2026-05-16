@@ -32,7 +32,7 @@ class MediaPipeVisionTask : public MediaPipeTask {
 private:                                   \
 	std::unique_ptr<TASK> task;
 
-RunningMode get_running_mode(int p_mode);
+mediapipe::tasks::vision::core::RunningMode get_running_mode(int p_mode);
 
 ImageProcessingOptions make_image_processing_options(Rect2 roi, int rotation_degrees);
 
