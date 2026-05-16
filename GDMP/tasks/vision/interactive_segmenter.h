@@ -6,17 +6,17 @@
 #include "godot_cpp/variant/rect2.hpp"
 #include "godot_cpp/variant/vector2.hpp"
 
-#include "mediapipe/tasks/cc/vision/interactive_segmenter/interactive_segmenter.h"
+#include "mediapipe/tasks/cc/vision/interactive_segmenter_legacy/interactive_segmenter_legacy.h"
 
 #include "GDMP/framework/image.h"
 #include "GDMP/tasks/vision/image_segmenter.h"
 #include "GDMP/tasks/vision/vision_task.h"
 
 using namespace godot;
-using namespace mediapipe::tasks::vision::interactive_segmenter;
+using namespace mediapipe::tasks::vision::interactive_segmenter_legacy;
 
 class MediaPipeInteractiveSegmenter : public MediaPipeVisionTask {
-		GDMP_VISION_TASK_CLASS(MediaPipeInteractiveSegmenter, InteractiveSegmenter)
+		GDMP_VISION_TASK_CLASS(MediaPipeInteractiveSegmenter, InteractiveSegmenterLegacy)
 
 	protected:
 		static void _bind_methods();

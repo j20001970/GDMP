@@ -74,7 +74,7 @@ MediaPipeProto::MediaPipeProto(const protobuf::Message &message) {
 }
 
 MediaPipeProto::MediaPipeProto(const protobuf::MessageLite &message) {
-	const std::string &type_name = message.GetTypeName();
+	const std::string &type_name = message.GetTypeName().data();
 	const protobuf::Message *prototype = util::get_prototype(type_name);
 	this->message = prototype->New();
 	this->message->ParseFromString(message.SerializeAsString());
@@ -214,7 +214,7 @@ Ref<MediaPipeProto> MediaPipeProto::duplicate() {
 
 Ref<MediaPipePacket> MediaPipeProto::get_packet() {
 	ERR_FAIL_COND_V(!is_initialized(), nullptr);
-	auto create_packet = mediapipe::packet_internal::PacketFromDynamicProto(message->GetTypeName(), message->SerializeAsString());
+	auto create_packet = mediapipe::packet_internal::PacketFromDynamicProto(message->GetTypeName().data(), message->SerializeAsString());
 	ERR_FAIL_COND_V_MSG(!create_packet.ok(), nullptr, create_packet.status().message().data());
 	return memnew(MediaPipePacket(create_packet.value()));
 }

@@ -1,7 +1,7 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -2,6 +2,53 @@ workspace(name = "mediapipe")
+@@ -2,6 +2,17 @@ workspace(name = "mediapipe")
  
  load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
  
@@ -15,42 +15,6 @@ diff --git a/WORKSPACE b/WORKSPACE
 +    build_file = "@GDMP//GDMP:godot-cpp.BUILD",
 +    path = "../godot-cpp",
 +)
-+
-+http_archive(
-+    name = "emsdk",
-+    strip_prefix = "emsdk-3.1.64/bazel",
-+    patch_args = [
-+        "-p2",
-+    ],
-+    patches = [
-+        "@GDMP//patch:emsdk_link_wrapper.diff",
-+    ],
-+    url = "https://github.com/emscripten-core/emsdk/archive/3.1.64.tar.gz",
-+)
-+
-+load("@emsdk//:deps.bzl", emsdk_deps = "deps")
-+emsdk_deps()
-+
-+load("@emsdk//:emscripten_deps.bzl", emsdk_emscripten_deps = "emscripten_deps")
-+emsdk_emscripten_deps(emscripten_version = "3.1.64")
-+
-+load("@emsdk//:toolchains.bzl", "register_emscripten_toolchains")
-+register_emscripten_toolchains(
-+    cache = {
-+        "configuration": ["--pic"],
-+        "targets": [
-+            "crtbegin",
-+        ],
-+    },
-+)
-+
-+http_archive(
-+    name = "hedron_compile_commands",
-+    url = "https://github.com/eduardvercaemer/bazel-compile-commands-extractor/archive/e49f0cd201931f2a3137814a66a0d2e30b45cda1.tar.gz",
-+    strip_prefix = "bazel-compile-commands-extractor-e49f0cd201931f2a3137814a66a0d2e30b45cda1",
-+)
-+load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_setup")
-+hedron_compile_commands_setup()
 +
  # Protobuf expects an //external:python_headers target
  bind(
