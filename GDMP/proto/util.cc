@@ -35,7 +35,7 @@ const protobuf::FieldDescriptor *util::get_field_descriptor(protobuf::Message **
 				const protobuf::Reflection *refl = msg->GetReflection();
 				msg = refl->MutableMessage(msg, field);
 			} else {
-				ERR_PRINT(vformat("Field %s is type %s", field->name().data(), field->type_name()));
+				ERR_PRINT(vformat("Field %s is type %s", field->name().data(), field->type_name().data()));
 				return nullptr;
 			}
 		}
@@ -78,7 +78,7 @@ Variant util::get_field(const protobuf::Message &message, const protobuf::FieldD
 			return bytes;
 		}
 	}
-	ERR_PRINT(vformat("Unsupported field type %s", field->type_name()));
+	ERR_PRINT(vformat("Unsupported field type %s", field->type_name().data()));
 	return nullptr;
 }
 
@@ -113,7 +113,7 @@ Variant util::get_repeated_field(const protobuf::Message &message, const protobu
 			return bytes;
 		}
 	}
-	ERR_PRINT(vformat("Unsupported field type %s", field->type_name()));
+	ERR_PRINT(vformat("Unsupported field type %s", field->type_name().data()));
 	return nullptr;
 }
 
@@ -175,7 +175,7 @@ Variant util::get_repeated_field(const protobuf::Message &message, const protobu
 			return array;
 		}
 	}
-	ERR_PRINT(vformat("Unsupported field type %s", field->type_name()));
+	ERR_PRINT(vformat("Unsupported field type %s", field->type_name().data()));
 	return nullptr;
 }
 
@@ -232,7 +232,7 @@ bool util::set_field(protobuf::Message &message, const protobuf::FieldDescriptor
 			return true;
 		}
 	}
-	ERR_PRINT(vformat("Unsupported field type %s", field->type_name()));
+	ERR_PRINT(vformat("Unsupported field type %s", field->type_name().data()));
 	return false;
 }
 
@@ -290,7 +290,7 @@ bool util::set_repeated_field(protobuf::Message &message, const protobuf::FieldD
 			return true;
 		}
 	}
-	ERR_PRINT(vformat("Unsupported field type %s", field->type_name()));
+	ERR_PRINT(vformat("Unsupported field type %s", field->type_name().data()));
 	return false;
 }
 
@@ -384,6 +384,6 @@ bool util::set_repeated_field(protobuf::Message &message, const protobuf::FieldD
 			return true;
 		}
 	}
-	ERR_PRINT(vformat("Unsupported field type %s", field->type_name()));
+	ERR_PRINT(vformat("Unsupported field type %s", field->type_name().data()));
 	return false;
 }

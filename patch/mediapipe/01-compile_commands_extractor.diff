@@ -1,0 +1,14 @@
+diff --git a/MODULE.bazel b/MODULE.bazel
+--- a/MODULE.bazel
++++ b/MODULE.bazel
+@@ -81,3 +81,10 @@ node.toolchain(node_version = "20.14.0")
+ use_repo(node, "nodejs_toolchains")
+ 
+ register_toolchains("@nodejs_toolchains//:all")
++
++bazel_dep(name = "hedron_compile_commands", dev_dependency = True)
++archive_override(
++    module_name = "hedron_compile_commands",
++    strip_prefix = "bazel-compile-commands-extractor-e49f0cd201931f2a3137814a66a0d2e30b45cda1",
++    urls = ["https://github.com/eduardvercaemer/bazel-compile-commands-extractor/archive/e49f0cd201931f2a3137814a66a0d2e30b45cda1.tar.gz"],
++)

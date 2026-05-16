@@ -13,8 +13,8 @@ void MediaPipeVisionTask::_register_task() {
 	_register_tasks();
 }
 
-RunningMode get_running_mode(MediaPipeVisionTask::RunningMode p_mode) {
-	return RunningMode(p_mode);
+mediapipe::tasks::vision::core::RunningMode get_running_mode(MediaPipeVisionTask::RunningMode p_mode) {
+	return mediapipe::tasks::vision::core::RunningMode(p_mode);
 }
 
 ImageProcessingOptions make_image_processing_options(Rect2 roi, int rotation_degrees) {

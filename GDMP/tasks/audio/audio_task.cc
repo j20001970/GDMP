@@ -10,8 +10,8 @@ void MediaPipeAudioTask::_register_task() {
 	_register_tasks();
 }
 
-RunningMode get_running_mode(MediaPipeAudioTask::RunningMode p_mode) {
-	return RunningMode(p_mode);
+mediapipe::tasks::audio::core::RunningMode get_running_mode(MediaPipeAudioTask::RunningMode p_mode) {
+	return mediapipe::tasks::audio::core::RunningMode(p_mode);
 }
 
 mediapipe::Matrix make_audio_matrix(PackedVector2Array audio_data, bool is_stereo) {
