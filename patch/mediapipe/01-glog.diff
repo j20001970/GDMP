@@ -1,33 +1,26 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -154,11 +201,22 @@ http_archive(
+@@ -81,11 +81,12 @@ http_archive(
+     ],
+     patches = [
+         "@//third_party:com_github_glog_glog.diff",
++        "@//third_party:com_github_glog_glog_windows_patch.diff",
+     ],
+-    sha256 = "8a83bf982f37bb70825df71a9709fa90ea9f4447fb3c099e1d720a439d88bad6",
+-    strip_prefix = "glog-0.6.0",
++    sha256 = "170d08f80210b82d95563f4723a15095eff1aad1863000e8eeb569c96a98fefb",
++    strip_prefix = "glog-3a0d4d22c5ae0b9a2216988411cfa6bf860cc372",
+     urls = [
+-        "https://github.com/google/glog/archive/v0.6.0.tar.gz",
++        "https://github.com/google/glog/archive/3a0d4d22c5ae0b9a2216988411cfa6bf860cc372.zip",
      ],
  )
  
-+http_archive(
-+    name = "com_github_glog_glog_emscripten",
-+    build_file = "@//third_party:glog_no_gflags.BUILD",
-+    sha256 = "00e4a87e87b7e7612f519a41e491f16623b12423620006f59f5688bfd8d13b08",
-+    strip_prefix = "glog-0.7.1",
-+    urls = [
-+        "https://github.com/google/glog/archive/v0.7.1.tar.gz",
-+    ],
-+)
-+
- # 2023-06-05
- # This version of Glog is required for Windows support, but currently causes
- # crashes on some Android devices.
- http_archive(
-     name = "com_github_glog_glog_windows",
-+    build_file = "@//third_party:glog_no_gflags.BUILD",
-     patch_args = [
-         "-p1",
-     ],
 diff --git a/third_party/BUILD b/third_party/BUILD
 --- a/third_party/BUILD
 +++ b/third_party/BUILD
-@@ -40,29 +40,14 @@ cc_library(
+@@ -40,29 +40,8 @@ cc_library(
      name = "glog",
      visibility = ["//visibility:public"],
      deps = select({
@@ -49,12 +42,9 @@ diff --git a/third_party/BUILD b/third_party/BUILD
 -        "//mediapipe:macos": [
 -            "@com_github_glog_glog//:glog",
 -        ],
-         "//mediapipe:windows": [
-             "@com_github_glog_glog_windows//:glog",
-         ],
-+        "//mediapipe:emscripten": [
-+            "@com_github_glog_glog_emscripten//:glog",
-+        ],
+-        "//mediapipe:windows": [
+-            "@com_github_glog_glog_windows//:glog",
+-        ],
          "//conditions:default": [
 -            "@com_github_glog_glog//:glog",
 +            "@com_github_glog_glog_no_gflags//:glog",
