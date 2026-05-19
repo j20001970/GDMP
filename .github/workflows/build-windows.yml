@@ -25,7 +25,7 @@ jobs:
         run: echo "work-dir=${{ inputs.working-directory }}" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -42,7 +42,7 @@ jobs:
           python ./build.py desktop --output build/${{ matrix.arch }}
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-artifact-windows-${{ matrix.arch }}
           path: |

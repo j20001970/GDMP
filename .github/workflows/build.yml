@@ -72,12 +72,12 @@ jobs:
         run: echo "work-dir=${{ inputs.working-directory }}" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: ${{ env.work-dir }}
           pattern: build-artifact-*
@@ -96,7 +96,7 @@ jobs:
           done
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-artifact
           path: ${{ env.work-dir }}/dist/
