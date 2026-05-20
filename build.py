@@ -22,8 +22,9 @@ TARGETS = {
 def build_android(args: Namespace) -> list[str]:
     arch: str = args.arch
     build_args = [
+        "--crosstool_top=//external:android/crosstool",
         "--extra_toolchains=@androidndk//:all",
-        "--config=android",
+        "--host_crosstool_top=@bazel_tools//tools/cpp:toolchain",
         "--copt=-fPIC",
         "--linkopt=-Wl,-z,max-page-size=16384",
         "--define=OPENCV=source",
@@ -44,6 +45,7 @@ def build_desktop(args: Namespace) -> list[str]:
             "--define=OPENCV=source",
         ],
         "darwin": [
+            "--apple_platform_type=macos",
             "--apple_generate_dsym=false",
             "--copt=-DMEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER",
             "--define=OPENCV=source",
@@ -74,7 +76,7 @@ def build_ios(args: Namespace) -> list[str]:
     arch: str = args.arch
     build_args = [
         "--apple_generate_dsym=false",
-        "--config=ios",
+        "--apple_platform_type=ios",
         "--define=OPENCV=source",
     ]
     return build_args
