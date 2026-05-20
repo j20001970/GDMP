@@ -12,7 +12,7 @@ cc_library(
     ],
     deps = [
         "//GDMP/framework:packet",
-        "@com_google_protobuf//:protobuf",
         "@godot-cpp//:godot",
+        "@mediapipe//mediapipe/framework/port:core_proto",
     ],
 )
