@@ -1,14 +1,15 @@
 name: 🌐 Build Web
 on:
-  pull_request:
   workflow_call:
     inputs:
       working-directory:
         type: string
         required: false
   workflow_dispatch:
+
 env:
-  WORKING_DIR: ${{ github.workspace }}
+  work-dir: ${{ github.workspace }}
+
 jobs:
   build:
     name: Web WebAssembly
@@ -16,7 +17,14 @@ jobs:
     steps:
       - name: Set Working Directory
         if: ${{ inputs.working-directory != '' }}
-        run: echo "WORKING_DIR=${{ inputs.working-directory }}" >> $GITHUB_ENV
+        run: echo "work-dir=${{ inputs.working-directory }}" >> $GITHUB_ENV
+
+      - name: Setup Bazel
+        uses: bazel-contrib/setup-bazel@0.19.0
+        with:
+          cache-save: ${{ github.event_name != 'pull_request' }}
+          disk-cache: web
+          external-cache: true
 
       - name: Checkout
         uses: actions/checkout@v6
@@ -24,18 +32,18 @@ jobs:
           submodules: recursive
 
       - name: Setup
-        working-directory: ${{ env.WORKING_DIR }}
+        working-directory: ${{ env.work-dir }}
         run: |
           python ./setup.py
 
       - name: Build
-        working-directory: ${{ env.WORKING_DIR }}
+        working-directory: ${{ env.work-dir }}
         run: |
           python ./build.py web --output build/
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: build-artifact-web
+          name: GDMP-web
           path: |
-            ${{ env.WORKING_DIR }}/build/*
+            ${{ env.work-dir }}/build/*

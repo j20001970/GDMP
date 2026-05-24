@@ -1,6 +1,5 @@
 name: 🐧 Build Linux
 on:
-  pull_request:
   workflow_call:
     inputs:
       working-directory:
@@ -32,6 +31,13 @@ jobs:
         if: ${{ inputs.working-directory != '' }}
         run: echo "work-dir=${{ inputs.working-directory }}" >> $GITHUB_ENV
 
+      - name: Setup Bazel
+        uses: bazel-contrib/setup-bazel@0.19.0
+        with:
+          cache-save: ${{ github.event_name != 'pull_request' }}
+          disk-cache: linux-${{ matrix.arch }}
+          external-cache: true
+
       - name: Checkout
         uses: actions/checkout@v6
         with:
@@ -54,13 +60,13 @@ jobs:
       - name: Build
         working-directory: ${{ env.work-dir }}
         run: |
-          ./scripts/flatpak_env.sh << EOF
+          ./scripts/flatpak_env.sh --filesystem=home << EOF
           python ./build.py desktop --arch ${{ matrix.arch }} --output build/${{ matrix.arch }}
           EOF
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: build-artifact-linux-${{ matrix.arch }}
+          name: GDMP-linux-${{ matrix.arch }}
           path: |
             ${{ env.work-dir }}/build/*

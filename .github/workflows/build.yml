@@ -80,7 +80,7 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           path: ${{ env.work-dir }}
-          pattern: build-artifact-*
+          pattern: GDMP-*
 
       - name: Assemble
         working-directory: ${{ env.work-dir }}
@@ -90,7 +90,7 @@ jobs:
           cp LICENSE dist/addons/GDMP/
           cp README.md dist/addons/GDMP/
           mkdir -p dist/addons/GDMP/libs/
-          for f in build-artifact-*
+          for f in GDMP-*
           do
           cp -r $f/* dist/addons/GDMP/libs/
           done
@@ -98,5 +98,5 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: build-artifact
+          name: GDMP
           path: ${{ env.work-dir }}/dist/
