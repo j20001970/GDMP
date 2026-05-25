@@ -13,9 +13,6 @@ cc_library(
 
 cc_binary(
     name = "GDMP",
-    linkopts = select({
-        "//conditions:default": ["-s"],
-    }),
     linkshared = 1,
     deps = [
         "//GDMP",

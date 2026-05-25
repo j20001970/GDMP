@@ -21,6 +21,7 @@ TARGETS = {
 
 def build_android(args: Namespace) -> list[str]:
     arch: str = args.arch
+    debug: bool = args.debug
     build_args = [
         "--crosstool_top=//external:android/crosstool",
         "--extra_toolchains=@androidndk//:all",
@@ -31,12 +32,15 @@ def build_android(args: Namespace) -> list[str]:
     ]
     if arch.startswith("arm64"):
         arch = "arm64-v8a"
+    if not debug:
+        build_args.append("--linkopt=-s")
     build_args.append(f"--cpu={arch}")
     return build_args
 
 
 def build_desktop(args: Namespace) -> list[str]:
     arch: str = args.arch
+    debug: bool = args.debug
     desktop_args = {
         "linux": [
             "--copt=-DMESA_EGL_NO_X11_HEADERS",
@@ -47,7 +51,6 @@ def build_desktop(args: Namespace) -> list[str]:
         "darwin": [
             "--incompatible_enable_cc_toolchain_resolution",
             "--apple_platform_type=macos",
-            "--apple_generate_dsym=false",
             "--copt=-DMEDIAPIPE_GPU_BUFFER_USE_CV_PIXEL_BUFFER",
             "--define=OPENCV=source",
         ],
@@ -70,9 +73,16 @@ def build_desktop(args: Namespace) -> list[str]:
             build_args.append("--cpu=darwin_x86_64")
             build_args.append("--macos_minimum_os=10.13")
             build_args.append("--define=xnn_enable_avxvnniint8=false")
+        if not debug:
+            build_args.append("--apple_generate_dsym=false")
+            build_args.append("--linkopt=-Wl,-S")
+            build_args.append("--linkopt=-Wl,-x")
+            build_args.append("--linkopt=-Wl,-dead_strip")
     elif sys.platform == "linux":
         if arch == "arm64":
             build_args.append("--copt=-fpermissive")
+        if not debug:
+            build_args.append("--linkopt=-s")
     elif sys.platform == "win32":
         if arch == "arm64":
             build_args.append("--cpu=arm64_windows")
@@ -84,17 +94,23 @@ def build_desktop(args: Namespace) -> list[str]:
             build_args.append("--define=xnn_enable_assembly=false")
         elif arch == "x86_64":
             build_args.append("--cpu=x64_windows")
+        if debug:
+            build_args.append("--linkopt=/DEBUG:FULL")
     return build_args
 
 
 def build_ios(args: Namespace) -> list[str]:
-    arch: str = args.arch
+    debug: bool = args.debug
     build_args = [
         "--incompatible_enable_cc_toolchain_resolution",
-        "--apple_generate_dsym=false",
         "--apple_platform_type=ios",
         "--define=OPENCV=source",
     ]
+    if not debug:
+        build_args.append("--apple_generate_dsym=false")
+        build_args.append("--linkopt=-Wl,-S")
+        build_args.append("--linkopt=-Wl,-x")
+        build_args.append("--linkopt=-Wl,-dead_strip")
     return build_args
 
 
@@ -118,6 +134,7 @@ def build_web(args: Namespace) -> list[str]:
 
 
 def get_build_args(args: Namespace) -> [str]:
+    debug: bool = args.debug
     target: str = args.target
     build_targets = {
         "android": build_android,
@@ -125,7 +142,11 @@ def get_build_args(args: Namespace) -> [str]:
         "ios": build_ios,
         "web": build_web,
     }
-    build_args = ["-c", "opt", "--action_env=HERMETIC_PYTHON_VERSION=3.12"]
+    build_args = ["--action_env=HERMETIC_PYTHON_VERSION=3.12"]
+    if debug:
+        build_args.extend(["-c", "dbg"])
+    else:
+        build_args.extend(["-c", "opt"])
     build_args.extend(build_targets[target](args))
     return build_args
 
@@ -244,6 +265,7 @@ def get_args() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument("target", choices=list(TARGETS), help="build target")
     parser.add_argument("--arch", default="", help="library architecture")
+    parser.add_argument("--debug", action="store_true", help="build debug library")
     parser.add_argument("--output", help="build output directory")
     args = parser.parse_args()
     if not args.arch:
