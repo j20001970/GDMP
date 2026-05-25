@@ -1,4 +1,5 @@
 load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile_commands")
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("//GDMP:GDMP.bzl", "CALCULATORS", "TASKS")
 
 package(default_visibility = ["//visibility:public"])
