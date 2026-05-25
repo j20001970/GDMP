@@ -56,6 +56,7 @@ def build_desktop(args: Namespace) -> list[str]:
         ],
         "win32": [
             "--copt=/Zc:preprocessor",
+            "--copt=/utf-8",
             "--conlyopt=/std:c11",
             "--conlyopt=/experimental:c11atomics",
             "--per_file_copt=mediapipe/framework/legacy_calculator_support\\.cc@/std:c++17",
