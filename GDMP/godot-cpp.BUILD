@@ -20,12 +20,8 @@ cc_library(
         "include/**",
     ]),
     copts = select({
-        "@platforms//os:windows": [
-            "/utf-8",
-        ],
-        "//conditions:default": [
-            "-fno-exceptions",
-        ],
+        "@platforms//os:windows": [],
+        "//conditions:default": ["-fno-exceptions"],
     }),
     defines = select({
         "@platforms//os:windows": [
