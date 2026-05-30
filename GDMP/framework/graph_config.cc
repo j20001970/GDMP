@@ -3,17 +3,14 @@
 void MediaPipeGraphConfig::_bind_methods() {}
 
 MediaPipeGraphConfig::MediaPipeGraphConfig() {
-	message = mediapipe::CalculatorGraphConfig().New();
-	config = static_cast<mediapipe::CalculatorGraphConfig *>(message);
+	config = mediapipe::CalculatorGraphConfig().New();
+	message = std::unique_ptr<mediapipe::CalculatorGraphConfig>(config);
 }
 
-MediaPipeGraphConfig::MediaPipeGraphConfig(const mediapipe::CalculatorGraphConfig &config) {
-	message = config.New();
+MediaPipeGraphConfig::MediaPipeGraphConfig(const mediapipe::CalculatorGraphConfig &config) :
+		MediaPipeGraphConfig() {
 	message->CopyFrom(config);
-	this->config = static_cast<mediapipe::CalculatorGraphConfig *>(message);
 }
-
-MediaPipeGraphConfig::~MediaPipeGraphConfig() = default;
 
 const mediapipe::CalculatorGraphConfig &MediaPipeGraphConfig::get_config() {
 	return *config;

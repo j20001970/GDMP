@@ -17,9 +17,10 @@ void MediaPipeProto::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_fields"), &MediaPipeProto::get_fields);
 	ClassDB::bind_method(D_METHOD("is_repeated_field", "field_name"), &MediaPipeProto::is_repeated_field);
 	ClassDB::bind_method(D_METHOD("get_repeated_field_size", "field_name"), &MediaPipeProto::get_repeated_field_size);
-	ClassDB::bind_method(D_METHOD("get_field", "field_name"), &MediaPipeProto::get_field);
-	ClassDB::bind_method(D_METHOD("get_repeated_field", "field_name", "index"), &MediaPipeProto::get_repeated_field);
-	ClassDB::bind_method(D_METHOD("set_field", "field_name", "value"), &MediaPipeProto::set_field);
+	ClassDB::bind_method(D_METHOD("get_field", "field_name", "delimiter"), &MediaPipeProto::get_field, DEFVAL("/"));
+	ClassDB::bind_method(D_METHOD("get_repeated_field", "field_name", "index", "delimiter"), &MediaPipeProto::get_repeated_field, DEFVAL("/"));
+	ClassDB::bind_method(D_METHOD("set_field", "field_name", "value", "delimiter"), &MediaPipeProto::set_field, DEFVAL("/"));
+	ClassDB::bind_method(D_METHOD("set_repeated_field", "field_name", "index", "value", "delimiter"), &MediaPipeProto::set_repeated_field, DEFVAL("/"));
 	ClassDB::bind_method(D_METHOD("duplicate"), &MediaPipeProto::duplicate);
 	ClassDB::bind_method(D_METHOD("get_packet"), &MediaPipeProto::get_packet);
 }
@@ -62,36 +63,30 @@ String MediaPipeProto::_to_string() const {
 	return string;
 }
 
-MediaPipeProto::MediaPipeProto() {
-	message = nullptr;
-}
+MediaPipeProto::MediaPipeProto() = default;
 
 MediaPipeProto::MediaPipeProto(const protobuf::Message &message) {
 	const protobuf::Descriptor *descriptor = message.GetDescriptor();
 	const protobuf::Message *prototype = util::get_prototype(descriptor);
-	this->message = prototype->New();
-	this->message->CopyFrom(message);
+	protobuf::Message *copy = prototype->New();
+	copy->CopyFrom(message);
+	this->message = std::unique_ptr<protobuf::Message>(copy);
 }
 
 MediaPipeProto::MediaPipeProto(const protobuf::MessageLite &message) {
 	const std::string &type_name = message.GetTypeName();
 	const protobuf::Message *prototype = util::get_prototype(type_name);
-	this->message = prototype->New();
-	this->message->ParseFromString(message.SerializeAsString());
-}
-
-MediaPipeProto::~MediaPipeProto() {
-	if (message)
-		::free(message);
+	protobuf::Message *copy = prototype->New();
+	copy->ParseFromString(message.SerializeAsString());
+	this->message = std::unique_ptr<protobuf::Message>(copy);
 }
 
 bool MediaPipeProto::initialize(const String &type_name) {
-	if (message)
-		::free(message);
+	ERR_FAIL_COND_V(is_initialized(), false);
 	const std::string &name = type_name.utf8().get_data();
 	const protobuf::Message *prototype = util::get_prototype(name);
 	ERR_FAIL_COND_V(prototype == nullptr, false);
-	message = prototype->New();
+	message = std::unique_ptr<protobuf::Message>(prototype->New());
 	return true;
 }
 
@@ -108,7 +103,7 @@ bool MediaPipeProto::parse_from_buffer(PackedByteArray buffer) {
 
 bool MediaPipeProto::parse_from_string(const String &string) {
 	ERR_FAIL_COND_V(!is_initialized(), false);
-	return protobuf::TextFormat::ParseFromString(string.utf8().get_data(), message);
+	return protobuf::TextFormat::ParseFromString(string.utf8().get_data(), message.get());
 }
 
 PackedByteArray MediaPipeProto::serialize_to_buffer() {
@@ -157,54 +152,43 @@ int MediaPipeProto::get_repeated_field_size(const String &field_name) {
 	return reflection->FieldSize(*message, field);
 }
 
-Variant MediaPipeProto::get_field(const String &field_name) {
-	ERR_FAIL_COND_V(!is_initialized(), Variant());
-	PackedStringArray names = field_name.split("/");
-	const protobuf::FieldDescriptor *field = util::get_field_descriptor(*message, names[0]);
-	ERR_FAIL_COND_V(field == nullptr, Variant());
-	if (names.size() > 1) {
-		Ref<MediaPipeProto> proto = util::get_field(*message, field);
-		ERR_FAIL_COND_V(proto == nullptr, proto);
-		names.remove_at(0);
-		return proto->get_field(String("/").join(names));
+Variant MediaPipeProto::get_field(const String &field_name, const String &delimiter) {
+	ERR_FAIL_COND_V(!is_initialized(), nullptr);
+	protobuf::Message *msg = message.get();
+	const protobuf::FieldDescriptor *field = util::get_field_descriptor(&msg, field_name, delimiter);
+	ERR_FAIL_NULL_V(field, nullptr);
+	if (field->is_repeated()) {
+		return util::get_repeated_field(*msg, field);
+	} else {
+		return util::get_field(*msg, field);
 	}
-	if (field->is_repeated())
-		return util::get_repeated_field(*message, field);
-	else
-		return util::get_field(*message, field);
 }
 
-Variant MediaPipeProto::get_repeated_field(const String &field_name, int index) {
-	ERR_FAIL_COND_V(!is_initialized(), Variant());
-	PackedStringArray names = field_name.split("/");
-	const protobuf::FieldDescriptor *field = util::get_field_descriptor(*message, names[0]);
-	ERR_FAIL_COND_V(field == nullptr, Variant());
-	if (names.size() > 1) {
-		Ref<MediaPipeProto> proto = util::get_field(*message, field);
-		ERR_FAIL_COND_V(proto == nullptr, proto);
-		names.remove_at(0);
-		return proto->get_repeated_field(String("/").join(names), index);
-	}
-	ERR_FAIL_COND_V(!field->is_repeated(), Variant());
-	return util::get_repeated_field(*message, field, index);
+Variant MediaPipeProto::get_repeated_field(const String &field_name, int index, const String &delimiter) {
+	ERR_FAIL_COND_V(!is_initialized(), nullptr);
+	protobuf::Message *msg = message.get();
+	const protobuf::FieldDescriptor *field = util::get_field_descriptor(&msg, field_name, delimiter);
+	ERR_FAIL_COND_V(!field->is_repeated(), nullptr);
+	return util::get_repeated_field(*msg, field, index);
 }
 
-bool MediaPipeProto::set_field(const String &field_name, Variant value) {
+bool MediaPipeProto::set_field(const String &field_name, Variant value, const String &delimiter) {
 	ERR_FAIL_COND_V(!is_initialized(), false);
-	PackedStringArray names = field_name.split("/");
-	const protobuf::FieldDescriptor *field = util::get_field_descriptor(*message, names[0]);
-	ERR_FAIL_COND_V(field == nullptr, false);
-	if (names.size() > 1) {
-		Ref<MediaPipeProto> proto = util::get_field(*message, field);
-		ERR_FAIL_COND_V(proto == nullptr, false);
-		names.remove_at(0);
-		ERR_FAIL_COND_V(!proto->set_field(String("/").join(names), value), false);
-		return util::set_field(*message, field, proto);
+	protobuf::Message *msg = message.get();
+	const protobuf::FieldDescriptor *field = util::get_field_descriptor(&msg, field_name, delimiter);
+	if (field->is_repeated()) {
+		return util::set_repeated_field(*msg, field, value);
+	} else {
+		return util::set_field(*msg, field, value);
 	}
-	if (field->is_repeated())
-		return util::set_repeated_field(*message, field, value);
-	else
-		return util::set_field(*message, field, value);
+}
+
+bool MediaPipeProto::set_repeated_field(const String &field_name, int index, Variant value, const String &delimiter) {
+	ERR_FAIL_COND_V(!is_initialized(), false);
+	protobuf::Message *msg = message.get();
+	const protobuf::FieldDescriptor *field = util::get_field_descriptor(&msg, field_name, delimiter);
+	ERR_FAIL_COND_V(!field->is_repeated(), false);
+	return util::set_repeated_field(*msg, field, index, value);
 }
 
 Ref<MediaPipeProto> MediaPipeProto::duplicate() {
@@ -220,5 +204,5 @@ Ref<MediaPipePacket> MediaPipeProto::get_packet() {
 }
 
 protobuf::Message *MediaPipeProto::get_message() {
-	return message;
+	return message.get();
 }

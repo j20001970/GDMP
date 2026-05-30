@@ -1,6 +1,8 @@
 #ifndef GDMP_PROTO
 #define GDMP_PROTO
 
+#include <memory>
+
 #include "godot_cpp/classes/ref_counted.hpp"
 #include "godot_cpp/variant/packed_string_array.hpp"
 #include "godot_cpp/variant/string.hpp"
@@ -23,7 +25,7 @@ class MediaPipeProto : public RefCounted {
 	protected:
 		static void _bind_methods();
 
-		protobuf::Message *message;
+		std::unique_ptr<protobuf::Message> message;
 
 		String _to_string() const;
 
@@ -34,8 +36,6 @@ class MediaPipeProto : public RefCounted {
 		MediaPipeProto(const protobuf::Message &message);
 		// Create from copying an existing protobuf::MessageLite.
 		MediaPipeProto(const protobuf::MessageLite &message);
-		// Destructor, free message if initialized.
-		~MediaPipeProto();
 
 		// Initialize the proto with the given type name, return true on success.
 		bool initialize(const String &type_name);
@@ -61,13 +61,16 @@ class MediaPipeProto : public RefCounted {
 		int get_repeated_field_size(const String &field_name);
 
 		// Get the value from the field of the proto.
-		Variant get_field(const String &field_name);
+		Variant get_field(const String &field_name, const String &delimiter);
 		// Get the value of repeated field on index.
-		Variant get_repeated_field(const String &field_name, int index);
+		Variant get_repeated_field(const String &field_name, int index, const String &delimiter);
 
 		// Set the value of the field for the proto.
 		// Return true on success.
-		bool set_field(const String &field_name, Variant value);
+		bool set_field(const String &field_name, Variant value, const String &delimiter);
+		// Set the value of repeated field on index.
+		// Return true on success.
+		bool set_repeated_field(const String &field_name, int index, Variant value, const String &delimiter);
 
 		// Returns a new copy of the proto message.
 		Ref<MediaPipeProto> duplicate();

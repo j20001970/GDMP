@@ -11,7 +11,7 @@ class MediaPipeGraphConfig : public MediaPipeProto {
 		GDCLASS(MediaPipeGraphConfig, MediaPipeProto)
 
 	private:
-		const mediapipe::CalculatorGraphConfig *config;
+		mediapipe::CalculatorGraphConfig *config;
 
 	protected:
 		static void _bind_methods();
@@ -19,7 +19,6 @@ class MediaPipeGraphConfig : public MediaPipeProto {
 	public:
 		MediaPipeGraphConfig();
 		MediaPipeGraphConfig(const mediapipe::CalculatorGraphConfig &config);
-		~MediaPipeGraphConfig();
 
 		// Get underlying mediapipe::CalculatorGraphConfig
 		const mediapipe::CalculatorGraphConfig &get_config();

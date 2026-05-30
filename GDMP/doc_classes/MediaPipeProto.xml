@@ -6,6 +6,18 @@
 	<description>
 		Protobuf is a platform-agnostic and language-agnostic way of describing data structures.
 		Protobuf is extensively used in MediaPipe framework.
+		Type conversion between Godot and Protobuf:
+		[codeblock lang="text"]
+		Godot           | Protobuf
+		------------------------------------
+		bool            | bool
+		float           | double, float
+		int             | enum, int32, int64
+		String          | string
+		MediaPipeProto  | message
+		PackedByteArray | bytes
+		[/codeblock]
+		Repeated fields correspond to typed [Array] of the field type.
 	</description>
 	<tutorials>
 		<link title="Protocol Buffers Documentation">https://protobuf.dev</link>
@@ -20,10 +32,11 @@
 		<method name="get_field">
 			<return type="Variant" />
 			<param index="0" name="field_name" type="String" />
+			<param index="1" name="delimiter" type="String" default="/" />
 			<description>
 				Gets the value of proto field [param field_name].
-				Returns [code]null[/code] if the field does not exist.
-				To get nested field value, use [code]/[/code] as separator.
+				To get nested field value, use [param delimiter] as separator.
+				Returns [code]null[/code] if the field type is not supported or does not exist.
 			</description>
 		</method>
 		<method name="get_fields">
@@ -44,8 +57,10 @@
 			<return type="Variant" />
 			<param index="0" name="field_name" type="String" />
 			<param index="1" name="index" type="int" />
+			<param index="2" name="delimiter" type="String" default="/" />
 			<description>
 				Gets the value of repeated field [param field_name] at [param index].
+				To get nested field value, use [param delimiter] as separator.
 				Returns [code]null[/code] if the field is not repeated or does not exist.
 			</description>
 		</method>
@@ -115,8 +130,23 @@
 			<return type="bool" />
 			<param index="0" name="field_name" type="String" />
 			<param index="1" name="value" type="Variant" />
+			<param index="2" name="delimiter" type="String" default="/" />
 			<description>
-				Sets the proto field [param field_name] with [param value]. Returns [code]true[/code] on success.
+				Sets the proto field [param field_name] with [param value].
+				To set nested field value, use [param delimiter] as separator.
+				Returns [code]true[/code] on success.
+			</description>
+		</method>
+		<method name="set_repeated_field">
+			<return type="bool" />
+			<param index="0" name="field_name" type="String" />
+			<param index="1" name="index" type="int" />
+			<param index="2" name="value" type="Variant" />
+			<param index="3" name="delimiter" type="String" default="/" />
+			<description>
+				Sets the value of repeated field [param field_name] at [param index].
+				To set nested field value, use [param delimiter] as separator.
+				Returns [code]true[/code] on success.
 			</description>
 		</method>
 	</methods>
