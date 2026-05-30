@@ -13,7 +13,7 @@ class MediaPipeGraphConfig : public MediaPipeProto {
 		GODOT_CLASS(MediaPipeGraphConfig, MediaPipeProto)
 
 	private:
-		const mediapipe::CalculatorGraphConfig *config;
+		mediapipe::CalculatorGraphConfig *config;
 
 	public:
 		static void _register_methods();

@@ -22,7 +22,7 @@ class MediaPipeProto : public Reference {
 		static bool register_packet_types();
 
 	protected:
-		protobuf::Message *message;
+		std::unique_ptr<protobuf::Message> message;
 
 		String _to_string() const;
 
@@ -30,8 +30,6 @@ class MediaPipeProto : public Reference {
 		static void _register_methods();
 		static MediaPipeProto *_new(const protobuf::Message &message);
 		static MediaPipeProto *_new(const protobuf::MessageLite &message);
-
-		~MediaPipeProto();
 
 		void _init();
 
@@ -59,13 +57,16 @@ class MediaPipeProto : public Reference {
 		int get_repeated_field_size(String field_name);
 
 		// Get the value from the field of the proto.
-		Variant get_field(String field_name);
+		Variant get_field(String field_name, String delimiter);
 		// Get the value of repeated field on index.
-		Variant get_repeated_field(String field_name, int index);
+		Variant get_repeated_field(String field_name, int index, String delimiter);
 
 		// Set the value of the field for the proto.
 		// Return true on success.
-		bool set_field(String field_name, Variant value);
+		bool set_field(String field_name, Variant value, String delimiter);
+		// Set the value of repeated field on index.
+		// Return true on success.
+		bool set_repeated_field(String field_name, int index, Variant value, String delimiter);
 
 		// Returns a new copy of the proto message.
 		Ref<MediaPipeProto> duplicate();

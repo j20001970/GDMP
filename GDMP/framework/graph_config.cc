@@ -9,8 +9,8 @@ MediaPipeGraphConfig *MediaPipeGraphConfig::_new(const mediapipe::CalculatorGrap
 }
 
 void MediaPipeGraphConfig::_init() {
-	message = mediapipe::CalculatorGraphConfig().New();
-	config = static_cast<mediapipe::CalculatorGraphConfig *>(message);
+	config = mediapipe::CalculatorGraphConfig().New();
+	message = std::unique_ptr<mediapipe::CalculatorGraphConfig>(config);
 }
 
 const mediapipe::CalculatorGraphConfig &MediaPipeGraphConfig::get_config() {
