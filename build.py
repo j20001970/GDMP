@@ -53,7 +53,6 @@ def build_desktop(args: Namespace) -> list[str]:
             "--define=OPENCV=source",
         ],
         "win32": [
-            "--noincompatible_enable_cc_toolchain_resolution",
             "--copt=/Zc:preprocessor",
             "--copt=/utf-8",
             "--conlyopt=/std:c11",
@@ -86,11 +85,17 @@ def build_desktop(args: Namespace) -> list[str]:
     elif sys.platform == "win32":
         if arch == "arm64":
             build_args.append("--cpu=arm64_windows")
+            build_args.append(
+                "--extra_toolchains=@local_config_cc//:cc-toolchain-arm64_windows"
+            )
             build_args.append("--copt=/DFARMHASH_NO_BUILTIN_EXPECT")
             build_args.append("--copt=/DPFFFT_SIMD_DISABLE")
             build_args.append("--define=xnn_enable_arm_fp16_scalar=false")
             build_args.append("--define=xnn_enable_arm_fp16_vector=false")
             build_args.append("--define=xnn_enable_arm_dotprod=false")
+            build_args.append("--define=xnn_enable_arm_i8mm=false")
+            build_args.append("--define=xnn_enable_arm_sme=false")
+            build_args.append("--define=xnn_enable_arm_sme2=false")
             build_args.append("--define=xnn_enable_assembly=false")
         elif arch == "x86_64":
             build_args.append("--cpu=x64_windows")

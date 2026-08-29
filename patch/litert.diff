@@ -1,0 +1,12 @@
+diff --git a/tflite/kernels/internal/optimized/4bit/neon_fully_connected_aarch64_sdot.cc b/tflite/kernels/internal/optimized/4bit/neon_fully_connected_aarch64_sdot.cc
+--- a/tflite/kernels/internal/optimized/4bit/neon_fully_connected_aarch64_sdot.cc
++++ b/tflite/kernels/internal/optimized/4bit/neon_fully_connected_aarch64_sdot.cc
+@@ -22,7 +22,7 @@ limitations under the License.
+ #include "tflite/kernels/internal/cppmath.h"
+ #include "tflite/kernels/internal/optimized/4bit/neon_fully_connected_impl.h"
+ 
+-#define DOTPROD_ATTRIBUTE __attribute__((target("dotprod")))
++#define DOTPROD_ATTRIBUTE __attribute__((target("+dotprod")))
+ 
+ namespace tflite {
+ namespace optimized_4bit {
