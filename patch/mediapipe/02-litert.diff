@@ -1,0 +1,11 @@
+diff --git a/WORKSPACE b/WORKSPACE
+--- a/WORKSPACE
++++ b/WORKSPACE
+@@ -835,6 +835,7 @@ http_archive(
+         "@//third_party:litert_rules_python_and_strict_deps.diff",
+         "@//third_party:litert_custom_ops.diff",
+         "@//third_party:litert_internal_fbs_fix.diff",
++        "@GDMP//patch:litert.diff",
+     ],
+     sha256 = "f95fa96332c56b7103db7a02ab4edab845949c196a986db55bddaa70539ee45b",
+     strip_prefix = "LiteRT-2.1.6",

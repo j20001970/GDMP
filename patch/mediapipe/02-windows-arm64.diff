@@ -2,31 +2,70 @@
 diff --git a/WORKSPACE b/WORKSPACE
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -189,6 +189,8 @@ http_archive(
- http_archive(
-     name = "XNNPACK",
-     # `curl -L <url> | shasum -a 256`
-+    patch_args = ["-p1", "-l"],
-+    patches = ["@GDMP//patch:xnnpack_windows_arm64.diff"],
-     sha256 = "7235b2b55fbf11b64f38db130efae0f293d2d6d6fd90613221b598a8847f41c5",
-     strip_prefix = "XNNPACK-68167d1fefa50296f0588ec280f48c58357ca898",
-     url = "https://github.com/google/XNNPACK/archive/68167d1fefa50296f0588ec280f48c58357ca898.zip",
-@@ -236,6 +238,10 @@ http_archive(
- # 2025-09-08
+@@ -228,5 +228,9 @@ http_archive(
  http_archive(
      name = "cpuinfo",
 +    patch_args = ["-p1"],
 +    patches = [
 +        "@GDMP//patch:cpuinfo.diff",
 +    ],
-     sha256 = "c0254ce97f7abc778dd2df0aaca1e0506dba1cd514fdb9fe88c07849393f8ef4",
-     strip_prefix = "cpuinfo-8a9210069b5a37dd89ed118a783945502a30a4ae",
+     sha256 = "9213f6f81784eb8679f0621ad1c20eac711e063cb9c7712738720609cbdf1c33",
+     strip_prefix = "cpuinfo-ea6b9f1bb6e1001d8b21574d5bc78ddef62e499d",
      urls = [
-@@ -273,6 +279,7 @@ http_archive(
-         # See https://github.com/bazelbuild/bazel/issues/19912
-         "@//third_party:org_tensorflow_objc_build_fixes.diff",
-         "@//third_party:org_tensorflow_verifier_int4.diff",
+@@ -264,6 +268,7 @@ http_archive(
+         # (tensorflow/lite/build_def.bzl) where link_extra_lib is duplicated when rules_cc has
+         # a version-suffixed canonical name (e.g., under single_version_override or complex dependency graphs).
+         "@//third_party:org_tensorflow_combine_cc_tests_link_extra_lib.diff",
 +        "@GDMP//patch:org_tensorflow_icu_windows_arm64.diff",
      ],
      sha256 = _TENSORFLOW_SHA256,
      strip_prefix = "tensorflow-%s" % _TENSORFLOW_GIT_COMMIT,
+diff --git a/mediapipe/BUILD b/mediapipe/BUILD
+--- a/mediapipe/BUILD
++++ b/mediapipe/BUILD
+@@ -179,6 +179,14 @@ alias(
+ # Windows 64-bit.
+ config_setting_and_platform(
+     name = "windows",
++    constraint_values = [
++        "@platforms//os:windows",
++    ],
++    visibility = ["//visibility:public"],
++)
++
++config_setting_and_platform(
++    name = "windows_x86_64",
+     constraint_values = [
+         "@platforms//os:windows",
+         "@platforms//cpu:x86_64",
+@@ -186,6 +194,15 @@ config_setting_and_platform(
+     visibility = ["//visibility:public"],
+ )
+ 
++config_setting_and_platform(
++    name = "windows_arm64",
++    constraint_values = [
++        "@platforms//os:windows",
++        "@platforms//cpu:arm64",
++    ],
++    visibility = ["//visibility:public"],
++)
++
+ # Linux 64-bit.
+ config_setting_and_platform(
+     name = "linux",
+diff --git a/platform_mappings b/platform_mappings
+--- a/platform_mappings
++++ b/platform_mappings
+@@ -55,7 +55,10 @@ flags:
+     @mediapipe//mediapipe:ios_arm64e_platform
+ 
+   --cpu=x64_windows
+-    @mediapipe//mediapipe:windows_platform
++    @mediapipe//mediapipe:windows_x86_64_platform
++
++  --cpu=arm64_windows
++    @mediapipe//mediapipe:windows_arm64_platform
+ 
+   --cpu=k8
+     @mediapipe//mediapipe:linux_platform

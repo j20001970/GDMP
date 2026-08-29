@@ -1,15 +1,15 @@
 diff --git a/mediapipe/calculators/tensor/BUILD b/mediapipe/calculators/tensor/BUILD
 --- a/mediapipe/calculators/tensor/BUILD
 +++ b/mediapipe/calculators/tensor/BUILD
-@@ -836,7 +836,6 @@ cc_library(
-         "@org_tensorflow//tensorflow/lite/c:common",
-         "@org_tensorflow//tensorflow/lite/core:framework",
+@@ -1042,7 +1042,6 @@ cc_library(
+         "@litert//tflite/c:common",
+         "@litert//tflite/core:framework",
      ] + select({
 -        "//mediapipe:emscripten": [],
          "//conditions:default": [
              "//mediapipe/util:cpu_util",
          ],
-@@ -917,6 +954,7 @@ cc_library(
+@@ -1120,6 +1119,7 @@ cc_library(
      name = "inference_calculator_gl_if_compute_shader_available",
      deps = selects.with_or({
          ":compute_shader_unavailable": [],
